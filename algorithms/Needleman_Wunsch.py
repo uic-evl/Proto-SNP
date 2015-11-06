@@ -19,14 +19,15 @@ class Needleman_Wunsch(object):
         for row in range(1, M):
             for col in range(1,N):
                 # compare the two residues
-                score = (int)(seq1[row-1] == seq2[col-1])
+                score = 2 if (seq1[row-1] == seq2[col-1]) else -1
                 # gap score (currently ignoring)
-                w = 0
+                w = -2
 
                 # set the matrix value based on:
                 # M[i,j] = max( M[i-1,j-1] + score ,
                 #           M[i,j-1] + w, M[i-1,j] + w)
                 gapMatrix[row][col] = max( gapMatrix[row-1][col-1] + score,
                     max(gapMatrix[row][col-1] + w, gapMatrix[row-1][col] + w))
-
         print gapMatrix
+
+        # TODO Implement the reconstruction

@@ -22,13 +22,11 @@ class Needleman_Wunsch(object):
                 score = (int)(seq1[row-1] == seq2[col-1])
                 # gap score (currently ignoring)
                 w = 0
+
                 # set the matrix value based on:
                 # M[i,j] = max( M[i-1,j-1] + score ,
                 #           M[i,j-1] + w, M[i-1,j] + w)
-
                 gapMatrix[row][col] = max( gapMatrix[row-1][col-1] + score,
                     max(gapMatrix[row][col-1] + w, gapMatrix[row-1][col] + w))
-                print gapMatrix[row][col]
 
-            print '\n'
         print gapMatrix

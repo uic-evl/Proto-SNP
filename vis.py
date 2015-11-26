@@ -167,6 +167,12 @@ class ColorWidget(QtGui.QWidget):
         self.setLayout(hbox)
         self.setWindowTitle('Coloring schemes')
 
+class OpenProteinWidget(QtGui.QWidget):
+    def __init__(self, parent = None):
+        QtGui.QWidget.__init__(self, parent)
+
+        self.setWindowTitle('Open Protein')
+
 
 def glal_draw_lines(self):
     """Draw a atom using bond lines only.

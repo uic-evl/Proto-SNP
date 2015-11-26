@@ -166,6 +166,7 @@ class MainWindow(QtGui.QMainWindow):
         #self.glWidgetD.installEventFilter(self.myEF)
 
         self.color_scheme = ColorWidget()
+        self.open_protein = OpenProteinWidget()
         self.initActions()
         self.initListWidget()
         self.initTIMs()
@@ -348,6 +349,8 @@ class MainWindow(QtGui.QMainWindow):
         menuBar = self.menuBar()
         fileMenu = menuBar.addMenu('&File')
         action_open_protein = fileMenu.addAction("&Open Protein")
+
+        self.connect(action_open_protein, QtCore.SIGNAL("triggered()"), lambda:self.open_protein.show())
 
         sortingMenu = menuBar.addMenu("&Sorting")
         action_frequency = sortingMenu.addAction("&Residue frequency")

@@ -167,10 +167,23 @@ class ColorWidget(QtGui.QWidget):
         self.setLayout(hbox)
         self.setWindowTitle('Coloring schemes')
 
-class OpenProteinWidget(QtGui.QWidget):
+class OpenProteinWidget(QtGui.QDialog):
     def __init__(self, parent = None):
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
 
+        layout = QtGui.QVBoxLayout()
+        self.setLayout(layout)
+        msg = """Enter the PDB Protein Identifier (e.g.2JGQ).\n\n"""
+        label = QtGui.QLabel(msg)
+        layout.addWidget(label)
+
+        buttonBox = QtGui.QDialogButtonBox(
+            QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel
+        )
+        layout.addWidget(buttonBox)
+
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
         self.setWindowTitle('Open Protein')
 
 

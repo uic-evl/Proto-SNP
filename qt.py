@@ -347,6 +347,7 @@ class MainWindow(QtGui.QMainWindow):
     def initMenus(self):
         menuBar = self.menuBar()
         fileMenu = menuBar.addMenu('&File')
+        action_open_protein = fileMenu.addAction("&Open Protein")
 
         sortingMenu = menuBar.addMenu("&Sorting")
         action_frequency = sortingMenu.addAction("&Residue frequency")

@@ -349,9 +349,11 @@ class MainWindow(QtGui.QMainWindow):
         menuBar = self.menuBar()
         fileMenu = menuBar.addMenu('&File')
         action_open_protein = fileMenu.addAction("&Open Protein")
+        action_quit = fileMenu.addAction("&Exit")
 
         self.connect(action_open_protein, QtCore.SIGNAL("triggered()"), lambda:self.open_protein.show())
-
+        self.connect(action_quit, QtCore.SIGNAL('triggered()'), self.close)
+        
         sortingMenu = menuBar.addMenu("&Sorting")
         action_frequency = sortingMenu.addAction("&Residue frequency")
         action_edit_dist = sortingMenu.addAction("&Edit distance")

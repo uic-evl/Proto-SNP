@@ -11,7 +11,8 @@ var App = App || {};
     // Default viewer options
     var options = {
       antialias: true,
-      quality : 'medium'
+      quality : 'medium',
+      background: 'black'
     };
 
     /* create the left and right viewers */

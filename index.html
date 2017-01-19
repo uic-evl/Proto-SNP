@@ -5,18 +5,23 @@
 
     <!-- CSS LIB -->
     <link rel="stylesheet" href="lib/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
 
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/splash.css">
 
     <!-- JS LIB-->
     <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
     <script type='text/javascript' src='lib/js/bio-pv.min.js'></script>
     <script type='text/javascript' src='lib/js/d3.min.js'></script>
+    <script type='text/javascript' src='lib/js/knockout-min.js'></script>
 
     <!-- JS SRC-->
-    <script type='text/javascript' src='src/js/modelView/molecularViewer.js'></script>
+    <script type='text/javascript' src='src/js/view/molecularViewer.js'></script>
+    <script type='text/javascript' src='src/js/view/viewerOverlay.js'></script>
     <script type='text/javascript' src='src/js/main.js'></script>
 
 </head>
@@ -24,18 +29,52 @@
 
     <div class="container-fluid">
         <!-- 3D Molecule Viewers -->
-        <div class="row 3DView">
+        <div class="row TDView">
             <!-- Left Viewer-->
             <div class="col-md-6">
                 <div id=leftViewer>
-                    <div class="static-label"></div>
+                    <!--<div class="static-label"></div>-->
+                    <button class="popup-trigger btn" id="popup-trigger-left">
+                        <span>Select Protein<i class="fa fa-plus-square-o"></i></span>
+                    </button>
+                    <div class="overlay" id="overlay-left">
+                        <div class="overlay-background" id="overlay-background-left"></div>
+                        <div class="overlay-content" id="overlay-content-left">
+                            <div class="fa fa-times fa-lg overlay-close" id="overlay-close-left"></div>
+                            <h1 class="main-heading">Select Protein</h1>
+                            <h3 class="blurb">Enter a PDB Name:</h3>
+                            <form class="signup-form" method="post" action="#" novalidate="novalidate">
+                                <label for="protein-name-left">PDB</label>
+                                <input id="protein-name-left" type="text" name="name" autocomplete="off"/>
+                                <button class="btn btn-outline submit-btn"><span>View</span></button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div> <!-- End Left Viewer -->
             <!-- Right Viewer -->
             <div class="col-md-6">
                 <div id=rightViewer>
-                    <div class="static-label"></div>
+                    <!--<div class="static-label"></div>-->
+                    <button class="popup-trigger btn" id="popup-trigger-right">
+                        <span>Select Protein<i class="fa fa-plus-square-o"></i></span>
+                    </button>
+                    <div class="overlay" id="overlay-right">
+                        <div class="overlay-background" id="overlay-background-right"></div>
+                        <div class="overlay-content" id="overlay-content-right">
+                            <div class="fa fa-times fa-lg overlay-close" id="overlay-close-right"></div>
+                            <h1 class="main-heading">Select Protein</h1>
+                            <h3 class="blurb">Enter a PDB Name:</h3>
+                            <form class="signup-form" method="post" action="#" novalidate="novalidate">
+                                <label for="protein-name-right">PDB</label>
+                                <input id="protein-name-right" type="text" name="name" autocomplete="off"/>
+                                <button class="btn btn-outline submit-btn"><span>View</span></button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+                </div>
+
             </div> <!-- End Right Viewer -->
         </div> <!-- End Molecular Viewers -->
     </div> <!-- end container -->

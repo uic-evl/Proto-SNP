@@ -9,3 +9,7 @@
     font-weight:bold;
     color: white;
 }
+
+#rightViewer, #leftViewer {
+    background-color: black;
+}

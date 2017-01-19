@@ -12,6 +12,9 @@ var MolecularViewer = function(){
     /* get the DOM element by the id parameter */
     viewer.domObj = document.getElementById(id);
 
+    /* check if viewing options were passed in */
+    options = options || {};
+
     /* get/save the width and height of the given DOM element */
     viewer.width = viewer.domObj.clientWidth;
     viewer.height = viewer.width * 0.9;

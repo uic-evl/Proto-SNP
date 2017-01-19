@@ -8,6 +8,18 @@ var App = App || {};
   /* Starting point of the program. Initializes the application */
   function init() {
 
+    /* Set the size of the 3D Divs*/
+    var leftDom = document.getElementById('leftViewer');
+    var rightDom = document.getElementById('rightViewer');
+
+    // attach the height to the global app variable
+    App.viewerWidth = leftDom.clientWidth;
+    App.viewerHeight = App.viewerWidth * 0.9;
+
+    // set the div size
+    leftDom.style.height = App.viewerHeight;
+    rightDom.style.height = App.viewerHeight;
+
     // Default viewer options
     var options = {
       antialias: true,
@@ -20,15 +32,18 @@ var App = App || {};
     App.rightViewer = new MolecularViewer();
 
     /* initialize the left/right viewers */
-    App.leftViewer.init( 'leftViewer', options );
-    App.rightViewer.init( 'rightViewer', options );
+    //App.leftViewer.init( 'leftViewer', options );
+    //App.rightViewer.init( 'rightViewer', options );
 
     /* load the pdb file for each viewer */
-    App.leftViewer.loadFromRCMB('2YPI');
-    App.rightViewer.loadFromRCMB('5CKN');
+    // App.leftViewer.loadFromRCMB('2YPI');
+    // App.rightViewer.loadFromRCMB('5CKN');
+
+    App.setupOverlays();
   }
 
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);
 
 })();
+

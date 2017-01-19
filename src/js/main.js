@@ -46,4 +46,3 @@ var App = App || {};
   document.addEventListener('DOMContentLoaded', init);
 
 })();
-

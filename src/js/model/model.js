@@ -3,40 +3,64 @@ var App = App || {};
 
 /*** KO Class ***/
 function Proteins() {
-
   // self reference
   var self = this;
+
+  // Default viewer options
+  self.options = {
+    antialias: true,
+    quality : 'medium',
+    background: 'black'
+  };
 
   // array to hold the proteins
   self.proteins = {};
 
-  // Left and Right Protein selectors
-  self.leftProtien = ko.observable();
-  self.rightProtien = ko.observable();
+  // Left and Right Proteins for the Viewers
+  self.leftProtien = {};
+  self.rightProtien = {};
 
-  /* Listen for input from the use on the left protein selection */
-  self.leftProtien.subscribe(function(protein) {
+  /* Form callback to process the request to load a new protein */
+  function fetchProtein(formData) {
 
+    /* if the left viewer, propagate the view for the left */
+    if(formData.id === "left-viewer"){
 
-  });
+      /* Remove the splash overlay */
+      $('#leftSplash').remove();
 
-  /* Listen for input from the use on the left protein selection */
-  self.rightProtien.subscribe(function(protein) {
+      /* Parse the input */
+      self.leftProtien = $(formData).serialize().split('=')[1];
 
+      // initialize the left viewer
+      App.leftViewer.init( 'leftViewer', self.options );
 
-  });
+      /* load the pdb file for each viewer */
+      App.leftViewer.loadFromRCMB(self.leftProtien);
+    }
 
+    /* if the left viewer, propagate the view for the left */
+    else if(formData.id === "right-viewer"){
+
+      /* Remove the splash overlay */
+      $('#rightSplash').remove();
+
+      /* Parse the input */
+      self.rightProtien = $(formData).serialize().split('=')[1];
+
+      // initialize the left viewer
+      App.rightViewer.init( 'rightViewer', self.options );
+
+      /* load the pdb file for each viewer */
+      App.rightViewer.loadFromRCMB(self.rightProtien);
+    }
+
+    /* Return false to prevent the form from reloading the page */
+    return false;
+  }
+
+  /* Return the public-facing functions */
+  return {
+    processProteinRequest : fetchProtein
+  };
 }
-
-// /*** IFE to load the data and apply the KO bindings ***/
-// (function(){
-//
-//   d3.json("data/rankings.json", function(error, json) {
-//     if (error) return console.warn(error);
-//
-//     App.data = json;
-//     ko.applyBindings(new Patients());
-//
-//   });
-//
-// })();

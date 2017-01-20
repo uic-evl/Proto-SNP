@@ -5,6 +5,13 @@ var App = App || {};
   // create reference to 'this'
   var self = this;
 
+  // Default PV viewer options
+  App.options = {
+    antialias: true,
+    quality : 'medium',
+    background: 'black'
+  };
+
   /* Starting point of the program. Initializes the application */
   function init() {
 
@@ -20,25 +27,14 @@ var App = App || {};
     leftDom.style.height = App.viewerHeight;
     rightDom.style.height = App.viewerHeight;
 
-    // Default viewer options
-    var options = {
-      antialias: true,
-      quality : 'medium',
-      background: 'black'
-    };
-
     /* create the left and right viewers */
     App.leftViewer = new MolecularViewer();
     App.rightViewer = new MolecularViewer();
 
-    /* initialize the left/right viewers */
-    //App.leftViewer.init( 'leftViewer', options );
-    //App.rightViewer.init( 'rightViewer', options );
+    /* Bind the model to the view*/
+    ko.applyBindings(new Proteins());
 
-    /* load the pdb file for each viewer */
-    // App.leftViewer.loadFromRCMB('2YPI');
-    // App.rightViewer.loadFromRCMB('5CKN');
-
+    /* Setup the protein selection overlays */
     App.setupOverlays();
   }
 

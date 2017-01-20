@@ -48,10 +48,9 @@ var MolecularViewer = function(){
 
       /* Add the protein's label */
       // get the label div
-      var staticLabel = viewer.domObj.querySelector('.static-label');
+      // var staticLabel = viewer.domObj.querySelector('.static-label');
       // set the text to the label
-      staticLabel.innerHTML = proteinName;
-
+      // staticLabel.innerHTML = proteinName;
     });
 
   }

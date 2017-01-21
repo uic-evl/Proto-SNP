@@ -17,30 +17,33 @@ var SequenceViewer = function(){
 
     // Get the width and height
     list.domWidth = list.domElement.node().clientWidth;
+    // we want the height to be that of the 3D Viewers
+    list.domHeight = App.leftViewer.getDimensions().height;
 
     // clear the dom of the previous list
     list.domElement.selectAll().remove();
 
-    // append a new SVG
+    // append a new span for the list
     list.domElement
-        .append("svg")
-        .attr("width", list.domWidth);
+        .style("height", list.domHeight)
+        .append("span") // span element
+        // .attr("width", list.domWidth / 2) // the width is half the column
+        // .attr("height", list.domHeight) // set the height
+        .attr("class", "sequence") // set the styling to the sequence class
+    ;
   }
 
   /* Render the sequence list */
   function render(sequence) {
 
-    let blockHeight = 100,
-        blockWidth = 100;
-
-    list.domElement.select("svg")
-        .append("g")
-        .selectAll("rect")
+    list.domElement.select("span")
+        .selectAll(".residues")
         .data(sequence)
-        .enter().append("rect")
-        .attr('y', function(d, i) { console.log(arguments); return i * blockHeight; })
-        .attr("height", blockHeight)
-        .attr("width", list.domWidth)
+        .enter().append("span")
+        .attr("class", "residue")
+        .text(function(d) { return d; })
+        .style("width", list.domWidth / 2)
+        .style("background-color", function(d, i) { return colorbrewer.Spectral[10][i%10]; })
         ;
 
   }

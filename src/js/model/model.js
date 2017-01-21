@@ -41,7 +41,13 @@ function Proteins() {
       App.leftViewer.loadFromRCMB(self.leftProtien.name)
       /* Once the data has been loaded, get the sequence */
       .then(function(view){
+        // get the sequence of the protein
         self.leftProtien.sequence = App.leftViewer.getSequence(0);
+
+        // initialize the sequence viewer
+        App.sequenceViewer.init("#sequenceViewer");
+
+        // render the sequence list
         App.sequenceViewer.render(self.leftProtien.sequence);
       });
     }

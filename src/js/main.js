@@ -33,7 +33,6 @@ var App = App || {};
 
     /* Setup the sequence viewer */
     App.sequenceViewer = new SequenceViewer();
-    App.sequenceViewer.init("#sequenceViewer");
 
     /* Bind the model to the view*/
     ko.applyBindings(new Proteins());

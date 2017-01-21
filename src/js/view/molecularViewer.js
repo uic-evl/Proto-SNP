@@ -63,6 +63,9 @@ var MolecularViewer = function(){
 /* Accessor to get the underlying structure in the viewer */
 function getStructure() { return viewer.structure; }
 
+/* Accessor to get the viewer's height and width */
+function getDimensions() { return {width: viewer.width, height: viewer.height }}
+
 /* Accessor to get the underlying sequence of the Protein*/
 function getSequence(chain) {
 
@@ -83,7 +86,8 @@ return {
   init          : initialize,
   loadFromRCMB  : loadPDBFromRCMB,
   getStructure  : getStructure,
-  getSequence   : getSequence
+  getSequence   : getSequence,
+  getDimensions : getDimensions
 };
 
 };

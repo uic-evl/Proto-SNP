@@ -17,13 +17,17 @@
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
     <script type='text/javascript' src='lib/js/bio-pv.min.js'></script>
     <script type='text/javascript' src='lib/js/d3.min.js'></script>
+    <script type='text/javascript' src='lib/js/colorbrewer.min.js'></script>
     <!--<script type='text/javascript' src='lib/js/knockout-min.js'></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-debug.js"></script>
+    <script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
 
     <!-- JS SRC-->
     <script type='text/javascript' src='src/js/view/molecularViewer.js'></script>
+    <script type='text/javascript' src='src/js/view/sequenceViewer.js'></script>
     <script type='text/javascript' src='src/js/view/viewerOverlay.js'></script>
     <script type='text/javascript' src='src/js/model/model.js'></script>
+    <script type='text/javascript' src='src/js/algorithms/Needleman-Wunsch.js'></script>
     <script type='text/javascript' src='src/js/main.js'></script>
 
 </head>
@@ -33,7 +37,7 @@
     <!-- 3D Molecule Viewers -->
     <div class="row TDView">
         <!-- Left Viewer-->
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div id=leftViewer>
                 <!--<div class="static-label"></div>-->
                 <div id="leftSplash">
@@ -55,9 +59,11 @@
                     </div>
                 </div>
             </div>
-        </div> <!-- End Left Viewer -->
+        </div>
+        <!-- End Left Viewer -->
+
         <!-- Right Viewer -->
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div id=rightViewer>
                 <!--<div class="static-label"></div>-->
                 <div id="rightSplash">
@@ -80,9 +86,13 @@
                 </div>
             </div>
         </div>
+        <!-- End Right Viewer -->
 
-    </div> <!-- End Right Viewer -->
-</div> <!-- End Molecular Viewers -->
+        <!-- Sequence Viewer -->
+        <div class="col-md-2">
+            <div id="sequenceViewer"></div>
+        </div>
+    </div> <!-- End Molecular Viewers -->
 </div> <!-- end container -->
 
 </body>

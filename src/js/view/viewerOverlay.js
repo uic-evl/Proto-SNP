@@ -1,3 +1,6 @@
+"use strict";
+
+// Global Application variable
 var App = App || {};
 
 (function(){
@@ -23,8 +26,8 @@ var App = App || {};
 
       $(window).trigger('resize');
 
-      var left = $('#popup-trigger-left');
-      var right = $('#popup-trigger-right');
+      let left = $('#popup-trigger-left');
+      let right = $('#popup-trigger-right');
 
       // Launch the overlay
       left.click(function () {

@@ -12,6 +12,20 @@ var App = App || {};
     let gp = options.gapPenalty  || -1;
     let gc = "-";
 
+    // swapped flag
+    let swap = false;
+
+    /* Check which sequence is longer */
+    if(seq2.length > seq1.length){
+      /* Swap the two arrays */
+      let temp = seq2;
+      seq2 = seq1;
+      seq1 = temp;
+
+      // set the flag
+      swap = true;
+    }
+
     //generate grid array
     let arr = [];
 
@@ -74,8 +88,8 @@ var App = App || {};
 
     /* return the two aligned sequences */
     return {
-      leftSequence: sq1.reverse(),
-      rightSequence: sq2.reverse()
+      leftSequence:  (swap) ? sq2.reverse() :  sq1.reverse(),
+      rightSequence: (swap) ? sq1.reverse() :  sq2.reverse()
     }
 
   };

@@ -19,8 +19,8 @@ function Proteins() {
   self.proteins = {};
 
   // Left and Right Proteins for the Viewers
-  self.leftProtien = {};
-  self.rightProtien = {};
+  self.leftProtein = {};
+  self.rightProtein = {};
 
   /* Form callback to process the request to load a new protein */
   function fetchProtein(formData) {
@@ -32,23 +32,35 @@ function Proteins() {
       $('#leftSplash').remove();
 
       /* Parse the input */
-      self.leftProtien.name = $(formData).serialize().split('=')[1];
+      self.leftProtein.name = $(formData).serialize().split('=')[1];
 
       // initialize the left viewer
       App.leftViewer.init( 'leftViewer', self.options );
 
       /* load the pdb file for each viewer */
-      App.leftViewer.loadFromRCMB(self.leftProtien.name)
+      App.leftViewer.loadFromRCMB(self.leftProtein.name)
       /* Once the data has been loaded, get the sequence */
       .then(function(view){
         // get the sequence of the protein
-        self.leftProtien.sequence = App.leftViewer.getSequence(0);
+        self.leftProtein.sequence = App.leftViewer.getSequence(0);
 
         // initialize the sequence viewer
-        App.sequenceViewer.init("#sequenceViewer");
+        App.sequenceViewer.init("#sequenceViewer-left");
+        
+        /* Check if a sequence is already added to the list, if so align them*/
+        if(self.rightProtein.name){
+          /* Align the sequences */
+          let seq = App.align(self.leftProtein.sequence, {});
 
+          /* Set the model sequences */
+          self.leftProtein.sequence = seq.leftSequence;
+          self.rightProtein.sequence = seq.rightSequence;
+
+          /* Render the other sequence */
+          App.sequenceViewer.render("#sequenceViewer-right", self.rightProtein.sequence);
+        }
         // render the sequence list
-        App.sequenceViewer.render(self.leftProtien.sequence);
+        App.sequenceViewer.render("#sequenceViewer-left", self.leftProtein.sequence);
       });
     }
 
@@ -59,24 +71,41 @@ function Proteins() {
       $('#rightSplash').remove();
 
       /* Parse the input */
-      self.rightProtien = $(formData).serialize().split('=')[1];
+      self.rightProtein.name = $(formData).serialize().split('=')[1];
 
       // initialize the left viewer
       App.rightViewer.init( 'rightViewer', self.options );
 
       /* load the pdb file for each viewer */
-      App.rightViewer.loadFromRCMB(self.rightProtien)
+      App.rightViewer.loadFromRCMB(self.rightProtein.name)
       /* Once the data has been loaded, get the sequence */
       .then(function(view){
-        self.rightProtien.sequence = App.rightViewer.getSequence(0);
+        // get the sequence of the protein
+        self.rightProtein.sequence = App.rightViewer.getSequence(0);
+
+        // initialize the sequence viewer
+        App.sequenceViewer.init("#sequenceViewer-right");
+
+        /* Check if a sequence is already added to the list, if so align them*/
+        if(self.leftProtein.name){
+          /* Align the sequences */
+          let seq = App.align(self.leftProtein.sequence, self.rightProtein.sequence, {});
+
+          /* Set the model sequences */
+          self.leftProtein.sequence = seq.leftSequence;
+          self.rightProtein.sequence = seq.rightSequence;
+
+          /* Render the other sequence */
+          App.sequenceViewer.render("#sequenceViewer-left", self.leftProtein.sequence);
+        }
+
+        // render the sequence list
+        App.sequenceViewer.render("#sequenceViewer-right", self.rightProtein.sequence);
       });
     }
-
     /* Return false to prevent the form from reloading the page */
     return false;
   }
-
-
 
   /* Return the public-facing functions */
   return {

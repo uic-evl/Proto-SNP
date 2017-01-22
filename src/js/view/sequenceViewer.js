@@ -12,19 +12,17 @@ var SequenceViewer = function(){
   /* Initialize the sequence view */
   function initialize(id, options){
 
-    // Grab the dom element for the list
-    list.domElement = d3.select(id);
-
-    // Get the width and height
-    list.domWidth = list.domElement.node().clientWidth;
+    /* Get the width and height */
+    // The width is twice the client width because of bootstrap
+    list.domWidth = d3.select(id).node().clientWidth * 2;
     // we want the height to be that of the 3D Viewers
     list.domHeight = App.leftViewer.getDimensions().height;
 
     // clear the dom of the previous list
-    list.domElement.selectAll().remove();
+    d3.select(id).selectAll().remove();
 
     // append a new span for the list
-    list.domElement
+    d3.select(id)
         .style("height", list.domHeight)
         .append("span") // span element
         // .attr("width", list.domWidth / 2) // the width is half the column
@@ -34,18 +32,24 @@ var SequenceViewer = function(){
   }
 
   /* Render the sequence list */
-  function render(sequence) {
+  function render(id, sequence) {
 
-    list.domElement.select("span")
-        .selectAll(".residues")
-        .data(sequence)
+    /* Add a span to the list view and populate it with the residues */
+    let view = d3.select(id).select("span")
+        .selectAll("span")
+        // JOIN: Add the data to the Dom
+        .data(sequence);
+    // UPDATE: add new elements if needed
+    view
         .enter().append("span")
         .attr("class", "residue")
-        .text(function(d) { return d; })
+        /* Merge the old elements (if they exist) with the new data */
+        .merge(view)
+          .text(function(d) { return d; })
         .style("width", list.domWidth / 2)
         .style("background-color", function(d, i) { return colorbrewer.Spectral[10][i%10]; })
-        ;
-
+        // EXIT: Remove unneeded DOM elements
+        .exit().remove();
   }
 
   /* return the public-facing functions */

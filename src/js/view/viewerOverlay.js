@@ -15,12 +15,16 @@ var App = App || {};
         if (App.viewerHeight < 560 && App.viewerWidth > 600) {
           $('#overlay-left').addClass('short');
           $('#overlay-right').addClass('short');
+          // $('#overlay-family').addClass('short');
+
         } else {
           $('#overlay-left').removeClass('short');
           $('#overlay-right').removeClass('short');
+          // $('#overlay-family').removeClass('short');
         }
         $('#overlay-background-left').width(App.viewerWidth).height(App.viewerHeight);
         $('#overlay-background-right').width(App.viewerWidth).height(App.viewerHeight);
+        // $('#overlay-background-family').width(App.trendWidth).height(App.trendHeight);
 
       });
 
@@ -28,6 +32,7 @@ var App = App || {};
 
       let left = $('#popup-trigger-left');
       let right = $('#popup-trigger-right');
+      // let family = $('#popup-trigger-family');
 
       // Launch the overlay
       left.click(function () {
@@ -44,7 +49,7 @@ var App = App || {};
       });
 
       // Launch the overlay
-      right.click(function () {
+      right.click(function() {
         // hide the select protein button
         right.hide();
         $('#overlay-right').addClass('open').find('.signup-form input:first').select();
@@ -56,6 +61,21 @@ var App = App || {};
         right.show();
         $('#overlay-right').removeClass('open');
       });
+
+      // // Launch the overlay
+      // family.click(function() {
+      //   // hide the select protein button
+      //   family.hide();
+      //   $('#overlay-family').addClass('open').find('.signup-form input:first').select();
+      // });
+      //
+      // // if the user clicks on the overlay or the 'X', close the overlay
+      // $('#overlay-background-family, #overlay-close-family').click(function () {
+      //   // reshow the button
+      //   family.show();
+      //   $('#overlay-family').removeClass('open');
+      // });
+
     });
   };
 

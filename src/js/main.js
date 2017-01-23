@@ -32,12 +32,12 @@ var App = App || {};
 
       // attach the width/height of the trend image
     App.trendWidth   = trendDom.clientWidth;
-    App.trendHeight  =  App.trendWidth * 0.2;
+    App.trendHeight  =  App.trendWidth * App.aspectRatio;
 
     // set the div size
-    leftDom.style.height  = App.viewerWidth * App.aspectRatio;
-    rightDom.style.height = App.viewerWidth * App.aspectRatio;
-    trendDom.style.height = App.viewerWidth * App.aspectRatio;
+    leftDom.style.height  = App.viewerHeight;
+    rightDom.style.height = App.viewerHeight;
+    trendDom.style.height = App.viewerHeight;
 
     /* create the left and right viewers */
     App.leftViewer  = new MolecularViewer();

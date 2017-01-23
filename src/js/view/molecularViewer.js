@@ -42,6 +42,17 @@ var MolecularViewer = function(){
     viewer.pvViewer.autoZoom();
   }
 
+  function load(proteinName, file){
+    // if the data method is from an uploaded file
+    if(file){
+      return loadFromUpoadedFile(file);
+    }
+    // else from a download
+    else {
+      return loadPDBFromRCMB(proteinName);
+    }
+  }
+
   function loadPDBFromRCMB(proteinName){
     /* perform an async download from RCMB to fetch the requested PDB File */
     return new Promise(function(resolve, reject){
@@ -60,7 +71,7 @@ var MolecularViewer = function(){
       /* Store the structure */
       viewer.structure = pv.io.pdb(file, {loadAllModels:true});
       /* Resolve the promise */
-      resolve(viewer.structure);
+      resolve(viewer.structure[0]);
     });
 
   }
@@ -73,7 +84,6 @@ function getDimensions() { return {width: viewer.width, height: viewer.height }}
 
 /* Accessor to get the underlying sequence of the Protein*/
 function getSequence(chain) {
-
   // Array to store the sequence
   let seq = [];
 
@@ -89,8 +99,7 @@ function getSequence(chain) {
 /* return the public-facing functions */
 return {
   init          : initialize,
-  loadFromRCMB  : loadPDBFromRCMB,
-  loadFromFile  : loadFromUpoadedFile,
+  loadProtein   : load,
   render        : render,
   getStructure  : getStructure,
   getSequence   : getSequence,

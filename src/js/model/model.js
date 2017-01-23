@@ -23,18 +23,21 @@ function Proteins() {
   self.rightProtein = {};
 
   /* Form callback to process the request to load a new protein */
-  function fetchAndStoreProtein(formData) {
+  function fetchAndStoreProtein(formData, file) {
 
     // view variable
-    let view      = App.leftViewer;
+    let view = App.leftViewer;
 
     // model pointers
     let modelPointer   = self.leftProtein;
     let siblingPointer = self.rightProtein;
 
     // left or right view
-    let viewPosition    = "#" + formData.id.split('-')[0];
+    let viewPosition    =  "#";
+        viewPosition += (file) ? formData.position : formData.id.split('-')[0];
     let siblingPosition = "#right";
+
+    // File (if upload)
 
     if(viewPosition === "#right") {
       /* Swap the views */
@@ -50,13 +53,13 @@ function Proteins() {
       $(viewPosition + 'Splash').remove();
 
       /* Parse the input */
-      modelPointer.name = $(formData).serialize().split('=')[1];
+      modelPointer.name = (file) ? formData.name : $(formData).serialize().split('=')[1];
 
       // initialize the left viewer
       view.init(viewPosition + 'Viewer', self.options );
 
       /* load the pdb file for each viewer */
-      view.loadFromRCMB(modelPointer.name)
+      view.loadProtein(modelPointer.name, file)
       /* Once the data has been loaded, get the sequence and render the view */
       .then(function(structure){
 

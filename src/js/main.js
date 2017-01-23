@@ -35,13 +35,15 @@ var App = App || {};
     App.sequenceViewer = new SequenceViewer();
 
     /* Bind the model to the view*/
-    ko.applyBindings(new Proteins());
+    App.proteins = new Proteins();
+    ko.applyBindings(App.proteins);
 
     /* Setup the protein selection overlays */
     App.setupOverlays();
 
     /* Setup the protein file upload */
-    App.setupUpload();
+    App.setupUpload("left");
+    App.setupUpload("right");
   }
 
   /* start the application once the DOM is ready */

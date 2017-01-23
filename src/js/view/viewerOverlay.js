@@ -63,9 +63,10 @@ var App = App || {};
   };
 
   // initialize the file upload
-  App.setupUpload = function () {
+  App.setupUpload = function (viewer) {
 
-    $('#fileupload').fileupload({
+    /* Setup the fileupload callback */
+    $('#fileupload-' + viewer).fileupload({
       url: "",
       dataType: 'json',
       autoUpload: false
@@ -83,33 +84,26 @@ var App = App || {};
               .text('Upload')
               .on('click', function () {
 
-                let// file = data.files[0],
-                    reader = new FileReader();
-
+                // JS File reader to parse the uploaded file
+                let reader = new FileReader(),
                 /* Save the file name in the closure scope */
-                self.fileName = file.name.split('.')[0];
+                fileName = file.name.split('.')[0];
 
                 /* Event to fire once the file loads*/
                 reader.addEventListener("load", function () {
-                  /* Pass the uploaded file into the reader */
-                  App.leftViewer.loadFromFile(this.result)
-                      .then(function(structure){
-                        $('#leftSplash').remove();
-
-                        App.leftViewer.init('#leftViewer', {
-                          antialias: true,
-                          quality : 'medium',
-                          background: 'black'
-                        } );
-
-                        App.leftViewer.render(structure[0], self.fileName);
-                      });
+                  /* Pass the file to be processed by the model */
+                  App.proteins.processProteinRequest({position: viewer, name: fileName}, this.result);
                 }, false);
 
+                // parse the file as text
                 reader.readAsText(file);
 
+                // Remove the div and buttons
                 $(this).parent().remove();
+                // abort the upload (we aren't passing it to a server)
                 data.abort();
+
+                // re-enable the select protein button
                 select.prop('disabled', false);
               });
 
@@ -126,7 +120,7 @@ var App = App || {};
               });
 
           /* Create a div and attach it beneath the Choose File button */
-          data.context = $('<div/>').appendTo('#left-files');
+          data.context = $('<div/>').appendTo('#files-'+viewer);
           let node = $('<p/>')
               .append($('<span/>').text(file.name));
 

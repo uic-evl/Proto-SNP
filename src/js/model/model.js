@@ -23,92 +23,75 @@ function Proteins() {
   self.rightProtein = {};
 
   /* Form callback to process the request to load a new protein */
-  function fetchProtein(formData) {
+  function fetchAndStoreProtein(formData) {
 
     /* if the left viewer, propagate the view for the left */
-    if(formData.id === "left-viewer"){
+
+    // view variable
+    let view      = App.leftViewer;
+
+    // model pointers
+    let modelPointer   = self.leftProtein;
+    let siblingPointer = self.rightProtein;
+
+    // left or right view
+    let viewPosition    = "#" + formData.id.split('-')[0];
+    let siblingPosition = "#right";
+
+    if(viewPosition === "#right") {
+      /* Swap the views */
+      view           = App.rightViewer;
+      /* Swap the views */
+      modelPointer   = self.rightProtein;
+      siblingPointer = self.leftProtein;
+      /* Swap the positions */
+      siblingPosition    = "#left";
+    }
 
       /* Remove the splash overlay */
-      $('#leftSplash').remove();
+      $(viewPosition + 'Splash').remove();
 
       /* Parse the input */
-      self.leftProtein.name = $(formData).serialize().split('=')[1];
+      modelPointer.name = $(formData).serialize().split('=')[1];
 
       // initialize the left viewer
-      App.leftViewer.init( 'leftViewer', self.options );
+      view.init(viewPosition + 'Viewer', self.options );
 
       /* load the pdb file for each viewer */
-      App.leftViewer.loadFromRCMB(self.leftProtein.name)
-      /* Once the data has been loaded, get the sequence */
-      .then(function(view){
+      view.loadFromRCMB(modelPointer.name)
+      /* Once the data has been loaded, get the sequence and render the view */
+      .then(function(structure){
+
+        /* Render the 3D view */
+        view.render(structure, modelPointer.name);
+
         // get the sequence of the protein
-        self.leftProtein.sequence = App.leftViewer.getSequence(0);
+        modelPointer.sequence = view.getSequence(0);
 
         // initialize the sequence viewer
-        App.sequenceViewer.init("#sequenceViewer-left");
+        App.sequenceViewer.init(viewPosition + "Viewer-Sequence");
         
         /* Check if a sequence is already added to the list, if so align them*/
-        if(self.rightProtein.name){
+        if(siblingPointer.name){
           /* Align the sequences */
-          let seq = App.align(self.leftProtein.sequence, {});
+          let seq = App.align(modelPointer.sequence, siblingPointer.sequence, {});
 
           /* Set the model sequences */
-          self.leftProtein.sequence = seq.leftSequence;
-          self.rightProtein.sequence = seq.rightSequence;
+          modelPointer.sequence   = (viewPosition === "left")     ? seq.leftSequence  : seq.rightSequence;
+          siblingPointer.sequence = (siblingPosition === "right") ? seq.rightSequence : seq.leftSequence;
 
           /* Render the other sequence */
-          App.sequenceViewer.render("#sequenceViewer-right", self.rightProtein.sequence);
+          App.sequenceViewer.render(siblingPosition + "Viewer-Sequence", siblingPointer.sequence);
         }
         // render the sequence list
-        App.sequenceViewer.render("#sequenceViewer-left", self.leftProtein.sequence);
+        App.sequenceViewer.render(viewPosition + "Viewer-Sequence", modelPointer.sequence);
       });
-    }
-
-    /* if the left viewer, propagate the view for the left */
-    else if(formData.id === "right-viewer"){
-
-      /* Remove the splash overlay */
-      $('#rightSplash').remove();
-
-      /* Parse the input */
-      self.rightProtein.name = $(formData).serialize().split('=')[1];
-
-      // initialize the left viewer
-      App.rightViewer.init( 'rightViewer', self.options );
-
-      /* load the pdb file for each viewer */
-      App.rightViewer.loadFromRCMB(self.rightProtein.name)
-      /* Once the data has been loaded, get the sequence */
-      .then(function(view){
-        // get the sequence of the protein
-        self.rightProtein.sequence = App.rightViewer.getSequence(0);
-
-        // initialize the sequence viewer
-        App.sequenceViewer.init("#sequenceViewer-right");
-
-        /* Check if a sequence is already added to the list, if so align them*/
-        if(self.leftProtein.name){
-          /* Align the sequences */
-          let seq = App.align(self.leftProtein.sequence, self.rightProtein.sequence, {});
-
-          /* Set the model sequences */
-          self.leftProtein.sequence = seq.leftSequence;
-          self.rightProtein.sequence = seq.rightSequence;
-
-          /* Render the other sequence */
-          App.sequenceViewer.render("#sequenceViewer-left", self.leftProtein.sequence);
-        }
-
-        // render the sequence list
-        App.sequenceViewer.render("#sequenceViewer-right", self.rightProtein.sequence);
-      });
-    }
     /* Return false to prevent the form from reloading the page */
     return false;
   }
 
   /* Return the public-facing functions */
   return {
-    processProteinRequest : fetchProtein
+    processProteinRequest : fetchAndStoreProtein
   };
 }

@@ -12,7 +12,7 @@ var MolecularViewer = function(){
   function initialize(id, options) {
 
     /* get the DOM element by the id parameter */
-    viewer.domObj = document.getElementById(id);
+    viewer.domObj = d3.select(id).node();
 
     /* check if viewing options were passed in */
     options = options || {};
@@ -26,7 +26,20 @@ var MolecularViewer = function(){
     options.height = viewer.height;
 
     /* insert the viewer under the DOM element */
-    viewer.pvViewer = pv.Viewer(document.getElementById(id), options);
+    viewer.pvViewer = pv.Viewer(d3.select(id).node(), options);
+  }
+
+  function render(structure, proteinName) {
+
+    /* Display the protein as cartoon, coloring the secondary structure
+     elements in a rainbow gradient */
+    viewer.pvViewer.cartoon(proteinName, structure, { color : color.ssSuccession() });
+
+    /* center the structure in the view */
+    // center in viewer
+    viewer.pvViewer.centerOn(structure);
+    // auto zoom to fit
+    viewer.pvViewer.autoZoom();
   }
 
   function loadPDBFromRCMB(proteinName){
@@ -38,18 +51,8 @@ var MolecularViewer = function(){
         /* Store the structure */
         viewer.structure = structure;
 
-        /* Display the protein as cartoon, coloring the secondary structure
-         elements in a rainbow gradient */
-        viewer.pvViewer.cartoon(proteinName, structure, { color : color.ssSuccession() });
-
-        /* center the structure in the view */
-        // center in viewer
-        viewer.pvViewer.centerOn(structure);
-        // auto zoom to fit
-        viewer.pvViewer.autoZoom();
-
         /* Resolve the promise */
-        resolve(viewer);
+        resolve(structure);
 
         /* Add the protein's label */
         // get the label div
@@ -58,6 +61,20 @@ var MolecularViewer = function(){
         // staticLabel.innerHTML = proteinName;
       });
     });
+  }
+
+  function loadFromUpoadedFile(file){
+
+    return new Promise(function(resolve, reject){
+
+      /* Store the structure */
+      viewer.structure = pv.io.pdb(file);
+
+      /* Resolve the promise */
+      resolve(viewer.structure);
+
+    });
+
   }
 
 /* Accessor to get the underlying structure in the viewer */
@@ -85,6 +102,8 @@ function getSequence(chain) {
 return {
   init          : initialize,
   loadFromRCMB  : loadPDBFromRCMB,
+  loadFromFile  : loadFromUpoadedFile,
+  render        : render,
   getStructure  : getStructure,
   getSequence   : getSequence,
   getDimensions : getDimensions

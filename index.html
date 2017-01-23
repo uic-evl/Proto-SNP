@@ -5,23 +5,34 @@
 
     <!-- CSS LIB -->
     <link rel="stylesheet" href="lib/css/bootstrap.min.css">
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
 
+    <link rel="stylesheet" href="lib/css/jQuery-file-upload/jquery.fileupload.css">
+
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/main.css">
-    <link rel="stylesheet" href="src/css/splash.css">
     <link rel="stylesheet" href="src/css/sequenceViewer.css">
+    <link rel="stylesheet" href="src/css/splash.css">
 
     <!-- JS LIB-->
-    <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
-    <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
     <script type='text/javascript' src='lib/js/bio-pv.min.js'></script>
     <script type='text/javascript' src='lib/js/d3.min.js'></script>
     <script type='text/javascript' src='lib/js/colorbrewer.min.js'></script>
     <!--<script type='text/javascript' src='lib/js/knockout-min.js'></script>-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-debug.js"></script>
     <script src="https://www.promisejs.org/polyfills/promise-7.0.4.min.js"></script>
+
+    <!-- jQuery File Upload-->
+    <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.ui.widget.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.iframe-transport.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.fileupload.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.fileupload-process.js'></script>
+
+    <!-- Bootstrap -->
+    <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
 
     <!-- JS SRC-->
     <script type='text/javascript' src='src/js/view/molecularViewer.js'></script>
@@ -42,19 +53,31 @@
             <div id=leftViewer>
                 <!--<div class="static-label"></div>-->
                 <div id="leftSplash">
-                    <button class="popup-trigger btn" id="popup-trigger-left">
-                        <span>Select Protein<i class="fa fa-plus-square-o"></i></span>
-                    </button>
+                    <!-- Select Protein Button -->
+
+                            <button class="popup-trigger sBtn" id="popup-trigger-left">
+                                <i class="fa fa-plus-square-o"></i><span> Add Protein...</span>
+                            </button>
+
+                    <!-- File upload button -->
+
+                            <span id="left-upload" class="btn btn-success fileinput-button">
+                                <i class="fa fa-plus-square-o"></i><span> Select file...</span>
+                                <!-- The file input field used as target for the file upload widget -->
+                                <input id="fileupload" type="file" name="files[]" accept="pdb">
+                            </span>
+
+                    <!-- Overlay for Select Protein Button -->
                     <div class="overlay" id="overlay-left">
                         <div class="overlay-background" id="overlay-background-left"></div>
                         <div class="overlay-content" id="overlay-content-left">
                             <div class="fa fa-times fa-lg overlay-close" id="overlay-close-left"></div>
                             <h1 class="main-heading">Select Protein</h1>
                             <h3 class="blurb">Enter a PDB Name:</h3>
-                            <form id="left-viewer" class="signup-form" data-bind="submit: processProteinRequest">
+                            <form id="left-form" class="signup-form" data-bind="submit: processProteinRequest">
                                 <label for="protein-name-left">PDB</label>
                                 <input id="protein-name-left" type="text" name="name" autocomplete="off"/>
-                                <button class="btn btn-outline submit-btn"><span>View</span></button>
+                                <button class="sBtn sBtn-outline submit-btn"><span>View</span></button>
                             </form>
                         </div>
                     </div>
@@ -68,7 +91,7 @@
             <div id=rightViewer>
                 <!--<div class="static-label"></div>-->
                 <div id="rightSplash">
-                    <button class="popup-trigger btn" id="popup-trigger-right">
+                    <button class="popup-trigger sBtn" id="popup-trigger-right">
                         <span>Select Protein<i class="fa fa-plus-square-o"></i></span>
                     </button>
                     <div class="overlay" id="overlay-right">
@@ -77,10 +100,10 @@
                             <div class="fa fa-times fa-lg overlay-close" id="overlay-close-right"></div>
                             <h1 class="main-heading">Select Protein</h1>
                             <h3 class="blurb">Enter a PDB Name:</h3>
-                            <form id="right-viewer" class="signup-form" data-bind="submit: processProteinRequest">
+                            <form id="right-form" class="signup-form" data-bind="submit: processProteinRequest">
                                 <label for="protein-name-right">PDB</label>
                                 <input id="protein-name-right" type="text" name="name" autocomplete="off"/>
-                                <button class="btn btn-outline submit-btn"><span>View</span></button>
+                                <button class="sBtn sBtn-outline submit-btn"><span>View</span></button>
                             </form>
                         </div>
                     </div>
@@ -94,17 +117,25 @@
             <div class="row">
                 <!-- Left Sequence List View-->
                 <div class="col-md-6">
-                    <div id="sequenceViewer-left"></div>
+                    <div id="leftViewer-Sequence"></div>
                 </div>
                 <!-- End Left Sequence List View-->
                 <!-- Right Sequence List View-->
                 <div class="col-md-6">
-                    <div id="sequenceViewer-right"></div>
+                    <div id="rightViewer-Sequence"></div>
                 </div>
                 <!-- End Right Sequence List View-->
             </div>
         </div>
     </div> <!-- End Molecular Viewers -->
+
+    <!-- Trend Image View-->
+    <div class="row trendImage">
+        <div class="col-md-12">
+
+        </div>
+    </div>
+    <!-- End Trend Image View-->
 </div> <!-- end container -->
 
 </body>

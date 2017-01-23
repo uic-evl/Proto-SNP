@@ -39,6 +39,9 @@ var App = App || {};
 
     /* Setup the protein selection overlays */
     App.setupOverlays();
+
+    /* Setup the protein file upload */
+    App.setupUpload();
   }
 
   /* start the application once the DOM is ready */

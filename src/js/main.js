@@ -22,11 +22,12 @@ var App = App || {};
     /* Set the size of the family viewer */
     let trendDom = document.getElementById('trendImage');
 
-    // attach the width to the global app variable
-    App.viewerWidth  = leftDom.clientWidth;
-
     // Aspect Ratio
-    App.aspectRatio = window.innerWidth / window.innerHeight;
+    App.aspectRatio = window.innerWidth > window.innerHeight ?
+      window.innerHeight/window.innerWidth : window.innerWidth / window.innerHeight;
+
+    // attach the width to the global app variable
+    App.viewerWidth  = leftDom.clientWidth;// * App.aspectRatio;
 
       // attach the width/height of the trend image
     App.trendWidth   = trendDom.clientWidth;

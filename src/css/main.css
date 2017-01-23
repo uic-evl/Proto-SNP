@@ -1,3 +1,14 @@
+#header_logo {
+    height: 104px;
+    width: 254px;
+    background: #404040;
+}
+
+.header_row {
+    background: #9d9ea0;
+    color: white;
+}
+
 /* 3D Viewer Title */
 .static-label {
     position: absolute;

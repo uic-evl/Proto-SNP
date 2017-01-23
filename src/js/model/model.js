@@ -26,14 +26,14 @@ function Proteins() {
   self.proteinFamily = {};
 
   /* Determines which method to load the protein */
-  function loadProtein(proteinName, viewer, file){
+  function loadProtein(viewer, file){
     // if the data method is from an uploaded file
     if(file){
       return loadFromUpoadedFile(file, viewer);
     }
     // else from a download
     else {
-      return loadPDBFromRCMB(proteinName, viewer);
+      return loadPDBFromRCMB(viewer.name, viewer);
     }
   }
 
@@ -61,70 +61,75 @@ function Proteins() {
     });
   }
 
+  /* Render the 3D and Sequence Views */
+  function renderViews(structure) {
+    /* Render the 3D view */
+    this.view.render(structure, this.modelPointer.name);
+    // get the sequence of the protein
+    this.modelPointer.sequence = this.view.getSequence(this.modelPointer.structure, 0);
+
+    // initialize the sequence viewer
+    App.sequenceViewer.init(this.viewPosition + "Viewer-Sequence");
+
+    /* Check if a sequence is already added to the list, if so align them*/
+    if(this.siblingPointer.name){
+      /* Align the sequences */
+      let seq = App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {});
+
+      /* Set the model sequences */
+      this.modelPointer.sequence   = (this.viewPosition === "left")
+        ? seq.leftSequence  : seq.rightSequence;
+      this.siblingPointer.sequence = (this.siblingPosition === "right")
+        ? seq.rightSequence : seq.leftSequence;
+
+      /* Render the other sequence */
+      App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
+    }
+    // render the sequence list
+    App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);
+  }
+
   /* Form callback to process the request to load a new protein */
   function fetchAndStoreProtein(formData, file) {
 
     // view variable
-    let view = App.leftViewer;
+    let viewOptions = {};
+
+    viewOptions.view = App.leftViewer;
 
     // model pointers
-    let modelPointer   = self.leftProtein;
-    let siblingPointer = self.rightProtein;
+    viewOptions.modelPointer   = self.leftProtein;
+    viewOptions.siblingPointer = self.rightProtein;
 
     // left or right view
-    let viewPosition    =  "#";
-        viewPosition += (file) ? formData.position : formData.id.split('-')[0];
-    let siblingPosition = "#right";
+    viewOptions.viewPosition    =  "#";
+    viewOptions.viewPosition += (file) ? formData.position : formData.id.split('-')[0];
+    viewOptions.siblingPosition = "#right";
 
     // Determine the viewer
-    if(viewPosition === "#right") {
+    if(viewOptions.viewPosition === "#right") {
       /* Swap the views */
-      view           = App.rightViewer;
+      viewOptions.view           = App.rightViewer;
       /* Swap the views */
-      modelPointer   = self.rightProtein;
-      siblingPointer = self.leftProtein;
+      viewOptions.modelPointer   = self.rightProtein;
+      viewOptions.siblingPointer = self.leftProtein;
       /* Swap the positions */
-      siblingPosition    = "#left";
+      viewOptions.siblingPosition    = "#left";
     }
 
-      /* Remove the splash overlay */
-      $(viewPosition + 'Splash').remove();
+    /* Remove the splash overlay */
+    $(viewOptions.viewPosition + 'Splash').remove();
 
       /* Parse the input */
-      modelPointer.name = (file) ? formData.name : $(formData).serialize().split('=')[1];
+    viewOptions.modelPointer.name = (file) ? formData.name : $(formData).serialize().split('=')[1];
 
       // initialize the left viewer
-      view.init(viewPosition + 'Viewer', self.options );
+    viewOptions.view.init(viewOptions.viewPosition + 'Viewer', self.options);
 
       /* load the pdb file for each viewer */
-      loadProtein(modelPointer.name, modelPointer, file)
+      loadProtein(viewOptions.modelPointer, file)
       /* Once the data has been loaded, get the sequence and render the view */
-      .then(function(structure){
-
-        /* Render the 3D view */
-        view.render(structure, modelPointer.name);
-
-        // get the sequence of the protein
-        modelPointer.sequence = view.getSequence(modelPointer.structure, 0);
-
-        // initialize the sequence viewer
-        App.sequenceViewer.init(viewPosition + "Viewer-Sequence");
-
-        /* Check if a sequence is already added to the list, if so align them*/
-        if(siblingPointer.name){
-          /* Align the sequences */
-          let seq = App.align(modelPointer.sequence, siblingPointer.sequence, {});
-
-          /* Set the model sequences */
-          modelPointer.sequence   = (viewPosition === "left")     ? seq.leftSequence  : seq.rightSequence;
-          siblingPointer.sequence = (siblingPosition === "right") ? seq.rightSequence : seq.leftSequence;
-
-          /* Render the other sequence */
-          App.sequenceViewer.render(siblingPosition + "Viewer-Sequence", siblingPointer.sequence);
-        }
-        // render the sequence list
-        App.sequenceViewer.render(viewPosition + "Viewer-Sequence", modelPointer.sequence);
-      });
+      .then(renderViews.bind(viewOptions));
     /* Return false to prevent the form from reloading the page */
     return false;
   }

@@ -46,6 +46,9 @@ var App = App || {};
     /* Setup the sequence viewer */
     App.sequenceViewer = new SequenceViewer();
 
+    /* Setup the trend image viewer */
+    App.trendImageViewer = new TrendImageViewer();
+
     /* Bind the model to the view*/
     App.proteins = new Proteins();
     ko.applyBindings(App.proteins);

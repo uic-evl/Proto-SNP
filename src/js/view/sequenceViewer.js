@@ -25,8 +25,6 @@ var SequenceViewer = function(){
     d3.select(id)
         .style("height", list.domHeight)
         .append("span") // span element
-        // .attr("width", list.domWidth / 2) // the width is half the column
-        // .attr("height", list.domHeight) // set the height
         .attr("class", "sequence") // set the styling to the sequence class
     ;
   }

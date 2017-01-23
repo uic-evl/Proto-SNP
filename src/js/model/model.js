@@ -137,7 +137,9 @@ function Proteins() {
   /* Form callback to process the family datafile */
   function parseAndStoreFamily(file) {
 
-    let family = new ProteinFamily();
+    let family = new ProteinFamily(file);
+
+
 
   }
 

@@ -35,12 +35,12 @@ function ProteinFamily(file) {
 
         /* Create the dictionary entry */
         self.family[parsedLine[1]] = {
-          firstResiduePosition  : parseInt(parsedLine[2]),
+          firstResiduePosition   : parseInt(parsedLine[2]),
           lastResiduePositione   : parseInt(parsedLine[3]),
-          length                : parseInt(parsedLine[4]),
-          check                 : parseInt(parsedLine[5]),
-          weight                : parseInt(parsedLine[6]),
-          sequence              : ""
+          length                 : parseInt(parsedLine[4]),
+          check                  : parseInt(parsedLine[5]),
+          weight                 : parseInt(parsedLine[6]),
+          sequence               : ""
         };
       }
       /* If not in the dictionary pattern, check the for the data pattern */
@@ -55,12 +55,15 @@ function ProteinFamily(file) {
     });
   }
 
+  /*Accessor to return the family */
+  function getFamily() { return self.family }
+
   /* Parse the family file */
   parseMSF(file);
 
   /* Return the publicly accessible functions*/
   return {
-
+    getFamily: getFamily
   };
 
 }

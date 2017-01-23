@@ -42,40 +42,6 @@ var MolecularViewer = function(){
     viewer.pvViewer.autoZoom();
   }
 
-  function load(proteinName, file){
-    // if the data method is from an uploaded file
-    if(file){
-      return loadFromUpoadedFile(file);
-    }
-    // else from a download
-    else {
-      return loadPDBFromRCMB(proteinName);
-    }
-  }
-
-  function loadPDBFromRCMB(proteinName){
-    /* perform an async download from RCMB to fetch the requested PDB File */
-    return new Promise(function(resolve, reject){
-      pv.io.fetchPdb('https://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {
-        /* Store the structure */
-        viewer.structure = structure;
-        /* Resolve the promise */
-        resolve(structure);
-      });
-    });
-  }
-
-  function loadFromUpoadedFile(file){
-    /* perform an async loading of the uploaded file */
-    return new Promise(function(resolve, reject){
-      /* Store the structure */
-      viewer.structure = pv.io.pdb(file, {loadAllModels:true})[0];
-      /* Resolve the promise */
-      resolve(viewer.structure);
-    });
-
-  }
-
 /* Accessor to get the underlying structure in the viewer */
 function getStructure() { return viewer.structure; }
 
@@ -83,12 +49,12 @@ function getStructure() { return viewer.structure; }
 function getDimensions() { return {width: viewer.width, height: viewer.height }}
 
 /* Accessor to get the underlying sequence of the Protein*/
-function getSequence(chain) {
+function getSequence(structure, chain) {
   // Array to store the sequence
   let seq = [];
 
   /* Iterate over the residues of the chain and add them to the array*/
-  viewer.structure.chains()[chain || 0].eachResidue(function(res){
+  structure.chains()[chain || 0].eachResidue(function(res){
     seq.push(res.name());
   });
 
@@ -99,7 +65,6 @@ function getSequence(chain) {
 /* return the public-facing functions */
 return {
   init          : initialize,
-  loadProtein   : load,
   render        : render,
   getStructure  : getStructure,
   getSequence   : getSequence,

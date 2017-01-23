@@ -63,7 +63,7 @@ var App = App || {};
     });
   };
 
-  // initialize the file upload
+  // initialize the 3D view file upload
   App.setupUpload = function (viewer) {
 
     /* Setup the fileupload callback */
@@ -132,6 +132,40 @@ var App = App || {};
         })
         .prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
-  }
+  };
+
+
+  // initialize the family file uploader
+  App.setupFamilyUploader = function(viewer) {
+    /* Setup the fileupload callback */
+    $('#fileupload-' + viewer).fileupload({
+      url: "",
+      dataType: 'json',
+      autoUpload: false
+    })
+    /* Handle the upload callbacks */
+      .on('fileuploadadd', function (e, data) {
+        // uploaded file
+        let file = data.files[0];
+
+        // JS File reader to parse the uploaded file
+        let reader = new FileReader();
+
+        /* Callback to loading the file */
+        reader.addEventListener("load", function () {
+          /* Pass the file to be processed by the model */
+            App.proteins.processProteinFamily(this.result);
+        }, false);
+
+        // parse the file as text
+        reader.readAsText(file);
+
+        // abort the upload (we aren't passing it to a server)
+        data.abort();
+
+      })
+      .prop('disabled', !$.support.fileInput)
+      .parent().addClass($.support.fileInput ? undefined : 'disabled');
+  };
 
 })();

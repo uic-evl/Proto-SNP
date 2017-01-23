@@ -56,6 +56,7 @@ var App = App || {};
     /* Setup the protein file upload */
     App.setupUpload("left");
     App.setupUpload("right");
+    App.setupFamilyUploader("family");
   }
 
   /* start the application once the DOM is ready */

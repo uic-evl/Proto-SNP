@@ -135,13 +135,15 @@ function Proteins() {
   }
 
   /* Form callback to process the family datafile */
-  function fetchAndStoreFamily(file) {
+  function parseAndStoreFamily(file) {
+
+    let family = new ProteinFamily();
 
   }
 
   /* Return the public-facing functions */
   return {
     processProteinRequest : fetchAndStoreProtein,
-    processProteinFamily  : fetchAndStoreFamily
+    processProteinFamily  : parseAndStoreFamily
   };
 }

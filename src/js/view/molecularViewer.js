@@ -69,9 +69,9 @@ var MolecularViewer = function(){
     /* perform an async loading of the uploaded file */
     return new Promise(function(resolve, reject){
       /* Store the structure */
-      viewer.structure = pv.io.pdb(file, {loadAllModels:true});
+      viewer.structure = pv.io.pdb(file, {loadAllModels:true})[0];
       /* Resolve the promise */
-      resolve(viewer.structure[0]);
+      resolve(viewer.structure);
     });
 
   }

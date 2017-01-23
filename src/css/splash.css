@@ -15,7 +15,7 @@ html {
 body {
     background-color: #ecf0f1;
     font-family: 'Open Sans', sans-serif;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 h1,
@@ -46,7 +46,7 @@ input {
     transition: all 0.3s;
 }
 
-#popup-trigger-left, #popup-trigger-right {
+#popup-trigger-left, #popup-trigger-right, #popup-trigger-family {
     display: block;
     position: absolute;
     top: 0;

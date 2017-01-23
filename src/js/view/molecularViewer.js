@@ -43,7 +43,6 @@ var MolecularViewer = function(){
   }
 
   function loadPDBFromRCMB(proteinName){
-
     /* perform an async download from RCMB to fetch the requested PDB File */
     return new Promise(function(resolve, reject){
       pv.io.fetchPdb('https://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {

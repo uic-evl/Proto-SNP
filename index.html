@@ -55,30 +55,45 @@
                 <div id="leftSplash">
                     <!-- Select Protein Button -->
 
-                            <button class="popup-trigger sBtn" id="popup-trigger-left">
-                                <i class="fa fa-plus-square-o"></i><span> Add Protein...</span>
-                            </button>
-
-                    <!-- File upload button -->
-
-                            <span id="left-upload" class="btn btn-success fileinput-button">
-                                <i class="fa fa-plus-square-o"></i><span> Select file...</span>
-                                <!-- The file input field used as target for the file upload widget -->
-                                <input id="fileupload" type="file" name="files[]" accept="pdb">
-                            </span>
+                    <button class="popup-trigger sBtn" id="popup-trigger-left">
+                        <i class="fa fa-plus-square-o"></i><span> Add Protein...</span>
+                    </button>
 
                     <!-- Overlay for Select Protein Button -->
                     <div class="overlay" id="overlay-left">
                         <div class="overlay-background" id="overlay-background-left"></div>
                         <div class="overlay-content" id="overlay-content-left">
                             <div class="fa fa-times fa-lg overlay-close" id="overlay-close-left"></div>
-                            <h1 class="main-heading">Select Protein</h1>
-                            <h3 class="blurb">Enter a PDB Name:</h3>
+
+                            <!--<h1 class="main-heading">Select Protein</h1>-->
+                            <!--<h3 class="blurb">Enter a PDB Name:</h3>-->
                             <form id="left-form" class="signup-form" data-bind="submit: processProteinRequest">
-                                <label for="protein-name-left">PDB</label>
-                                <input id="protein-name-left" type="text" name="name" autocomplete="off"/>
-                                <button class="sBtn sBtn-outline submit-btn"><span>View</span></button>
+                                <div class="container-fluid">
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="protein-name-left">PDB Code (ex: 2YPI):</label>
+                                            <input id="protein-name-left" type="text" name="name" autocomplete="off"/>
+                                            <button class="sBtn sBtn-outline submit-btn"><span>Download</span></button>
+                                        </div>
+                                    </div>
+                                    <br><br>
+                                    <div class="row ">
+                                        <div class="col-md-12">
+                                            <span class="fileUpload">Choose a file: </span>
+                                            <br>
+                                            <span id="left-upload" class="btn btn-success fileinput-button left-upload">
+                                                 <i class="fa fa-plus-square-o"></i><span> Select file...</span>
+                                                <!-- The file input field used as target for the file upload widget -->
+                                                <input id="fileupload" type="file" name="files[]" accept="pdb">
+                                            </span>
+                                            <br><br>
+                                            <div id="left-files" class="files"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
+
                         </div>
                     </div>
                 </div>

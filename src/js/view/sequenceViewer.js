@@ -33,7 +33,6 @@ var SequenceViewer = function(){
 
   /* Render the sequence list */
   function render(id, sequence) {
-
     /* Add a span to the list view and populate it with the residues */
     let view = d3.select(id).select("span")
         .selectAll("span")

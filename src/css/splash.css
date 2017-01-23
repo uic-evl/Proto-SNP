@@ -35,6 +35,12 @@ input {
     display: block;
 }
 
+.fileUpload {
+    display: block;
+    font-weight: 700;
+    font-size: 14px;
+}
+
 .animate, .sBtn, .sBtn span, .overlay .overlay-content, .overlay .overlay-content .overlay-close, .overlay .overlay-content .signup-form input {
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
@@ -48,8 +54,13 @@ input {
     z-index: 10;
 }
 
-#left-upload {
+.left-upload {
+    cursor: pointer;
+}
+
+.uploadPDB {
     z-index: 10;
+    margin-left: 10px;
 }
 
 .main-heading {

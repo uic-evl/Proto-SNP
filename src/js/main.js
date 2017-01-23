@@ -22,18 +22,20 @@ var App = App || {};
     /* Set the size of the family viewer */
     let trendDom = document.getElementById('trendImage');
 
-    // attach the height to the global app variable
+    // attach the width to the global app variable
     App.viewerWidth  = leftDom.clientWidth;
-    App.viewerHeight = App.viewerWidth * 0.7;
 
-    // attach the width/height of the trend image
+    // Aspect Ratio
+    App.aspectRatio = window.innerWidth / window.innerHeight;
+
+      // attach the width/height of the trend image
     App.trendWidth   = trendDom.clientWidth;
     App.trendHeight  =  App.trendWidth * 0.2;
 
     // set the div size
-    leftDom.style.height  = App.viewerHeight;
-    rightDom.style.height = App.viewerHeight;
-    trendDom.style.height = App.trendHeight;
+    leftDom.style.height  = App.viewerWidth * App.aspectRatio;
+    rightDom.style.height = App.viewerWidth * App.aspectRatio;
+    trendDom.style.height = App.viewerWidth * App.aspectRatio;
 
     /* create the left and right viewers */
     App.leftViewer  = new MolecularViewer();

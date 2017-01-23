@@ -19,7 +19,7 @@ var MolecularViewer = function(){
 
     /* get/save the width and height of the given DOM element */
     viewer.width = App.viewerWidth;
-    viewer.height = App.viewerHeight;
+    viewer.height = App.viewerWidth * App.aspectRatio;
 
     /* add the width and height to the options */
     options.width = viewer.width;

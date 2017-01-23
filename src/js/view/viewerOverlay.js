@@ -3,10 +3,12 @@
 // Global Application variable
 var App = App || {};
 
-(function(){
+(function () {
+
+  var self = {};
 
   // initialize the protein selection overlays
-  App.setupOverlays = function() {
+  App.setupOverlays = function () {
 
     $(document).ready(function () {
 
@@ -59,5 +61,45 @@ var App = App || {};
 
     });
   };
+
+  // initialize the file upload
+  App.setupUpload = function () {
+
+    $('#fileupload').fileupload({
+      url: "",
+      dataType: 'json',
+      autoUpload: false
+    })
+        /* Handle the upload callbacks */
+        .on('fileuploadadd', function (e, data) {
+          let file = data.files[0],
+              reader = new FileReader();
+
+          /* Save the file name in the closure scope */
+          self.fileName = file.name.split('.')[0];
+
+          /* Event to fire once the file loads*/
+          reader.addEventListener("load", function () {
+            /* Pass the uploaded file into the reader */
+            App.leftViewer.loadFromFile(this.result)
+                .then(function(structure){
+                  $('#leftSplash').remove();
+
+                  App.leftViewer.init('#leftViewer', {
+                    antialias: true,
+                    quality : 'medium',
+                    background: 'black'
+                  } );
+
+                  App.leftViewer.render(structure[0], self.fileName);
+                });
+          }, false);
+
+          reader.readAsText(file);
+        })
+
+        .prop('disabled', !$.support.fileInput)
+        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+  }
 
 })();

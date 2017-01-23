@@ -32,7 +32,7 @@ var MolecularViewer = function(){
   function render(structure, proteinName) {
 
     /* Display the protein as cartoon, coloring the secondary structure
-     elements in a rainbow gradient */
+       elements in a rainbow gradient */
     viewer.pvViewer.cartoon(proteinName, structure, { color : color.ssSuccession() });
 
     /* center the structure in the view */
@@ -47,32 +47,21 @@ var MolecularViewer = function(){
     /* perform an async download from RCMB to fetch the requested PDB File */
     return new Promise(function(resolve, reject){
       pv.io.fetchPdb('https://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {
-
         /* Store the structure */
         viewer.structure = structure;
-
         /* Resolve the promise */
         resolve(structure);
-
-        /* Add the protein's label */
-        // get the label div
-        // var staticLabel = viewer.domObj.querySelector('.static-label');
-        // set the text to the label
-        // staticLabel.innerHTML = proteinName;
       });
     });
   }
 
   function loadFromUpoadedFile(file){
-
+    /* perform an async loading of the uploaded file */
     return new Promise(function(resolve, reject){
-
       /* Store the structure */
-      viewer.structure = pv.io.pdb(file);
-
+      viewer.structure = pv.io.pdb(file, {loadAllModels:true});
       /* Resolve the promise */
       resolve(viewer.structure);
-
     });
 
   }

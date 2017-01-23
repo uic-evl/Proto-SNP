@@ -25,8 +25,6 @@ function Proteins() {
   /* Form callback to process the request to load a new protein */
   function fetchAndStoreProtein(formData) {
 
-    /* if the left viewer, propagate the view for the left */
-
     // view variable
     let view      = App.leftViewer;
 

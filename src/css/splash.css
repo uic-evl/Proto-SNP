@@ -35,7 +35,7 @@ input {
     display: block;
 }
 
-.animate, .btn, .btn span, .overlay .overlay-content, .overlay .overlay-content .overlay-close, .overlay .overlay-content .signup-form input {
+.animate, .sBtn, .sBtn span, .overlay .overlay-content, .overlay .overlay-content .overlay-close, .overlay .overlay-content .signup-form input {
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 }
@@ -48,6 +48,10 @@ input {
     z-index: 10;
 }
 
+#left-upload {
+    z-index: 10;
+}
+
 .main-heading {
     line-height: 100%;
     font-weight: 600;
@@ -55,7 +59,7 @@ input {
     text-transform: uppercase;
 }
 
-.btn {
+.sBtn {
     display: block;
     height: 50px;
     line-height: 50px;
@@ -64,36 +68,36 @@ input {
     cursor: pointer;
     border-radius: 5px;
 }
-.btn span {
+.sBtn span {
     font-weight: 600;
     font-size: 14px;
     text-transform: uppercase;
 }
-.btn span .fa {
+.sBtn span .fa {
     margin-left: 8px;
     font-size: 18px;
     vertical-align: middle;
 }
-.btn:not(.btn-outline) {
+.sBtn:not(.sBtn-outline) {
     background-color: #fff;
 }
-.btn:not(.btn-outline) span {
+.sBtn:not(.sBtn-outline) span {
     color: #666;
 }
-.btn:not(.btn-outline):hover {
+.sBtn:not(.sBtn-outline):hover {
     background-color: #f7f7f7;
 }
-.btn.btn-outline {
+.sBtn.sBtn-outline {
     background-color: transparent;
     border: 1px solid #fff;
 }
-.btn.btn-outline span {
+.sBtn.sBtn-outline span {
     color: #fff;
 }
-.btn.btn-outline:hover {
+.sBtn.sBtn-outline:hover {
     background-color: #fff;
 }
-.btn.btn-outline:hover span {
+.sBtn.sBtn-outline:hover span {
     color: #666;
 }
 

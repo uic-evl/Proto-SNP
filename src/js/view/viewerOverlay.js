@@ -5,8 +5,6 @@ var App = App || {};
 
 (function () {
 
-  var self = {};
-
   // initialize the protein selection overlays
   App.setupOverlays = function () {
 
@@ -58,7 +56,6 @@ var App = App || {};
         right.show();
         $('#overlay-right').removeClass('open');
       });
-
     });
   };
 
@@ -126,8 +123,6 @@ var App = App || {};
 
           /* Append the Upload and Cancel Buttons */
           node.appendTo(data.context)
-              .append('<br>')
-              .append('<br>')
               .append(uploadButton.clone(true).data(data))
               .append(cancelButton.clone(true).data(data));
         })

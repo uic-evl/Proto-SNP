@@ -28,6 +28,7 @@ var App = App || {};
 
     // attach the width to the global app variable
     App.viewerWidth  = leftDom.clientWidth;// * App.aspectRatio;
+    App.viewerHeight = App.viewerWidth * App.aspectRatio;
 
       // attach the width/height of the trend image
     App.trendWidth   = trendDom.clientWidth;

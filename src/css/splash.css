@@ -147,8 +147,8 @@ input {
 .overlay .overlay-content {
     width: 100%;
     max-width: 530px;
-    margin: 100px auto 0;
-    padding: 0 15px;
+    /*margin: 100px auto 0;*/
+    /*padding: 0 15px;*/
     color: #fff;
     position: relative;
     z-index: 10;
@@ -202,7 +202,7 @@ input {
 .overlay.open {
     z-index: 15;
     opacity: 1;
-    -webkit-transform: translateY(0);
+    -webkit-transform: translateY(0)f;
     transform: translateY(0);
     -webkit-transition: opacity 0.5s, z-index 0s, -webkit-transform 0.5s;
     transition: opacity 0.5s, z-index 0s, -webkit-transform 0.5s;

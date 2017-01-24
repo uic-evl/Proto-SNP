@@ -23,8 +23,14 @@
 
 .viewers {
     background-color: black;
+    width: 100%;
+    height: 100%;
 }
 
-.TDView, .TrendImage {
+.trendImage {
+    background-color: gray;
+}
+
+.TDView, .TrendImageView {
     margin-bottom: 20px;
 }

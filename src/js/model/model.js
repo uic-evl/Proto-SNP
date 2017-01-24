@@ -137,8 +137,11 @@ function Proteins() {
   /* Form callback to process the family datafile */
   function parseAndStoreFamily(file) {
 
+    /* Remove the Splash screen */
+    $("#trendSplash").remove();
     let family = new ProteinFamily(file);
-
+    /* Initialize the trend image view */
+    App.trendImageViewer.init("#trendImageViewer");
 
 
   }

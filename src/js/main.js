@@ -16,23 +16,23 @@ var App = App || {};
   function init() {
 
     /* Set the size of the 3D Divs*/
-    let leftDom  = document.getElementById('leftViewer');
-    let rightDom = document.getElementById('rightViewer');
+    let leftDom  = document.getElementById('leftViewer').parentNode;
+    let rightDom = document.getElementById('rightViewer').parentNode;
 
     /* Set the size of the family viewer */
-    let trendDom = document.getElementById('trendImage');
+    let trendDom = document.getElementById('trendImageViewer').parentNode;
 
     // Aspect Ratio
     App.aspectRatio = window.innerWidth > window.innerHeight ?
       window.innerHeight/window.innerWidth : window.innerWidth / window.innerHeight;
 
     // attach the width to the global app variable
-    App.viewerWidth  = leftDom.clientWidth;// * App.aspectRatio;
+    App.viewerWidth  = leftDom.clientWidth;
     App.viewerHeight = App.viewerWidth * App.aspectRatio;
 
       // attach the width/height of the trend image
     App.trendWidth   = trendDom.clientWidth;
-    App.trendHeight  =  App.trendWidth * App.aspectRatio;
+    App.trendHeight  =  App.viewerHeight;
 
     // set the div size
     leftDom.style.height  = App.viewerHeight;

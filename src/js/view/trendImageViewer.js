@@ -64,9 +64,7 @@ var TrendImageViewer = function(){
         .attr("class", "trendImage")
         .style("width", viewer.width)
         .style("height", viewer.height)
-        .append("g")
       ;
-
   }
 
   function render(family) {
@@ -98,7 +96,10 @@ var TrendImageViewer = function(){
     /* Construct the horizontal Protein-selection paddle */
     viewer.horizonalPaddle = d3.brushY()
       .extent( [ [0, 0], [viewer.width, y_elements.length * viewer.residue_size] ])
-      .on("brush end", viewer.controller.horizontalBrushed);
+      .on("brush", viewer.controller.horizontalBrushed);
+
+    /* Append a group to the svg for the rows */
+    let g = viewer.svg.append("g");
 
     /* Invoke the tip in the context of your visualization */
     viewer.svg.call(viewer.tooltip);
@@ -107,7 +108,7 @@ var TrendImageViewer = function(){
     constructTrendImage(family)
         .then(function(data){
           /* Construct the image out of each residue  */
-          viewer.svg.selectAll("rect")
+          g.selectAll("rect")
               .data(data)
               .enter().append('g')
               .append('rect')
@@ -123,15 +124,19 @@ var TrendImageViewer = function(){
           ;
 
           /* Add the horizontal brush to the trend image*/
-          viewer.svg.append("g")
+          g.append("g")
             .attr("class", "brush")
+            .on("mousedown", function(){
+              if(d3.event.button){
+                d3.event.stopImmediatePropagation();
+              }
+            })
             .call(viewer.horizonalPaddle)
             // initialize the starting selection
             .call(viewer.horizonalPaddle.move, [0, viewer.residue_size])
           ;
 
         });
-
   }
 
   /* Return the publicly accessible functions*/

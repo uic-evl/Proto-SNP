@@ -11,20 +11,22 @@ var TrendImageViewer = function(){
 
   function constructTrendImage(family) {
 
+    /* New array for the parse residues */
     let data = [];
-    console.log(family);
 
-    family.forEach(function(memberProtein) {
-      memberProtein.sequence.forEach(function(residue,i){
-        data.push({
-          protein : memberProtein.name,
-          x       : i,
-          residue : residue
-        })
-      });
-    });
-
-    return data;
+    /* Return a promise that will resolve with the new data array*/
+   return new Promise(function(resolve, reject) {
+     family.forEach(function(memberProtein) {
+       memberProtein.sequence.forEach(function(residue,i){
+         data.push({
+           protein : memberProtein.name,
+           x       : i,
+           residue : residue
+         })
+       });
+     });
+     resolve(data)
+   });
 
   }
 
@@ -50,9 +52,6 @@ var TrendImageViewer = function(){
 
   function render(family) {
 
-    /* Convert the data into a residue-based array */
-    let data = constructTrendImage(family);
-
     /* Get the length of the longest sequence */
     let max_sequence_length = _.max(d3.set(family.map(function( residue ) { return residue.length; } )).values());
 
@@ -61,71 +60,40 @@ var TrendImageViewer = function(){
 
     /* construct the y-scale */
     let yScale = d3.scale.ordinal()
-        .domain(y_elements)
-        .rangeBands([0, y_elements.length * 22]);
+            .domain(y_elements)
+            .rangeBands([0, y_elements.length * 22])
+        ;
 
     /* construct the x-scale */
     let xScale = d3.scale.linear()
-        .domain([0, max_sequence_length])
-        .range([0, max_sequence_length * 22])
+            .domain([0, max_sequence_length])
+            .range([0, max_sequence_length * 22])
         ;
-
-    /* construct the x-axis*/
-    let xAxis = d3.svg.axis()
-        .scale(xScale)
-        .tickFormat(function (d) {
-          return d;
-        })
-        .orient("top");
-
-    /* construct the y-axis*/
-    let yAxis = d3.svg.axis()
-        .scale(yScale)
-        .tickFormat(function (d) {
-          return d;
-        })
-        .orient("left");
 
     /* Add the svg to the trend image dom*/
     let svg = viewer.domObj
-        .append("svg") //svg
-        .attr("class", "trendImage")
-        .style("width", viewer.width)
-        .style("height", viewer.height)
-        .append("g")
-        .attr("transform", "translate(" + 50 + "," + 50 + ")")
+            .append("svg") //svg
+            .attr("class", "trendImage")
+            .style("width", viewer.width)
+            .style("height", viewer.height)
+            .append("g")
+        //.attr("transform", "translate(" + 50 + "," + 50 + ")")
         ;
 
-    /* Construct the image out of each residue  */
-    svg.selectAll("rect")
-        .data(data)
-        .enter().append('g').append('rect')
-        .attr("class", "residue")
-        .attr("width", 22)
-        .attr("height", 22)
-        .attr('y', function(d) { return yScale(d.protein) })
-        .attr('x', function(d) { return xScale(d.x) })
-        .attr('fill', function(d, i) { return colorbrewer.Spectral[10][i%10]; })
-        ;
-
-    /* Add the axes -- this will be removed later*/
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .selectAll('text')
-        .attr('font-weight', 'normal');
-
-    svg.append("g")
-        .attr("class", "x axis")
-        .call(xAxis)
-        .selectAll('text')
-        .attr('font-weight', 'normal')
-        .style("text-anchor", "start")
-        .attr("dx", ".8em")
-        .attr("dy", ".5em")
-        .attr("transform", function (d) {
-          return "rotate(-65)";
-        });
+    /* Convert the data into a residue-based array */
+    constructTrendImage(family).then(function(data){
+      /* Construct the image out of each residue  */
+      svg.selectAll("rect")
+          .data(data)
+          .enter().append('g').append('rect')
+          .attr("class", "residue")
+          .attr("width", 22)
+          .attr("height", 22)
+          .attr('y', function(d) { return yScale(d.protein) })
+          .attr('x', function(d) { return xScale(d.x) })
+          .attr('fill', function(d, i) { return colorbrewer.Spectral[10][i%10]; })
+      ;
+    });
 
   }
 

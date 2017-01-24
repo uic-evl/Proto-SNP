@@ -49,6 +49,24 @@ var TrendImageViewer = function(){
         .style("height", viewer.height)
     ;
 
+    /* Trend Image Tooltip */
+    viewer.tooltip  = d3.tip().attr('class', 'd3-tip').html(
+      function(d) {
+        return d.residue;
+      });
+
+    /* Trend Image interaction controller */
+    viewer.controller = new TrendImageController();
+
+    /* Add the svg to the trend image dom*/
+    viewer.svg = viewer.domObj
+        .append("svg") //svg
+        .attr("class", "trendImage")
+        .style("width", viewer.width)
+        .style("height", viewer.height)
+        .append("g")
+      ;
+
   }
 
   function render(family) {
@@ -62,18 +80,14 @@ var TrendImageViewer = function(){
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     viewer.residue_size = Math.round(viewer.width / max_sequence_length);
 
-    /* Reset the width/height to account for the rounded size*/
-    //viewer.width = max_sequence_length * viewer.residue_size;
-    //viewer.height = y_elements.length * viewer.residue_size;
-
     /* construct the y-scale */
-    let yScale = d3.scale.ordinal()
+    let yScale = d3.scaleBand()
             .domain(y_elements)
-            .rangeBands([0, y_elements.length * viewer.residue_size])
+            .range([0, y_elements.length * viewer.residue_size])
         ;
 
     /* construct the x-scale */
-    let xScale = d3.scale.linear()
+    let xScale = d3.scaleLinear()
             .domain([0, max_sequence_length])
             .range([0, viewer.width])
         ;
@@ -81,20 +95,19 @@ var TrendImageViewer = function(){
     /* Construct a color map using the residue codes*/
     let residueModel = new ResidueModel();
 
-    /* Add the svg to the trend image dom*/
-    let svg = viewer.domObj
-            .append("svg") //svg
-            .attr("class", "trendImage")
-            .style("width", viewer.width)
-            .style("height", viewer.height)
-            .append("g")
-      ;
+
+    viewer.horizonalPaddle = d3.brushY()
+      .extent( [ [0, 0], [viewer.residue_size, viewer.width] ])
+      .on("brush end", viewer.controller.horizontalBrushed);
+
+    /* Invoke the tip in the context of your visualization */
+    viewer.svg.call(viewer.tooltip);
 
     /* Convert the data into a residue-based array */
     constructTrendImage(family)
         .then(function(data){
           /* Construct the image out of each residue  */
-          svg.selectAll("rect")
+          viewer.svg.selectAll("rect")
               .data(data)
               .enter().append('g')
               .append('rect')
@@ -105,7 +118,16 @@ var TrendImageViewer = function(){
               .attr('x', function(d) { return xScale(d.x) })
               .attr('fill', function(d) { return residueModel.getColor(d.residue); })
               .attr('stroke', function(d) { return residueModel.getColor(d.residue); })
+            // .on('mouseover', viewer.tooltip.show)
+            // .on('mouseout', viewer.tooltip.hide)
           ;
+
+          /* Add the horizontal brush to the trend image*/
+          viewer.svg.append("g")
+            .attr("class", "brush")
+            .call(viewer.horizonalPaddle)
+            .call(viewer.horizonalPaddle.move, yScale.range());
+
         });
 
   }

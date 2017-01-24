@@ -41,8 +41,8 @@ var SequenceViewer = function(){
         .enter().append("span")
         .attr("class", "residue")
         /* Merge the old elements (if they exist) with the new data */
-        // .merge(view)
-        //   .text(function(d) { return d; })
+        .merge(view)
+          .text(function(d) { return d; })
         .style("width", list.domWidth / 2)
         .style("background-color", function(d, i) { return colorbrewer.Spectral[10][i%10]; })
         // EXIT: Remove unneeded DOM elements

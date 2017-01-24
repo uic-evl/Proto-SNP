@@ -24,6 +24,7 @@ function ProteinFamily(file) {
       if(!line.length) return;
 
       /* Create a regex pattern to check for the header lines */
+      //Name:\s*(\w+)\|?(\w?)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/
       let regex_dict = /Name:\s*(\w+)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/,
           regex_data = /(\w+)\/(\d*)-(\d*)\s*([~.\w\s]*)/;
 

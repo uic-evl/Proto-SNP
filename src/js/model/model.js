@@ -139,10 +139,11 @@ function Proteins() {
 
     /* Remove the Splash screen */
     $("#trendSplash").remove();
-    let family = new ProteinFamily(file);
+    self.proteinFamily = new ProteinFamily(file);
     /* Initialize the trend image view */
     App.trendImageViewer.init("#trendImageViewer");
 
+    App.trendImageViewer.render(self.proteinFamily.getFamily());
 
   }
 

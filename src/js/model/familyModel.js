@@ -35,8 +35,9 @@ function ProteinFamily(file) {
 
         /* Create the dictionary entry */
         self.family[parsedLine[1]] = {
+          name                   : parsedLine[1],
           firstResiduePosition   : parseInt(parsedLine[2]),
-          lastResiduePositione   : parseInt(parsedLine[3]),
+          lastResiduePosition    : parseInt(parsedLine[3]),
           length                 : parseInt(parsedLine[4]),
           check                  : parseInt(parsedLine[5]),
           weight                 : parseInt(parsedLine[6]),
@@ -53,6 +54,12 @@ function ProteinFamily(file) {
       }
 
     });
+
+    /* Convert the family object to an array */
+    self.family = _.values(self.family);
+    self.family.forEach(function(protein) {
+      protein.sequence = protein.sequence.split('');
+    })
   }
 
   /*Accessor to return the family */

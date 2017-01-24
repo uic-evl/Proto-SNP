@@ -95,9 +95,9 @@ var TrendImageViewer = function(){
     /* Construct a color map using the residue codes*/
     let residueModel = new ResidueModel();
 
-
+    /* Construct the horizontal Protein-selection paddle */
     viewer.horizonalPaddle = d3.brushY()
-      .extent( [ [0, 0], [viewer.residue_size, viewer.width] ])
+      .extent( [ [0, 0], [viewer.width, y_elements.length * viewer.residue_size] ])
       .on("brush end", viewer.controller.horizontalBrushed);
 
     /* Invoke the tip in the context of your visualization */
@@ -126,7 +126,9 @@ var TrendImageViewer = function(){
           viewer.svg.append("g")
             .attr("class", "brush")
             .call(viewer.horizonalPaddle)
-            .call(viewer.horizonalPaddle.move, yScale.range());
+            // initialize the starting selection
+            .call(viewer.horizonalPaddle.move, [0, viewer.residue_size])
+          ;
 
         });
 

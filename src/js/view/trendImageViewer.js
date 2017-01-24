@@ -62,10 +62,9 @@ var TrendImageViewer = function(){
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     viewer.residue_size = Math.round(viewer.width / max_sequence_length);
 
-    console.log(viewer.residue_size);
-
-    /*Reset the width to account for the rounded size*/
-    viewer.width = max_sequence_length * viewer.residue_size;
+    /* Reset the width/height to account for the rounded size*/
+    //viewer.width = max_sequence_length * viewer.residue_size;
+    //viewer.height = y_elements.length * viewer.residue_size;
 
     /* construct the y-scale */
     let yScale = d3.scale.ordinal()
@@ -89,7 +88,7 @@ var TrendImageViewer = function(){
             .style("width", viewer.width)
             .style("height", viewer.height)
             .append("g")
-        ;
+      ;
 
     /* Convert the data into a residue-based array */
     constructTrendImage(family)
@@ -97,13 +96,15 @@ var TrendImageViewer = function(){
           /* Construct the image out of each residue  */
           svg.selectAll("rect")
               .data(data)
-              .enter().append('g').append('rect')
+              .enter().append('g')
+              .append('rect')
               .attr("class", "aminoAcid")
               .attr("width", viewer.residue_size)
               .attr("height", viewer.residue_size)
               .attr('y', function(d) { return yScale(d.protein) })
               .attr('x', function(d) { return xScale(d.x) })
               .attr('fill', function(d) { return residueModel.getColor(d.residue); })
+              .attr('stroke', function(d) { return residueModel.getColor(d.residue); })
           ;
         });
 

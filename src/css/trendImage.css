@@ -10,6 +10,6 @@
     color: black
 }
 
-g.brush > .handle, g.brush > .crosshair {
+g.brush.horizontal > .handle {
     display: none;
 }

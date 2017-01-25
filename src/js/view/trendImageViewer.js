@@ -87,8 +87,11 @@ var TrendImageViewer = function(){
     /* construct the x-scale */
     let xScale = d3.scaleLinear()
             .domain([0, max_sequence_length])
-            .range([0, viewer.width])
+            .range([0, Math.ceil((viewer.width-1)/viewer.residue_size)*viewer.residue_size])
         ;
+
+    /* Get the halfway point of the x-range*/
+    let xMid = xScale(max_sequence_length/2);
 
     /* Construct a color map using the residue codes*/
     let residueModel = new ResidueModel();
@@ -99,17 +102,27 @@ var TrendImageViewer = function(){
       // .on("start", viewer.controller.horizontalStart)
       .on("brush", function(){ viewer.controller.horizontalBrushed.call(this, viewer.residue_size) });
 
-    /* Append a group to the svg for the rows */
-    let g = viewer.svg.append("g");
+    /* Construct the right vertical residue-selection paddle */
+    viewer.leftVerticalPaddle = d3.brushX()
+        .extent( [ [0, 0], [xMid, y_elements.length * viewer.residue_size] ])
+        .on("brush", function(){ viewer.controller.verticalBrushed.call(this, viewer.residue_size) })
+        ;
+
+    /* Construct the right vertical residue-selection paddle */
+    viewer.rightVerticalPaddle = d3.brushX()
+        .extent( [ [xMid, 0], [viewer.width, y_elements.length * viewer.residue_size] ])
+        .on("brush", function(){ viewer.controller.verticalBrushed.call(this, viewer.residue_size) })
+    ;
 
     /* Invoke the tip in the context of your visualization */
-    viewer.svg.call(viewer.tooltip);
+    //viewer.svg.call(viewer.tooltip);
 
     /* Convert the data into a residue-based array */
     constructTrendImage(family)
         .then(function(data){
           /* Construct the image out of each residue  */
-          g.selectAll("rect")
+          viewer.svg.append("g")
+              .selectAll("rect")
               .data(data)
               .enter().append('g')
               .append('rect')
@@ -124,15 +137,47 @@ var TrendImageViewer = function(){
             // .on('mouseout', viewer.tooltip.hide)
           ;
 
-          /* Add the horizontal brush to the trend image*/
-          viewer.svg.append("g")
-            .attr("class", "brush")
+          /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
+          viewer.brushes = viewer.svg.append("g")
+            .attr("class", "brushes")
             .style("width", viewer.width)
-            .style("height", viewer.residue_size * y_elements.length)
-            .call(viewer.horizonalPaddle)
-            // initialize the starting selection
-            .call(viewer.horizonalPaddle.move, [0, viewer.residue_size])
+            .style("height", viewer.residue_size * y_elements.length);
+
+
+          /* Add the horizontal paddle to the trend image */
+          viewer.brushes.append("g")
+              .attr("class", "brush horizontal")
+              .call(viewer.horizonalPaddle) // add the paddle
+              .call(viewer.horizonalPaddle.move, [0, viewer.residue_size]) // initialize the position
           ;
+
+          /* Add the left vertical paddle to the trend image*/
+          viewer.brushes.append("g")
+              .attr("class", "brush vertical-left")
+              .call(viewer.leftVerticalPaddle)
+              .call(viewer.leftVerticalPaddle.move, [0, viewer.residue_size])
+          ;
+
+          /* Add the right vertical paddle to the trend image*/
+          viewer.brushes.append("g")
+              .attr("class", "brush vertical-right")
+              .call(viewer.rightVerticalPaddle)
+              .call(viewer.rightVerticalPaddle.move, [0, viewer.residue_size])
+              // HACK: There is an issue with the rush extent that doesn't start at 0
+              .select("g.brush>.selection")
+              .attr("x", Math.ceil((viewer.width/2)/viewer.residue_size)*viewer.residue_size)
+          ;
+
+
+          /* Remove the pointer events from the brush overlays to prevent:
+           * 1: Deleting the brush on a wrong click
+           * 2: Interference between brushes
+          */
+          viewer.brushes.selectAll('.overlay')
+              .style("pointer-events", "none");
+
+          // viewer.brushes.select("g.brush.vertical-right")
+          // .call(viewer.rightVerticalPaddle.move, [-viewer.width/2, viewer.residue_size]);
 
         });
   }

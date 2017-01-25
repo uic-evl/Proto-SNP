@@ -96,7 +96,8 @@ var TrendImageViewer = function(){
     /* Construct the horizontal Protein-selection paddle */
     viewer.horizonalPaddle = d3.brushY()
       .extent( [ [0, 0], [viewer.width, y_elements.length * viewer.residue_size] ])
-      .on("brush", viewer.controller.horizontalBrushed);
+      // .on("start", viewer.controller.horizontalStart)
+      .on("brush", function(){ viewer.controller.horizontalBrushed.call(this, viewer.residue_size) });
 
     /* Append a group to the svg for the rows */
     let g = viewer.svg.append("g");
@@ -124,13 +125,10 @@ var TrendImageViewer = function(){
           ;
 
           /* Add the horizontal brush to the trend image*/
-          g.append("g")
+          viewer.svg.append("g")
             .attr("class", "brush")
-            .on("mousedown", function(){
-              if(d3.event.button){
-                d3.event.stopImmediatePropagation();
-              }
-            })
+            .style("width", viewer.width)
+            .style("height", viewer.residue_size * y_elements.length)
             .call(viewer.horizonalPaddle)
             // initialize the starting selection
             .call(viewer.horizonalPaddle.move, [0, viewer.residue_size])

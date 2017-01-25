@@ -12,14 +12,19 @@ function ResidueModel() {
   ];
 
   let colorCodes = [
-    "#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69","#fccde5", "#d9d9d9", "#bc80bd", "#ccebc5","#ffed6f","#1f78b4",
-    "#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f", "#ff7f00", "#cab2d6","#6a3d9a", "#ffff99", "#b15928", "#85929e", "#7B241C", "#000000", "#000000", "#FFFFFF"
+    "#C0D0FF", "#B0FFB0", "#FFC0C8", "#FFFF80", "#FFC0FF", "#B0F0F0", "#FFD070","#F08080", "#F5DEB3", "#00BFFF", "#CD5C5C","#66CDAA",
+    "#9ACD32","#EE82EE","#00CED1","#00FF7F","#3CB371", "#00008B", "#BDB76B","#006400", "#800000", "#808000", "#800080", "#B8860B", "#B22222", "#000000", "#008080"
   ];
 
+  let colorCodesHEAT = [
+    "#90A0CF", "#80CF98", "#CF90B0", "#CFCF70", "#CF90CF", "#80C0C0", "#CFA060","#C05070", "#C5AE83", "#00A7CF",
+    "#B54C4C","#56B592", "#8AB52A","#BE72BE", "#00B6A1","#00CF6F","#349B61", "#0000BB", "#A59F5B","#009400",
+    "#B00000", "#B0B000", "#B000B0", "#B8860B", "#E8B613", "#000000", "#00B0B0"
+  ];
 
   return {
     getResidueCodes : function() { return aminoAcidCodes; },
-    getColor   : function(residue) { return colorCodes[aminoAcidCodes.indexOf(residue)] }
+    getColor   : function(residue) { return colorCodesHEAT[aminoAcidCodes.indexOf(residue)] }
   }
 
 }

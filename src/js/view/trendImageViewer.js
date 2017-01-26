@@ -130,7 +130,7 @@ var TrendImageViewer = function(){
               .enter().append('g')
               .attr("class", "aminoAcid")
               .append('rect')
-              .attr("class", function(d, i) { return "p" + d.protein + "r" + i; })
+              .attr("class", function(d, i) { return "p" + d.protein + " r" + i; })
               .attr("width", viewer.residue_size)
               .attr("height", viewer.residue_size)
               .attr('y', function(d) { return yScale(d.protein) })
@@ -178,6 +178,9 @@ var TrendImageViewer = function(){
           */
           viewer.brushes.selectAll('.overlay')
               .style("pointer-events", "none");
+
+          viewer.brushes.selectAll('.selection')
+              .style("shape-rendering", "auto");
 
           // viewer.brushes.select("g.brush.vertical-right")
           // .call(viewer.rightVerticalPaddle.move, [-viewer.width/2, viewer.residue_size]);

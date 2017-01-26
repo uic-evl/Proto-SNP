@@ -61,12 +61,18 @@ var TrendImageController = function(){
 
   }
 
-  function verticalPaddleControllerEnd(xScale) {
+  function verticalPaddleControllerEnd(xScale, family) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
 
-    console.log(d3.event.selection.map(xScale.invert));
+    let selection = d3.event.selection.map(xScale.invert);
+
+    let currentSelection = [];
+
+    family.forEach(function(member) {
+      console.log(member.sequence[selection[0]]);
+    });
 
   }
 

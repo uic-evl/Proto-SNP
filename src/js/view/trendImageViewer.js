@@ -108,7 +108,7 @@ var TrendImageViewer = function(){
     viewer.leftVerticalPaddle = d3.brushX()
         .extent( [ [0, 0], [xMid, y_elements.length * viewer.residue_size] ])
         .on("brush", function(){ viewer.controller.verticalBrushed.call(this, viewer.residue_size) })
-        //.on("end", function(){viewer.controller.verticalEnd.call(this, xScale)})
+        .on("end", function(){viewer.controller.verticalEnd.call(this, xScale, family)})
         ;
 
     /* Construct the right vertical residue-selection paddle */

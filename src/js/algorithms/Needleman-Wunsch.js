@@ -58,39 +58,45 @@ var App = App || {};
         sq1 = [],
         sq2 = [];
 
-    do {
+    return new Promise(function(resolve, reject) {
 
-      let t = arr[i-1][j],
-          d = arr[i-1][j-1],
-          l = arr[i][j-1],
-          max = Math.max(t, d, l);
+      do {
 
-      switch(max) {
-        case t:
-          i--;
-          sq1.push(gc);
-          sq2.push(seq2[i]);
-          break;
-        case d:
-          j--;
-          i--;
-          sq1.push(seq1[j]);
-          sq2.push(seq2[i]);
-          break;
-        case l:
-          j--;
-          sq1.push(seq1[j]);
-          sq2.push(gc);
-          break;
-      }
+        let t = arr[i-1][j],
+            d = arr[i-1][j-1],
+            l = arr[i][j-1],
+            max = Math.max(t, d, l);
 
-    } while(i>0 && j>0);
+        switch(max) {
+          case t:
+            i--;
+            sq1.push(gc);
+            sq2.push(seq2[i]);
+            break;
+          case d:
+            j--;
+            i--;
+            sq1.push(seq1[j]);
+            sq2.push(seq2[i]);
+            break;
+          case l:
+            j--;
+            sq1.push(seq1[j]);
+            sq2.push(gc);
+            break;
+        }
 
-    /* return the two aligned sequences */
-    return {
-      leftSequence:  (swap) ? sq2.reverse() :  sq1.reverse(),
-      rightSequence: (swap) ? sq1.reverse() :  sq2.reverse()
-    }
+      } while(i>0 && j>0);
+
+      /* return the two aligned sequences */
+      resolve({
+        leftSequence:  (swap) ? sq2.reverse() :  sq1.reverse(),
+        rightSequence: (swap) ? sq1.reverse() :  sq2.reverse()
+      });
+
+    });
+
+
 
   };
 

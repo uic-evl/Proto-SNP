@@ -65,6 +65,7 @@ function Proteins() {
   function renderViews(structure) {
     /* Render the 3D view */
     this.view.render(structure, this.modelPointer.name);
+
     // get the sequence of the protein
     this.modelPointer.sequence = this.view.getSequence(this.modelPointer.structure, 0);
 
@@ -74,16 +75,17 @@ function Proteins() {
     /* Check if a sequence is already added to the list, if so align them*/
     if(this.siblingPointer.name){
       /* Align the sequences */
-      let seq = App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {});
+      App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {})
+          .then(function(seq){
+            /* Set the model sequences */
+            this.modelPointer.sequence   = (this.viewPosition === "left")
+                ? seq.leftSequence  : seq.rightSequence;
+            this.siblingPointer.sequence = (this.siblingPosition === "right")
+                ? seq.rightSequence : seq.leftSequence;
 
-      /* Set the model sequences */
-      this.modelPointer.sequence   = (this.viewPosition === "left")
-        ? seq.leftSequence  : seq.rightSequence;
-      this.siblingPointer.sequence = (this.siblingPosition === "right")
-        ? seq.rightSequence : seq.leftSequence;
-
-      /* Render the other sequence */
-      App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
+            /* Render the other sequence */
+            App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
+          }.bind(this));
     }
     // render the sequence list
     App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);

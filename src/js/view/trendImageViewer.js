@@ -100,12 +100,15 @@ var TrendImageViewer = function(){
     viewer.horizonalPaddle = d3.brushY()
       .extent( [ [0, 0], [viewer.width, y_elements.length * viewer.residue_size] ])
       // .on("start", viewer.controller.horizontalStart)
-      .on("brush", function(){ viewer.controller.horizontalBrushed.call(this, viewer.residue_size) });
+      .on("brush", function(){ viewer.controller.horizontalBrushed.call(this, viewer.residue_size, yScale) })
+      .on("end", function(){viewer.controller.horizontalEnd.call(this, yScale)})
+      ;
 
     /* Construct the right vertical residue-selection paddle */
     viewer.leftVerticalPaddle = d3.brushX()
         .extent( [ [0, 0], [xMid, y_elements.length * viewer.residue_size] ])
         .on("brush", function(){ viewer.controller.verticalBrushed.call(this, viewer.residue_size) })
+        //.on("end", function(){viewer.controller.verticalEnd.call(this, xScale)})
         ;
 
     /* Construct the right vertical residue-selection paddle */
@@ -125,14 +128,15 @@ var TrendImageViewer = function(){
               .selectAll("rect")
               .data(data)
               .enter().append('g')
-              .append('rect')
               .attr("class", "aminoAcid")
+              .append('rect')
+              .attr("class", function(d, i) { return "p" + d.protein + "r" + i; })
               .attr("width", viewer.residue_size)
               .attr("height", viewer.residue_size)
               .attr('y', function(d) { return yScale(d.protein) })
               .attr('x', function(d) { return xScale(d.x) })
               .attr('fill', function(d) { return residueModel.getColor(d.residue); })
-              .attr('stroke', function(d) { return residueModel.getColor(d.residue); })
+              .attr('stroke', "none")
             // .on('mouseover', viewer.tooltip.show)
             // .on('mouseout', viewer.tooltip.hide)
           ;
@@ -159,15 +163,14 @@ var TrendImageViewer = function(){
           ;
 
           /* Add the right vertical paddle to the trend image*/
-          viewer.brushes.append("g")
-              .attr("class", "brush vertical-right")
-              .call(viewer.rightVerticalPaddle)
-              .call(viewer.rightVerticalPaddle.move, [0, viewer.residue_size])
-              // HACK: There is an issue with the rush extent that doesn't start at 0
-              .select("g.brush>.selection")
-              .attr("x", Math.ceil((viewer.width/2)/viewer.residue_size)*viewer.residue_size)
-          ;
-
+          // viewer.brushes.append("g")
+          //     .attr("class", "brush vertical-right")
+          //     .call(viewer.rightVerticalPaddle)
+          //     .call(viewer.rightVerticalPaddle.move, [0, viewer.residue_size])
+          //     // HACK: There is an issue with the rush extent that doesn't start at 0
+          //     .select("g.brush>.selection")
+          //     .attr("x", Math.ceil((viewer.width/2)/viewer.residue_size)*viewer.residue_size)
+          // ;
 
           /* Remove the pointer events from the brush overlays to prevent:
            * 1: Deleting the brush on a wrong click

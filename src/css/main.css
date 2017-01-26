@@ -27,10 +27,6 @@
     height: 100%;
 }
 
-.trendImage {
-    background-color: gray;
-}
-
 .TDView, .TrendImageView {
     margin-bottom: 20px;
 }

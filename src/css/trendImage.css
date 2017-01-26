@@ -10,6 +10,18 @@
     color: black
 }
 
+.trendImage {
+    background-color: gray;
+}
+
+.aminoAcid {
+    fill-opacity: 0.4;
+}
+
+.active-selection {
+    fill-opacity: 1.0;
+}
+
 g.brush.horizontal > .handle {
     display: none;
 }

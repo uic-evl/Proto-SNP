@@ -6,7 +6,9 @@ var App = App || {};
 // Protein / Molecule Viewer "Class"
 var TrendImageController = function(){
 
-  function horizontalPaddleController(residue_size) {
+  let self = {};
+
+  function horizontalPaddleController(residue_size, yScale) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't a brushing
@@ -18,6 +20,30 @@ var TrendImageController = function(){
 
     // Snap the brush onto the closest protein
     d3.select(this).call(d3.event.target.move, d3.event.selection);
+
+    /* Get the current protein */
+    let protein = d3.event.selection.map(yScale.invert)[0];
+
+    /* Reset the opacity of the previous row */
+    if(self.previousHorizontal){
+      d3.selectAll('.p' + self.previousHorizontal)
+          .attr("class", "p" + self.previousHorizontal);
+    }
+
+    /* Set the previous horizontal to the current protein */
+    self.previousHorizontal = protein;
+
+    /* Set the opacity of the highlighted row */
+    d3.selectAll('.p' + protein)
+        .attr("class", "p" + protein + " active-selection");
+
+  }
+
+  function horizontalPaddleControllerEnd(yScale) {
+
+    if (!d3.event.sourceEvent) return; // Only transition after input.
+    if (!d3.event.selection) return; // Ignore empty selections.
+
   }
 
   function verticalPaddleController(residue_size) {
@@ -32,11 +58,23 @@ var TrendImageController = function(){
 
     // Snap the brush onto the closest protein
     d3.select(this).call(d3.event.target.move, d3.event.selection);
+
+  }
+
+  function verticalPaddleControllerEnd(xScale) {
+
+    if (!d3.event.sourceEvent) return; // Only transition after input.
+    if (!d3.event.selection) return; // Ignore empty selections.
+
+    console.log(d3.event.selection.map(xScale.invert));
+
   }
 
   return {
     horizontalBrushed : horizontalPaddleController,
-    verticalBrushed   : verticalPaddleController
+    verticalBrushed   : verticalPaddleController,
+    verticalEnd       : verticalPaddleControllerEnd,
+    horizontalEnd     : horizontalPaddleControllerEnd
   }
 
 };

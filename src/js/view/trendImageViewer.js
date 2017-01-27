@@ -3,11 +3,11 @@
 // global application variable
 var App = App || {};
 
-// Protein / Molecule Viewer "Class"
+// Protein / Molecule trendImageViewer "Class"
 var TrendImageViewer = function(){
 
-  /* initialize the molecular viewer global variable */
-  let viewer = {};
+  /* initialize the molecular trendImageViewer global variable */
+  let trendImageViewer = {};
 
   function constructTrendImage(family) {
 
@@ -34,36 +34,36 @@ var TrendImageViewer = function(){
   function initialize(id) {
 
     /* get the DOM element by the id parameter */
-    viewer.domObj = d3.select(id);
+    trendImageViewer.domObj = d3.select(id);
 
     /* get/save the width and height of the given DOM element */
-    viewer.width = App.trendWidth;
-    viewer.height = App.trendHeight;
+    trendImageViewer.width = App.trendWidth;
+    trendImageViewer.height = App.trendHeight;
 
     /* clear the trend image DOM */
-    viewer.domObj.selectAll().remove();
+    trendImageViewer.domObj.selectAll().remove();
 
     /* append a new svg trend image */
-    viewer.domObj
-        .style("width", viewer.width)
-        .style("height", viewer.height)
+    trendImageViewer.domObj
+        .style("width", trendImageViewer.width)
+        .style("height", trendImageViewer.height)
     ;
 
     /* Trend Image Tooltip */
-    viewer.tooltip  = d3.tip().attr('class', 'd3-tip').html(
+    trendImageViewer.tooltip  = d3.tip().attr('class', 'd3-tip').html(
       function(d) {
         return d.residue;
       });
 
     /* Trend Image interaction controller */
-    viewer.controller = new TrendImageController();
+    trendImageViewer.controller = new TrendImageController();
 
     /* Add the svg to the trend image dom*/
-    viewer.svg = viewer.domObj
+    trendImageViewer.svg = trendImageViewer.domObj
         .append("svg") //svg
         .attr("class", "trendImage")
-        .style("width", viewer.width)
-        .style("height", viewer.height)
+        .style("width", trendImageViewer.width)
+        .style("height", trendImageViewer.height)
       ;
   }
 
@@ -76,18 +76,18 @@ var TrendImageViewer = function(){
     let y_elements = d3.set(family.map(function( residue ) { return residue.name; } )).values();
 
     /* Get and save the size of each residue for the trend image based on the width of the screen */
-    viewer.residue_size = Math.round(viewer.width / max_sequence_length);
+    trendImageViewer.residue_size = Math.round(trendImageViewer.width / max_sequence_length);
 
     /* construct the y-scale */
     let yScale = d3.scaleBand()
             .domain(y_elements)
-            .range([0, y_elements.length * viewer.residue_size])
+            .range([0, y_elements.length * trendImageViewer.residue_size])
         ;
 
     /* construct the x-scale */
     let xScale = d3.scaleLinear()
             .domain([0, max_sequence_length])
-            .range([0, Math.ceil((viewer.width-1)/viewer.residue_size)*viewer.residue_size])
+            .range([0, Math.ceil((trendImageViewer.width-1)/trendImageViewer.residue_size)*trendImageViewer.residue_size])
         ;
 
     /* Get the halfway point of the x-range*/
@@ -97,92 +97,92 @@ var TrendImageViewer = function(){
     let residueModel = new ResidueModel();
 
     /* Construct the horizontal Protein-selection paddle */
-    viewer.horizonalPaddle = d3.brushY()
-      .extent( [ [0, 0], [viewer.width, y_elements.length * viewer.residue_size] ])
-      // .on("start", viewer.controller.horizontalStart)
-      .on("brush", function(){ viewer.controller.horizontalBrushed.call(this, viewer.residue_size, yScale) })
-      .on("end", function(){viewer.controller.horizontalEnd.call(this, yScale)})
+    trendImageViewer.horizonalPaddle = d3.brushY()
+      .extent( [ [0, 0], [trendImageViewer.width, y_elements.length * trendImageViewer.residue_size] ])
+      // .on("start", trendImageViewer.controller.horizontalStart)
+      .on("brush", function(){ trendImageViewer.controller.horizontalBrushed.call(this, trendImageViewer.residue_size, yScale) })
+      .on("end", function(){trendImageViewer.controller.horizontalEnd.call(this, yScale)})
       ;
 
     /* Construct the right vertical residue-selection paddle */
-    viewer.leftVerticalPaddle = d3.brushX()
-        .extent( [ [0, 0], [xMid, y_elements.length * viewer.residue_size] ])
-        .on("brush", function(){ viewer.controller.verticalBrushed.call(this, viewer.residue_size) })
-        .on("end", function(){viewer.controller.verticalEnd.call(this, xScale, family)})
+    trendImageViewer.leftVerticalPaddle = d3.brushX()
+        .extent( [ [0, 0], [xMid, y_elements.length * trendImageViewer.residue_size] ])
+        .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_size) })
+        .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, xScale, family)})
         ;
 
     /* Construct the right vertical residue-selection paddle */
-    viewer.rightVerticalPaddle = d3.brushX()
-        .extent( [ [xMid, 0], [viewer.width, y_elements.length * viewer.residue_size] ])
-        .on("brush", function(){ viewer.controller.verticalBrushed.call(this, viewer.residue_size) })
+    trendImageViewer.rightVerticalPaddle = d3.brushX()
+        .extent( [ [xMid, 0], [trendImageViewer.width, y_elements.length * trendImageViewer.residue_size] ])
+        .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_size) })
     ;
 
     /* Invoke the tip in the context of your visualization */
-    //viewer.svg.call(viewer.tooltip);
+    //trendImageViewer.svg.call(trendImageViewer.tooltip);
 
     /* Convert the data into a residue-based array */
     constructTrendImage(family)
         .then(function(data){
           /* Construct the image out of each residue  */
-          viewer.svg.append("g")
+          trendImageViewer.svg.append("g")
               .selectAll("rect")
               .data(data)
               .enter().append('g')
               .attr("class", "aminoAcid")
               .append('rect')
               .attr("class", function(d, i) { return "p" + d.protein + " r" + i; })
-              .attr("width", viewer.residue_size)
-              .attr("height", viewer.residue_size)
+              .attr("width", trendImageViewer.residue_size)
+              .attr("height", trendImageViewer.residue_size)
               .attr('y', function(d) { return yScale(d.protein) })
               .attr('x', function(d) { return xScale(d.x) })
               .attr('fill', function(d) { return residueModel.getColor(d.residue); })
               .attr('stroke', "none")
-            // .on('mouseover', viewer.tooltip.show)
-            // .on('mouseout', viewer.tooltip.hide)
+            // .on('mouseover', trendImageViewer.tooltip.show)
+            // .on('mouseout', trendImageViewer.tooltip.hide)
           ;
 
           /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
-          viewer.brushes = viewer.svg.append("g")
+          trendImageViewer.brushes = trendImageViewer.svg.append("g")
             .attr("class", "brushes")
-            .style("width", viewer.width)
-            .style("height", viewer.residue_size * y_elements.length);
+            .style("width", trendImageViewer.width)
+            .style("height", trendImageViewer.residue_size * y_elements.length);
 
           /* Add the horizontal paddle to the trend image */
-          viewer.brushes.append("g")
+          trendImageViewer.brushes.append("g")
               .attr("class", "brush horizontal")
-              .call(viewer.horizonalPaddle) // add the paddle
-              .call(viewer.horizonalPaddle.move, [0, viewer.residue_size]) // initialize the position
+              .call(trendImageViewer.horizonalPaddle) // add the paddle
+              .call(trendImageViewer.horizonalPaddle.move, [0, trendImageViewer.residue_size]) // initialize the position
           ;
 
           /* Add the left vertical paddle to the trend image*/
-          viewer.brushes.append("g")
+          trendImageViewer.brushes.append("g")
               .attr("class", "brush vertical-left")
-              .call(viewer.leftVerticalPaddle)
-              .call(viewer.leftVerticalPaddle.move, [0, viewer.residue_size])
+              .call(trendImageViewer.leftVerticalPaddle)
+              .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_size])
           ;
 
           /* Add the right vertical paddle to the trend image*/
-          // viewer.brushes.append("g")
+          // trendImageViewer.brushes.append("g")
           //     .attr("class", "brush vertical-right")
-          //     .call(viewer.rightVerticalPaddle)
-          //     .call(viewer.rightVerticalPaddle.move, [0, viewer.residue_size])
+          //     .call(trendImageViewer.rightVerticalPaddle)
+          //     .call(trendImageViewer.rightVerticalPaddle.move, [0, trendImageViewer.residue_size])
           //     // HACK: There is an issue with the rush extent that doesn't start at 0
           //     .select("g.brush>.selection")
-          //     .attr("x", Math.ceil((viewer.width/2)/viewer.residue_size)*viewer.residue_size)
+          //     .attr("x", Math.ceil((trendImageViewer.width/2)/trendImageViewer.residue_size)*trendImageViewer.residue_size)
           // ;
 
           /* Remove the pointer events from the brush overlays to prevent:
            * 1: Deleting the brush on a wrong click
            * 2: Interference between brushes
           */
-          viewer.brushes.selectAll('.overlay')
+          trendImageViewer.brushes.selectAll('.overlay')
               .style("pointer-events", "none");
 
-          viewer.brushes.selectAll('.selection')
+          trendImageViewer.brushes.selectAll('.selection')
               .style("shape-rendering", "auto");
 
-          // viewer.brushes.select("g.brush.vertical-right")
-          // .call(viewer.rightVerticalPaddle.move, [-viewer.width/2, viewer.residue_size]);
+          // trendImageViewer.brushes.select("g.brush.vertical-right")
+          // .call(trendImageViewer.rightVerticalPaddle.move, [-trendImageViewer.width/2, trendImageViewer.residue_size]);
 
         });
   }

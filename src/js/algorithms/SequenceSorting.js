@@ -25,7 +25,7 @@ var SequenceSorting = function(family){
       /* Iterate over each column to determine the frequencies of residues*/
       for(let i = 0; i < max_len; i++){
         /* Get the residues of the ith column */
-        let column_residues = _.map(family, function(o) { return _.nth(o.sequence, i); });
+        let column_residues = _.map(family, function(member) { return _.nth(member.sequence, i); });
 
         /* Get the residue counts for each column*/
         self.frequencies[i] = _.countBy(column_residues);
@@ -35,7 +35,7 @@ var SequenceSorting = function(family){
     });
   }
 
-  function sortByFrequencyWith(protein){
+  function sortByFrequencyWithProtein(protein){
 
   }
 

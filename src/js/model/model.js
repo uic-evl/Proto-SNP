@@ -147,6 +147,9 @@ function Proteins() {
 
     App.trendImageViewer.render(self.proteinFamily.getFamily());
 
+    /* Create the sorting callbacks */
+    self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
+    self.sortedSequences.calculateFrequency();
   }
 
   /* Return the public-facing functions */

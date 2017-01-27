@@ -147,7 +147,6 @@ var TrendImageViewer = function(){
             .style("width", viewer.width)
             .style("height", viewer.residue_size * y_elements.length);
 
-
           /* Add the horizontal paddle to the trend image */
           viewer.brushes.append("g")
               .attr("class", "brush horizontal")

@@ -377,6 +377,7 @@ class sequenceSet(object):
             for (frag, frequency) in frequency_list.items():
                 if frequency == m:
                     self.max_frag_frequency.append((frag_id,frag, frequency))
+
     def sort_by_selection(self, selections):
         """
         selections : {frag_id:frag_name}

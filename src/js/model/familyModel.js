@@ -53,7 +53,6 @@ function ProteinFamily(file) {
         /* Append the sequence to the dictionary entry*/
         self.family[parsedLine[1]].sequence += parsedLine[4].split(' ').join('');
       }
-
     });
 
     /* Convert the family object to an array */

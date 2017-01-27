@@ -81,13 +81,13 @@ var TrendImageViewer = function(){
       .on("end", function(){trendImageViewer.controller.horizontalEnd.call(this, yScale)})
     ;
 
-    // /* Construct the right vertical residue-selection paddle */
-    // trendImageViewer.leftVerticalPaddle = d3.brushX()
-    //   .extent( [ [0, 0], [x_midpoint, y_axis_length * trendImageViewer.residue_glyph_size] ])
-    //   .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
-    //   .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, xScale, protein_family_data)})
-    // ;
-    //
+    /* Construct the right vertical residue-selection paddle */
+    trendImageViewer.leftVerticalPaddle = d3.brushX()
+      .extent( [ [0, 0], [x_midpoint, y_axis_length * trendImageViewer.residue_glyph_size] ])
+      .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
+      .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, xScale, protein_family_data)})
+    ;
+
     // /* Construct the right vertical residue-selection paddle */
     // trendImageViewer.rightVerticalPaddle = d3.brushX()
     //   .extent( [ [x_midpoint, 0], [trendImageViewer.width, y_axis_length * trendImageViewer.residue_glyph_size] ])
@@ -110,12 +110,12 @@ var TrendImageViewer = function(){
       .call(trendImageViewer.horizonalPaddle.move, [0, trendImageViewer.residue_glyph_size]) // initialize the position
     ;
 
-    // /* Add the left vertical paddle to the trend image*/
-    // trendImageViewer.brushes.append("g")
-    //   .attr("class", "brush vertical-left")
-    //   .call(trendImageViewer.leftVerticalPaddle)
-    //   .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size])
-    // ;
+    /* Add the left vertical paddle to the trend image*/
+    trendImageViewer.brushes.append("g")
+      .attr("class", "brush vertical-left")
+      .call(trendImageViewer.leftVerticalPaddle)
+      .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size])
+    ;
 
     /* Add the right vertical paddle to the trend image*/
     // trendImageViewer.brushes.append("g")
@@ -128,13 +128,13 @@ var TrendImageViewer = function(){
     // ;
   }
 
-  function render(family) {
+  function render(protein_family_data) {
 
     /* Get the length of the longest sequence */
-    let x_axis_length = _.max(d3.set(family.map(function( residue ) { return residue.length; } )).values());
+    let x_axis_length = _.max(d3.set(protein_family_data.map(function( residue ) { return residue.length; } )).values());
 
     /* Extract the names of the proteins. They will construct the y-axis*/
-    let y_elements = d3.set(family.map(function( residue ) { return residue.name; } )).values();
+    let y_elements = d3.set(protein_family_data.map(function( residue ) { return residue.name; } )).values();
 
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     trendImageViewer.residue_glyph_size = Math.round(trendImageViewer.width / x_axis_length);
@@ -152,7 +152,7 @@ var TrendImageViewer = function(){
         ;
 
     /* Create the three brushes */
-    createBrushes(x_axis_length, y_elements.length, xScale, yScale);
+    createBrushes(x_axis_length, y_elements.length, xScale, yScale, protein_family_data);
 
     /* Construct a color map using the residue codes*/
     let residueModel = new ResidueModel();
@@ -161,7 +161,7 @@ var TrendImageViewer = function(){
     //trendImageViewer.svg.call(trendImageViewer.tooltip);
 
     /* Convert the data into a residue-based array */
-    constructTrendImage(family)
+    constructTrendImage(protein_family_data)
         .then(function(data){
           /* Construct the image out of each residue  */
           trendImageViewer.svg.append("g")

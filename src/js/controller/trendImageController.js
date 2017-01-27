@@ -6,6 +6,7 @@ var App = App || {};
 // Protein / Molecule Viewer "Class"
 var TrendImageController = function(){
 
+  /* Class private variable */
   let self = {};
 
   function horizontalPaddleController(residue_glyph_size, yScale) {
@@ -17,7 +18,7 @@ var TrendImageController = function(){
       return;
     }
     if (!d3.event.selection) return; // Ignore empty selections.
-    if (d3.event.sourceEvent.type === "brush") return; // if the event isn't associated with a mousemove
+    if (d3.event.sourceEvent.type === "brush") return; // if the event isn't associated with a mouse move
 
     // Round the two event extents to the nearest row
     d3.event.selection[0] = Math.ceil(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size;
@@ -41,7 +42,6 @@ var TrendImageController = function(){
     /* Set the opacity of the highlighted row */
     d3.selectAll('.p' + currentHorizontalSelection)
         .attr("class", "p" + currentHorizontalSelection + " active-selection");
-
   }
 
   function horizontalPaddleControllerEnd(yScale) {
@@ -66,7 +66,7 @@ var TrendImageController = function(){
 
   }
 
-  function verticalPaddleControllerEnd(xScale, family) {
+  function verticalPaddleControllerEnd(xScale, protein_family_data) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -75,7 +75,7 @@ var TrendImageController = function(){
 
     let currentSelection = [];
 
-    family.forEach(function(member) {
+    protein_family_data.forEach(function(member) {
       console.log(member.sequence[selection[0]]);
     });
 

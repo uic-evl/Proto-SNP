@@ -104,11 +104,17 @@ var TrendImageController = function(){
 
   }
 
+  function get_selected_protein() { return self.previousHorizontalSelection }
+
+  function get_selected_residues() { return self.currentVerticalSelection; }
+
   return {
-    horizontalBrushed : horizontal_paddle_controller,
-    verticalBrushed   : vertical_paddle_controller,
-    verticalEnd       : vertical_paddle_controllerEnd,
-    horizontalEnd     : horizontal_paddle_controllerEnd
+    horizontalBrushed   : horizontal_paddle_controller,
+    verticalBrushed     : vertical_paddle_controller,
+    verticalEnd         : vertical_paddle_controllerEnd,
+    horizontalEnd       : horizontal_paddle_controllerEnd,
+    getSelectedProtein  : get_selected_protein,
+    getSelectedResidues : get_selected_residues
   }
 
 };

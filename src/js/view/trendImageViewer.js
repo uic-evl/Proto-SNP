@@ -86,9 +86,32 @@ var TrendImageViewer = function(){
 
     /* Once the column frequency sorting is complete, enable the brushing callbacks*/
     trendImageViewer.column_frequencies.getPromise().then(function(){
+      /* Enable the paddle brushing callback */
       trendImageViewer.leftVerticalPaddle
           .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, trendImageViewer.residue_glyph_size,
-            xScale, protein_family_data, trendImageViewer.column_frequencies, trendImageViewer.horizonalPaddle)})
+            xScale, protein_family_data, trendImageViewer.column_frequencies, trendImageViewer.horizonalPaddle)});
+
+      /* Update the frequency viewer's text */
+      /* Get the currently selected protein and the selected residues */
+      let currentProtein = _.find(protein_family_data, ["name", trendImageViewer.controller.getSelectedProtein() ]) || protein_family_data[0];
+      let selectedResidues = trendImageViewer.controller.getSelectedResidues() || [0, 5];
+
+      /* Get the fragments from the column*/
+      let fragments = trendImageViewer.column_frequencies
+        .getMostFrequentFragmentFromRange(selectedResidues[0], selectedResidues[1]);
+
+      /* Iterate over each of the returned fragments */
+      let currentSelectionFragments = [];
+      fragments.forEach(function(fragment) {
+        /* Get the highest occurring residue and it's frequency */
+        currentSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+      });
+
+      /* Get the residues that intersect with the vertical paddle*/
+      let horizontalSelectedResidues = currentProtein.sequence.slice(selectedResidues[0], selectedResidues[1]);
+
+     /* Render the frequency view*/
+      App.leftFrequencyViewer.render(currentSelectionFragments, protein_family_data.length, horizontalSelectedResidues )
     })
     ;
 

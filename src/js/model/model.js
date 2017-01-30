@@ -142,14 +142,14 @@ function Proteins() {
     /* Remove the Splash screen */
     $("#trendSplash").remove();
     self.proteinFamily = new ProteinFamily(file);
-    /* Initialize the trend image view */
-    App.trendImageViewer.init("#trendImageViewer");
-
-    App.trendImageViewer.render(self.proteinFamily.getFamily());
 
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
     self.sortedSequences.calculateFrequency();
+
+    /* Initialize the trend image view */
+    App.trendImageViewer.init("#trendImageViewer", self.sortedSequences);
+    App.trendImageViewer.render(self.proteinFamily.getFamily());
   }
 
   /* Return the public-facing functions */

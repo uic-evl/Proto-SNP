@@ -11,6 +11,15 @@ var SequenceSorting = function(family){
   /* Promise */
   self.frequencies_computed = null;
 
+  /* Get the fragment frequency */
+  function get_most_frequent_fragment(column_index) {
+    /* return the fragment that occurs the most often in the column */
+    return self.frequencies[column_index];
+  }
+
+  /* Accessor for the fragment frequency promise */
+  function get_frequency_promise () { return self.frequencies_computed; }
+
   /* Calculates the frequency of each column's residues*/
   function calculate_fragment_frequency(){
 
@@ -30,9 +39,13 @@ var SequenceSorting = function(family){
         /* Get the residue counts for each column*/
         self.frequencies[i] = _.countBy(column_residues);
       }
+
       /* resolve the promise with the column frequencies*/
       resolve(self.frequencies)
     });
+
+    // return the promise
+    return self.frequencies_computed;
   }
 
   function sortByFrequencyWithProtein(protein){
@@ -40,7 +53,9 @@ var SequenceSorting = function(family){
   }
 
   return {
-    calculateFrequency : calculate_fragment_frequency
+    calculateFrequency      : calculate_fragment_frequency,
+    getMostFrequentFragment : get_most_frequent_fragment,
+    getPromise              : get_frequency_promise
   }
 
 };

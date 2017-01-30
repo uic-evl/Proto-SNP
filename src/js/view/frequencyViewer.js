@@ -9,6 +9,12 @@ var FrequencyViewer = function(){
   /* Class private variable */
   let self = {};
 
-return {};
+  function initialize(div_id) {
+
+
+
+  }
+
+return {init: initialize};
 
 };

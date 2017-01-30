@@ -31,10 +31,10 @@ var TrendImageViewer = function(){
 
   }
 
-  function initialize(id) {
+  function initialize(div_id, column_frequencies) {
 
     /* get the DOM element by the id parameter */
-    trendImageViewer.domObj = d3.select(id);
+    trendImageViewer.domObj = d3.select(div_id);
 
     /* get/save the width and height of the given DOM element */
     trendImageViewer.width = App.trendWidth;
@@ -57,6 +57,9 @@ var TrendImageViewer = function(){
 
     /* Trend Image interaction controller */
     trendImageViewer.controller = new TrendImageController();
+
+    /* Save the frequencies for the columns */
+    trendImageViewer.column_frequencies = column_frequencies;
 
     /* Add the svg to the trend image dom*/
     trendImageViewer.svg = trendImageViewer.domObj
@@ -83,9 +86,16 @@ var TrendImageViewer = function(){
 
     /* Construct the right vertical residue-selection paddle */
     trendImageViewer.leftVerticalPaddle = d3.brushX()
-      .extent( [ [0, 0], [x_midpoint, y_axis_length * trendImageViewer.residue_glyph_size] ])
+      .extent( [ [0, 0], [x_midpoint, y_axis_length * trendImageViewer.residue_glyph_size] ]);
+
+    /* Once the column frequency sorting is complete, enable the brushing callbacks*/
+    trendImageViewer.column_frequencies.getPromise().then(function(){
+      trendImageViewer.leftVerticalPaddle
       .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
-      .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, xScale, protein_family_data)})
+          .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, xScale, protein_family_data,
+              trendImageViewer.column_frequencies)})
+    })
+
     ;
 
     // /* Construct the right vertical residue-selection paddle */

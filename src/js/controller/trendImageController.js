@@ -66,7 +66,7 @@ var TrendImageController = function(){
 
   }
 
-  function verticalPaddleControllerEnd(xScale, protein_family_data) {
+  function verticalPaddleControllerEnd(xScale, protein_family_data, column_frequencies) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -75,10 +75,13 @@ var TrendImageController = function(){
 
     let currentSelection = [];
 
-    protein_family_data.forEach(function(member) {
-      console.log(member.sequence[selection[0]]);
-    });
+    /* Get the fragments from the column*/
+    let fragments = column_frequencies.getMostFrequentFragment(selection[0]);
 
+    /* Get the highest occurring residue and it's frequency */
+    let highestFrequency = _.max(_.toPairs(fragments), function(o){ return o[1] });
+
+    console.log(highestFrequency);
   }
 
   return {

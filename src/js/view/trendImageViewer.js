@@ -62,6 +62,9 @@ var TrendImageViewer = function(){
         .style("width", trendImageViewer.width)
         .style("height", trendImageViewer.height)
       ;
+
+    /* Set the size of the initial vertical paddles */
+    trendImageViewer.verticalPaddleSize = 6;
   }
 
   /* Function to create the three brush paddles*/
@@ -94,7 +97,7 @@ var TrendImageViewer = function(){
       /* Update the frequency viewer's text */
       /* Get the currently selected protein and the selected residues */
       let currentProtein = _.find(protein_family_data, ["name", trendImageViewer.controller.getSelectedProtein() ]) || protein_family_data[0];
-      let selectedResidues = trendImageViewer.controller.getSelectedResidues() || [0, 5];
+      let selectedResidues = trendImageViewer.controller.getSelectedResidues() || [0, trendImageViewer.verticalPaddleSize];
 
       /* Get the fragments from the column*/
       let fragments = trendImageViewer.column_frequencies
@@ -142,7 +145,7 @@ var TrendImageViewer = function(){
     trendImageViewer.brushes.append("g")
       .attr("class", "brush vertical-left")
       .call(trendImageViewer.leftVerticalPaddle)
-      .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size * 5])
+      .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize])
     ;
 
     /* Add the right vertical paddle to the trend image*/

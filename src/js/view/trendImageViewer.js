@@ -43,12 +43,6 @@ var TrendImageViewer = function(){
     /* clear the trend image DOM */
     trendImageViewer.domObj.selectAll().remove();
 
-    /* append a new svg trend image */
-    trendImageViewer.domObj
-        .style("width", trendImageViewer.width)
-        .style("height", trendImageViewer.height)
-    ;
-
     /* Trend Image Tooltip */
     trendImageViewer.tooltip  = d3.tip().attr('class', 'd3-tip').html(
       function(d) {
@@ -81,21 +75,21 @@ var TrendImageViewer = function(){
       .extent( [ [0, 0], [trendImageViewer.width, y_axis_length * trendImageViewer.residue_glyph_size] ])
       // .on("start", trendImageViewer.controller.horizontalStart)
       .on("brush", function(){ trendImageViewer.controller.horizontalBrushed.call(this, trendImageViewer.residue_glyph_size, yScale) })
-      .on("end", function(){trendImageViewer.controller.horizontalEnd.call(this, yScale)})
+      .on("end", function(){trendImageViewer.controller.horizontalEnd.call(this, protein_family_data)})
     ;
 
     /* Construct the right vertical residue-selection paddle */
     trendImageViewer.leftVerticalPaddle = d3.brushX()
-      .extent( [ [0, 0], [x_midpoint, y_axis_length * trendImageViewer.residue_glyph_size] ]);
+      .extent( [ [0, 0], [x_midpoint, y_axis_length * trendImageViewer.residue_glyph_size] ])
+      .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
+    ;
 
     /* Once the column frequency sorting is complete, enable the brushing callbacks*/
     trendImageViewer.column_frequencies.getPromise().then(function(){
       trendImageViewer.leftVerticalPaddle
-      .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
-          .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, xScale, protein_family_data,
-              trendImageViewer.column_frequencies)})
+          .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, trendImageViewer.residue_glyph_size,
+            xScale, protein_family_data, trendImageViewer.column_frequencies, trendImageViewer.horizonalPaddle)})
     })
-
     ;
 
     // /* Construct the right vertical residue-selection paddle */
@@ -107,6 +101,7 @@ var TrendImageViewer = function(){
 
   /* Function to add the three brush paddles to the svg*/
   function addBrushes(y_axis_length) {
+
     /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
     trendImageViewer.brushes = trendImageViewer.svg.append("g")
       .attr("class", "brushes")
@@ -124,7 +119,7 @@ var TrendImageViewer = function(){
     trendImageViewer.brushes.append("g")
       .attr("class", "brush vertical-left")
       .call(trendImageViewer.leftVerticalPaddle)
-      .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size])
+      .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size * 5])
     ;
 
     /* Add the right vertical paddle to the trend image*/

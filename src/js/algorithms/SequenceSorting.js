@@ -17,6 +17,12 @@ var SequenceSorting = function(family){
     return self.frequencies[column_index];
   }
 
+  /* Get the residue frequency from range */
+  function get_most_frequent_fragment_from_range(column_index_start, column_index_end) {
+    /* return the fragment that occurs the most often in the column */
+    return self.frequencies.slice(column_index_start, column_index_end);
+  }
+
   /* Accessor for the fragment frequency promise */
   function get_frequency_promise () { return self.frequencies_computed; }
 
@@ -53,9 +59,10 @@ var SequenceSorting = function(family){
   }
 
   return {
-    calculateFrequency      : calculate_fragment_frequency,
-    getMostFrequentFragment : get_most_frequent_fragment,
-    getPromise              : get_frequency_promise
+    calculateFrequency               : calculate_fragment_frequency,
+    getMostFrequentFragment          : get_most_frequent_fragment,
+    getMostFrequentFragmentFromRange : get_most_frequent_fragment_from_range,
+    getPromise                       : get_frequency_promise
   }
 
 };

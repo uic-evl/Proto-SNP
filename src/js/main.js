@@ -49,6 +49,10 @@ var App = App || {};
     /* Setup the trend image viewer */
     App.trendImageViewer = new TrendImageViewer();
 
+    /* Setup the frequency histogram viewers*/
+    App.leftFrequencyViewer = new FrequencyViewer();
+    App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
+
     /* Bind the model to the view*/
     App.proteins = new Proteins();
     ko.applyBindings(App.proteins);

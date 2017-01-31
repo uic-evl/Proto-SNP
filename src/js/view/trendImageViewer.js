@@ -245,7 +245,7 @@ var TrendImageViewer = function(){
               .attr('y', function(d) { return yScale(d.protein) })
               .attr('x', function(d) { return xScale(d.x) })
               .attr('fill', function(d) { return residueModel.getColor(d.residue); })
-              .attr('stroke', "none")
+              .attr('stroke',  function(d) { return residueModel.getColor(d.residue); })
             // .on('mouseover', trendImageViewer.tooltip.show)
             // .on('mouseout', trendImageViewer.tooltip.hide)
           ;

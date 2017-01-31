@@ -12,6 +12,7 @@ var FrequencyViewer = function(){
   function initialize(div_id) {
 
     /* get the DOM element by the id parameter */
+    frequencyViewer.id     = div_id;
     frequencyViewer.domObj = d3.select(div_id);
 
     /* get/save the width and height of the given DOM element */
@@ -140,6 +141,16 @@ var FrequencyViewer = function(){
 
     /* Add the residue text to the bars */
     update_current_selection_text(selected_residues);
+
+    /* Add a line under the frequencies to show which paddle it belongs to*/
+    frequencyViewer.svg.append("line")
+      .attr("x1", 0)
+      .attr("x2", frequencyViewer.width)
+      .attr("y1", frequencyViewer.height)
+      .attr("y2", frequencyViewer.height)
+      .attr("stroke-width", 5)
+      .style("stroke", function() { return (frequencyViewer.id === "#leftResidueSummaryViewer") ?  "#a6d854" : "#e78ac3"});
+
   }
 
   return {

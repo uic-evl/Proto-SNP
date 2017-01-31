@@ -67,6 +67,60 @@ var TrendImageViewer = function(){
     trendImageViewer.verticalPaddleSize = 6;
   }
 
+  /* Initialized the frequency viewers */
+  function initialize_frequency_viewers(protein_family_data) {
+    /* Get the currently selected protein and the selected residues */
+    let currentProtein = protein_family_data[0];
+
+    /* Get the length of the sequence */
+    let sequence_length = currentProtein.sequence.length;
+
+    /* Get the selected residues from the left paddle */
+    let leftSelectedResidues = [0, trendImageViewer.verticalPaddleSize];
+
+    /* Get the selected residues from the left paddle */
+    let rightSelectedResidues = [sequence_length - trendImageViewer.verticalPaddleSize, sequence_length];
+
+    /* Get the fragments from the left column*/
+    let leftFragments = trendImageViewer.column_frequencies
+      .getMostFrequentFragmentFromRange(leftSelectedResidues[0], leftSelectedResidues[1]);
+
+    /* Get the fragments from the right column*/
+    let rightFragments = trendImageViewer.column_frequencies
+      .getMostFrequentFragmentFromRange(rightSelectedResidues[0], rightSelectedResidues[1]);
+
+    /* Iterate over each of the left returned fragments */
+    let leftSelectionFragments = [];
+    leftFragments.forEach(function(fragment) {
+      /* Get the highest occurring residue and it's frequency */
+      leftSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+    });
+
+    /* Iterate over each of the right returned fragments */
+    let rightSelectionFragments = [];
+    rightFragments.forEach(function(fragment) {
+      /* Get the highest occurring residue and it's frequency */
+      rightSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+    });
+
+
+    /* Get the residues that intersect with the left vertical paddle*/
+    let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftSelectedResidues[0], leftSelectedResidues[1]);
+
+    /* Get the residues that intersect with the vertical paddle*/
+    let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectedResidues[0], rightSelectedResidues[1]);
+
+
+    /* Initialize the frequency viewers*/
+    App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
+    App.rightFrequencyViewer.init("#rightResidueSummaryViewer");
+
+    /* Render the frequency view*/
+    App.leftFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, leftHorizontalSelectedResidues );
+    App.rightFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, rightHorizontalSelectedResidues );
+  }
+
+
   /* Function to create the three brush paddles*/
   function createBrushes(x_axis_length, y_axis_length, xScale, yScale, protein_family_data) {
 
@@ -102,53 +156,8 @@ var TrendImageViewer = function(){
           .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, trendImageViewer.residue_glyph_size,
                protein_family_data, trendImageViewer.column_frequencies, App.rightFrequencyViewer)});
 
-      /* Update the frequency viewer's text for the first selection */
-
-      /* Get the currently selected protein and the selected residues */
-      let currentProtein = protein_family_data[0];
-
-      /* Get the selected residues from the left paddle */
-      let leftSelectedResidues = [0, trendImageViewer.verticalPaddleSize];
-
-      /* Get the selected residues from the left paddle */
-      let rightSelectedResidues = [trendImageViewer.width - trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize, trendImageViewer.width];
-
-      /* Get the fragments from the left column*/
-      let leftFragments = trendImageViewer.column_frequencies
-        .getMostFrequentFragmentFromRange(leftSelectedResidues[0], leftSelectedResidues[1]);
-
-      /* Get the fragments from the right column*/
-      let rightFragments = trendImageViewer.column_frequencies
-        .getMostFrequentFragmentFromRange(rightSelectedResidues[0], rightSelectedResidues[1]);
-
-      /* Iterate over each of the left returned fragments */
-      let leftSelectionFragments = [];
-      leftFragments.forEach(function(fragment) {
-        /* Get the highest occurring residue and it's frequency */
-        leftSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
-      });
-
-      /* Iterate over each of the right returned fragments */
-      let rightSelectionFragments = [];
-      rightFragments.forEach(function(fragment) {
-        /* Get the highest occurring residue and it's frequency */
-        rightSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
-      });
-
-      /* Get the residues that intersect with the left vertical paddle*/
-      let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftSelectedResidues[0], leftSelectedResidues[1]);
-
-      /* Get the residues that intersect with the vertical paddle*/
-      let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectionFragments[0], rightSelectionFragments[1]);
-
-      /* Initialize the frequency viewers*/
-      App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
-      App.rightFrequencyViewer.init("#rightResidueSummaryViewer");
-
-     /* Render the frequency view*/
-      App.leftFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, leftHorizontalSelectedResidues );
-      App.rightFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, rightHorizontalSelectedResidues );
-
+      /* Initialize the protein frequency charts with the selection data*/
+      initialize_frequency_viewers(protein_family_data);
     })
     ;
 

@@ -18,7 +18,7 @@
     fill-opacity: 0.4;
 }
 
-.active-selection {
+.active_protein_selection, .active_res_selection {
     fill-opacity: 1.0;
 }
 

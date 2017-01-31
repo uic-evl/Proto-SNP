@@ -12,11 +12,7 @@ var TrendImageController = function(){
   function horizontal_paddle_controller(residue_glyph_size, yScale) {
 
     /* We only want to capture user events. */
-    if (!d3.event.sourceEvent) {
-      /* The first event that fires is the initialization. */
-      self.previousHorizontalSelection = d3.event.selection.map(yScale.invert)[0];
-      return;
-    }
+    if (!d3.event.sourceEvent) return;
     if (!d3.event.selection) return; // Ignore empty selections.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't associated with a mouse move
 
@@ -30,28 +26,23 @@ var TrendImageController = function(){
     /* Get the current protein */
     let currentHorizontalSelection = d3.event.selection.map(yScale.invert)[0];
 
-    /* Reset the opacity of the previous row */
-    if(self.previousHorizontalSelection){
-      d3.selectAll('.p' + self.previousHorizontalSelection)
-          .attr("class", "p" + self.previousHorizontalSelection);
-    }
-
-    /* Set the previous horizontal to the current protein */
-    self.previousHorizontalSelection = currentHorizontalSelection;
+    /* Reset the opacity of unselected rows */
+    d3.selectAll('rect.active_protein_selection')
+      .classed("active_protein_selection", false);
 
     /* Set the opacity of the highlighted row */
     d3.selectAll('.p' + currentHorizontalSelection)
-        .attr("class", "p" + currentHorizontalSelection + " active-selection");
+      .classed("active_protein_selection", true);
   }
 
-  function horizontal_paddle_controllerEnd(protein_family_data, xScale) {
+  function horizontal_paddle_controllerEnd(protein_family_data, xScale, yScale) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
 
     /* Update the frequency viewer's text */
     /* Get the currently selected protein*/
-    let currentProtein = _.find(protein_family_data, ["name", self.previousHorizontalSelection]);
+    let currentProtein = _.find(protein_family_data, ["name", d3.event.selection.map(yScale.invert)[0]]);
 
     /* Get the left vertical selection */
     let leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(xScale.invert);
@@ -72,21 +63,39 @@ var TrendImageController = function(){
     App.rightFrequencyViewer.update(rightHorizontalSelectedResidues);
   }
 
-  function vertical_paddle_controller(residue_glyph_size) {
+  function vertical_paddle_controller(residue_glyph_size, xScale) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't a brushing
     if (!d3.event.selection) return; // Ignore empty selections.
 
     // Round the two event extents to the nearest row
-    d3.event.selection[0] = Math.ceil(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size;
-    d3.event.selection[1] = Math.ceil(d3.event.selection[1]/residue_glyph_size)*residue_glyph_size;
+    d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size);
+    d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/residue_glyph_size)*residue_glyph_size);
 
     // Snap the brush onto the closest protein
     d3.select(this).call(d3.event.target.move, d3.event.selection);
+
+    /* Get the current protein */
+    let currentVerticalSelection = d3.event.selection.map(xScale.invert);
+
+    /* Get the current paddle */
+    let currentPaddle = d3.select(this).attr("class").split(" ")[1];
+
+    /* Remove the previous selection */
+    d3.selectAll('rect.'+ currentPaddle + '.active_res_selection')
+      .classed(currentPaddle, false)
+      .classed("active_res_selection", false);
+
+    /* Iterate over the selection and add the active class to the selected fragments */
+    for(let i = currentVerticalSelection[0]; i < currentVerticalSelection[1]; i++) {
+      d3.selectAll("rect[class$='r" + parseInt(i) + "']")
+        .classed(currentPaddle, true)
+        .classed("active_res_selection", true);
+    }
   }
 
-  function vertical_paddle_controllerEnd(residue_glyph_size, protein_family_data, column_frequencies, frequencyViewer) {
+  function vertical_paddle_controllerEnd(residue_glyph_size, protein_family_data, column_frequencies, frequencyViewer, yScale) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -105,7 +114,7 @@ var TrendImageController = function(){
     });
 
     /* Get the currently selected protein*/
-    let currentProtein = _.find(protein_family_data, ["name", self.previousHorizontalSelection]);
+    let currentProtein = _.find(protein_family_data, ["name", d3.event.selection.map(yScale.invert)[0]]);
 
     /* Get the residues that intersect with the vertical paddle*/
     let horizontalSelectedResidues = currentProtein.sequence.slice(currentVerticalSelection[0], currentVerticalSelection[1]);

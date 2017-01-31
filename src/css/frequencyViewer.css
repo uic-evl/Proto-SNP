@@ -1,7 +1,7 @@
-/*#leftResidueSummaryViewer svg {*/
-    /*background: #ccebc5;*/
-/*}*/
+g.brush.vertical-left > rect.selection {
+    stroke: #a6d854;
+}
 
-/*#rightResidueSummaryViewer svg {*/
-    /*background: #decbe4;*/
-/*}*/
+g.brush.vertical-right > rect.selection {
+    stroke: #e78ac3;
+}

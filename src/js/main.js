@@ -63,9 +63,6 @@ var App = App || {};
     App.leftFrequencyViewer = new FrequencyViewer();
     App.rightFrequencyViewer = new FrequencyViewer();
 
-    App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
-    App.rightFrequencyViewer.init("#rightResidueSummaryViewer");
-
     /* Bind the model to the view*/
     App.proteins = new Proteins();
     ko.applyBindings(App.proteins);

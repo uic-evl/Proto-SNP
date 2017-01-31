@@ -141,6 +141,10 @@ var TrendImageViewer = function(){
       /* Get the residues that intersect with the vertical paddle*/
       let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectionFragments[0], rightSelectionFragments[1]);
 
+      /* Initialize the frequency viewers*/
+      App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
+      App.rightFrequencyViewer.init("#rightResidueSummaryViewer");
+
      /* Render the frequency view*/
       App.leftFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, leftHorizontalSelectedResidues );
       App.rightFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, rightHorizontalSelectedResidues );

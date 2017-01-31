@@ -82,7 +82,8 @@ var FrequencyViewer = function(){
 
     // UPDATE: add new elements if needed
     bar
-      .enter().append('g').append('rect')
+      .enter().append('g')
+      .append('rect')
     /* Merge the old elements (if they exist) with the new data */
       .merge(bar)
       .attr("class", "freq_bars")
@@ -90,8 +91,7 @@ var FrequencyViewer = function(){
       .attr("height", frequencyViewer.height * 0.6)
       .attr('y', function(d) { return frequencyViewer.height * 0.2 } )
       .attr('x', function(d, i) { return frequencyViewer.xScale(i) })
-      .style("fill", "white")
-    ;
+      .style("fill", "white");
 
     /* Remove the unneeded bars */
     bar.exit().remove();

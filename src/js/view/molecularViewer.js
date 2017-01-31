@@ -7,49 +7,49 @@ var App = App || {};
 var MolecularViewer = function(){
 
   /* initialize the molecular viewer global variable */
-  let viewer = {};
+  let molecularViewer = {};
 
   function initialize(id, options) {
 
     /* get the DOM element by the id parameter */
-    viewer.domObj = d3.select(id).node();
+    molecularViewer.domObj = d3.select(id).node();
 
     /* check if viewing options were passed in */
     options = options || {};
 
     /* get/save the width and height of the given DOM element */
-    viewer.width = App.viewerWidth;
-    viewer.height = App.viewerWidth * App.aspectRatio;
+    molecularViewer.width = App.molecularViewerWidth;
+    molecularViewer.height = App.molecularViewerHeight;
 
     /* add the width and height to the options */
-    options.width = viewer.width;
-    options.height = viewer.height;
+    options.width = molecularViewer.width;
+    options.height = molecularViewer.height;
 
-    /* insert the viewer under the DOM element */
-    viewer.pvViewer = pv.Viewer(d3.select(id).node(), options);
+    /* insert the molecularViewer under the DOM element */
+    molecularViewer.pvViewer = pv.Viewer(d3.select(id).node(), options);
   }
 
   function render(structure, proteinName) {
 
     /* Display the protein as cartoon, coloring the secondary structure
        elements in a rainbow gradient */
-    viewer.pvViewer.cartoon(proteinName, structure, { color : color.ssSuccession() });
+    molecularViewer.pvViewer.cartoon(proteinName, structure, { color : color.ssSuccession() });
 
     /* center the structure in the view */
-    // center in viewer
-    viewer.pvViewer.centerOn(structure);
+    // center in molecularViewer
+    molecularViewer.pvViewer.centerOn(structure);
     // auto zoom to fit
-    viewer.pvViewer.autoZoom();
+    molecularViewer.pvViewer.autoZoom();
   }
 
-/* Accessor to get the underlying structure in the viewer */
-function getStructure() { return viewer.structure; }
+/* Accessor to get the underlying structure in the molecularViewer */
+function get_structure() { return molecularViewer.structure; }
 
-/* Accessor to get the viewer's height and width */
-function getDimensions() { return {width: viewer.width, height: viewer.height }}
+/* Accessor to get the molecularViewer's height and width */
+function get_dimensions() { return {width: molecularViewer.width, height: molecularViewer.height }}
 
 /* Accessor to get the underlying sequence of the Protein*/
-function getSequence(structure, chain) {
+function get_sequence(structure, chain) {
   // Array to store the sequence
   let seq = [];
 
@@ -66,9 +66,9 @@ function getSequence(structure, chain) {
 return {
   init          : initialize,
   render        : render,
-  getStructure  : getStructure,
-  getSequence   : getSequence,
-  getDimensions : getDimensions
+  getStructure  : get_structure,
+  getSequence   : get_sequence,
+  getDimensions : get_dimensions
 };
 
 };

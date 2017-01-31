@@ -47,6 +47,7 @@ var FrequencyViewer = function(){
       .attr("dy", ".35em")
       .text(function(d){ return d[0] })
       .style("text-anchor", "middle")
+      .style("font-weight", "bold")
     ;
 
     /* Remove the unneeded selection labels */
@@ -131,6 +132,7 @@ var FrequencyViewer = function(){
       .attr("dy", ".35em")
       .text(function(d){ return d[0] })
       .style("text-anchor", "middle")
+      .style("font-weight", "bold")
     ;
 
     /* Remove the unneeded frequency labels */
@@ -151,6 +153,7 @@ var FrequencyViewer = function(){
       .attr("dy", ".35em")
       .text(function(d){ return d[0] })
       .style("text-anchor", "middle")
+      .style("font-weight", "bold")
     ;
 
     /* Remove the unneeded selection labels */

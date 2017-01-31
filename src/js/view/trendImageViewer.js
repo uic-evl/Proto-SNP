@@ -70,12 +70,9 @@ var TrendImageViewer = function(){
   /* Function to create the three brush paddles*/
   function createBrushes(x_axis_length, y_axis_length, xScale, yScale, protein_family_data) {
 
-    /* Get the halfway point of the x-range*/
-    let x_midpoint = xScale(x_axis_length/2);
-
     /* Construct the horizontal Protein-selection paddle */
     trendImageViewer.horizonalPaddle = d3.brushY()
-      .extent( [ [0, 0], [trendImageViewer.width, y_axis_length * trendImageViewer.residue_glyph_size] ])
+      .extent( [ [0, 0], [x_axis_length, y_axis_length * trendImageViewer.residue_glyph_size] ])
       // .on("start", trendImageViewer.controller.horizontalStart)
       .on("brush", function(){ trendImageViewer.controller.horizontalBrushed.call(this, trendImageViewer.residue_glyph_size, yScale) })
       .on("end", function(){trendImageViewer.controller.horizontalEnd.call(this, protein_family_data)})
@@ -83,46 +80,74 @@ var TrendImageViewer = function(){
 
     /* Construct the right vertical residue-selection paddle */
     trendImageViewer.leftVerticalPaddle = d3.brushX()
-      .extent( [ [0, 0], [x_midpoint, y_axis_length * trendImageViewer.residue_glyph_size] ])
+      .extent( [ [0, 0], [x_axis_length, y_axis_length * trendImageViewer.residue_glyph_size] ])
       .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
+    ;
+
+    /* Construct the right vertical residue-selection paddle */
+    trendImageViewer.rightVerticalPaddle = d3.brushX()
+        .extent( [ [0, 0], [trendImageViewer.width, y_axis_length * trendImageViewer.residue_glyph_size] ])
+        .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
     ;
 
     /* Once the column frequency sorting is complete, enable the brushing callbacks*/
     trendImageViewer.column_frequencies.getPromise().then(function(){
-      /* Enable the paddle brushing callback */
+
+      /* Enable the paddle brushing callbacks */
       trendImageViewer.leftVerticalPaddle
           .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, trendImageViewer.residue_glyph_size,
-            xScale, protein_family_data, trendImageViewer.column_frequencies, trendImageViewer.horizonalPaddle)});
+             protein_family_data, trendImageViewer.column_frequencies, App.leftFrequencyViewer)});
 
-      /* Update the frequency viewer's text */
+      trendImageViewer.rightVerticalPaddle
+          .on("end", function(){trendImageViewer.controller.verticalEnd.call(this, trendImageViewer.residue_glyph_size,
+               protein_family_data, trendImageViewer.column_frequencies, App.rightFrequencyViewer)});
+
+      /* Update the frequency viewer's text for the first selection */
+
       /* Get the currently selected protein and the selected residues */
-      let currentProtein = _.find(protein_family_data, ["name", trendImageViewer.controller.getSelectedProtein() ]) || protein_family_data[0];
-      let selectedResidues = trendImageViewer.controller.getSelectedResidues() || [0, trendImageViewer.verticalPaddleSize];
+      let currentProtein = protein_family_data[0];
 
-      /* Get the fragments from the column*/
-      let fragments = trendImageViewer.column_frequencies
-        .getMostFrequentFragmentFromRange(selectedResidues[0], selectedResidues[1]);
+      /* Get the selected residues from the left paddle */
+      let leftSelectedResidues = [0, trendImageViewer.verticalPaddleSize];
 
-      /* Iterate over each of the returned fragments */
-      let currentSelectionFragments = [];
-      fragments.forEach(function(fragment) {
+      /* Get the selected residues from the left paddle */
+      let rightSelectedResidues = [trendImageViewer.width - trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize, trendImageViewer.width];
+
+      /* Get the fragments from the left column*/
+      let leftFragments = trendImageViewer.column_frequencies
+        .getMostFrequentFragmentFromRange(leftSelectedResidues[0], leftSelectedResidues[1]);
+
+      /* Get the fragments from the right column*/
+      let rightFragments = trendImageViewer.column_frequencies
+        .getMostFrequentFragmentFromRange(rightSelectedResidues[0], rightSelectedResidues[1]);
+
+      /* Iterate over each of the left returned fragments */
+      let leftSelectionFragments = [];
+      leftFragments.forEach(function(fragment) {
         /* Get the highest occurring residue and it's frequency */
-        currentSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+        leftSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
       });
 
+      /* Iterate over each of the right returned fragments */
+      let rightSelectionFragments = [];
+      rightFragments.forEach(function(fragment) {
+        /* Get the highest occurring residue and it's frequency */
+        rightSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+      });
+
+      /* Get the residues that intersect with the left vertical paddle*/
+      let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftSelectedResidues[0], leftSelectedResidues[1]);
+
       /* Get the residues that intersect with the vertical paddle*/
-      let horizontalSelectedResidues = currentProtein.sequence.slice(selectedResidues[0], selectedResidues[1]);
+      let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectionFragments[0], rightSelectionFragments[1]);
 
      /* Render the frequency view*/
-      App.leftFrequencyViewer.render(currentSelectionFragments, protein_family_data.length, horizontalSelectedResidues )
+      App.leftFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, leftHorizontalSelectedResidues );
+      App.rightFrequencyViewer.render(leftSelectionFragments, protein_family_data.length, rightHorizontalSelectedResidues );
+
     })
     ;
 
-    // /* Construct the right vertical residue-selection paddle */
-    // trendImageViewer.rightVerticalPaddle = d3.brushX()
-    //   .extent( [ [x_midpoint, 0], [trendImageViewer.width, y_axis_length * trendImageViewer.residue_glyph_size] ])
-    //   .on("brush", function(){ trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.residue_glyph_size) })
-    // ;
   }
 
   /* Function to add the three brush paddles to the svg*/
@@ -138,25 +163,26 @@ var TrendImageViewer = function(){
     trendImageViewer.brushes.append("g")
       .attr("class", "brush horizontal")
       .call(trendImageViewer.horizonalPaddle) // add the paddle
-      .call(trendImageViewer.horizonalPaddle.move, [0, trendImageViewer.residue_glyph_size]) // initialize the position
+      // initialize the position
+      .call(trendImageViewer.horizonalPaddle.move, [0, trendImageViewer.residue_glyph_size])
     ;
 
     /* Add the left vertical paddle to the trend image*/
     trendImageViewer.brushes.append("g")
       .attr("class", "brush vertical-left")
       .call(trendImageViewer.leftVerticalPaddle)
+      // initialize the position
       .call(trendImageViewer.leftVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize])
     ;
 
     /* Add the right vertical paddle to the trend image*/
-    // trendImageViewer.brushes.append("g")
-    //     .attr("class", "brush vertical-right")
-    //     .call(trendImageViewer.rightVerticalPaddle)
-    //     .call(trendImageViewer.rightVerticalPaddle.move, [0, trendImageViewer.residue_glyph_size])
-    //     // HACK: There is an issue with the rush extent that doesn't start at 0
-    //     .select("g.brush>.selection")
-    //     .attr("x", Math.ceil((trendImageViewer.width/2)/trendImageViewer.residue_glyph_size)*trendImageViewer.residue_glyph_size)
-    // ;
+    trendImageViewer.brushes.append("g")
+        .attr("class", "brush vertical-right")
+        .call(trendImageViewer.rightVerticalPaddle)
+        // initialize the position
+        .call(trendImageViewer.rightVerticalPaddle.move, [trendImageViewer.width - trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize,
+          trendImageViewer.width])
+    ;
   }
 
   function render(protein_family_data) {
@@ -183,7 +209,7 @@ var TrendImageViewer = function(){
         ;
 
     /* Create the three brushes */
-    createBrushes(x_axis_length, y_elements.length, xScale, yScale, protein_family_data);
+    createBrushes(trendImageViewer.width, y_elements.length, xScale, yScale, protein_family_data);
 
     /* Construct a color map using the residue codes*/
     let residueModel = new ResidueModel();

@@ -72,16 +72,15 @@ var TrendImageController = function(){
 
     // Snap the brush onto the closest protein
     d3.select(this).call(d3.event.target.move, d3.event.selection);
-
   }
 
-  function vertical_paddle_controllerEnd(residue_glyph_size, xScale, protein_family_data, column_frequencies) {
+  function vertical_paddle_controllerEnd(residue_glyph_size, protein_family_data, column_frequencies, frequencyViewer) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
 
     /* Save the range of the current vertical selection */
-    self.currentVerticalSelection = d3.event.selection.map(function(o) { return o / residue_glyph_size});
+    self.currentVerticalSelection = d3.brushSelection(this).map(function(o) { return o / residue_glyph_size});
 
     /* Get the fragments from the column*/
     let fragments = column_frequencies.getMostFrequentFragmentFromRange(self.currentVerticalSelection[0], self.currentVerticalSelection[1]);
@@ -100,8 +99,7 @@ var TrendImageController = function(){
     let horizontalSelectedResidues = currentProtein.sequence.slice(self.currentVerticalSelection[0], self.currentVerticalSelection[1]);
 
     /* Render the frequency bars */
-    App.leftFrequencyViewer.render(currentSelectionFragments, protein_family_data.length, horizontalSelectedResidues);
-
+    frequencyViewer.render(currentSelectionFragments, protein_family_data.length, horizontalSelectedResidues);
   }
 
   function get_selected_protein() { return self.previousHorizontalSelection }

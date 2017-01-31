@@ -277,7 +277,7 @@ var TrendImageViewer = function(){
           }
 
           /* Iterate over the right selection and add the active class to the selected fragments */
-          for(let i = x_axis_length ; i < x_axis_length; i++) {
+          for(let i = x_axis_length - trendImageViewer.verticalPaddleSize ; i < x_axis_length; i++) {
             d3.selectAll("rect[class$='r" + parseInt(i) + "']")
               .classed("vertical-right", true)
               .classed("active_res_selection", true);

@@ -165,7 +165,7 @@ var TrendImageViewer = function(){
   }
 
   /* Function to add the three brush paddles to the svg*/
-  function add_brushes(x_axis_length, y_axis_length) {
+  function add_brushes(y_axis_length) {
 
     /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
     trendImageViewer.brushes = trendImageViewer.svg.append("g")

@@ -75,7 +75,7 @@ var TrendImageViewer = function(){
       .extent( [ [0, 0], [x_axis_length, y_axis_length * trendImageViewer.residue_glyph_size] ])
       // .on("start", trendImageViewer.controller.horizontalStart)
       .on("brush", function(){ trendImageViewer.controller.horizontalBrushed.call(this, trendImageViewer.residue_glyph_size, yScale) })
-      .on("end", function(){trendImageViewer.controller.horizontalEnd.call(this, protein_family_data)})
+      .on("end", function(){trendImageViewer.controller.horizontalEnd.call(this, protein_family_data, xScale)})
     ;
 
     /* Construct the right vertical residue-selection paddle */

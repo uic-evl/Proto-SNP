@@ -9,7 +9,7 @@ var TrendImageController = function(){
   /* Class private variable */
   let self = {};
 
-  function horizontal_paddle_controller(residue_glyph_size,  yScale) {
+  function horizontal_paddle_controller(residue_glyph_size, yScale) {
 
     /* We only want to capture user events. */
     if (!d3.event.sourceEvent) {
@@ -44,7 +44,7 @@ var TrendImageController = function(){
         .attr("class", "p" + currentHorizontalSelection + " active-selection");
   }
 
-  function horizontal_paddle_controllerEnd(protein_family_data) {
+  function horizontal_paddle_controllerEnd(protein_family_data, xScale) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -53,11 +53,23 @@ var TrendImageController = function(){
     /* Get the currently selected protein*/
     let currentProtein = _.find(protein_family_data, ["name", self.previousHorizontalSelection]);
 
-    /* Get the residues that intersect with the vertical paddle*/
-    let horizontalSelectedResidues = currentProtein.sequence.slice(self.currentVerticalSelection[0], self.currentVerticalSelection[1]);
+    /* Get the left vertical selection */
+    let leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(xScale.invert);
 
-    /* Update the frequency viewer text  */
-    App.leftFrequencyViewer.update(horizontalSelectedResidues);
+    /* Get the right vertical selection */
+    let rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(xScale.invert);
+
+    /* Get the residues that intersect with the left vertical paddle*/
+    let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftVerticalSelection[0], leftVerticalSelection[1]);
+
+    /* Get the residues that intersect with the right vertical paddle*/
+    let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightVerticalSelection[0], rightVerticalSelection[1]);
+
+    /* Update the left frequency viewer text  */
+    App.leftFrequencyViewer.update(leftHorizontalSelectedResidues);
+
+    /* Update the right frequency viewer text  */
+    App.rightFrequencyViewer.update(rightHorizontalSelectedResidues);
   }
 
   function vertical_paddle_controller(residue_glyph_size) {
@@ -80,10 +92,10 @@ var TrendImageController = function(){
     if (!d3.event.selection) return; // Ignore empty selections.
 
     /* Save the range of the current vertical selection */
-    self.currentVerticalSelection = d3.brushSelection(this).map(function(o) { return o / residue_glyph_size});
+    let currentVerticalSelection = d3.brushSelection(this).map(function(o) { return o / residue_glyph_size});
 
     /* Get the fragments from the column*/
-    let fragments = column_frequencies.getMostFrequentFragmentFromRange(self.currentVerticalSelection[0], self.currentVerticalSelection[1]);
+    let fragments = column_frequencies.getMostFrequentFragmentFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Iterate over each of the returned fragments */
     let currentSelectionFragments = [];
@@ -96,23 +108,17 @@ var TrendImageController = function(){
     let currentProtein = _.find(protein_family_data, ["name", self.previousHorizontalSelection]);
 
     /* Get the residues that intersect with the vertical paddle*/
-    let horizontalSelectedResidues = currentProtein.sequence.slice(self.currentVerticalSelection[0], self.currentVerticalSelection[1]);
+    let horizontalSelectedResidues = currentProtein.sequence.slice(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Render the frequency bars */
     frequencyViewer.render(currentSelectionFragments, protein_family_data.length, horizontalSelectedResidues);
   }
 
-  function get_selected_protein() { return self.previousHorizontalSelection }
-
-  function get_selected_residues() { return self.currentVerticalSelection; }
-
   return {
     horizontalBrushed   : horizontal_paddle_controller,
     verticalBrushed     : vertical_paddle_controller,
     verticalEnd         : vertical_paddle_controllerEnd,
-    horizontalEnd       : horizontal_paddle_controllerEnd,
-    getSelectedProtein  : get_selected_protein,
-    getSelectedResidues : get_selected_residues
+    horizontalEnd       : horizontal_paddle_controllerEnd
   }
 
 };

@@ -139,25 +139,7 @@ var FrequencyViewer = function(){
     frequencyText.exit().remove();
 
     /* Add the residue text to the bars */
-    let selectionText = frequencyViewer.svg.selectAll(".selectionText")
-      .data(selected_residues);
-
-    // UPDATE: add new elements if needed
-    selectionText
-      .enter().append("text")
-      .attr("class", "selectionText")
-      /* Merge the old elements (if they exist) with the new data */
-      .merge(selectionText)
-      .attr('x', function(d, i) { return frequencyViewer.xScale(i) + frequencyViewer.bar_glyph_width / 2 })
-      .attr("y", frequencyViewer.height * 0.1 )
-      .attr("dy", ".35em")
-      .text(function(d){ return d[0] })
-      .style("text-anchor", "middle")
-      .style("font-weight", "bold")
-    ;
-
-    /* Remove the unneeded selection labels */
-    selectionText.exit().remove();
+    update_current_selection_text(selected_residues);
   }
 
   return {

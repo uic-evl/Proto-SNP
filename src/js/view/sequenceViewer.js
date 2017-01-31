@@ -15,7 +15,7 @@ var SequenceViewer = function(){
     // The width is twice the client width because of bootstrap
     list.domWidth = d3.select(id).node().clientWidth * 2;
     // we want the height to be that of the 3D Viewers
-    list.domHeight = App.viewerHeight;
+    list.domHeight = App.molecularViewerHeight;
 
     // clear the dom of the previous list
     d3.select(id).selectAll().remove();

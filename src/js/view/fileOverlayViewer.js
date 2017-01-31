@@ -10,7 +10,7 @@ var App = App || {};
 
     $(window).resize(function () {
 
-      if (App.viewerHeight < 560 && App.viewerWidth > 600) {
+      if (App.molecularViewerHeight < 560 && App.molecularViewerWidth > 600) {
         $('#overlay-left').addClass('short');
         $('#overlay-right').addClass('short');
       } else {

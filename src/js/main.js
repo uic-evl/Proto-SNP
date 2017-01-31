@@ -22,22 +22,32 @@ var App = App || {};
     /* Set the size of the family viewer */
     let trendDom = document.getElementById('trendImageViewer').parentNode;
 
-    // Aspect Ratio
-    App.aspectRatio = window.innerWidth > window.innerHeight ?
-      window.innerHeight/window.innerWidth : window.innerWidth / window.innerHeight;
+    /* The size of the EVL header */
+    let headerHeight = 104;
 
-    // attach the width to the global app variable
-    App.viewerWidth  = leftDom.clientWidth;
-    App.viewerHeight = App.viewerWidth * App.aspectRatio;
+    /* Aspect Ratio */
+    App.aspectRatio = window.innerWidth > ( window.innerHeight - headerHeight ) ?
+        (window.innerHeight - headerHeight)/window.innerWidth :
+        window.innerWidth / (window.innerHeight- headerHeight) ;
 
-      // attach the width/height of the trend image
+    /* Calculate the height and width of the molecular viewers */
+    App.molecularViewerWidth  = leftDom.clientWidth;
+    App.molecularViewerHeight = App.molecularViewerWidth * App.aspectRatio;
+
+    /* Calculate the height and width of the trend image */
     App.trendWidth   = trendDom.clientWidth;
-    App.trendHeight  =  App.viewerHeight;
+    App.trendHeight  = (window.innerHeight - App.molecularViewerHeight) * App.aspectRatio;
 
-    // set the div size
-    leftDom.style.height  = App.viewerHeight;
-    rightDom.style.height = App.viewerHeight;
-    trendDom.style.height = App.viewerHeight;
+    /* Calculate the height and width of the frequency viewer */
+    App.frequencyWidth  = App.trendWidth / 2.0;
+    App.frequencyHeight = (window.innerHeight - App.molecularViewerHeight - App.trendHeight) * App.aspectRatio;
+
+    /* Set the div height for the molecular viewers */
+    leftDom.style.height  = App.molecularViewerHeight;
+    rightDom.style.height = App.molecularViewerHeight;
+
+    /* Set the div height for the trend image */
+    trendDom.style.height = App.trendHeight;
 
     /* create the left and right viewers */
     App.leftViewer  = new MolecularViewer();

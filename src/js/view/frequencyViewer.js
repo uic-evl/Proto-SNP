@@ -15,8 +15,8 @@ var FrequencyViewer = function(){
     frequencyViewer.domObj = d3.select(div_id);
 
     /* get/save the width and height of the given DOM element */
-    frequencyViewer.width = frequencyViewer.domObj.node().clientWidth;
-    frequencyViewer.height = frequencyViewer.width * 0.2;
+    frequencyViewer.width = App.frequencyWidth;
+    frequencyViewer.height = App.frequencyHeight ;
 
     /* clear the frequency viewer DOM */
     frequencyViewer.domObj.selectAll().remove();

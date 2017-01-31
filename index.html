@@ -200,29 +200,37 @@
         </div>
     </div> <!-- End Molecular Viewers -->
 
-    <!-- Trend Image View-->
-    <div class="row TrendImageView">
+    <div class="row">
         <div class="col-md-11">
-            <div id="trendImageViewer" class="viewers">
-                <!-- Select Protein Button -->
-                <div id="trendSplash">
+            <!-- Trend Image View-->
+            <div class="row TrendImageView">
+                <div class="col-md-12">
+                    <div id="trendImageViewer" class="viewers">
+                        <!-- Select Protein Button -->
+                        <div id="trendSplash">
                     <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-family">
                         <i class="fa fa-plus-square-o"></i><span> Upload Family </span>
                         <input id="fileupload-family" type="file" name="files[]" accept="msf">
                     </span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div><!-- End Trend Image View-->
+            <!-- End Trend Image View-->
 
-    <div class="row residueSummaryView">
-        <div class="col-md-5">
-            <div id="leftResidueSummaryViewer">
+            <!-- Residue Frequency Viewer-->
+            <div class="row residueSummaryView">
+                <div class="col-md-5">
+                    <div id="leftResidueSummaryViewer">
+                    </div>
+                </div>
+                <div class="col-md-11">
+                    <div id="rightResidueSummaryViewer" >
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-5">
-            <div id="rightResidueSummaryViewer" >
-            </div>
+            <!-- End Residue Frequency Viewer -->
+
         </div>
     </div>
 

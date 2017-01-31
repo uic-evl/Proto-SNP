@@ -9,14 +9,15 @@ var TrendImageViewer = function(){
   /* initialize the molecular trendImageViewer global variable */
   let trendImageViewer = {};
 
-  function constructTrendImage(family) {
+  /* Parse the data into the format to be used in the trend image*/
+  function construct_trend_image(protein_family_data) {
 
     /* New array for the parse residues */
     let data = [];
 
     /* Return a promise that will resolve with the new data array*/
     return new Promise(function(resolve, reject) {
-      family.forEach(function(memberProtein) {
+      protein_family_data.forEach(function(memberProtein) {
         memberProtein.sequence.forEach(function(residue,i){
           data.push({
             protein : memberProtein.name,
@@ -31,6 +32,7 @@ var TrendImageViewer = function(){
 
   }
 
+  /* Initialize the trend image object, create globals, and create the svg */
   function initialize(div_id, column_frequencies) {
 
     /* get the DOM element by the id parameter */
@@ -205,13 +207,16 @@ var TrendImageViewer = function(){
     /* Extract the names of the proteins. They will construct the y-axis*/
     let y_elements = d3.set(protein_family_data.map(function( residue ) { return residue.name; } )).values();
 
+    /* Get the length of the y-axis -- i.e. how many proteins it contains */
+    let y_axis_length = y_elements.length;
+
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     trendImageViewer.residue_glyph_size = Math.round(trendImageViewer.width / x_axis_length);
 
     /* construct the y-scale */
     let yScale = d3.scaleBand()
             .domain(y_elements)
-            .range([0, y_elements.length * trendImageViewer.residue_glyph_size])
+            .range([0, y_axis_length * trendImageViewer.residue_glyph_size])
         ;
 
     /* construct the x-scale */
@@ -221,7 +226,7 @@ var TrendImageViewer = function(){
         ;
 
     /* Create the three brushes */
-    create_brushes(trendImageViewer.width, y_elements.length, xScale, yScale, protein_family_data);
+    create_brushes(trendImageViewer.width, y_axis_length, xScale, yScale, protein_family_data);
 
     /* Construct a color map using the residue codes*/
     let residueModel = new ResidueModel();
@@ -230,7 +235,7 @@ var TrendImageViewer = function(){
     //trendImageViewer.svg.call(trendImageViewer.tooltip);
 
     /* Convert the data into a residue-based array */
-    constructTrendImage(protein_family_data)
+    construct_trend_image(protein_family_data)
         .then(function(data){
           /* Construct the image out of each residue  */
           trendImageViewer.svg.append("g")
@@ -251,7 +256,7 @@ var TrendImageViewer = function(){
           ;
 
           /*Add the brushes to the trend image*/
-          add_brushes(x_axis_length, y_elements.length);
+          add_brushes(y_axis_length);
 
           /* Remove the pointer events from the brush overlays to prevent:
            * 1: Deleting the brush on a wrong click

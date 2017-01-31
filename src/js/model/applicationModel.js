@@ -5,8 +5,9 @@ var App = App || {};
 
 /*** KO Class ***/
 function Proteins() {
+
   // self reference
-  let self = this;
+  let self = {};
 
   // Default viewer options
   self.options = {
@@ -26,19 +27,19 @@ function Proteins() {
   self.proteinFamily = {};
 
   /* Determines which method to load the protein */
-  function loadProtein(viewer, file){
+  function load_protein(viewer, file){
     // if the data method is from an uploaded file
     if(file){
-      return loadFromUpoadedFile(file, viewer);
+      return load_from_upoaded_file(file, viewer);
     }
     // else from a download
     else {
-      return loadPDBFromRCMB(viewer.name, viewer);
+      return load_PDB_From_RCMB(viewer.name, viewer);
     }
   }
 
   /* Load the protein from RCMB */
-  function loadPDBFromRCMB(proteinName, pointer){
+  function load_PDB_From_RCMB(proteinName, pointer){
     /* perform an async download from RCMB to fetch the requested PDB File */
     return new Promise(function(resolve, reject){
       pv.io.fetchPdb('https://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {
@@ -51,7 +52,7 @@ function Proteins() {
   }
 
   /* Load the protein from the uploaded file */
-  function loadFromUpoadedFile(file, pointer){
+  function load_from_upoaded_file(file, pointer){
     /* perform an async loading of the uploaded file */
     return new Promise(function(resolve, reject){
       /*Save the protein structure*/
@@ -62,7 +63,7 @@ function Proteins() {
   }
 
   /* Render the 3D and Sequence Views */
-  function renderViews(structure) {
+  function render_views(structure) {
     /* Render the 3D view */
     this.view.render(structure, this.modelPointer.name);
 
@@ -92,7 +93,7 @@ function Proteins() {
   }
 
   /* Form callback to process the request to load a new protein */
-  function fetchAndStoreProtein(formData, file) {
+  function fetch_and_store_protein(formData, file) {
 
     // view variable
     let viewOptions = {};
@@ -129,15 +130,15 @@ function Proteins() {
     viewOptions.view.init(viewOptions.viewPosition + 'Viewer', self.options);
 
       /* load the pdb file for each viewer */
-      loadProtein(viewOptions.modelPointer, file)
+      load_protein(viewOptions.modelPointer, file)
       /* Once the data has been loaded, get the sequence and render the view */
-      .then(renderViews.bind(viewOptions));
+      .then(render_views.bind(viewOptions));
     /* Return false to prevent the form from reloading the page */
     return false;
   }
 
   /* Form callback to process the family datafile */
-  function parseAndStoreFamily(file) {
+  function parse_and_store_family(file) {
 
     /* Remove the Splash screen */
     $("#trendSplash").remove();
@@ -154,7 +155,7 @@ function Proteins() {
 
   /* Return the public-facing functions */
   return {
-    processProteinRequest : fetchAndStoreProtein,
-    processProteinFamily  : parseAndStoreFamily
+    processProteinRequest : fetch_and_store_protein,
+    processProteinFamily  : parse_and_store_family
   };
 }

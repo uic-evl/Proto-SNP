@@ -28,7 +28,7 @@ var DatabaseMappingUtils = function(){
         mappingUtils.mappedProteins[mneumonic] = mappedName;
 
         /* Resolve the promise with the converted name*/
-        resolve(mappedName)
+        resolve(mappedName.PDB)
       });
     });
 

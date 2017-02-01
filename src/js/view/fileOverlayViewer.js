@@ -84,7 +84,7 @@ var App = App || {};
                 /* Event to fire once the file loads*/
                 reader.addEventListener("load", function () {
                   /* Pass the file to be processed by the model */
-                  App.applicationModel.processProteinRequest({position: viewer, name: fileName}, this.result);
+                  App.applicationModel.processProteinRequest({position: viewer, protein_name: fileName}, this.result);
                 }, false);
 
                 // parse the file as text
@@ -124,7 +124,6 @@ var App = App || {};
         .prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
   };
-
 
   // initialize the family file uploader
   App.setupFamilyUploader = function(viewer) {

@@ -110,7 +110,7 @@ function ApplicationModel() {
     // view variable
     let viewOptions = {};
 
-    viewOptions.view = App.leftViewer;
+    viewOptions.view = App.leftMolecularViewer;
 
     // model pointers
     viewOptions.modelPointer   = self.leftProtein;
@@ -118,13 +118,13 @@ function ApplicationModel() {
 
     // left or right view
     viewOptions.viewPosition    =  "#";
-    viewOptions.viewPosition += (file) ? formData.position : formData.id.split('-')[0];
+    viewOptions.viewPosition += (formData.position) ? formData.position : formData.id.split('-')[0];
     viewOptions.siblingPosition = "#right";
 
     // Determine the viewer
     if(viewOptions.viewPosition === "#right") {
       /* Swap the views */
-      viewOptions.view           = App.rightViewer;
+      viewOptions.view           = App.rightMolecularViewer;
       /* Swap the views */
       viewOptions.modelPointer   = self.rightProtein;
       viewOptions.siblingPointer = self.leftProtein;
@@ -135,16 +135,16 @@ function ApplicationModel() {
     /* Remove the splash overlay */
     $(viewOptions.viewPosition + 'Splash').remove();
 
-      /* Parse the input */
-    viewOptions.modelPointer.name = (file) ? formData.name : $(formData).serialize().split('=')[1];
+    /* Parse the input */
+    viewOptions.modelPointer.name = (formData.protein_name) ? formData.protein_name : $(formData).serialize().split('=')[1];
 
-      // initialize the left viewer
+    // initialize the left viewer
     viewOptions.view.init(viewOptions.viewPosition + 'Viewer', self.options);
 
-      /* load the pdb file for each viewer */
-      load_protein(viewOptions.modelPointer, file)
-      /* Once the data has been loaded, get the sequence and render the view */
-      .then(render_views.bind(viewOptions));
+    /* load the pdb file for each viewer */
+    load_protein(viewOptions.modelPointer, file)
+    /* Once the data has been loaded, get the sequence and render the view */
+        .then(render_views.bind(viewOptions));
     /* Return false to prevent the form from reloading the page */
     return false;
   }

@@ -53,8 +53,8 @@ var App = App || {};
     App.dataUtils = new DatabaseMappingUtils();
 
     /* create the left and right viewers */
-    App.leftViewer  = new MolecularViewer();
-    App.rightViewer = new MolecularViewer();
+    App.leftMolecularViewer  = new MolecularViewer();
+    App.rightMolecularViewer = new MolecularViewer();
 
     /* Setup the sequence viewer */
     App.sequenceViewer = new SequenceViewer();

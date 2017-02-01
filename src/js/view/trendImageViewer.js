@@ -82,7 +82,7 @@ var TrendImageViewer = function(){
   }
 
   /* Create a customized context menu per right-click */
-  function create_context_menu(data) {
+  function create_context_menu() {
 
     /* Get the horizontal brush extent */
     let brush_selection = d3.brushSelection(this);
@@ -93,14 +93,13 @@ var TrendImageViewer = function(){
     /* Return the customized context menu */
     return [
       {
-        title: function(d) {console.log(this); return "Load Protein: " + selected_protein; },
-        action: function(elm, d, i) {
-
+        title: function() {return "Load Protein: " + selected_protein; },
+        action: function() {
+          App.applicationModel.processProteinRequest({position: "left", protein_name: selected_protein});
         },
         disabled: false // optional, defaults to false
       }
     ];
-
   }
 
   /* Initialized the frequency viewers */

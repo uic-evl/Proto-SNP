@@ -44,9 +44,14 @@ function ApplicationModel() {
       }
 
       /* Fetch/Load the model from RCMP PDB */
-      return Promise.resolve(protein_name).then(function(name){
-        return load_PDB_From_RCMB(name, viewer);
-      });
+      return Promise.resolve(protein_name)
+        .then(function(name){
+          return load_PDB_From_RCMB(name, viewer);
+        })
+        .catch(function() {
+          /* Reject the operation */
+          return Promise.reject(null);
+        });
     }
   }
 
@@ -76,6 +81,10 @@ function ApplicationModel() {
 
   /* Render the 3D and Sequence Views */
   function render_views(structure) {
+
+    /* No structure was returned */
+    if(!structure) return;
+
     /* Render the 3D view */
     this.view.render(structure, this.modelPointer.name);
 
@@ -89,16 +98,16 @@ function ApplicationModel() {
     if(this.siblingPointer.name){
       /* Align the sequences */
       App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {})
-          .then(function(seq){
-            /* Set the model sequences */
-            this.modelPointer.sequence   = (this.viewPosition === "left")
-                ? seq.leftSequence  : seq.rightSequence;
-            this.siblingPointer.sequence = (this.siblingPosition === "right")
-                ? seq.rightSequence : seq.leftSequence;
+        .then(function(seq){
+          /* Set the model sequences */
+          this.modelPointer.sequence   = (this.viewPosition === "left")
+            ? seq.leftSequence  : seq.rightSequence;
+          this.siblingPointer.sequence = (this.siblingPosition === "right")
+            ? seq.rightSequence : seq.leftSequence;
 
-            /* Render the other sequence */
-            App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
-          }.bind(this));
+          /* Render the other sequence */
+          App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
+        }.bind(this));
     }
     // render the sequence list
     App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);
@@ -132,19 +141,26 @@ function ApplicationModel() {
       viewOptions.siblingPosition    = "#left";
     }
 
-    /* Remove the splash overlay */
-    $(viewOptions.viewPosition + 'Splash').remove();
-
     /* Parse the input */
     viewOptions.modelPointer.name = (formData.protein_name) ? formData.protein_name : $(formData).serialize().split('=')[1];
-
-    // initialize the left viewer
-    viewOptions.view.init(viewOptions.viewPosition + 'Viewer', self.options);
 
     /* load the pdb file for each viewer */
     load_protein(viewOptions.modelPointer, file)
     /* Once the data has been loaded, get the sequence and render the view */
-        .then(render_views.bind(viewOptions));
+      .then(function(structure) {
+
+        /* Remove the splash overlay */
+        $(viewOptions.viewPosition + 'Splash').remove();
+
+        /* initialize the molecular viewer */
+        viewOptions.view.init(viewOptions.viewPosition + 'Viewer', self.options);
+
+        /* Render the views */
+        render_views.call(viewOptions, structure);
+
+      })
+      .catch(function() { console.log("Protein not found") });
+
     /* Return false to prevent the form from reloading the page */
     return false;
   }

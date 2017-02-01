@@ -20,6 +20,13 @@ var DatabaseMappingUtils = function(){
       d3.tsv("http://www.uniprot.org/uniprot/?query=mneumonic:" + mneumonic +
           "+AND+database:pdb&format=tab&compress=no&columns=id,database(PDB)", function(data) {
 
+        /* No model exists */
+        if(!data[0]){
+          /* reject and exit  */
+          reject("");
+          return;
+        }
+
         /* Add the retrieved names to the dictionary */
         let mappedName = {
           "PDB" : data[0]["Cross-reference (PDB)"].split(";")[0],

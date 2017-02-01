@@ -56,7 +56,7 @@ var FrequencyViewer = function(){
 
     /* Update the color for matching residues*/
     frequencyViewer.svg.selectAll(".frequencies")
-      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#e34a33" : "#43a2ca"; })
+      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#e34a33"; })
   }
 
   function render(residue_frequencies, family_member_count, selected_residues) {

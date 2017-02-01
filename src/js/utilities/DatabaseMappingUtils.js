@@ -15,7 +15,22 @@ var DatabaseMappingUtils = function(){
   /* Map from uniprot 'mneumonic' to PDB code*/
   function map_mneumonic_to_PDB(mneumonic){
 
-    // http://www.uniprot.org/uniprot/?query=mneumonic:SHRM_DROME+AND+database:pdb&format=tab&compress=no&columns=id,database(PDB)
+    return new Promise(function(resolve, reject) {
+      /* Use d3 to query UniProt for the tab-separated name conversion*/
+      d3.tsv("http://www.uniprot.org/uniprot/?query=mneumonic:" + mneumonic +
+          "+AND+database:pdb&format=tab&compress=no&columns=id,database(PDB)", function(data) {
+
+        /* Add the retrieved names to the dictionary */
+        let mappedName = {
+          "PDB" : data[0]["Cross-reference (PDB)"].split(";")[0],
+          "Uniprot" : data[0]["Entry"]
+        };
+        mappingUtils.mappedProteins[mneumonic] = mappedName;
+
+        /* Resolve the promise with the converted name*/
+        resolve(mappedName)
+      });
+    });
 
   }
 

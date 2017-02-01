@@ -49,6 +49,9 @@ var App = App || {};
     /* Set the div height for the trend image */
     trendDom.style.height = App.trendHeight;
 
+    /* Create the Data Mapping Utility Library */
+    App.dataUtils = new DatabaseMappingUtils();
+
     /* create the left and right viewers */
     App.leftViewer  = new MolecularViewer();
     App.rightViewer = new MolecularViewer();
@@ -74,6 +77,11 @@ var App = App || {};
     App.setupUpload("left");
     App.setupUpload("right");
     App.setupFamilyUploader("family");
+
+    App.dataUtils.mneumonicToPDB("SHRM_DROME").then(function(protein_name) {
+      console.log(protein_name);
+    });
+
   }
 
   /* start the application once the DOM is ready */

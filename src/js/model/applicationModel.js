@@ -34,7 +34,19 @@ function Proteins() {
     }
     // else from a download
     else {
-      return load_PDB_From_RCMB(viewer.name, viewer);
+
+      /* create a variable to use to test a promise */
+      let protein_name = viewer.name;
+
+      /* If the name is greater than 4 characters, it is not PDB format*/
+      if(viewer.name.length > 4) {
+        protein_name = App.dataUtils.mneumonicToPDB(viewer.name);
+      }
+
+      /* Fetch/Load the model from RCMP PDB */
+      return Promise.resolve(protein_name).then(function(name){
+        return load_PDB_From_RCMB(name, viewer);
+      });
     }
   }
 

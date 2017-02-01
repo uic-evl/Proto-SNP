@@ -78,10 +78,6 @@ var App = App || {};
     App.setupUpload("right");
     App.setupFamilyUploader("family");
 
-    App.dataUtils.mneumonicToPDB("SHRM_DROME").then(function(protein_name) {
-      console.log(protein_name);
-    });
-
   }
 
   /* start the application once the DOM is ready */

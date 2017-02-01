@@ -43,7 +43,6 @@ var SequenceViewer = function(){
         .merge(view)
           .text(function(d) { return d; })
         .style("width", list.domWidth / 2)
-        .style("background-color", function(d, i) { return colorbrewer.Spectral[10][i%10]; })
         // EXIT: Remove unneeded DOM elements
         .exit().remove();
   }

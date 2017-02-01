@@ -31,7 +31,6 @@ var DatabaseMappingUtils = function(){
         resolve(mappedName.PDB)
       });
     });
-
   }
 
   return {

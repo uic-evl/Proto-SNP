@@ -67,8 +67,8 @@ var App = App || {};
     App.rightFrequencyViewer = new FrequencyViewer();
 
     /* Bind the model to the view*/
-    App.proteins = new Proteins();
-    ko.applyBindings(App.proteins);
+    App.applicationModel = new ApplicationModel();
+    ko.applyBindings(App.applicationModel);
 
     /* Setup the protein selection overlays */
     App.setupOverlays();

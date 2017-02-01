@@ -4,7 +4,7 @@
 var App = App || {};
 
 /*** KO Class ***/
-function Proteins() {
+function ApplicationModel() {
 
   // self reference
   let self = {};

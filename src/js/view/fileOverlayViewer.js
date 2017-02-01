@@ -84,7 +84,7 @@ var App = App || {};
                 /* Event to fire once the file loads*/
                 reader.addEventListener("load", function () {
                   /* Pass the file to be processed by the model */
-                  App.proteins.processProteinRequest({position: viewer, name: fileName}, this.result);
+                  App.applicationModel.processProteinRequest({position: viewer, name: fileName}, this.result);
                 }, false);
 
                 // parse the file as text
@@ -145,7 +145,7 @@ var App = App || {};
         /* Callback to loading the file */
         reader.addEventListener("load", function () {
           /* Pass the file to be processed by the model */
-            App.proteins.processProteinFamily(this.result);
+            App.applicationModel.processProteinFamily(this.result);
         }, false);
 
         // parse the file as text

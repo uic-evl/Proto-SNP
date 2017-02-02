@@ -9,12 +9,15 @@ var TrendImageController = function(){
   /* Class private variable */
   let self = {};
 
-  function horizontal_paddle_controller(residue_glyph_size, yScale) {
+  function horizontal_paddle_controller(trendImage) {
 
     /* We only want to capture user events. */
     if (!d3.event.sourceEvent) return;
     if (!d3.event.selection) return; // Ignore empty selections.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't associated with a mouse move
+
+    /* Get and store the residue glyph size */
+    let residue_glyph_size = trendImage.getGlyphSize();
 
     // Round the two event extents to the nearest row
     d3.event.selection[0] = Math.ceil(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size;
@@ -24,7 +27,7 @@ var TrendImageController = function(){
     d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Get the current protein */
-    let currentHorizontalSelection = d3.event.selection.map(yScale.invert)[0];
+    let currentHorizontalSelection = d3.event.selection.map(trendImage.getYAxisScale().invert)[0];
 
     /* Reset the opacity of unselected rows */
     d3.selectAll('rect.active_protein_selection')
@@ -35,20 +38,20 @@ var TrendImageController = function(){
       .classed("active_protein_selection", true);
   }
 
-  function horizontal_paddle_controllerEnd(protein_family_data, xScale, yScale) {
+  function horizontal_paddle_controllerEnd(trendImage) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
 
     /* Update the frequency viewer's text */
     /* Get the currently selected protein*/
-    let currentProtein = _.find(protein_family_data, ["name", d3.event.selection.map(yScale.invert)[0]]);
+    let currentProtein = _.find(trendImage.getProteinData(), ["name", d3.event.selection.map(trendImage.getYAxisScale().invert)[0]]);
 
     /* Get the left vertical selection */
-    let leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(xScale.invert);
+    let leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(trendImage.getXAxisSize().invert);
 
     /* Get the right vertical selection */
-    let rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(xScale.invert);
+    let rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(trendImage.getXAxisSize().invert);
 
     /* Get the residues that intersect with the left vertical paddle*/
     let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftVerticalSelection[0], leftVerticalSelection[1]);
@@ -63,11 +66,14 @@ var TrendImageController = function(){
     App.rightFrequencyViewer.update(rightHorizontalSelectedResidues);
   }
 
-  function vertical_paddle_controller(residue_glyph_size, xScale) {
+  function vertical_paddle_controller(trendImage) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't a brushing
     if (!d3.event.selection) return; // Ignore empty selections.
+
+    /* Get and store the residue glyph size */
+    let residue_glyph_size = trendImage.getGlyphSize();
 
     // Round the two event extents to the nearest row
     d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size);
@@ -77,7 +83,7 @@ var TrendImageController = function(){
     d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Get the current protein */
-    let currentVerticalSelection = d3.event.selection.map(xScale.invert);
+    let currentVerticalSelection = d3.event.selection.map(trendImage.getXAxisSize().invert);
 
     /* Get the current paddle */
     let currentPaddle = d3.select(this).attr("class").split(" ")[1];
@@ -95,16 +101,19 @@ var TrendImageController = function(){
     }
   }
 
-  function vertical_paddle_controllerEnd(residue_glyph_size, protein_family_data, column_frequencies, frequencyViewer, yScale) {
+  function vertical_paddle_controllerEnd(trendImage) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
+
+    /* Get and store the residue glyph size */
+    let residue_glyph_size = trendImage.getGlyphSize();
 
     /* Save the range of the current vertical selection */
     let currentVerticalSelection = d3.brushSelection(this).map(function(o) { return o / residue_glyph_size});
 
     /* Get the fragments from the column*/
-    let fragments = column_frequencies.getMostFrequentFragmentFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
+    let fragments = trendImage.getColumnFrequency().getMostFrequentFragmentFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Iterate over each of the returned fragments */
     let currentSelectionFragments = [];
@@ -114,13 +123,13 @@ var TrendImageController = function(){
     });
 
     /* Get the currently selected protein*/
-    let currentProtein = _.find(protein_family_data, ["name", d3.event.selection.map(yScale.invert)[0]]);
+    let currentProtein = _.find(trendImage.getProteinData(), ["name", d3.event.selection.map(trendImage.getYAxisScale().invert)[0]]);
 
     /* Get the residues that intersect with the vertical paddle*/
     let horizontalSelectedResidues = currentProtein.sequence.slice(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Render the frequency bars */
-    frequencyViewer.render(currentSelectionFragments, protein_family_data.length, horizontalSelectedResidues);
+    trendImage.getColumnFrequency().render(currentSelectionFragments, trendImage.getXAxisSize(), horizontalSelectedResidues);
   }
 
   return {

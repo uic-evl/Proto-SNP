@@ -176,9 +176,15 @@ function ApplicationModel() {
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
     self.sortedSequences.calculateFrequency();
 
+    /* Set the protein family and column sequence data */
+    App.trendImageViewer.setProteinFamily(self.proteinFamily.getFamily());
+    App.trendImageViewer.setColumnFrequency(self.sortedSequences);
+
     /* Initialize the trend image view */
-    App.trendImageViewer.init("#trendImageViewer", self.sortedSequences);
-    App.trendImageViewer.render(self.proteinFamily.getFamily());
+    App.trendImageViewer.init("#trendImageViewer");
+
+    /* Render the trend image */
+    App.trendImageViewer.render();
   }
 
   /* Return the public-facing functions */

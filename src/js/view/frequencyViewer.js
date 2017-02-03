@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Protein / Molecule Viewer "Class"
-var FrequencyViewer = function(){
+const FrequencyViewer = function(){
 
   /* Class private variable */
   let frequencyViewer = {};

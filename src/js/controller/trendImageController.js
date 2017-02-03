@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Protein / Molecule Viewer "Class"
-var TrendImageController = function(){
+const TrendImageController = function(){
 
   /* Class private variable */
   let self = {};

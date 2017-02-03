@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Protein / Molecule trendImageViewer "Class"
-var TrendImageViewer = function(){
+const TrendImageViewer = function(){
 
   /* initialize the molecular trendImageViewer global variable */
   let trendImageViewer = {};
@@ -347,9 +347,6 @@ var TrendImageViewer = function(){
     trendImageViewer.domObj = d3.select(div_id);
   }
 
-  /* Getter for the chart DOM element */
-  function get_chart_dom_obj() { return trendImageViewer.domObj; }
-
   /* Setter for the trend image scales */
   function set_chart_scales() {
     /* construct the x-scale */
@@ -414,10 +411,6 @@ var TrendImageViewer = function(){
       trendImageViewer.protein_family_data.map(function( residue ) { return residue.name; } ))
       .values();
   }
-
-  function get_trend_image_width() { return trendImageViewer.width }
-
-  function get_trend_image_height() { return trendImageViewer.height }
 
   /* Setter for the names of the proteins from the family */
   function set_glyph_size() {

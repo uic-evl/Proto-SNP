@@ -67,7 +67,6 @@ var TrendImageController = function(){
   }
 
   function vertical_paddle_controller(trendImage) {
-
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't a brushing
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -83,7 +82,7 @@ var TrendImageController = function(){
     d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Get the current protein */
-    let currentVerticalSelection = d3.event.selection.map(trendImage.getXAxisSize().invert);
+    let currentVerticalSelection = d3.event.selection.map(trendImage.getXAxisScale().invert);
 
     /* Get the current paddle */
     let currentPaddle = d3.select(this).attr("class").split(" ")[1];
@@ -101,7 +100,7 @@ var TrendImageController = function(){
     }
   }
 
-  function vertical_paddle_controllerEnd(trendImage) {
+  function vertical_paddle_controllerEnd(trendImage, frequencyChart) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -129,7 +128,7 @@ var TrendImageController = function(){
     let horizontalSelectedResidues = currentProtein.sequence.slice(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Render the frequency bars */
-    trendImage.getColumnFrequency().render(currentSelectionFragments, trendImage.getXAxisSize(), horizontalSelectedResidues);
+    frequencyChart.render(currentSelectionFragments, trendImage.getYAxisSize(), horizontalSelectedResidues);
   }
 
   return {

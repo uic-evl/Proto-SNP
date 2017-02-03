@@ -12,7 +12,6 @@ App.VERTICAL_PADDLE   = 2;
   /* Generic Brush Class */
   let Brush = function()
   {
-    var self = {};
     /* Set the brush extent */
     function set_brush_extent(ext) {
       this.brush.extent(ext);
@@ -21,7 +20,7 @@ App.VERTICAL_PADDLE   = 2;
 
     /* Set the brush paddle size */
     function set_brush_paddle_size(size) {
-      self.paddleSize = size;
+      this.paddleSize = size;
       return this
     }
 
@@ -39,24 +38,40 @@ App.VERTICAL_PADDLE   = 2;
 
     /* Set the frequency viewer that corresponds to the brush  */
     function set_frequency_viewer_pointer(frequencyViewer) {
-      self.frequency_viewer = frequencyViewer;
+      this.frequency_viewer = frequencyViewer;
+      return this;
+    }
+
+    /* Brush class name */
+    function set_brush_class(brushClassName) {
+      this.brush_class = brushClassName;
       return this;
     }
 
     /* Get the frequency viewer controlled by this brush */
-    function get_frequency_viewer() { return self.frequency_viewer; }
+    function get_frequency_viewer() { return this.frequency_viewer; }
 
     /* Get the brush paddle size */
     function get_brush_paddle_size() { return this.paddleSize; }
 
+    /* Get the brush selection */
+    function get_current_selection() {
+      /* Get the DOM element */
+      let brush = document.getElementsByClassName(this.brush_class)[0];
+      /* Return the selection of the brush */
+      return d3.brushSelection(brush)
+    }
+
     return {
-      setPaddleExtent    : set_brush_extent,
-      setPaddleSize      : set_brush_paddle_size,
-      setFrequencyViewer : set_frequency_viewer_pointer,
-      getPaddleSize      : get_brush_paddle_size,
-      getFrequencyViewer : get_frequency_viewer,
-      onBrush            : set_brushing_callback,
-      onEnd              : set_on_end_callback
+      setPaddleExtent     : set_brush_extent,
+      setPaddleSize       : set_brush_paddle_size,
+      setFrequencyViewer  : set_frequency_viewer_pointer,
+      setBrushClass       : set_brush_class,
+      getPaddleSize       : get_brush_paddle_size,
+      getFrequencyViewer  : get_frequency_viewer,
+      getCurrentSelection : get_current_selection,
+      onBrush             : set_brushing_callback,
+      onEnd               : set_on_end_callback
     }
   };
 

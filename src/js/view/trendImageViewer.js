@@ -179,16 +179,16 @@ const TrendImageViewer = function(){
       App.TrendImageBrushFactory.createBrush(App.HORIZONTAL_PADDLE)
         .setPaddleSize(1)
         .setBrushClass("brush horizontal")
-        .setPaddleExtent([ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
+        .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
         .onBrush(function(){ trendImageViewer.controller.horizontalBrushed.call(this, trendImageViewer.instanceVariables.protected)})
         .onEnd( function() { trendImageViewer.controller.horizontalEnd.call(this, trendImageViewer.instanceVariables.protected)})
     ;
 
-    /* Construct the right vertical residue-selection paddle */
+    /* Construct the left vertical residue-selection paddle */
     trendImageViewer.leftVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
       .setPaddleSize(trendImageViewer.verticalPaddleSize)
       .setBrushClass("brush vertical-left")
-      .setPaddleExtent([ [0, 0], [trendImageViewer.x_axis_length, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
+      .setPaddleExtent([ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
       .onBrush(function(){
         trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected)});
 

@@ -48,10 +48,10 @@ const TrendImageController = function(){
     let currentProtein = _.find(trendImage.getProteinData(), ["name", d3.event.selection.map(trendImage.getYAxisScale().invert)[0]]);
 
     /* Get the left vertical selection */
-    let leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(trendImage.getXAxisSize().invert);
+    let leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(trendImage.getXAxisScale().invert);
 
     /* Get the right vertical selection */
-    let rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(trendImage.getXAxisSize().invert);
+    let rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(trendImage.getXAxisScale().invert);
 
     /* Get the residues that intersect with the left vertical paddle*/
     let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftVerticalSelection[0], leftVerticalSelection[1]);

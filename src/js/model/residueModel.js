@@ -22,9 +22,33 @@ function ResidueModel() {
     "#B00000", "#B0B000", "#B000B0", "#B8860B", "#E8B613", "#000000", "#00B0B0"
   ];
 
+  let colorCodesSideChain = {
+    basic: "#fbfff4", aliphatic: "#ff3100", aromatic: "#0772a1",
+    hydroxyl: "#ff8700", sulfuric: "#ff8700", cyclic: "#00b74a",
+    acid: "#fddbc7",  amide: "#fddbc7"};
+
+  let sideChains = {
+
+    "A" : "aliphatic",  "R" : "basic",
+    "N" : "amide",      "D" : "acid",
+    "C" : "sulfuric",   "E" : "acid",
+    "Q" : "amide",      "G" : "aliphatic",
+    "H" : "aromatic",   "I" : "aliphatic",
+    "L" : "aliphatic",  "K" : "basic",
+    "M" : "sulfuric",   "F" : "aromatic",
+    "P" : "cyclic",     "S" : "hydroxyl",
+    "T" : "hydroxyl",   "W" : "aromatic",
+    "Y" : "aromatic",   "V" : "aliphatic",
+
+    };
+
+  function colorBySideChain(residue) {
+    return colorCodesSideChain[sideChains[residue]];
+  }
+
   return {
     getResidueCodes : function() { return aminoAcidCodes; },
-    getColor   : function(residue) { return colorCodesHEAT[aminoAcidCodes.indexOf(residue)] }
+    getColor   : function(residue) { return colorBySideChain(residue) }
   }
 
 }

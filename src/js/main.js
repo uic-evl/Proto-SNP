@@ -43,8 +43,8 @@ var App = App || {};
     App.frequencyHeight = (window.innerHeight - App.molecularViewerHeight - App.trendHeight) * App.aspectRatio;
 
     /* Set the div height for the molecular viewers */
-    leftDom.style.height  = App.molecularViewerHeight;
-    rightDom.style.height = App.molecularViewerHeight;
+    leftDom.style.height  = parseInt(App.molecularViewerHeight);
+    rightDom.style.height = parseInt(App.molecularViewerHeight);
 
     /* Set the div height for the trend image */
     trendDom.style.height = App.trendHeight;

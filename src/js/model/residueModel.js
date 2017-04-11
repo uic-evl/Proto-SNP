@@ -28,7 +28,6 @@ function ResidueModel() {
     acid: "#fddbc7",  amide: "#fddbc7"};
 
   let sideChains = {
-
     "A" : "aliphatic",  "R" : "basic",
     "N" : "amide",      "D" : "acid",
     "C" : "sulfuric",   "E" : "acid",
@@ -39,7 +38,6 @@ function ResidueModel() {
     "P" : "cyclic",     "S" : "hydroxyl",
     "T" : "hydroxyl",   "W" : "aromatic",
     "Y" : "aromatic",   "V" : "aliphatic",
-
     };
 
   function colorBySideChain(residue) {

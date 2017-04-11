@@ -302,11 +302,11 @@ const TrendImageViewer = function(){
     /* Set the DOM element by the id parameter */
     set_chart_dom_obj(div_id);
 
-    /* Initialize the chart dOM*/
-    initialize_chart_dom();
-
     /* initialize the proteins names and dimensions */
     initialize_data_descriptors();
+
+    /* Initialize the chart dOM*/
+    initialize_chart_dom();
 
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     set_glyph_size();
@@ -361,6 +361,16 @@ const TrendImageViewer = function(){
 
   /* Setter for the chart dimensions */
   function set_chart_dimensions() {
+
+    let residue_width = parseInt(App.trendWidth / trendImageViewer.x_axis_length);
+    App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
+
+    /*Reset the parent dom heights*/
+    /*Reset the parent dom heights*/
+    trendImageViewer.domObj.classed("viewers", false);
+    document.getElementById('trendImageViewer').parentNode.style.height =
+        trendImageViewer.y_axis_length * (residue_width+1);
+
     trendImageViewer.width = App.trendWidth;
     trendImageViewer.height = App.trendHeight;
   }

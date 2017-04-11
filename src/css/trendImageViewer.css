@@ -1,5 +1,5 @@
 .trendImage {
-    background-color: gray;
+    background-color: #ecf0f1;
 }
 
 .aminoAcid {
@@ -19,3 +19,4 @@ g.brush.horizontal > .handle {
 .TDView, .TrendImageView {
     margin-bottom: 10px;
 }
+

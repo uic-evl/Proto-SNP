@@ -53,8 +53,8 @@ var App = App || {};
     App.dataUtils = new DatabaseMappingUtils();
 
     /* Setup the Menu */
-    App.menu = new MenuController();
-    App.menu.init("#menu");
+    App.coloringMenu = new MenuController();
+    App.coloringMenu.init(".coloringOption");
 
     /* create the left and right viewers */
     App.leftMolecularViewer  = new MolecularViewer();

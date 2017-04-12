@@ -42,7 +42,7 @@ function ResidueModel() {
   };
 
   let residuePropertiesByLetter = [
-    {abbr: "A", sideClass: "aliphatic", polarity: "nonpolar", name: "ALA"},
+    {abbr: "A", sideClass: "aliphatic", polarity: "nonpolar", name:"ALA"},
     {abbr: "R", sideClass: "basic",     polarity: "basic",    name:"ARG"},
     {abbr: "N", sideClass: "amide",     polarity: "polar",    name:"ASN"},
     {abbr: "D", sideClass:  "acid",     polarity: "acidic",   name:"ASP"},
@@ -70,11 +70,14 @@ function ResidueModel() {
     let residueProperties = _.find(residuePropertiesByLetter, function(r) {
       return residue === r.abbr || residue === r.name;
     });
-    return colorCodesBySideChain[residueProperties.sideClass];
+    return colorCodesBySideChain[(residueProperties) ? residueProperties.sideClass : "gap"];
   }
 
   function colorByPolarity(residue) {
-    return colorCodesByPolarity[residuePropertiesByLetter[residue].polarity];
+    let residueProperties = _.find(residuePropertiesByLetter, function(r) {
+      return residue === r.abbr || residue === r.name;
+    });
+    return colorCodesByPolarity[(residueProperties) ? residueProperties.polarity : "gap"];
   }
 
   function getColorMapping(mapping, residue){

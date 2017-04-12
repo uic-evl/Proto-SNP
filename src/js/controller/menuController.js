@@ -12,10 +12,30 @@ const MenuController = function() {
   function initOnClick() {
 
     self.menu.click(function(e){
-      //do something
       e.preventDefault();
 
-      console.log(e);
+      switch($(this).text()) {
+
+        case "Side Chain Class":
+          /*Set the new coloring scheme */
+          App.colorMapping = "side chain";
+
+          /* Recolor the molecular viewers */
+          App.leftMolecularViewer.recolor();
+          App.rightMolecularViewer.recolor();
+
+          break;
+
+        case "Side Chain Polarity":
+          /*Set the new coloring scheme */
+          App.colorMapping = "polarity";
+
+          /* Recolor the molecular viewers */
+          App.leftMolecularViewer.recolor();
+          App.rightMolecularViewer.recolor();
+
+          break;
+      }
 
 
     });

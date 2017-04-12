@@ -41,15 +41,23 @@ let MolecularViewer = function(){
     molecularViewer.pvViewer = pv.Viewer(d3.select(div_id).node(), options);
   }
 
+  function recolor(){
+
+    let structure = get_geometry();
+    if(structure){
+      console.log("coloring, fool!");
+      structure.colorBy(colorProteinBy());
+    }
+  }
+
   function render(structure, proteinName) {
 
     /* Display the protein in the specified rendering, coloring by the specified property */
     switch(App.renderingStyle){
       case "cartoon":
-        molecularViewer.pvViewer.cartoon(proteinName, structure, {color : colorProteinBy()});
+        molecularViewer.geom = molecularViewer.pvViewer.cartoon(proteinName, structure, {color : colorProteinBy()});
         break;
     }
-
 
     /* center the structure in the view */
     // center in molecularViewer
@@ -61,8 +69,11 @@ let MolecularViewer = function(){
   /* Accessor to get the underlying structure in the molecularViewer */
   function get_structure() { return molecularViewer.structure; }
 
+  /* Accessor to get the underlying geometry in the molecularViewer */
+  function get_geometry() { return molecularViewer.geom; }
+
   /* Accessor to get the molecularViewer's height and width */
-  function get_dimensions() { return {width: molecularViewer.width, height: molecularViewer.height }}
+  function get_dimensions() { return {width: molecularViewer.width, height: molecularViewer.height}}
 
   /* Accessor to get the underlying sequence of the Protein*/
   function get_sequence(structure, chain) {
@@ -82,6 +93,7 @@ let MolecularViewer = function(){
   return {
     init          : initialize,
     render        : render,
+    recolor       : recolor,
     getStructure  : get_structure,
     getSequence   : get_sequence,
     getDimensions : get_dimensions

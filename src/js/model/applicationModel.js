@@ -159,7 +159,10 @@ function ApplicationModel() {
         render_views.call(viewOptions, structure);
 
       })
-      .catch(function() { console.log("Protein not found") });
+      .catch(function() {
+        console.log(arguments);
+        console.log("Protein not found");
+      });
 
     /* Return false to prevent the form from reloading the page */
     return false;

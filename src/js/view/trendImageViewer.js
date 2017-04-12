@@ -209,9 +209,6 @@ const TrendImageViewer = function(){
   /* Render the trend image to the svg */
   function render() {
 
-    /* Construct a color map using the residue codes*/
-    let residueModel = new ResidueModel();
-
     /* Invoke the tip in the context of your visualization */
     //trendImageViewer.svg.call(trendImageViewer.tooltip);
 
@@ -230,8 +227,8 @@ const TrendImageViewer = function(){
               .attr("height", trendImageViewer.residue_glyph_size)
               .attr('y', function(d) { return trendImageViewer.yScale(d.protein) })
               .attr('x', function(d) { return trendImageViewer.xScale(d.x) })
-              .attr('fill', function(d) { return residueModel.getColor(d.residue); })
-              .attr('stroke',  function(d) { return residueModel.getColor(d.residue); })
+              .attr('fill', function(d) { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
+              .attr('stroke',  function(d) { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
           // .on('mouseover', trendImageViewer.tooltip.show)
           // .on('mouseout', trendImageViewer.tooltip.hide)
           ;

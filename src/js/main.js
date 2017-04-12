@@ -66,6 +66,10 @@ var App = App || {};
     App.leftFrequencyViewer = new FrequencyViewer();
     App.rightFrequencyViewer = new FrequencyViewer();
 
+    /* Set the initial color mapping */
+    App.colorMapping = "side chain";
+    App.residueModel = new ResidueModel();
+
     /* Bind the model to the view*/
     App.applicationModel = new ApplicationModel();
     ko.applyBindings(App.applicationModel);

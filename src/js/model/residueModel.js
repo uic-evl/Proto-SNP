@@ -11,52 +11,84 @@ function ResidueModel() {
     "Q", "R", "S", "T", "U", "V", "W", "Y", "Z", ".", "~", "X"
   ];
 
-  let colorCodes = [
-    "#C0D0FF", "#B0FFB0", "#FFC0C8", "#FFFF80", "#FFC0FF", "#B0F0F0", "#FFD070","#F08080", "#F5DEB3", "#00BFFF", "#CD5C5C","#66CDAA",
-    "#9ACD32","#EE82EE","#00CED1","#00FF7F","#3CB371", "#00008B", "#BDB76B","#006400", "#800000", "#808000", "#800080", "#B8860B", "#B22222", "#000000", "#008080"
-  ];
-
-  let colorCodesHEAT = [
-    "#90A0CF", "#80CF98", "#CF90B0", "#CFCF70", "#CF90CF", "#80C0C0", "#CFA060","#C05070", "#C5AE83", "#00A7CF",
-    "#B54C4C","#56B592", "#8AB52A","#BE72BE", "#00B6A1","#00CF6F","#349B61", "#0000BB", "#A59F5B","#009400",
-    "#B00000", "#B0B000", "#B000B0", "#B8860B", "#E8B613", "#000000", "#00B0B0"
-  ];
-
-  let colorCodesSideChain = {
-    basic: "#fbfff4", aliphatic: "#ff3100", aromatic: "#0772a1",
-    hydroxyl: "#ff8700", sulfuric: "#ff8700", cyclic: "#00b74a",
-    acid: "#fddbc7",  amide: "#fddbc7", gap: "#000000"
+  let colorCodes = {
+    white : {code: "#fbfff4", rgba: [251.0, 255.0, 244.0, 255.0] },
+    red   : {code: "#ff3100", rgba: [255.0, 49.0,  0.0,   255.0] },
+    orange: {code: "#ff8700", rgba: [255.0, 135.0, 0.0,   255.0] },
+    blue  : {code: "#0772a1", rgba: [7.0,   114.0, 161.0, 255.0] },
+    green : {code: "#00b74a", rgba: [0.0,   183.0, 74.0,  255.0] },
+    tan   : {code: "#fddbc7", rgba: [253.0, 219.0, 199.0, 255.0] },
+    black : {code: "#000000", rgba: [0.0,   0.0,   0.0,   255.0] }
   };
 
-  let colorCodesPolarity = {
-    basic: "#fbfff4", nonpolar:"#ff3100", polar: "#0772a1", acidic: "#00b74a", gap: "#000000"
+  let colorCodesBySideChain = {
+    basic     : colorCodes.white,
+    aliphatic : colorCodes.red,
+    aromatic  : colorCodes.blue,
+    hydroxyl  : colorCodes.orange,
+    sulfuric  : colorCodes.orange,
+    cyclic    : colorCodes.green,
+    acid      : colorCodes.tan,
+    amide     : colorCodes.tan,
+    gap       : colorCodes.black
   };
 
-  let aminoAcidProperties = {
-    "A" : {sideClass: "aliphatic", polarity: "nonpolar"},  "R" : {sideClass: "basic", polarity: "basic"},
-    "N" : {sideClass: "amide", polarity: "polar"},         "D" : {sideClass: "acid", polarity: "acidic"},
-    "C" : {sideClass: "sulfuric", polarity: "nonpolar"},   "E" : {sideClass: "acid", polarity: "acidic"},
-    "Q" : {sideClass: "amide", polarity: "polar"},         "G" : {sideClass: "aliphatic", polarity: "nonpolar"},
-    "H" : {sideClass: "aromatic", polarity: "basic"},      "I" : {sideClass: "aliphatic", polarity: "nonpolar"},
-    "L" : {sideClass: "aliphatic", polarity: "nonpolar"},  "K" : {sideClass: "basic", polarity: "basic"},
-    "M" : {sideClass: "sulfuric", polarity: "nonpolar"},   "F" : {sideClass: "aromatic", polarity: "nonpolar"},
-    "P" : {sideClass: "cyclic", polarity: "nonpolar"},     "S" : {sideClass: "hydroxyl", polarity: "polar"},
-    "T" : {sideClass: "hydroxyl", polarity: "polar"},      "W" : {sideClass: "aromatic", polarity: "nonpolar"},
-    "Y" : {sideClass: "aromatic", polarity: "polar"},      "V" : {sideClass: "aliphatic", polarity: "nonpolar"},
-    "." : {sideClass: "gap", polarity: "gap"},             "~" : {sideClass: "gap", polarity: "gap"}
-    };
+  let colorCodesByPolarity = {
+    basic     : colorCodes.white,
+    nonpolar  : colorCodes.red,
+    polar     : colorCodes.blue,
+    acidic    : colorCodes.green,
+    gap       : colorCodes.black
+  };
 
-  function colorBySideChain(residue) {
-    return colorCodesSideChain[aminoAcidProperties[residue].sideClass];
+  let residuePropertiesByLetter = [
+    {abbr: "A", sideClass: "aliphatic", polarity: "nonpolar", name: "ALA"},
+    {abbr: "R", sideClass: "basic",     polarity: "basic",    name:"ARG"},
+    {abbr: "N", sideClass: "amide",     polarity: "polar",    name:"ASN"},
+    {abbr: "D", sideClass:  "acid",     polarity: "acidic",   name:"ASP"},
+    {abbr: "C", sideClass: "sulfuric",  polarity: "nonpolar", name:"CYS"},
+    {abbr: "E", sideClass: "acid",      polarity: "acidic",   name:"GLU"},
+    {abbr: "Q", sideClass: "amide",     polarity: "polar",    name:"GLN"},
+    {abbr: "G", sideClass: "aliphatic", polarity: "nonpolar", name:"GLY"},
+    {abbr: "H", sideClass: "aromatic",  polarity: "basic",    name:"HIS"},
+    {abbr: "I", sideClass: "aliphatic", polarity: "nonpolar", name:"ILE"},
+    {abbr: "L", sideClass: "aliphatic", polarity: "nonpolar", name:"LEU"},
+    {abbr: "K", sideClass: "basic",     polarity: "basic",    name:"LYS"},
+    {abbr: "M", sideClass: "sulfuric",  polarity: "nonpolar", name:"MET"},
+    {abbr: "F", sideClass: "aromatic",  polarity: "nonpolar", name:"PHE"},
+    {abbr: "P", sideClass: "cyclic",    polarity: "nonpolar", name:"PRO"},
+    {abbr: "S", sideClass: "hydroxyl",  polarity: "polar",    name:"SER"},
+    {abbr: "T", sideClass: "hydroxyl",  polarity: "polar",    name:"THR"},
+    {abbr: "W", sideClass: "aromatic",  polarity: "nonpolar", name:"TRP"},
+    {abbr: "Y", sideClass: "aromatic",  polarity: "polar",    name:"TYR"},
+    {abbr: "V", sideClass: "aliphatic", polarity: "nonpolar", name:"VAL"},
+    {abbr: ".", sideClass: "gap",       polarity: "gap",      name:"gap"},
+    {abbr: "~", sideClass: "gap",       polarity: "gap",      name:"gap"}
+    ];
+
+  function colorBySideChainClass(residue) {
+    let residueProperties = _.find(residuePropertiesByLetter, function(r) {
+      return residue === r.abbr || residue === r.name;
+    });
+    return colorCodesBySideChain[residueProperties.sideClass];
   }
 
   function colorByPolarity(residue) {
-    return colorCodesSideChain[aminoAcidProperties[residue].polarity];
+    return colorCodesByPolarity[residuePropertiesByLetter[residue].polarity];
+  }
+
+  function getColorMapping(mapping, residue){
+    switch(mapping){
+      case "side chain":
+        return colorBySideChainClass(residue);
+      case "polarity":
+        return colorByPolarity(residue);
+    }
   }
 
   return {
-    getResidueCodes : function() { return aminoAcidCodes; },
-    getColor   : function(residue) { return colorBySideChain(residue) }
+    getResidueCodes : function() {   return aminoAcidCodes; },
+    getColor        : getColorMapping
   }
 
 }

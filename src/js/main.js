@@ -52,6 +52,10 @@ var App = App || {};
     /* Create the Data Mapping Utility Library */
     App.dataUtils = new DatabaseMappingUtils();
 
+    /* Setup the Menu */
+    App.menu = new MenuController();
+    App.menu.init("#menu");
+
     /* create the left and right viewers */
     App.leftMolecularViewer  = new MolecularViewer();
     App.rightMolecularViewer = new MolecularViewer();
@@ -79,6 +83,7 @@ var App = App || {};
 
     /* Setup the protein selection overlays */
     App.setupOverlays();
+
 
     /* Setup the protein file upload */
     App.setupUpload("left");

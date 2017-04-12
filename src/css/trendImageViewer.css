@@ -16,7 +16,6 @@ g.brush.horizontal > .handle {
     display: none;
 }
 
-.TDView, .TrendImageView {
-    margin-bottom: 10px;
+.TDView {
+    margin-bottom: 30px;
 }
-

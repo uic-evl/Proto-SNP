@@ -73,6 +73,7 @@ const TrendImageViewer = function(){
 
   /* Initialized the frequency viewers */
   function initialize_frequency_viewers() {
+
     /* Get the currently selected protein and the selected residues */
     let currentProtein = trendImageViewer.protein_family_data[0];
 

@@ -23,7 +23,7 @@ var App = App || {};
     let trendDom = document.getElementById('trendImageViewer').parentNode;
 
     /* The size of the EVL header */
-    let headerHeight = 104;
+    let headerHeight = 0;
 
     /* Aspect Ratio */
     App.aspectRatio = window.innerWidth > ( window.innerHeight - headerHeight ) ?
@@ -77,7 +77,6 @@ var App = App || {};
     App.setupUpload("left");
     App.setupUpload("right");
     App.setupFamilyUploader("family");
-
   }
 
   /* start the application once the DOM is ready */

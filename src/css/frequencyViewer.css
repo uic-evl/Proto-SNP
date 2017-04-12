@@ -5,3 +5,11 @@ g.brush.vertical-left > rect.selection {
 g.brush.vertical-right > rect.selection {
     stroke: #e78ac3;
 }
+
+.frequencyViewerLabel {
+    visibility: hidden;
+}
+
+.residueSummaryView {
+    margin-top: 10px;
+}

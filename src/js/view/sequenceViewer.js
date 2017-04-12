@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Protein Sequence Viewer "Class"
-var SequenceViewer = function(){
+let SequenceViewer = function(){
 
   /* initialize the sequence viewer global variable */
   let list = {};

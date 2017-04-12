@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Protein / Molecule Viewer "Class"
-var MolecularViewer = function(){
+let MolecularViewer = function(){
 
   /* initialize the molecular viewer global variable */
   let molecularViewer = {};
@@ -43,9 +43,13 @@ var MolecularViewer = function(){
 
   function render(structure, proteinName) {
 
-    /* Display the protein as cartoon, coloring the secondary structure
-     elements in a rainbow gradient */
-    molecularViewer.pvViewer.cartoon(proteinName, structure, {color : colorProteinBy()});
+    /* Display the protein in the specified rendering, coloring by the specified property */
+    switch(App.renderingStyle){
+      case "cartoon":
+        molecularViewer.pvViewer.cartoon(proteinName, structure, {color : colorProteinBy()});
+        break;
+    }
+
 
     /* center the structure in the view */
     // center in molecularViewer

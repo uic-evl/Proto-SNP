@@ -66,8 +66,11 @@ var App = App || {};
     App.leftFrequencyViewer = new FrequencyViewer();
     App.rightFrequencyViewer = new FrequencyViewer();
 
-    /* Set the initial color mapping */
-    App.colorMapping = "side chain";
+    /* Set the initial rendering style and color mapping */
+    App.colorMapping      = "side chain";
+    App.renderingStyle    = "cartoon";
+
+    /* Set the residue property model */
     App.residueModel = new ResidueModel();
 
     /* Bind the model to the view*/

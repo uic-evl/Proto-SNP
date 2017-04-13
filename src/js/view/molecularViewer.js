@@ -43,10 +43,15 @@ let MolecularViewer = function(){
 
   function recolor(){
 
-    let structure = get_geometry();
-    if(structure){
-      console.log("coloring, fool!");
-      structure.colorBy(colorProteinBy());
+    let geometry = get_geometry(),
+        viewer   = get_viewer();
+
+    /* Check to make sure the view is active*/
+    if(geometry){
+      /* Recolor */
+      geometry.colorBy(colorProteinBy());
+      /* Redraw */
+      viewer.requestRedraw();
     }
   }
 
@@ -67,10 +72,13 @@ let MolecularViewer = function(){
   }
 
   /* Accessor to get the underlying structure in the molecularViewer */
-  function get_structure() { return molecularViewer.structure; }
+  function get_structure() { return molecularViewer.geom.structure(); }
 
   /* Accessor to get the underlying geometry in the molecularViewer */
   function get_geometry() { return molecularViewer.geom; }
+
+  /* Accessor to get the underlying geometry in the molecularViewer */
+  function get_viewer() { return molecularViewer.pvViewer; }
 
   /* Accessor to get the molecularViewer's height and width */
   function get_dimensions() { return {width: molecularViewer.width, height: molecularViewer.height}}

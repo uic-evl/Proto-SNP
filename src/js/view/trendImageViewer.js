@@ -206,9 +206,19 @@ const TrendImageViewer = function(){
       .then(enable_vertical_brushing);
   }
 
+  /* Function to redraw the trend image */
+  function recolor() {
+    /* If a trend image exists, recolor based on the new color map */
+    if(trendImageViewer.svg) {
+      trendImageViewer.svg
+          .selectAll(".aminoAcid rect")
+          .attr('fill',    function(d) { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
+          .attr('stroke',  function(d) { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
+    }
+  }
+
   /* Render the trend image to the svg */
   function render() {
-
     /* Invoke the tip in the context of your visualization */
     //trendImageViewer.svg.call(trendImageViewer.tooltip);
 
@@ -318,7 +328,6 @@ const TrendImageViewer = function(){
     /* Set the size of the initial vertical paddles */
     trendImageViewer.verticalPaddleSize = 6;
 
-
     /* Create the three brushes */
     create_brushes();
   }
@@ -360,7 +369,7 @@ const TrendImageViewer = function(){
   /* Setter for the chart dimensions */
   function set_chart_dimensions() {
 
-    let residue_width = parseInt(App.trendWidth / trendImageViewer.x_axis_length);
+    let residue_width = Math.round(App.trendWidth / trendImageViewer.x_axis_length);
     App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
 
     /*Reset the parent dom heights*/
@@ -439,6 +448,7 @@ const TrendImageViewer = function(){
     public: {
       init               : initialize,
       render             : render,
+      recolor            : recolor,
       setColumnFrequency : set_column_frequency_data,
       setProteinFamily   : set_protein_family
     },

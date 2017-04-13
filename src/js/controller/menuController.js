@@ -14,30 +14,26 @@ const MenuController = function() {
     self.menu.click(function(e){
       e.preventDefault();
 
+      /* Set the color scheme depending on the option the user selected*/
       switch($(this).text()) {
 
         case "Side Chain Class":
           /*Set the new coloring scheme */
           App.colorMapping = "side chain";
-
-          /* Recolor the molecular viewers */
-          App.leftMolecularViewer.recolor();
-          App.rightMolecularViewer.recolor();
-
           break;
 
         case "Side Chain Polarity":
           /*Set the new coloring scheme */
           App.colorMapping = "polarity";
-
-          /* Recolor the molecular viewers */
-          App.leftMolecularViewer.recolor();
-          App.rightMolecularViewer.recolor();
-
           break;
       }
 
+      /* Recolor the molecular viewers */
+      App.leftMolecularViewer.recolor();
+      App.rightMolecularViewer.recolor();
 
+      /* Recolor the trend image*/
+      App.trendImageViewer.recolor();
     });
   }
 

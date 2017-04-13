@@ -146,12 +146,10 @@ input {
 }
 .overlaySplash .overlay-content {
     width: 100%;
-    max-width: 530px;
-    /*margin: 100px auto 0;*/
-    /*padding: 0 15px;*/
     color: #fff;
     position: relative;
     z-index: 10;
+    padding: 0 10px 0 10px;
 }
 .overlaySplash .overlay-content .overlay-close {
     display: block;
@@ -159,7 +157,7 @@ input {
     cursor: pointer;
     position: absolute;
     top: 0;
-    right: 15px;
+    right: 10px;
 }
 .overlaySplash .overlay-content .overlay-close:hover {
     opacity: .8;

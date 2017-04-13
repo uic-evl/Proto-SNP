@@ -27,6 +27,13 @@
     height: 100%;
 }
 
+.molecularViewerA {
+   padding-right: 0;
+}
+
+.molecularViewerB {
+    padding-left: 0;
+}
 p.view {
     color: dimgray;
     font-weight: bolder;

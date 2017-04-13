@@ -102,8 +102,9 @@
 
     <!-- 3D Molecule Viewers -->
     <div class="row TDView">
+
         <!-- Left Viewer-->
-        <div class="col-md-5">
+        <div class="col-md-5 molecularViewerA">
             <p class="view">Molecular View A</p>
             <div id=leftViewer class="viewers">
                 <!--<div class="static-label"></div>-->
@@ -135,10 +136,10 @@
                                             <span class="fileUpload">Choose a file: </span>
                                             <br>
                                             <span id="upload-left" class="btn btn-success fileinput-button viewer-upload">
-                                                 <i class="fa fa-plus-square-o"></i><span> Select file...</span>
+                                             <i class="fa fa-plus-square-o"></i><span> Select file...</span>
                                                 <!-- The file input field used as target for the file upload widget -->
-                                                <input id="fileupload-left" type="file" name="files[]" accept="pdb">
-                                            </span>
+                                            <input id="fileupload-left" type="file" name="files[]" accept="pdb">
+                                        </span>
                                             <br><br>
                                             <div id="files-left" class="files"></div>
                                         </div>
@@ -154,7 +155,7 @@
         <!-- End Left Viewer -->
 
         <!-- Right Viewer -->
-        <div class="col-md-5">
+        <div class="col-md-5 molecularViewerB">
             <p class="view">Molecular View B</p>
             <div id=rightViewer class="viewers">
                 <!--<div class="static-label"></div>-->
@@ -186,10 +187,10 @@
                                             <span class="fileUpload">Choose a file: </span>
                                             <br>
                                             <span id="upload-right" class="btn btn-success fileinput-button viewer-upload">
-                                                 <i class="fa fa-plus-square-o"></i><span> Select file...</span>
+                                             <i class="fa fa-plus-square-o"></i><span> Select file...</span>
                                                 <!-- The file input field used as target for the file upload widget -->
-                                                <input id="fileupload-right" type="file" name="files[]" accept="pdb">
-                                            </span>
+                                            <input id="fileupload-right" type="file" name="files[]" accept="pdb">
+                                        </span>
                                             <br><br>
                                             <div id="files-right" class="files"></div>
                                         </div>
@@ -225,7 +226,7 @@
         <div class="col-md-10">
             <!-- Trend Image View-->
             <div class="row TrendImageView">
-                <p class="view">Trend Image View</p>
+                <p class="view">Protein Family Viewer</p>
                 <div class="col-md-12">
                     <div id="trendImageViewer" class="viewers">
                         <!-- Select Protein Button -->

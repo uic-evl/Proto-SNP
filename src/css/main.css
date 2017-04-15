@@ -9,32 +9,13 @@
     color: white;
 }
 
-/* 3D Viewer Title */
-.static-label {
-    position: absolute;
-    right: 50px;
-    background: #0000;
-    text-align:right;
-    z-index: 1;
-    font-size: large;
-    font-weight:bold;
-    color: white;
-}
-
 .viewers {
     background-color: black;
     width: 100%;
     height: 100%;
 }
 
-.molecularViewerA {
-   padding-right: 0;
-}
-
-.molecularViewerB {
-    padding-left: 0;
-}
-
+/* View titles */
 p.view {
     color: dimgray;
     font-weight: bolder;

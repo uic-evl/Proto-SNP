@@ -1,9 +1,19 @@
+/* 3D viewer highlight label*/
 .static-label {
-    position:absolute;
+    position: absolute;
+    right: 50px;
     background: #0000;
-    color: red;
     text-align:right;
     z-index: 1;
+    font-size: large;
     font-weight:bold;
-    width:290px;
+    color: white;
+}
+
+.molecularViewerA {
+    padding-right: 0;
+}
+
+.molecularViewerB {
+    padding-left: 0;
 }

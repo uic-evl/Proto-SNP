@@ -120,7 +120,7 @@ const TrendImageViewer = function(){
 
     /* Render the frequency view*/
     App.leftFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length, leftHorizontalSelectedResidues );
-    App.rightFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length, rightHorizontalSelectedResidues );
+    App.rightFrequencyViewer.render(rightSelectionFragments, trendImageViewer.y_axis_length, rightHorizontalSelectedResidues );
   }
 
   /* Vertical brushing cannot be enabled until the column frequencies are computed*/

@@ -9,6 +9,7 @@ let MolecularViewer = function(){
   /* initialize the molecular viewer global variable */
   let molecularViewer = {};
   let residueModel = new ResidueModel();
+  let molecularController = null;
 
   function colorProteinBy() {
     return new pv.color.ColorOp(function (atom, out, index) {
@@ -26,6 +27,14 @@ let MolecularViewer = function(){
     /* get the DOM element by the id parameter */
     molecularViewer.domObj = d3.select(div_id).node();
 
+    /* create a label to display selections */
+    let staticLabel = document.createElement('div');
+    staticLabel.innerHTML = '&nbsp;';
+    staticLabel.className = 'static-label';
+
+    /* Add the label to the model */
+    molecularViewer.domObj.appendChild(staticLabel);
+
     /* check if viewing options were passed in */
     options = options || {};
 
@@ -39,6 +48,12 @@ let MolecularViewer = function(){
 
     /* insert the molecularViewer under the DOM element */
     molecularViewer.pvViewer = pv.Viewer(d3.select(div_id).node(), options);
+    molecularController = new MolecularModelController({
+      viewer   : molecularViewer.pvViewer,
+      parent   : molecularViewer.domObj,
+      label    : staticLabel
+    });
+
   }
 
   function recolor(){

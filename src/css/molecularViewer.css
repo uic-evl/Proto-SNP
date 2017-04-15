@@ -1,0 +1,9 @@
+.static-label {
+    position:absolute;
+    background: #0000;
+    color: red;
+    text-align:right;
+    z-index: 1;
+    font-weight:bold;
+    width:290px;
+}

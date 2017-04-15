@@ -127,12 +127,12 @@ const TrendImageViewer = function(){
   function enable_vertical_brushing() {
       /* Enable the paddle brushing callbacks */
       trendImageViewer.leftVerticalPaddle
-        .onEnd(function(){trendImageViewer.controller.verticalEnd
-            .call(this, trendImageViewer.instanceVariables.protected, App.leftFrequencyViewer)});
+          .onBrush(function(){
+            trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected, App.leftFrequencyViewer)});
 
       trendImageViewer.rightVerticalPaddle
-        .onEnd( function(){trendImageViewer.controller.verticalEnd
-            .call(this, trendImageViewer.instanceVariables.protected, App.rightFrequencyViewer)});
+          .onBrush(function(){
+            trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected, App.rightFrequencyViewer) });
 
       /* Initialize the protein frequency charts with the selection data*/
       initialize_frequency_viewers();
@@ -190,16 +190,14 @@ const TrendImageViewer = function(){
       .setPaddleSize(trendImageViewer.verticalPaddleSize)
       .setBrushClass("brush vertical-left")
       .setPaddleExtent([ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
-      .onBrush(function(){
-        trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected)});
+    ;
 
     /* Construct the right vertical residue-selection paddle */
       trendImageViewer.rightVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
         .setPaddleSize(trendImageViewer.verticalPaddleSize)
         .setBrushClass("brush vertical-right")
         .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
-          .onBrush(function(){
-            trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected) });
+      ;
 
     /* Once the column frequency sorting is complete, enable the brushing callbacks*/
     trendImageViewer.column_frequencies.getPromise()
@@ -372,7 +370,6 @@ const TrendImageViewer = function(){
     let residue_width = Math.round(App.trendWidth / trendImageViewer.x_axis_length);
     App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
 
-    /*Reset the parent dom heights*/
     /*Reset the parent dom heights*/
     trendImageViewer.domObj.classed("viewers", false);
     document.getElementById('trendImageViewer').parentNode.style.height =

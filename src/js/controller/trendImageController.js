@@ -66,7 +66,7 @@ const TrendImageController = function(){
     App.rightFrequencyViewer.update(rightHorizontalSelectedResidues);
   }
 
-  function vertical_paddle_controller(trendImage) {
+  function vertical_paddle_controller(trendImage, frequencyChart) {
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't a brushing
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -98,18 +98,6 @@ const TrendImageController = function(){
         .classed(currentPaddle, true)
         .classed("active_res_selection", true);
     }
-  }
-
-  function vertical_paddle_controllerEnd(trendImage, frequencyChart) {
-
-    if (!d3.event.sourceEvent) return; // Only transition after input.
-    if (!d3.event.selection) return; // Ignore empty selections.
-
-    /* Get and store the residue glyph size */
-    let residue_glyph_size = trendImage.getGlyphSize();
-
-    /* Save the range of the current vertical selection */
-    let currentVerticalSelection = d3.brushSelection(this).map(function(o) { return o / residue_glyph_size});
 
     /* Get the fragments from the column*/
     let fragments = trendImage.getColumnFrequency().getMostFrequentFragmentFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
@@ -131,10 +119,11 @@ const TrendImageController = function(){
     frequencyChart.render(currentSelectionFragments, trendImage.getYAxisSize(), horizontalSelectedResidues);
   }
 
+
+
   return {
     horizontalBrushed   : horizontal_paddle_controller,
     verticalBrushed     : vertical_paddle_controller,
-    verticalEnd         : vertical_paddle_controllerEnd,
     horizontalEnd       : horizontal_paddle_controllerEnd
   }
 

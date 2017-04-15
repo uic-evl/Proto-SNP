@@ -17,7 +17,7 @@ const FrequencyViewer = function(){
 
     /* get/save the width and height of the given DOM element */
     frequencyViewer.width = App.frequencyWidth;
-    frequencyViewer.height = App.frequencyHeight ;
+    frequencyViewer.height = App.frequencyHeight;
 
     /* clear the frequency viewer DOM */
     frequencyViewer.domObj.selectAll().remove();
@@ -56,7 +56,7 @@ const FrequencyViewer = function(){
 
     /* Update the color for matching residues*/
     frequencyViewer.svg.selectAll(".frequencies")
-      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#e34a33"; })
+      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#e34a33"; })
   }
 
   function render(residue_frequencies, family_member_count, selected_residues) {
@@ -112,7 +112,7 @@ const FrequencyViewer = function(){
       .attr('y', function(d) { return frequencyViewer.yScale(d[1]) + frequencyViewer.height * 0.2 } )
       .attr("width", frequencyViewer.bar_glyph_width)
       .attr("height", function(d) { return ( frequencyViewer.height * 0.6 - frequencyViewer.yScale(d[1]) )  })
-      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#e34a33" : "#43a2ca"; })
+      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#e34a33" : "#D3D3D3"; })
     ;
 
     /* Remove the unneeded frequency bars */
@@ -141,16 +141,6 @@ const FrequencyViewer = function(){
 
     /* Add the residue text to the bars */
     update_current_selection_text(selected_residues);
-
-    /* Add a line under the frequencies to show which paddle it belongs to*/
-    frequencyViewer.svg.append("line")
-      .attr("x1", 0)
-      .attr("x2", frequencyViewer.width)
-      .attr("y1", frequencyViewer.height)
-      .attr("y2", frequencyViewer.height)
-      .attr("stroke-width", 5)
-      .style("stroke", function() { return (frequencyViewer.id === "#leftResidueSummaryViewer") ?  "#a6d854" : "#e78ac3"});
-
   }
 
   return {

@@ -1,7 +1,7 @@
 /* 3D viewer highlight label*/
 .static-label {
     position: absolute;
-    right: 50px;
+    right: 25px;
     background: #0000;
     text-align:right;
     z-index: 1;

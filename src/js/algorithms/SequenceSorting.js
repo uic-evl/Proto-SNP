@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Sequence Sorting "Class"
-var SequenceSorting = function(family){
+const SequenceSorting = function(family){
 
   /* Internal private variable*/
   let self = {};

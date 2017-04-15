@@ -22,40 +22,9 @@ let MolecularViewer = function(){
      out[index+2]= color[2] / 255.0; out[index+3]= color[3] / 255.0;
     });
   }
-    function initialize(div_id, options) {
 
-    /* get the DOM element by the id parameter */
-    molecularViewer.domObj = d3.select(div_id).node();
 
-    /* create a label to display selections */
-    let staticLabel = document.createElement('div');
-    staticLabel.innerHTML = '&nbsp;';
-    staticLabel.className = 'static-label';
-
-    /* Add the label to the model */
-    molecularViewer.domObj.appendChild(staticLabel);
-
-    /* check if viewing options were passed in */
-    options = options || {};
-
-    /* get/save the width and height of the given DOM element */
-    molecularViewer.width = App.molecularViewerWidth;
-    molecularViewer.height = App.molecularViewerHeight;
-
-    /* add the width and height to the options */
-    options.width = molecularViewer.width;
-    options.height = molecularViewer.height;
-
-    /* insert the molecularViewer under the DOM element */
-    molecularViewer.pvViewer = pv.Viewer(d3.select(div_id).node(), options);
-    molecularController = new MolecularModelController({
-      viewer   : molecularViewer.pvViewer,
-      parent   : molecularViewer.domObj,
-      label    : staticLabel
-    });
-
-  }
-
+  /* Recolor the protein according to the current coloring scheme */
   function recolor(){
 
     let geometry = get_geometry(),
@@ -70,7 +39,16 @@ let MolecularViewer = function(){
     }
   }
 
+  /* Render the title of the viewer */
+  function updateViewTitle(title) {
+    d3.select(molecularViewer.parentNode).select('p.view')
+      .html(title);
+  }
+
   function render(structure, proteinName) {
+
+    /* Place the name of the protein above the viewer*/
+    updateViewTitle(proteinName);
 
     /* Display the protein in the specified rendering, coloring by the specified property */
     switch(App.renderingStyle){
@@ -110,6 +88,40 @@ let MolecularViewer = function(){
 
     // return the sequence
     return seq;
+  }
+
+  function initialize(div_id, options) {
+
+    /* get the DOM element by the id parameter */
+    molecularViewer.domObj = d3.select(div_id).node();
+    molecularViewer.parentNode = molecularViewer.domObj.parentNode;
+
+    /* create a label to display selections */
+    let staticLabel = document.createElement('div');
+    staticLabel.innerHTML = '&nbsp;';
+    staticLabel.className = 'static-label';
+
+    /* Add the label to the model */
+    molecularViewer.domObj.appendChild(staticLabel);
+
+    /* check if viewing options were passed in */
+    options = options || {};
+
+    /* get/save the width and height of the given DOM element */
+    molecularViewer.width = App.molecularViewerWidth;
+    molecularViewer.height = App.molecularViewerHeight;
+
+    /* add the width and height to the options */
+    options.width = molecularViewer.width;
+    options.height = molecularViewer.height;
+
+    /* insert the molecularViewer under the DOM element */
+    molecularViewer.pvViewer = pv.Viewer(molecularViewer.domObj, options);
+    molecularController = new MolecularModelController({
+      viewer   : molecularViewer.pvViewer,
+      dom      : molecularViewer.domObj,
+      label    : staticLabel
+    });
   }
 
   /* return the public-facing functions */

@@ -12,8 +12,8 @@ const MolecularModelController = function(options) {
   };
 
   let viewer   = options.viewer;
-  let parent   = options.parent;
-  let label   = options.label;
+  let dom      = options.dom;
+  let label    = options.label;
 
   function zoomToSelections () {
 
@@ -97,7 +97,7 @@ const MolecularModelController = function(options) {
 
   /* Initialize the events attached to the 3D viewer */
   function initialize() {
-    parent.addEventListener('mousemove', mouseMoveEvent);
+    dom.addEventListener('mousemove', mouseMoveEvent);
     viewer.on('click', mouseClickEvent);
 
     /* Register the enter key to reset the selections of the view */

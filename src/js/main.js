@@ -84,7 +84,6 @@ var App = App || {};
     /* Setup the protein selection overlays */
     App.setupOverlays();
 
-
     /* Setup the protein file upload */
     App.setupUpload("left");
     App.setupUpload("right");

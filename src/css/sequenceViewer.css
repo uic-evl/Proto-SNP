@@ -15,10 +15,8 @@
 .residue {
     display: block;
     vertical-align: middle;
-    /*width: 37px;*/
     height: 22px;
     text-align: center;
-    font-weight: bold;
     font-weight: bold;
     background-color: #f7f7f7;
     border: solid 1px #aaa;

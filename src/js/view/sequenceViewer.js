@@ -41,7 +41,7 @@ let SequenceViewer = function(){
         .attr("class", "residue")
         /* Merge the old elements (if they exist) with the new data */
         .merge(view)
-          .text(function(d) { return d; })
+          .text(function(d, i) { return "(" + parseInt(i+1) + ") " + d; })
         .style("width", list.domWidth / 2)
         // EXIT: Remove unneeded DOM elements
         .exit().remove();

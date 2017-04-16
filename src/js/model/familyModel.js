@@ -42,7 +42,8 @@ function ProteinFamily(file) {
           length                 : parseInt(parsedLine[4]),
           check                  : parseInt(parsedLine[5]),
           weight                 : parseInt(parsedLine[6]),
-          sequence               : ""
+          sequence               : "",
+          scores                 : []
         };
       }
       /* If not in the dictionary pattern, check the for the data pattern */

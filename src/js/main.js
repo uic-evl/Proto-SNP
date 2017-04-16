@@ -89,8 +89,6 @@ var App = App || {};
     App.setupUpload("right");
     App.setupFamilyUploader("family");
   }
-
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);
-
 })();

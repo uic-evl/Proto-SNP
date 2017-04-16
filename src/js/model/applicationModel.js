@@ -178,6 +178,7 @@ function ApplicationModel() {
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
     self.sortedSequences.calculateFrequency();
+    self.sortedSequences.calculateFrequencyScores();
 
     /* Set the protein family and column sequence data */
     App.trendImageViewer.setProteinFamily(self.proteinFamily.getFamily());

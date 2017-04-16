@@ -88,11 +88,11 @@ const TrendImageViewer = function(){
 
     /* Get the fragments from the left column*/
     let leftFragments = trendImageViewer.column_frequencies
-      .getMostFrequentFragmentFromRange(leftSelectedResidues[0], leftSelectedResidues[1]);
+      .getFragmentCountsFromRange(leftSelectedResidues[0], leftSelectedResidues[1]);
 
     /* Get the fragments from the right column*/
     let rightFragments = trendImageViewer.column_frequencies
-      .getMostFrequentFragmentFromRange(rightSelectedResidues[0], rightSelectedResidues[1]);
+      .getFragmentCountsFromRange(rightSelectedResidues[0], rightSelectedResidues[1]);
 
     /* Iterate over each of the left returned fragments */
     let leftSelectionFragments = [];

@@ -100,7 +100,7 @@ const TrendImageController = function(){
     }
 
     /* Get the fragments from the column*/
-    let fragments = trendImage.getColumnFrequency().getMostFrequentFragmentFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
+    let fragments = trendImage.getColumnFrequency().getFragmentCountsFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Iterate over each of the returned fragments */
     let currentSelectionFragments = [];

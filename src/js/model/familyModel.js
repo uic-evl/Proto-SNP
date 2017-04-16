@@ -64,7 +64,7 @@ function ProteinFamily(file) {
   function set_scores(metric, scores) {
     scores.forEach( (o) => {
       let member = _.find(self.family, (m) => { return o.name === m.name} );
-          member.scores.push({metric:metric, scores:o.score});
+          member.scores[metric] = o.score;
     });
   }
 

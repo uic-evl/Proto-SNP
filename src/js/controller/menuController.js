@@ -47,7 +47,7 @@ const MenuController = function() {
 
         case "Residue Frequency":
           /*Set the new coloring scheme */
-          App.sorting = "residue frequency";
+          App.sorting = "residue_frequency";
           break;
 
         case "Edit Distance":
@@ -56,7 +56,7 @@ const MenuController = function() {
           break;
       }
       /* Recolor the trend image*/
-      //App.trendImageViewer.recolor();
+      App.trendImageViewer.reorder();
     });
   }
 

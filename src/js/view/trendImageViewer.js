@@ -200,16 +200,23 @@ const TrendImageViewer = function(){
     /* If a trend image exists, recolor based on the new color map */
     if(trendImageViewer.svg) {
       trendImageViewer.svg
-          .selectAll(".aminoAcid rect")
+          .selectAll(".proteinRow rect")
           .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
           .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
     }
   }
 
   /* Reorder the proteins based on the selected sorting  */
-  function reorder(newOrder) {
-    trendImageViewer.svg.selectAll(".aminoAcid")
-        .y( (d,i) => {  } )
+  function reorder() {
+
+    let ordering_scores = _.sortBy(trendImageViewer.protein_family_data, (protein) => { return protein.scores[App.sorting];});
+
+    trendImageViewer.svg.selectAll(".cell")
+        .attr("y", function(d,i) {
+          let row = parseInt(d3.select(this).attr("row")),
+              new_row = _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
+          return new_row * trendImageViewer.residue_glyph_size;
+        } );
   }
 
   /* Render the brushes to the image */
@@ -251,6 +258,7 @@ const TrendImageViewer = function(){
     }
   }
 
+  /* Render the trend image to the svg */
   function render(){
     /* Invoke the tip in the context of your visualization */
     //trendImageViewer.svg.call(trendImageViewer.tooltip);
@@ -260,20 +268,18 @@ const TrendImageViewer = function(){
     let rows = trendImageViewer.svg.selectAll(".proteinRow")
         .data(data.data)
         .enter().append("g")
-        .attr("id", function(d,i) {
-          return data.index[i];
-        })
+        .attr("id", (d,i) => { return data.index[i];})
         .attr("class", "proteinRow");
 
     /* For each row, render the residues as columns */
-      rows.selectAll('.cells')
+      rows.selectAll('.cell')
         .data( (d) => { return d} )
         .enter().append('rect')
         .attr("x", (d, i) => { return i * trendImageViewer.residue_glyph_size; })
         .attr("y", (d, i, j) => { return j * trendImageViewer.residue_glyph_size; })
         .attr("width", trendImageViewer.residue_glyph_size)
         .attr("height", trendImageViewer.residue_glyph_size)
-        .attr("class", (d, i, j) => { return "p" + data.index[j] + " r" + i % trendImageViewer.x_axis_length; })
+        .attr("class", (d, i, j) => { return "cell p" + data.index[j] + " r" + i % trendImageViewer.x_axis_length; })
         .attr("row", (d, i, j) => { return j; })
         .attr("col", (d, i, j) => { return i; })
         .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
@@ -450,6 +456,7 @@ const TrendImageViewer = function(){
       init               : initialize,
       render             : render,
       recolor            : recolor,
+      reorder            : reorder,
       setColumnFrequency : set_column_frequency_data,
       setProteinFamily   : set_protein_family
     },

@@ -12,7 +12,7 @@ function ProteinFamily(file) {
   self.family = {};
 
   /* Parse the MSF File*/
-  function parseMSF(file) {
+  function parse_MSF(file) {
 
     /* Parse the lines of the file */
     let lines = file.split('\n');
@@ -58,20 +58,27 @@ function ProteinFamily(file) {
 
     /* Convert the family object to an array */
     self.family = _.values(self.family);
-    self.family.forEach(function(protein) {
-      protein.sequence = protein.sequence.split('');
-    })
+    self.family.forEach((protein) => { protein.sequence = protein.sequence.split(''); });
   }
 
   /*Accessor to return the family */
-  function getFamily() { return self.family }
+  function get_family() { return self.family }
+
+  /* Setter for the different types of similarity scores */
+  function set_scores(metric, scores) {
+    scores.forEach( (o) => {
+      let member = _.find(self.family, (m) => { return o.name === m.name} );
+          member.scores.push({metric:metric, scores:o.score});
+    });
+  }
 
   /* Parse the family file */
-  parseMSF(file);
+  parse_MSF(file);
 
   /* Return the publicly accessible functions*/
   return {
-    getFamily: getFamily
+    getFamily : get_family,
+    setScores  : set_scores
   };
 
 }

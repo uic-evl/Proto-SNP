@@ -14,12 +14,11 @@ const TrendImageViewer = function(){
 
   /* Parse the data into the format to be used in the trend image*/
   function map_trend_image_data() {
-
     /* New array for the parse residues */
     let data = [];
-
     /* Return a promise that will resolve with the new data array*/
     return new Promise(function(resolve, reject) {
+      console.log(trendImageViewer.protein_family_data);
       trendImageViewer.protein_family_data.forEach(function(memberProtein) {
         memberProtein.sequence.forEach(function(residue,i){
           data.push({
@@ -32,7 +31,6 @@ const TrendImageViewer = function(){
       /* resolve the promise and return the data */
       resolve(data)
     });
-
   }
 
   /* Clear the chart DOM of all elements */

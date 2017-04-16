@@ -182,12 +182,14 @@ function ApplicationModel() {
     self.sortedSequences.calculateFrequency();
     /* Calculate the column frequency scores and enable the menu option */
     self.sortedSequences.calculateFrequencyScores()
-        .then(() => { $("#residue_freq_li a").removeClass("disabled") });
+        .then((scores) => {
+          $("#residue_freq_li a").removeClass("disabled");
+          self.proteinFamily.setScores("residue_frequency", scores);
+        });
 
     /* Set the protein family and column sequence data */
     App.trendImageViewer.setProteinFamily(self.proteinFamily.getFamily());
     App.trendImageViewer.setColumnFrequency(self.sortedSequences);
-
 
     /* Initialize the trend image view */
     App.trendImageViewer.init("#trendImageViewer");

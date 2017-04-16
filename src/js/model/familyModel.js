@@ -4,36 +4,31 @@
 var App = App || {};
 
 function ProteinFamily(file) {
-
   // self reference
-  let self = {};
+  let self = {
+      family : {}
+  };
 
-  // Store the members of the family
-  self.family = {};
 
   /* Parse the MSF File*/
   function parse_MSF(file) {
-
     /* Parse the lines of the file */
     let lines = file.split('\n');
 
     /* Iterate over each line*/
     lines.forEach(function(line){
-
       // If an empty line, continue
       if(!line.length) return;
-
       /* Create a regex pattern to check for the header lines */
       //Name:\s*(\w+)\|?(\w?)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/
       let regex_dict = /Name:\s*(\w+)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/,
-          regex_data = /(\w+)\/(\d*)-(\d*)\s*([~.\w\s]*)/;
+          regex_data = /(\w+)\/(\d*)-(\d*)\s*([~.\w\s]*)/,
 
-      /* perform the regex matching on the line */
-      let parsedLine =line.match(regex_dict);
+      /* Perform the regex matching on the line */
+          parsedLine =line.match(regex_dict);
 
       /* If parsed, create the dictionary for the entry  */
       if(parsedLine){
-
         /* Create the dictionary entry */
         self.family[parsedLine[1]] = {
           name                   : parsedLine[1],
@@ -50,7 +45,6 @@ function ProteinFamily(file) {
       else if(regex_data.test(line)){
         /* Get the data */
         parsedLine = line.match(regex_data);
-
         /* Append the sequence to the dictionary entry*/
         self.family[parsedLine[1]].sequence += parsedLine[4].split(' ').join('');
       }
@@ -61,8 +55,10 @@ function ProteinFamily(file) {
     self.family.forEach((protein) => { protein.sequence = protein.sequence.split(''); });
   }
 
+
   /*Accessor to return the family */
   function get_family() { return self.family }
+
 
   /* Setter for the different types of similarity scores */
   function set_scores(metric, scores) {
@@ -72,13 +68,14 @@ function ProteinFamily(file) {
     });
   }
 
+
   /* Parse the family file */
   parse_MSF(file);
+
 
   /* Return the publicly accessible functions*/
   return {
     getFamily : get_family,
     setScores  : set_scores
   };
-
 }

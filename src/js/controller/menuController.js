@@ -9,12 +9,12 @@ const MenuController = function() {
   /* Class private variable */
   let self = {};
 
-  function initOnClick() {
-
-    self.menu.click(function(e){
+  /* Set the callback for the coloring menu options */
+  function init_color_on_click() {
+    self.coloring_menu.click(function(e){
       e.preventDefault();
 
-      /* Set the color scheme depending on the option the user selected*/
+      /* Set the color scheme depending on the option the user selected */
       switch($(this).text()) {
 
         case "Side Chain Class":
@@ -37,15 +37,44 @@ const MenuController = function() {
     });
   }
 
-  function initialize(id){
+  /* Set the callback for the coloring menu options*/
+  function init_sorting_on_click() {
+    self.sorting_menu.click(function(e){
+      e.preventDefault();
 
+      /* Set the sorting algorithm depending on the option the user selected */
+      switch($(this).text()) {
+
+        case "Residue Frequency":
+          /*Set the new coloring scheme */
+          App.sorting = "residue frequency";
+          break;
+
+        case "Edit Distance":
+          /*Set the new coloring scheme */
+          App.sorting = "edit distance";
+          break;
+      }
+      /* Recolor the trend image*/
+      //App.trendImageViewer.recolor();
+    });
+  }
+
+  function initialize_coloring_menu(id){
     /* Save the menu element*/
-    self.menu = $(id);
-    initOnClick();
+    self.coloring_menu = $(id);
+    init_color_on_click();
+  }
+
+  function initialize_sorting_menu(id){
+    /* Save the menu element*/
+    self.sorting_menu = $(id);
+    init_sorting_on_click();
   }
 
   return {
-    init: initialize
+    initColoringMenu   : initialize_coloring_menu,
+    initSortingMenu    : initialize_sorting_menu
   }
 
 };

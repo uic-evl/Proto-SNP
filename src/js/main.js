@@ -54,7 +54,8 @@ var App = App || {};
 
     /* Setup the Menu */
     App.coloringMenu = new MenuController();
-    App.coloringMenu.init(".coloringOption");
+    App.coloringMenu.initColoringMenu(".coloringOption");
+    App.coloringMenu.initSortingMenu(".sortingOption");
 
     /* create the left and right viewers */
     App.leftMolecularViewer  = new MolecularViewer();
@@ -72,6 +73,7 @@ var App = App || {};
 
     /* Set the initial rendering style and color mapping */
     App.colorMapping      = "side chain";
+    App.sorting           = "default";
     App.renderingStyle    = "cartoon";
 
     /* Set the residue property model */

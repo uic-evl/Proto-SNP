@@ -177,12 +177,17 @@ function ApplicationModel() {
 
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
+
+    /* Calculate the residue frequencies per column */
     self.sortedSequences.calculateFrequency();
-    self.sortedSequences.calculateFrequencyScores();
+    /* Calculate the column frequency scores and enable the menu option */
+    self.sortedSequences.calculateFrequencyScores()
+        .then(() => { $("#residue_freq_li a").removeClass("disabled") });
 
     /* Set the protein family and column sequence data */
     App.trendImageViewer.setProteinFamily(self.proteinFamily.getFamily());
     App.trendImageViewer.setColumnFrequency(self.sortedSequences);
+
 
     /* Initialize the trend image view */
     App.trendImageViewer.init("#trendImageViewer");

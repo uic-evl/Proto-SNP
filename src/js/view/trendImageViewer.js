@@ -200,7 +200,7 @@ const TrendImageViewer = function(){
       ;
 
     /* Once the column frequency sorting is complete, enable the brushing callbacks*/
-    trendImageViewer.column_frequencies.getPromise()
+    trendImageViewer.column_frequencies.getFrequencyPromise()
       .then(enable_vertical_brushing);
   }
 

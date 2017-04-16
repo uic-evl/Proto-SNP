@@ -18,7 +18,6 @@ const TrendImageViewer = function(){
     let data = [];
     /* Return a promise that will resolve with the new data array*/
     return new Promise(function(resolve, reject) {
-      console.log(trendImageViewer.protein_family_data);
       trendImageViewer.protein_family_data.forEach(function(memberProtein) {
         memberProtein.sequence.forEach(function(residue,i){
           data.push({

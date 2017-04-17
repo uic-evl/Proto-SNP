@@ -45,16 +45,17 @@ const TrendImageController = function(){
 
     /* Update the frequency viewer's text */
     /* Get the currently selected protein*/
-    let currentProtein = _.find(trendImage.getProteinData(), ["name", self.currentHorizontalSelection]),
+    let currentProtein = _.find(trendImage.getProteinData(), ["name", self.currentHorizontalSelection]);
     /* Get the left vertical selection */
-        leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(trendImage.getXAxisScale().invert),
+    self.leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(trendImage.getXAxisScale().invert);
     /* Get the right vertical selection */
-        rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(trendImage.getXAxisScale().invert);
+    self.rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(trendImage.getXAxisScale().invert);
 
     /* Get the residues that intersect with the left vertical paddle*/
-    let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftVerticalSelection[0], leftVerticalSelection[1]);
+    let leftHorizontalSelectedResidues = currentProtein.sequence.slice(self.leftVerticalSelection[0], self.leftVerticalSelection[1]);
+
     /* Get the residues that intersect with the right vertical paddle*/
-    let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightVerticalSelection[0], rightVerticalSelection[1]);
+    let rightHorizontalSelectedResidues = currentProtein.sequence.slice(self.rightVerticalSelection[0], self.rightVerticalSelection[1]);
 
     /* Update the left frequency viewer text  */
     App.leftFrequencyViewer.update(leftHorizontalSelectedResidues);
@@ -79,6 +80,9 @@ const TrendImageController = function(){
 
     /* Get the current protein */
     let currentVerticalSelection = d3.event.selection.map(trendImage.getXAxisScale().invert);
+    // (It's sad that I have to do this -- Floating pt errors)
+    currentVerticalSelection[0] = parseInt(Math.round(currentVerticalSelection[0]));
+    currentVerticalSelection[1] = parseInt(Math.round(currentVerticalSelection[1]));
 
     /* Get the current paddle */
     let currentPaddle = d3.select(this).attr("class").split(" ")[1];
@@ -117,11 +121,14 @@ const TrendImageController = function(){
 
   function get_selected_protein() { return self.currentHorizontalSelection }
 
+  function get_selected_residue_ranges() { return { left: self.leftVerticalSelection, right: self.rightVerticalSelection} }
+
   return {
     horizontalBrushed   : horizontal_paddle_controller,
     verticalBrushed     : vertical_paddle_controller,
     horizontalEnd       : horizontal_paddle_controllerEnd,
-    getSelectedProtein  : get_selected_protein
+    getSelectedProtein  : get_selected_protein,
+    getSelectedRanges   : get_selected_residue_ranges
   }
 
 };

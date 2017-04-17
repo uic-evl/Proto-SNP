@@ -120,7 +120,6 @@ const TrendImageViewer = function(){
       trendImageViewer.leftVerticalPaddle
           .onBrush(function(){
             trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected, App.leftFrequencyViewer)});
-
       trendImageViewer.rightVerticalPaddle
           .onBrush(function(){
             trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected, App.rightFrequencyViewer) });
@@ -164,14 +163,17 @@ const TrendImageViewer = function(){
     ;
   }
 
-  /* Function to create the three brush paddles*/
-  function create_brushes() {
-
+  /* Function to set the starting positions of the three paddles */
+  function initialize_brush_positions() {
     /* Store the initial positions of the brushes */
     trendImageViewer.initHorizontalBrush    = get_protein_names()[0];
     trendImageViewer.initLeftVerticalBrush  = [0, trendImageViewer.verticalPaddleSize];
     trendImageViewer.initRightVerticalBrush = [trendImageViewer.x_axis_length - trendImageViewer.verticalPaddleSize,  trendImageViewer.x_axis_length];
+    trendImageViewer.initVerticalBrushes    = {left: trendImageViewer.initLeftVerticalBrush, right: trendImageViewer.initRightVerticalBrush};
+  }
 
+  /* Function to create the three brush paddles*/
+  function create_brushes() {
     /* Construct the horizontal Protein-selection paddle */
     trendImageViewer.horizonalPaddle =
       App.TrendImageBrushFactory.createBrush(App.HORIZONTAL_PADDLE)
@@ -220,7 +222,9 @@ const TrendImageViewer = function(){
 
     /* Reset the brush selections */
     trendImageViewer.svg.selectAll('rect')
-        .classed("active_protein_selection", false);
+        .classed("active_protein_selection", false)
+        .classed("active_res_selection", false);
+
     /* Set the first highlighted row's opacity */
     trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
         .classed("active_protein_selection", true);
@@ -242,11 +246,9 @@ const TrendImageViewer = function(){
   /* Function to reset the brushes to be the before-sorted selection */
   function reset_brushes() {
     /* Get the protein that was last selected */
-    let currentProtein = trendImageViewer.controller.getSelectedProtein() || trendImageViewer.initHorizontalBrush;
+    let currentProtein = trendImageViewer.controller.getSelectedProtein();
     /* Get the protein that was last selected */
     let currentRanges = trendImageViewer.controller.getSelectedRanges();
-    currentRanges.left = currentRanges.left   || trendImageViewer.initLeftVerticalBrush;
-    currentRanges.right = currentRanges.right || trendImageViewer.initRightVerticalBrush;
 
     /* Render the brush with the current protein selected */
     render_brushes(currentProtein, currentRanges);
@@ -265,7 +267,6 @@ const TrendImageViewer = function(){
 
   /* Reorder the proteins based on the selected sorting  */
   function reorder() {
-
     /* Get the new order for the protein rows*/
     let ordering_scores = _.sortBy(trendImageViewer.protein_family_data, (protein) => { return protein.scores[App.sorting];});
 
@@ -320,8 +321,7 @@ const TrendImageViewer = function(){
     add_brushes();
 
     /* Render the brushes */
-    render_brushes(trendImageViewer.initHorizontalBrush,
-        {left: trendImageViewer.initLeftVerticalBrush, right:trendImageViewer.initRightVerticalBrush});
+    render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
   }
 
   function initialize_chart_dom(){
@@ -362,11 +362,14 @@ const TrendImageViewer = function(){
     /* Initialize the scales for the trend image*/
     set_chart_scales();
 
-    /* Trend Image interaction controller */
-    set_trend_image_controller();
-
     /* Set the size of the initial vertical paddles */
     trendImageViewer.verticalPaddleSize = 6;
+
+    /* Initialize the sizes of the brushing paddles */
+    initialize_brush_positions();
+
+    /* Trend Image interaction controller */
+    set_trend_image_controller();
 
     /* Create the three brushes */
     create_brushes();
@@ -384,7 +387,12 @@ const TrendImageViewer = function(){
   }
 
   /* Setter for the trend image controller */
-  function set_trend_image_controller() { trendImageViewer.controller = new TrendImageController(); }
+  function set_trend_image_controller() {
+    trendImageViewer.controller = new TrendImageController({
+      initHorizontalPosition : trendImageViewer.initHorizontalBrush,
+      initVerticalPosition   : trendImageViewer.initVerticalBrushes
+    });
+  }
 
   /* Setter for the chart DOM element */
   function set_chart_dom_obj(div_id) {
@@ -436,9 +444,9 @@ const TrendImageViewer = function(){
   function set_data_dimensions_sizes() {
 
     /* Get/store the length of the longest sequence */
-    trendImageViewer.x_axis_length = _.max(d3.set(trendImageViewer.protein_family_data.map(
-        function( residue ) { return residue.length; } ))
-        .values());
+    trendImageViewer.x_axis_length = parseInt(_.max(d3.set(trendImageViewer.protein_family_data
+        .map((residue) => { return residue.length; } ))
+        .values()));
 
     /* Get/store the length of the y-axis -- i.e. how many proteins it contains */
     trendImageViewer.y_axis_length = get_protein_names().length;

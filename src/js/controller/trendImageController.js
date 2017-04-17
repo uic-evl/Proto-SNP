@@ -4,10 +4,14 @@
 var App = App || {};
 
 // Protein / Molecule Viewer "Class"
-const TrendImageController = function(){
+const TrendImageController = function(options){
 
   /* Class private variable */
-  let self = {};
+  let self = {
+    currentHorizontalSelection : options.initHorizontalPosition,
+    leftVerticalSelection      : options.initVerticalPosition.left,
+    rightVerticalSelection      : options.initVerticalPosition.right
+  };
 
   function horizontal_paddle_controller(trendImage) {
 
@@ -38,7 +42,7 @@ const TrendImageController = function(){
       .classed("active_protein_selection", true);
   }
 
-  function horizontal_paddle_controllerEnd(trendImage) {
+  function horizontal_paddle_controller_end(trendImage) {
 
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (!d3.event.selection) return; // Ignore empty selections.
@@ -87,6 +91,14 @@ const TrendImageController = function(){
     /* Get the current paddle */
     let currentPaddle = d3.select(this).attr("class").split(" ")[1];
 
+    /* Keep track of the current selection */
+    if(currentPaddle === "vertical-right"){
+      self.rightVerticalSelection = currentVerticalSelection;
+    }
+    else {
+      self.leftVerticalSelection = currentVerticalSelection;
+    }
+
     /* Remove the previous selection */
     d3.selectAll('rect.'+ currentPaddle + '.active_res_selection')
       .classed(currentPaddle, false)
@@ -126,7 +138,7 @@ const TrendImageController = function(){
   return {
     horizontalBrushed   : horizontal_paddle_controller,
     verticalBrushed     : vertical_paddle_controller,
-    horizontalEnd       : horizontal_paddle_controllerEnd,
+    horizontalEnd       : horizontal_paddle_controller_end,
     getSelectedProtein  : get_selected_protein,
     getSelectedRanges   : get_selected_residue_ranges
   }

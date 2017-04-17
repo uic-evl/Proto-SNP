@@ -12,6 +12,18 @@ App.VERTICAL_PADDLE   = 2;
   /* Generic Brush Class */
   let Brush = function()
   {
+    /* Move the brush to a specified position */
+    function move_brush(pos) {
+      /* Get the DOM element */
+      let brush = d3.select(document.getElementsByClassName(this.brush_class)[0]);
+      /* Move the brush */
+      brush
+          .transition().duration(1000)
+          .call(this.brush.move, pos);
+
+      return this;
+    }
+
     /* Set the brush extent */
     function set_brush_extent(ext) {
       this.brush.extent(ext);
@@ -70,6 +82,7 @@ App.VERTICAL_PADDLE   = 2;
       getPaddleSize       : get_brush_paddle_size,
       getFrequencyViewer  : get_frequency_viewer,
       getCurrentSelection : get_current_selection,
+      moveBrush           : move_brush,
       onBrush             : set_brushing_callback,
       onEnd               : set_on_end_callback
     }

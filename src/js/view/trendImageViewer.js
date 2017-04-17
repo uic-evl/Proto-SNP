@@ -252,6 +252,10 @@ const TrendImageViewer = function(){
 
     /* Render the brush with the current protein selected */
     render_brushes(currentProtein, currentRanges);
+
+    /* Move the brush to the current overlay */
+    let brush_pos = trendImageViewer.yScale(currentProtein);
+    trendImageViewer.horizonalPaddle.moveBrush( [brush_pos, brush_pos+trendImageViewer.residue_glyph_size] );
   }
 
   /* Function to redraw the trend image */
@@ -281,13 +285,14 @@ const TrendImageViewer = function(){
         .attr("row", function(){
           let row = parseInt(d3.select(this).attr("row"));
           return _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
+        })
+        .call(function(){
+          /* Set the new y-scale so the brushes have an updated lookup table */
+          set_y_scale(_.map(ordering_scores, "name"));
+          set_protein_family(ordering_scores);
+          /* Reset the brush selections */
+          reset_brushes();
         });
-
-    /* Set the new y-scale so the brushes have an updated lookup table */
-    set_y_scale(_.map(ordering_scores, "name"));
-
-    /* Reset the brush selections */
-    reset_brushes();
   }
 
   /* Render the trend image to the svg */
@@ -414,7 +419,6 @@ const TrendImageViewer = function(){
       .domain([0, trendImageViewer.x_axis_length])
       .range([0, Math.ceil((trendImageViewer.width)/trendImageViewer.residue_glyph_size)*trendImageViewer.residue_glyph_size])
     ;
-
     /* Set the y scale with the protein names*/
     set_y_scale(get_protein_names())
 

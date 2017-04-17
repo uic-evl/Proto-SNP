@@ -110,7 +110,6 @@ const SequenceSorting = function(family){
   function calculate_edit_distance_scores(protein_a, weights) {
     /* Store the promise for later use*/
     self.edit_distance_scores_computed = new Promise(function(resolve, reject) {
-
       /* Extract the sequence as a string */
       let s = protein_a.sequence.join(''),
           scores = [];
@@ -128,12 +127,48 @@ const SequenceSorting = function(family){
         scores.push({ name: protein_b.name, score : distance });
       });
       /* Store the protein scores */
-      self.edit_distance_scores = scores;
+      if(weights){
+        self.weighted_edit_distance_scores = scores;
+      }
+      else {
+        self.edit_distance_scores = scores;
+      }
       /* Resolve the promise */
       resolve(scores);
     });
     // return the promise
     return self.edit_distance_scores_computed
+  }
+
+  /* Calculates each protein's score based on the edit distance with the protein in question */
+  function calculate_residue_commonality(protein_a){
+    /* Store the promise for later use*/
+    self.common_residues_with_computed = new Promise(function(resolve, reject) {
+      /* Iterate over the family and perform the pairwise comparison*/
+      let scores = [];
+      family.forEach(function (protein_b) {
+        /* If we're comparing the same protein, it receives max score */
+        if (_.eq(protein_a, protein_b)) {
+          scores.push({name: protein_a.name, score: Infinity})
+        }
+        /* Else, iterate over the sequences count the positional residue matches*/
+        else {
+          let sequenceCount = 0;
+          for(let i=0; i < protein_a.sequence.length; i++){
+            if(protein_a.sequence[i] === protein_b.sequence[i]){
+              sequenceCount += 1;
+            }
+          }
+          scores.push({name: protein_b.name, score: sequenceCount})
+        }
+      });
+      /* Store the protein's scores */
+      self.common_residues_with_scores = scores;
+      /* Resolve the promise */
+      resolve(scores);
+    });
+    // return the promise
+    return self.common_residues_with_computed;
   }
 
 
@@ -142,10 +177,11 @@ const SequenceSorting = function(family){
 
 
   /* Get the frequency of each column's residues */
-  function get_edit_distance_scores() { return self.fragment_frequency_scores; }
+  function get_edit_distance_scores(w) { return (w) ? self.weighted_edit_distance_scores : self.edit_distance_scores; }
 
 
-  function sortByFrequencyWithProtein(protein){}
+  /* Get the frequency of each column's residues */
+  function get_common_residues_with_scores() { return self.common_residues_with_scores; }
 
 
   return {
@@ -153,11 +189,13 @@ const SequenceSorting = function(family){
     calculateFrequency               : calculate_fragment_frequency,
     calculateFrequencyScores         : calculate_fragment_frequency_scores,
     calculateEditDistanceScores      : calculate_edit_distance_scores,
+    calculateCommonalityScores       : calculate_residue_commonality,
     /* Getters */
     getFragmentCountsAt              : get_fragment_counts_at,
     getFragmentCountsFromRange       : get_fragment_counts_from_range,
     getFragmentFrequencyScores       : get_fragment_frequency_scores,
     getEditDistanceScores            : get_edit_distance_scores,
+    getOccurandeScores               : get_common_residues_with_scores,
     getFrequencyPromise              : get_frequency_promise
   }
 

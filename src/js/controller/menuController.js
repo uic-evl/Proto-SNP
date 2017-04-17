@@ -45,16 +45,24 @@ const MenuController = function() {
       /* Set the sorting algorithm depending on the option the user selected */
       switch($(this).text()) {
         case "Residue Frequency":
-          /*Set the new coloring scheme */
+          /*Set the new sorting scheme */
           App.sorting = "residue_frequency";
           break;
         case "Edit Distance":
-          /*Set the new coloring scheme */
+          /*Set the new sorting scheme */
           App.sorting = "edit_distance";
           break;
         case "Weighted Edit Distance":
-          /*Set the new coloring scheme */
+          /*Set the new sorting scheme */
           App.sorting = "weighted_edit_distance";
+          break;
+        case "Residue Commonality with":
+          /*Set the new sorting scheme */
+          App.sorting = "commonality_scores";
+          break;
+        case "Weighted Residue Commonality with":
+          /*Set the new sorting scheme */
+          App.sorting = "weighted_commonality_scores";
           break;
       }
       /* Recolor the trend image*/

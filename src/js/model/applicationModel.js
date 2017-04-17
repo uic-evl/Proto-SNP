@@ -168,13 +168,7 @@ function ApplicationModel() {
     return false;
   }
 
-  /* Form callback to process the family datafile */
-  function parse_and_store_family(file) {
-
-    /* Remove the Splash screen */
-    $("#trendSplash").remove();
-    self.proteinFamily = new ProteinFamily(file);
-
+  function calcualte_all_sorting_scores() {
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
 
@@ -198,6 +192,23 @@ function ApplicationModel() {
           $("#weighted_edit_dist_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("weighted_edit_distance", scores);
         });
+    /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
+    self.sortedSequences.calculateCommonalityScores(self.proteinFamily.getFamily()[0])
+        .then((scores) => {
+          $("#common_residues_li").find("a").removeClass("disabled");
+          self.proteinFamily.setScores("commonality_scores", scores);
+        });
+  }
+
+  /* Form callback to process the family datafile */
+  function parse_and_store_family(file) {
+
+    /* Remove the Splash screen */
+    $("#trendSplash").remove();
+    self.proteinFamily = new ProteinFamily(file);
+
+    /* Calculate all of the initial sorting scores*/
+    calcualte_all_sorting_scores();
 
     /* Set the protein family and column sequence data */
     App.trendImageViewer.setProteinFamily(self.proteinFamily.getFamily());

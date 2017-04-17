@@ -271,8 +271,10 @@ const TrendImageViewer = function(){
 
   /* Reorder the proteins based on the selected sorting  */
   function reorder() {
-    /* Get the new order for the protein rows*/
-    let ordering_scores = _.sortBy(trendImageViewer.protein_family_data, (protein) => { return protein.scores[App.sorting];});
+    /* Get the new order for the protein rows in descending order */
+    let ordering_scores = _.chain(trendImageViewer.protein_family_data)
+        .sortBy((protein) => { return protein.scores[App.sorting];})
+        .reverse().value();
 
     trendImageViewer.svg
         .transition().duration(1000)

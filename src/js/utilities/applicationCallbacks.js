@@ -6,7 +6,6 @@ var App = App || {};
 // Application-wide callback handler
 App.ApplicationCallbackListener = (function() {
 
-  let self = {};
   let registeredKeys = {};
 
   function addKeyboardCallback(key, cb) {

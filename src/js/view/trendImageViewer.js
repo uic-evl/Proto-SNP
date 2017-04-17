@@ -259,9 +259,9 @@ const TrendImageViewer = function(){
     /* If a trend image exists, recolor based on the new color map */
     if(trendImageViewer.svg) {
       trendImageViewer.svg
-          .selectAll(".proteinRow rect")
-          .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
-          .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
+          .selectAll(".cell")
+          .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
+          .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
     }
   }
 

@@ -8,9 +8,6 @@ const SequenceSorting = function(family){
 
   /* Internal private variable*/
   let self = {};
-  /* Promise */
-  self.frequencies_computed = null;
-
 
   /* Get the fragment frequency */
   function get_fragment_counts_at(column_index) {
@@ -69,27 +66,22 @@ const SequenceSorting = function(family){
 
   /* Calculates each protein's score based on per-fragment comparison's with the max */
   function calculate_fragment_frequency_scores() {
-
     /* Store the promise for later use*/
     self.frequency_scores_computed = new Promise(function(resolve, reject) {
-
       /* After each columns frequencies have been */
       get_frequency_promise().then(function(frequencies){
         /* Get the length of the longest sequence*/
         let max_len = _.maxBy(family, 'length').length,
             column_max_frequencies = [],
             scores = [],
-
           /* Highest occurring residue column in the entire family  */
             max_frequency = _.chain(frequencies)
               .maxBy(function(o) { return Math.max(_.values(o)); } )
               .toPairs().head().value()[1];
-
         /* Get the highest residue(s) from each column */
         for(let i = 0; i < max_len; i++) {
           column_max_frequencies.push(get_most_frequent_fragment_at(i));
         }
-
         /* Iterate over each protein in the family */
         family.forEach(function(protein){
           /* Iterate over each residue of the sequence, and increase the score depending on
@@ -114,22 +106,58 @@ const SequenceSorting = function(family){
   }
 
 
+  /* Calculates each protein's score based on the edit distance with the protein in question */
+  function calculate_edit_distance_scores(protein_a, weights) {
+    /* Store the promise for later use*/
+    self.edit_distance_scores_computed = new Promise(function(resolve, reject) {
+
+      /* Extract the sequence as a string */
+      let s = protein_a.sequence.join(''),
+          scores = [];
+      /* Iterate over the family and perform the edit distance with the protein in question*/
+      family.forEach(function(protein_b){
+        /* If we're comparing the same protein, it receives max score */
+        if(_.eq(protein_a, protein_b)) {
+          scores.push({name: protein_a.name, score : Infinity})
+        }
+        /* Extract the sequence as a string */
+        let t = protein_b.sequence.join(''),
+        /* Compute the edit distance */
+            distance = App.editDistance(s,t,weights);
+        /* Add the final score to the list of scores */
+        scores.push({ name: protein_b.name, score : distance });
+      });
+      /* Store the protein scores */
+      self.edit_distance_scores = scores;
+      /* Resolve the promise */
+      resolve(scores);
+    });
+    // return the promise
+    return self.edit_distance_scores_computed
+  }
+
+
   /* Get the frequency of each column's residues */
   function get_fragment_frequency_scores() { return self.fragment_frequency_scores; }
 
 
-  function sortByFrequencyWithProtein(protein){
+  /* Get the frequency of each column's residues */
+  function get_edit_distance_scores() { return self.fragment_frequency_scores; }
 
-  }
+
+  function sortByFrequencyWithProtein(protein){}
+
 
   return {
     /* Setters */
     calculateFrequency               : calculate_fragment_frequency,
     calculateFrequencyScores         : calculate_fragment_frequency_scores,
+    calculateEditDistanceScores      : calculate_edit_distance_scores,
     /* Getters */
     getFragmentCountsAt              : get_fragment_counts_at,
     getFragmentCountsFromRange       : get_fragment_counts_from_range,
     getFragmentFrequencyScores       : get_fragment_frequency_scores,
+    getEditDistanceScores            : get_edit_distance_scores,
     getFrequencyPromise              : get_frequency_promise
   }
 

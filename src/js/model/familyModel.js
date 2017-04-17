@@ -49,7 +49,6 @@ function ProteinFamily(file) {
         self.family[parsedLine[1]].sequence += parsedLine[4].split(' ').join('');
       }
     });
-
     /* Convert the family object to an array */
     self.family = _.values(self.family);
     self.family.forEach((protein) => { protein.sequence = protein.sequence.split(''); });

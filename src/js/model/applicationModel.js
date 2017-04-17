@@ -183,8 +183,20 @@ function ApplicationModel() {
     /* Calculate the column frequency scores and enable the menu option */
     self.sortedSequences.calculateFrequencyScores()
         .then((scores) => {
-          $("#residue_freq_li a").removeClass("disabled");
+          $("#residue_freq_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("residue_frequency", scores);
+        });
+    /* Calculate the edit distance scores with the first protein and enable the menu option */
+    self.sortedSequences.calculateEditDistanceScores(self.proteinFamily.getFamily()[0])
+        .then((scores) => {
+          $("#edit_dist_li").find("a").removeClass("disabled");
+          self.proteinFamily.setScores("edit_distance", scores);
+        });
+    /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
+    self.sortedSequences.calculateEditDistanceScores(self.proteinFamily.getFamily()[0], {insertion: 3, deletion: 3, substitution: 5})
+        .then((scores) => {
+          $("#weighted_edit_dist_li").find("a").removeClass("disabled");
+          self.proteinFamily.setScores("weighted_edit_distance", scores);
         });
 
     /* Set the protein family and column sequence data */

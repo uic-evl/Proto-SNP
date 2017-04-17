@@ -27,14 +27,14 @@ const TrendImageController = function(){
     d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Get the current protein */
-    let currentHorizontalSelection = d3.event.selection.map(trendImage.getYAxisScale().invert)[0];
+    self.currentHorizontalSelection = d3.event.selection.map(trendImage.getYAxisScale().invert)[0];
 
     /* Reset the opacity of unselected rows */
     d3.selectAll('rect.active_protein_selection')
       .classed("active_protein_selection", false);
 
     /* Set the opacity of the highlighted row */
-    d3.selectAll('.p' + currentHorizontalSelection)
+    d3.selectAll('#p' + self.currentHorizontalSelection + " > rect")
       .classed("active_protein_selection", true);
   }
 
@@ -45,23 +45,19 @@ const TrendImageController = function(){
 
     /* Update the frequency viewer's text */
     /* Get the currently selected protein*/
-    let currentProtein = _.find(trendImage.getProteinData(), ["name", d3.event.selection.map(trendImage.getYAxisScale().invert)[0]]);
-
+    let currentProtein = _.find(trendImage.getProteinData(), ["name", self.currentHorizontalSelection]),
     /* Get the left vertical selection */
-    let leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(trendImage.getXAxisScale().invert);
-
+        leftVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-left').node() ).map(trendImage.getXAxisScale().invert),
     /* Get the right vertical selection */
-    let rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(trendImage.getXAxisScale().invert);
+        rightVerticalSelection = d3.brushSelection( d3.select('g.brush.vertical-right').node() ).map(trendImage.getXAxisScale().invert);
 
     /* Get the residues that intersect with the left vertical paddle*/
     let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftVerticalSelection[0], leftVerticalSelection[1]);
-
     /* Get the residues that intersect with the right vertical paddle*/
     let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightVerticalSelection[0], rightVerticalSelection[1]);
 
     /* Update the left frequency viewer text  */
     App.leftFrequencyViewer.update(leftHorizontalSelectedResidues);
-
     /* Update the right frequency viewer text  */
     App.rightFrequencyViewer.update(rightHorizontalSelectedResidues);
   }
@@ -94,7 +90,7 @@ const TrendImageController = function(){
 
     /* Iterate over the selection and add the active class to the selected fragments */
     for(let i = currentVerticalSelection[0]; i < currentVerticalSelection[1]; i++) {
-      d3.selectAll("rect[class$='r" + parseInt(i) + "']")
+      d3.selectAll("[col='" + parseInt(i) + "']")
         .classed(currentPaddle, true)
         .classed("active_res_selection", true);
     }
@@ -119,12 +115,13 @@ const TrendImageController = function(){
     frequencyChart.render(currentSelectionFragments, trendImage.getYAxisSize(), horizontalSelectedResidues);
   }
 
-
+  function get_selected_protein() { return self.currentHorizontalSelection }
 
   return {
     horizontalBrushed   : horizontal_paddle_controller,
     verticalBrushed     : vertical_paddle_controller,
-    horizontalEnd       : horizontal_paddle_controllerEnd
+    horizontalEnd       : horizontal_paddle_controllerEnd,
+    getSelectedProtein  : get_selected_protein
   }
 
 };

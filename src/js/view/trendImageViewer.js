@@ -195,32 +195,8 @@ const TrendImageViewer = function(){
       .then(enable_vertical_brushing);
   }
 
-  /* Function to redraw the trend image */
-  function recolor() {
-    /* If a trend image exists, recolor based on the new color map */
-    if(trendImageViewer.svg) {
-      trendImageViewer.svg
-          .selectAll(".proteinRow rect")
-          .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
-          .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
-    }
-  }
-
-  /* Reorder the proteins based on the selected sorting  */
-  function reorder() {
-
-    let ordering_scores = _.sortBy(trendImageViewer.protein_family_data, (protein) => { return protein.scores[App.sorting];});
-
-    trendImageViewer.svg.selectAll(".cell")
-        .attr("y", function(d,i) {
-          let row = parseInt(d3.select(this).attr("row")),
-              new_row = _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
-          return new_row * trendImageViewer.residue_glyph_size;
-        } );
-  }
-
   /* Render the brushes to the image */
-  function render_brushes() {
+  function render_brushes(selected_protein) {
 
     /* Remove the pointer events from the brush overlays to prevent:
      * 1: Deleting the brush on a wrong click
@@ -239,23 +215,73 @@ const TrendImageViewer = function(){
 
     /* Highlight the initial selections*/
 
+    /* Reset the brush selections */
+    trendImageViewer.svg.selectAll('rect')
+        .classed("active_protein_selection", false);
+
     /* Set the first highlighted row's opacity */
-    d3.selectAll('.p' + get_protein_names()[0])
+    trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
         .classed("active_protein_selection", true);
 
     /* Iterate over the left selection and add the active class to the selected fragments */
     for(let i = 0; i < trendImageViewer.verticalPaddleSize; i++) {
-      d3.selectAll("rect[class$='r" + parseInt(i) + "']")
+      trendImageViewer.svg.selectAll("rect[col='" + parseInt(i) + "']")
           .classed("vertical-left", true)
           .classed("active_res_selection", true);
     }
 
     /* Iterate over the right selection and add the active class to the selected fragments */
     for(let i = trendImageViewer.x_axis_length - trendImageViewer.verticalPaddleSize ; i < trendImageViewer.x_axis_length; i++) {
-      d3.selectAll("rect[class$='r" + parseInt(i) + "']")
+      trendImageViewer.svg.selectAll("rect[col='" + parseInt(i) + "']")
           .classed("vertical-right", true)
           .classed("active_res_selection", true);
     }
+  }
+
+  /* Function to reset the horizontal brush to be the before-sorted selection */
+  function reset_horizontal_brush() {
+
+    /* Get the protein that was last selected */
+    let currentProtein = trendImageViewer.controller.getSelectedProtein() || trendImageViewer.protein_family_data[0].name;
+    /* Render the brush with the current protein selected */
+    render_brushes(currentProtein);
+  }
+
+  /* Function to redraw the trend image */
+  function recolor() {
+    /* If a trend image exists, recolor based on the new color map */
+    if(trendImageViewer.svg) {
+      trendImageViewer.svg
+          .selectAll(".proteinRow rect")
+          .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
+          .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d.residue).code; })
+    }
+  }
+
+  /* Reorder the proteins based on the selected sorting  */
+  function reorder() {
+
+    /* Get the new order for the protein rows*/
+    let ordering_scores = _.sortBy(trendImageViewer.protein_family_data, (protein) => { return protein.scores[App.sorting];});
+
+    trendImageViewer.svg
+        .transition().duration(1000)
+        .selectAll(".cell")
+        .attr("y", function(d,i) {
+          let row = parseInt(d3.select(this).attr("row")),
+              new_row = _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
+          return new_row * trendImageViewer.residue_glyph_size;
+        })
+        .attr("row", function(){
+          let row = parseInt(d3.select(this).attr("row"));
+          return _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
+        });
+
+    /* Set the new y-scale so the brushes have an updated lookup table */
+    set_y_scale(_.map(ordering_scores, "name"));
+
+    /* Reset the horizontal brush */
+    reset_horizontal_brush();
   }
 
   /* Render the trend image to the svg */
@@ -268,7 +294,7 @@ const TrendImageViewer = function(){
     let rows = trendImageViewer.svg.selectAll(".proteinRow")
         .data(data.data)
         .enter().append("g")
-        .attr("id", (d,i) => { return data.index[i];})
+        .attr("id", (d,i) => { return "p" + data.index[i];})
         .attr("class", "proteinRow");
 
     /* For each row, render the residues as columns */
@@ -279,7 +305,7 @@ const TrendImageViewer = function(){
         .attr("y", (d, i, j) => { return j * trendImageViewer.residue_glyph_size; })
         .attr("width", trendImageViewer.residue_glyph_size)
         .attr("height", trendImageViewer.residue_glyph_size)
-        .attr("class", (d, i, j) => { return "cell p" + data.index[j] + " r" + i % trendImageViewer.x_axis_length; })
+        .attr("class", "cell")
         .attr("row", (d, i, j) => { return j; })
         .attr("col", (d, i, j) => { return i; })
         .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
@@ -289,7 +315,7 @@ const TrendImageViewer = function(){
     add_brushes();
 
     /* Render the brushes */
-    render_brushes();
+    render_brushes(get_protein_names()[0]);
   }
 
   function initialize_chart_dom(){
@@ -359,6 +385,14 @@ const TrendImageViewer = function(){
     trendImageViewer.domObj = d3.select(div_id);
   }
 
+  function set_y_scale(values) {
+    /* construct the y-scale */
+    trendImageViewer.yScale = d3.scaleBand()
+        .domain(values)
+        .range([0, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size])
+    ;
+  }
+
   /* Setter for the trend image scales */
   function set_chart_scales() {
     /* construct the x-scale */
@@ -367,11 +401,9 @@ const TrendImageViewer = function(){
       .range([0, Math.ceil((trendImageViewer.width)/trendImageViewer.residue_glyph_size)*trendImageViewer.residue_glyph_size])
     ;
 
-    /* construct the y-scale */
-    trendImageViewer.yScale = d3.scaleBand()
-      .domain(get_protein_names())
-      .range([0, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size])
-    ;
+    /* Set the y scale with the protein names*/
+    set_y_scale(get_protein_names())
+
   }
 
   /* Setter for the chart dimensions */

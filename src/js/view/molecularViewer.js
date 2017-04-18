@@ -11,6 +11,7 @@ let MolecularViewer = function(){
   let residueModel = new ResidueModel();
   let molecularController = null;
 
+
   function colorProteinBy() {
     return new pv.color.ColorOp(function (atom, out, index) {
 
@@ -39,11 +40,13 @@ let MolecularViewer = function(){
     }
   }
 
+
   /* Render the title of the viewer */
   function updateViewTitle(title) {
     d3.select(molecularViewer.parentNode).select('p.view')
       .html(title);
   }
+
 
   function render(structure, proteinName) {
 
@@ -64,17 +67,22 @@ let MolecularViewer = function(){
     molecularViewer.pvViewer.autoZoom();
   }
 
+
   /* Accessor to get the underlying structure in the molecularViewer */
   function get_structure() { return molecularViewer.geom.structure(); }
+
 
   /* Accessor to get the underlying geometry in the molecularViewer */
   function get_geometry() { return molecularViewer.geom; }
 
+
   /* Accessor to get the underlying geometry in the molecularViewer */
   function get_viewer() { return molecularViewer.pvViewer; }
 
+
   /* Accessor to get the molecularViewer's height and width */
   function get_dimensions() { return {width: molecularViewer.width, height: molecularViewer.height}}
+
 
   /* Accessor to get the underlying sequence of the Protein*/
   function get_sequence(structure, chain) {
@@ -89,6 +97,7 @@ let MolecularViewer = function(){
     // return the sequence
     return seq;
   }
+
 
   function initialize(div_id, options) {
 
@@ -108,8 +117,8 @@ let MolecularViewer = function(){
     options = options || {};
 
     /* get/save the width and height of the given DOM element */
-    molecularViewer.width = App.molecularViewerWidth;
-    molecularViewer.height = App.molecularViewerHeight;
+    molecularViewer.width = App.molecularViewerWidth - App.labelHeight;
+    molecularViewer.height = App.molecularViewerHeight - App.labelHeight;
 
     /* add the width and height to the options */
     options.width = molecularViewer.width;
@@ -123,6 +132,7 @@ let MolecularViewer = function(){
       label    : staticLabel
     });
   }
+
 
   /* return the public-facing functions */
   return {

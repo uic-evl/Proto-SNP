@@ -456,7 +456,7 @@ const TrendImageViewer = function(){
     App.frequencyWidth = App.trendWidth / 2.0;
 
     /*Reset the parent dom width/heights*/
-    trendImageViewer.domObj.classed("viewers", false);
+    trendImageViewer.domObj.classed("trend-viewer", false);
 
     document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.y_axis_length * (residue_width+1);
     document.getElementById('trendImageViewer').parentNode.style.width = App.trendWidth;

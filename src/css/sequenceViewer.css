@@ -1,5 +1,5 @@
 .sequenceViewer {
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: hidden;
 }
 
@@ -20,4 +20,8 @@
     font-weight: bold;
     background-color: #f7f7f7;
     border: solid 1px #aaa;
+}
+
+.sequence-viewer {
+
 }

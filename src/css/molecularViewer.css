@@ -17,3 +17,8 @@
 .molecularViewerB {
     padding-left: 0;
 }
+
+.molecular-viewer {
+    background-color: black;
+    width: 100%;
+}

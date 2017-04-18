@@ -131,9 +131,9 @@
     <div class="row TDView">
 
         <!-- Left Viewer-->
-        <div class="col-md-6 molecularViewerA">
+        <div class="col-md-5 molecularViewerA">
             <p class="view">&nbsp;</p>
-            <div id=leftViewer class="viewers">
+            <div id=leftViewer class="molecular-viewer">
                 <div id="leftSplash">
                     <!-- Select Protein Button -->
                     <button class="popup-trigger sBtn" id="popup-trigger-left">
@@ -180,10 +180,27 @@
         </div>
         <!-- End Left Viewer -->
 
-        <!-- Right Viewer -->
-        <div class="col-md-6 molecularViewerB">
+        <!-- Sequence Viewer -->
+        <div class="col-md-2 sequenceViewer">
             <p class="view">&nbsp;</p>
-            <div id=rightViewer class="viewers">
+            <div id="sequenceViewer" class="row">
+                <!-- Left Sequence List View-->
+                <div class="col-md-6">
+                    <div id="leftViewer-Sequence"></div>
+                </div>
+                <!-- End Left Sequence List View-->
+                <!-- Right Sequence List View-->
+                <div class="col-md-6">
+                    <div id="rightViewer-Sequence"></div>
+                </div>
+                <!-- End Right Sequence List View-->
+            </div>
+        </div>
+
+        <!-- Right Viewer -->
+        <div class="col-md-5 molecularViewerB">
+            <p class="view">&nbsp;</p>
+            <div id=rightViewer class="molecular-viewer">
                 <div id="rightSplash">
                     <!-- Select Protein Button -->
                     <button class="popup-trigger sBtn" id="popup-trigger-right">
@@ -230,21 +247,6 @@
         </div>
         <!-- End Right Viewer -->
 
-        <!-- Sequence Viewer -->
-        <!--<div class="col-md-2 sequenceViewer">-->
-            <!--<div class="row">-->
-                <!--&lt;!&ndash; Left Sequence List View&ndash;&gt;-->
-                <!--<div class="col-md-6">-->
-                    <!--<div id="leftViewer-Sequence"></div>-->
-                <!--</div>-->
-                <!--&lt;!&ndash; End Left Sequence List View&ndash;&gt;-->
-                <!--&lt;!&ndash; Right Sequence List View&ndash;&gt;-->
-                <!--<div class="col-md-6">-->
-                    <!--<div id="rightViewer-Sequence"></div>-->
-                <!--</div>-->
-                <!--&lt;!&ndash; End Right Sequence List View&ndash;&gt;-->
-            <!--</div>-->
-        <!--</div>-->
     </div> <!-- End Molecular Viewers -->
     <br>
     <div class="row">
@@ -253,7 +255,7 @@
             <div class="row TrendImageView center-aligned">
                 <p class="view">Protein Family Viewer</p>
                 <div class="col-md-12  trend-column">
-                    <div id="trendImageViewer" class="viewers">
+                    <div id="trendImageViewer" class="trend-viewer">
                         <!-- Select Protein Button -->
                         <div id="trendSplash">
                     <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-family">

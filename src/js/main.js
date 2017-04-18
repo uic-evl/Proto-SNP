@@ -15,15 +15,15 @@ var App = App || {};
   /* Starting point of the program. Initializes the application */
   function init() {
 
-    /* Set the size of the 3D Divs*/
-    let leftDom  = document.getElementById('leftViewer').parentNode;
-    let rightDom = document.getElementById('rightViewer').parentNode;
-
-    /* Set the size of the family viewer */
-    let trendDom = document.getElementById('trendImageViewer').parentNode;
+    /* Get the interface's dom elements*/
+    let leftDomMol  = document.getElementById('leftViewer').parentNode;
+    let rightDomMol = document.getElementById('rightViewer').parentNode;
+    let trendDom    = document.getElementById('trendImageViewer').parentNode;
+    let seqViewDom  = document.getElementById('sequenceViewer');
 
     /* The size of the EVL header */
     let headerHeight = 0;
+    App.labelHeight = document.getElementsByClassName('view')[0].clientHeight;
 
     /* Aspect Ratio */
     App.aspectRatio = window.innerWidth > ( window.innerHeight - headerHeight ) ?
@@ -31,7 +31,7 @@ var App = App || {};
         window.innerWidth / (window.innerHeight- headerHeight) ;
 
     /* Calculate the height and width of the molecular viewers */
-    App.molecularViewerWidth  = leftDom.clientWidth;
+    App.molecularViewerWidth  = leftDomMol.clientWidth;
     App.molecularViewerHeight = App.molecularViewerWidth * App.aspectRatio;
 
     /* Calculate the height and width of the trend image */
@@ -43,8 +43,11 @@ var App = App || {};
     App.frequencyHeight = App.trendHeight * 0.2;
 
     /* Set the div height for the molecular viewers */
-    leftDom.style.height  = parseInt(App.molecularViewerHeight);
-    rightDom.style.height = parseInt(App.molecularViewerHeight);
+    leftDomMol.style.height  = parseInt(App.molecularViewerHeight)  + App.labelHeight;
+    rightDomMol.style.height = parseInt(App.molecularViewerHeight)  + App.labelHeight;
+
+    seqViewDom.parentNode.style.height  = parseInt(App.molecularViewerHeight) + App.labelHeight;
+    seqViewDom.style.height  = parseInt(App.molecularViewerHeight) - App.labelHeight;
 
     /* Set the div height for the trend image */
     trendDom.style.height = App.trendHeight;

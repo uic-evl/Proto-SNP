@@ -79,7 +79,7 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -89,22 +89,35 @@
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" id="menu-nav">
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li id="residue_freq_li"             class="sortingOption"><a href="#" class="disabled">Residue Frequency</a></li>
-                            <li id="edit_dist_li"                class="sortingOption"><a href="#" class="disabled">Edit Distance</a></li>
-                            <li id="weighted_edit_dist_li"       class="sortingOption"><a href="#" class="disabled">Weighted Edit Distance</a></li>
-                            <li id="common_residues_li"          class="sortingOption"><a href="#" class="disabled">Residue Commonality with</a></li>
-                            <li id="weighted_common_residues_li" class="sortingOption"><a href="#" class="disabled">Weighted Residue Commonality with</a></li>
+                        <ul id="sorting-nav" class="dropdown-menu">
+                            <li id="initial_sort_li" class="sortingOption">
+                                <a href="#" class="disabled">Initial Ordering</a>
+                            </li>
+                            <li id="residue_freq_li" class="sortingOption">
+                                <a href="#" class="disabled">Residue Frequency</a>
+                            </li>
+                            <li id="edit_dist_li" class="sortingOption">
+                                <a href="#" class="disabled">Edit Distance</a>
+                            </li>
+                            <li id="weighted_edit_dist_li" class="sortingOption">
+                                <a href="#" class="disabled">Weighted Edit Distance</a>
+                            </li>
+                            <li id="commonality_li" class="sortingOption">
+                                <a href="#" class="disabled">Residue Commonality with</a>
+                            </li>
+                            <li id="normalized_commonality_li" class="sortingOption">
+                                <a href="#" class="disabled">Normalized Residue Commonality with</a>
+                            </li>
                         </ul>
                     </li>
-                    <li class="dropdown">
+                    <li id="coloring-nav" class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li class="coloringOption"><a href="#">Side Chain Class</a></li>
+                            <li class="coloringOption active-selection"><a href="#">Side Chain Class</a></li>
                             <li class="coloringOption"><a href="#">Side Chain Polarity</a></li>
                         </ul>
                     </li>

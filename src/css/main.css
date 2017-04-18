@@ -23,3 +23,11 @@ p.view {
     margin: 5px 0 5px 0;
     text-align: center;
 }
+
+.active-selection {
+    color: #555;
+    text-decoration: none;
+    font-weight: bold;
+    background-color: #e7e7e7;
+    outline: 0
+}

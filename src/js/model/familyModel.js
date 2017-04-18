@@ -16,7 +16,7 @@ function ProteinFamily(file) {
     let lines = file.split('\n');
 
     /* Iterate over each line*/
-    lines.forEach(function(line){
+    lines.forEach(function(line, idx){
       // If an empty line, continue
       if(!line.length) return;
       /* Create a regex pattern to check for the header lines */
@@ -38,7 +38,7 @@ function ProteinFamily(file) {
           check                  : parseInt(parsedLine[5]),
           weight                 : parseInt(parsedLine[6]),
           sequence               : "",
-          scores                 : []
+          scores                 : {initial: lines.length - idx}
         };
       }
       /* If not in the dictionary pattern, check the for the data pattern */

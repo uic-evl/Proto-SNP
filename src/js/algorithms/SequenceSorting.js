@@ -119,12 +119,14 @@ const SequenceSorting = function(family){
         if(_.eq(protein_a, protein_b)) {
           scores.push({name: protein_a.name, score : Infinity})
         }
-        /* Extract the sequence as a string */
-        let t = protein_b.sequence.join(''),
-        /* Compute the edit distance */
-            distance = App.editDistance(s,t,weights);
-        /* Add the final score to the list of scores */
-        scores.push({ name: protein_b.name, score : distance });
+        else{
+          /* Extract the sequence as a string */
+          let t = protein_b.sequence.join(''),
+              /* Compute the edit distance */
+              distance = App.editDistance(s,t,weights);
+          /* Add the final score to the list of scores */
+          scores.push({ name: protein_b.name, score : distance });
+        }
       });
       /* Store the protein scores */
       if(weights){
@@ -159,7 +161,10 @@ const SequenceSorting = function(family){
               sequenceCount += 1;
             }
           }
-          scores.push({name: protein_b.name, score: sequenceCount / (normalized) ? protein_b.sequence.length : 1})
+          if(normalized){
+            sequenceCount = sequenceCount / protein_b.sequence.length;
+          }
+          scores.push({name: protein_b.name, score: sequenceCount})
         }
       });
       /* Store the protein's scores */
@@ -200,7 +205,7 @@ const SequenceSorting = function(family){
     getFragmentCountsFromRange       : get_fragment_counts_from_range,
     getFragmentFrequencyScores       : get_fragment_frequency_scores,
     getEditDistanceScores            : get_edit_distance_scores,
-    getOccurandeScores               : get_common_occurance_scores,
+    getOccuranceScores               : get_common_occurance_scores,
     getFrequencyPromise              : get_frequency_promise
   }
 

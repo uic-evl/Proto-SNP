@@ -172,6 +172,11 @@ function ApplicationModel() {
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
 
+    /* Initial sorting -- order the file is read in*/
+    $("#initial_sort_li")
+        .addClass("active-selection")
+        .find("a").removeClass("disabled");
+
     /* Calculate the residue frequencies per column */
     self.sortedSequences.calculateFrequency();
     /* Calculate the column frequency scores and enable the menu option */
@@ -195,14 +200,14 @@ function ApplicationModel() {
     /* Calculate the residue commonality scores with the first protein and enable the menu option */
     self.sortedSequences.calculateCommonalityScores(self.proteinFamily.getFamily()[0])
         .then((scores) => {
-          $("#common_residues_li").find("a").removeClass("disabled");
+          $("#commonality_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("commonality_scores", scores);
         });
     /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
     self.sortedSequences.calculateCommonalityScores(self.proteinFamily.getFamily()[0], 1)
         .then((scores) => {
-          $("#weighted_common_residues_li").find("a").removeClass("disabled");
-          self.proteinFamily.setScores("weighted_commonality_scores", scores);
+          $("#normalized_commonality_li").find("a").removeClass("disabled");
+          self.proteinFamily.setScores("normalized_commonality_scores", scores);
         });
   }
 

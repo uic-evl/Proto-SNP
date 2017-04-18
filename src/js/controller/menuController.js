@@ -14,8 +14,16 @@ const MenuController = function() {
     self.coloring_menu.click(function(e){
       e.preventDefault();
 
+      /* Check the selection is already selected */
+      if($(this).hasClass('active-selection')){ return; }
+
+      /* Remove the previous active selection */
+      $("#coloring-nav").find("li").removeClass("active-selection");
+      /* Add the active selection class to the selected item */
+      $(this).addClass("active-selection");
+
       /* Set the color scheme depending on the option the user selected */
-      switch($(this).text()) {
+      switch(_.trim($(this).text())) {
 
         case "Side Chain Class":
           /*Set the new coloring scheme */
@@ -42,8 +50,20 @@ const MenuController = function() {
     self.sorting_menu.click(function(e){
       e.preventDefault();
 
+      /* Check the selection is already selected */
+      if($(this).hasClass('active-selection')){ return; }
+
+      /* Remove the previous active selection */
+      $("#sorting-nav").find("li").removeClass("active-selection");
+      /* Add the active selection class to the selected item */
+      $(this).addClass("active-selection");
+
       /* Set the sorting algorithm depending on the option the user selected */
-      switch($(this).text()) {
+      switch(_.trim($(this).text())) {
+        case "Initial Ordering":
+          /*Set the new sorting scheme */
+          App.sorting = "initial";
+          break;
         case "Residue Frequency":
           /*Set the new sorting scheme */
           App.sorting = "residue_frequency";
@@ -60,9 +80,9 @@ const MenuController = function() {
           /*Set the new sorting scheme */
           App.sorting = "commonality_scores";
           break;
-        case "Weighted Residue Commonality with":
+        case "Normalized Residue Commonality with":
           /*Set the new sorting scheme */
-          App.sorting = "weighted_commonality_scores";
+          App.sorting = "normalized_commonality_scores";
           break;
       }
       /* Recolor the trend image*/

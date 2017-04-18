@@ -73,7 +73,7 @@ var App = App || {};
 
     /* Set the initial rendering style and color mapping */
     App.colorMapping      = "side chain";
-    App.sorting           = "default";
+    App.sorting           = "initial";
     App.renderingStyle    = "cartoon";
 
     /* Set the residue property model */

@@ -3,16 +3,8 @@
     overflow-x: hidden;
 }
 /* Disable the scroll bar from rendering */
-.sequence-a::-webkit-scrollbar,
-.sequence-b::-webkit-scrollbar
-{
-    display: none;
-}
-
-#sequenceViewer::-webkit-scrollbar
-{
-    display: none;
-}
+.sequence::-webkit-scrollbar
+{  display: none;  }
 
 .sequence-a, .sequence-b {
     padding: 0;

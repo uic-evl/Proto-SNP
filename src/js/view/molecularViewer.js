@@ -44,7 +44,7 @@ let MolecularViewer = function(){
   /* Render the title of the viewer */
   function updateViewTitle(title) {
     d3.select(molecularViewer.parentNode).select('p.view')
-      .html(title);
+      .html(_.toUpper(title));
   }
 
 

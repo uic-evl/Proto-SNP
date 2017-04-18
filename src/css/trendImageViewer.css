@@ -16,10 +16,6 @@ g.brush.horizontal > .handle {
     display: none;
 }
 
-.TDView {
-    margin-bottom: 30px;
-}
-
 ul li a.disabled {
     pointer-events:none;
     opacity:0.4;

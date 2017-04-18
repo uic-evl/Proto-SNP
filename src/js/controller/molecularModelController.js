@@ -26,6 +26,7 @@ const MolecularModelController = function(options) {
     viewer.fitTo(allSelections);
   }
 
+
   function setColorForAtom(go, atom, color) {
     let view = go.structure().createEmptyView();
     view.addAtom(atom);
@@ -68,6 +69,7 @@ const MolecularModelController = function(options) {
     viewer.requestRedraw();
   }
 
+
   function mouseClickEvent(picked, ev){
     if (picked === null || picked.target() === null) {
       return;
@@ -102,7 +104,6 @@ const MolecularModelController = function(options) {
 
     /* Register the enter key to reset the selections of the view */
     App.ApplicationCallbackListener.addKeyboardCallback(13, zoomToSelections);
-
   }
 
   initialize();

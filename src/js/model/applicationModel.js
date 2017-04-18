@@ -192,11 +192,17 @@ function ApplicationModel() {
           $("#weighted_edit_dist_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("weighted_edit_distance", scores);
         });
-    /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
+    /* Calculate the residue commonality scores with the first protein and enable the menu option */
     self.sortedSequences.calculateCommonalityScores(self.proteinFamily.getFamily()[0])
         .then((scores) => {
           $("#common_residues_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("commonality_scores", scores);
+        });
+    /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
+    self.sortedSequences.calculateCommonalityScores(self.proteinFamily.getFamily()[0], 1)
+        .then((scores) => {
+          $("#weighted_common_residues_li").find("a").removeClass("disabled");
+          self.proteinFamily.setScores("weighted_commonality_scores", scores);
         });
   }
 

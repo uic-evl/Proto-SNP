@@ -141,9 +141,9 @@ const SequenceSorting = function(family){
   }
 
   /* Calculates each protein's score based on the edit distance with the protein in question */
-  function calculate_residue_commonality(protein_a){
+  function calculate_residue_commonality(protein_a, normalized){
     /* Store the promise for later use*/
-    self.common_residues_with_computed = new Promise(function(resolve, reject) {
+    self.residue_commonality_computed = new Promise(function(resolve, reject) {
       /* Iterate over the family and perform the pairwise comparison*/
       let scores = [];
       family.forEach(function (protein_b) {
@@ -159,16 +159,21 @@ const SequenceSorting = function(family){
               sequenceCount += 1;
             }
           }
-          scores.push({name: protein_b.name, score: sequenceCount})
+          scores.push({name: protein_b.name, score: sequenceCount / (normalized) ? protein_b.sequence.length : 1})
         }
       });
       /* Store the protein's scores */
-      self.common_residues_with_scores = scores;
+      if(normalized){
+        self.weighted_residue_commonality_scores = scores;
+      }
+      else {
+        self.residue_commonality_scores = scores;
+      }
       /* Resolve the promise */
       resolve(scores);
     });
     // return the promise
-    return self.common_residues_with_computed;
+    return self.residue_commonality_computed;
   }
 
 
@@ -181,7 +186,7 @@ const SequenceSorting = function(family){
 
 
   /* Get the frequency of each column's residues */
-  function get_common_residues_with_scores() { return self.common_residues_with_scores; }
+  function get_common_occurance_scores(n) { return (n) ? self.weighted_residue_commonality_scores : self.residue_commonality_scores; }
 
 
   return {
@@ -195,7 +200,7 @@ const SequenceSorting = function(family){
     getFragmentCountsFromRange       : get_fragment_counts_from_range,
     getFragmentFrequencyScores       : get_fragment_frequency_scores,
     getEditDistanceScores            : get_edit_distance_scores,
-    getOccurandeScores               : get_common_residues_with_scores,
+    getOccurandeScores               : get_common_occurance_scores,
     getFrequencyPromise              : get_frequency_promise
   }
 

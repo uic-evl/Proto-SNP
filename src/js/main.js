@@ -40,7 +40,7 @@ var App = App || {};
 
     /* Calculate the height and width of the frequency viewer */
     App.frequencyWidth  = App.trendWidth / 2.0;
-    App.frequencyHeight = App.trendHeight / 6.0;
+    App.frequencyHeight = App.trendHeight * 0.2;
 
     /* Set the div height for the molecular viewers */
     leftDom.style.height  = parseInt(App.molecularViewerHeight);

@@ -17,7 +17,7 @@ const FrequencyViewer = function(){
 
     /* get/save the width and height of the given DOM element */
     frequencyViewer.width = App.frequencyWidth;
-    frequencyViewer.height = App.frequencyHeight;
+    frequencyViewer.height = App.frequencyHeight * 0.95;
 
     /* clear the frequency viewer DOM */
     frequencyViewer.domObj.selectAll().remove();
@@ -45,7 +45,7 @@ const FrequencyViewer = function(){
       .merge(selectionText)
       .attr('x', function(d, i) { return frequencyViewer.xScale(i) + frequencyViewer.bar_glyph_width / 2 })
       .attr("y", frequencyViewer.height * 0.1 )
-      .attr("dy", ".35em")
+      .attr("dy", ".3em")
       .text(function(d){ return d[0] })
       .style("text-anchor", "middle")
       .style("font-weight", "bold")

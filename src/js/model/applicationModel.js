@@ -168,7 +168,7 @@ function ApplicationModel() {
     return false;
   }
 
-  function calcualte_all_sorting_scores() {
+  function calculate_all_sorting_scores(protein) {
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
 
@@ -186,25 +186,25 @@ function ApplicationModel() {
           self.proteinFamily.setScores("residue_frequency", scores);
         });
     /* Calculate the edit distance scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateEditDistanceScores(self.proteinFamily.getFamily()[0])
+    self.sortedSequences.calculateEditDistanceScores(protein)
         .then((scores) => {
           $("#edit_dist_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("edit_distance", scores);
         });
     /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateEditDistanceScores(self.proteinFamily.getFamily()[0], {insertion: 3, deletion: 3, substitution: 5})
+    self.sortedSequences.calculateEditDistanceScores(protein, {insertion: 3, deletion: 3, substitution: 5})
         .then((scores) => {
           $("#weighted_edit_dist_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("weighted_edit_distance", scores);
         });
     /* Calculate the residue commonality scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateCommonalityScores(self.proteinFamily.getFamily()[0])
+    self.sortedSequences.calculateCommonalityScores(protein)
         .then((scores) => {
           $("#commonality_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("commonality_scores", scores);
         });
     /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateCommonalityScores(self.proteinFamily.getFamily()[0], 1)
+    self.sortedSequences.calculateCommonalityScores(protein, 1)
         .then((scores) => {
           $("#normalized_commonality_li").find("a").removeClass("disabled");
           self.proteinFamily.setScores("normalized_commonality_scores", scores);
@@ -218,8 +218,8 @@ function ApplicationModel() {
     $("#trendSplash").remove();
     self.proteinFamily = new ProteinFamily(file);
 
-    /* Calculate all of the initial sorting scores*/
-    calcualte_all_sorting_scores();
+    /* Calculate all of the initial sorting scores */
+    calculate_all_sorting_scores(self.proteinFamily.getFamily()[0]);
 
     /* Set the protein family and column sequence data */
     App.trendImageViewer.setProteinFamily(self.proteinFamily.getFamily());

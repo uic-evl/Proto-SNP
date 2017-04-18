@@ -105,6 +105,9 @@ let MolecularViewer = function(){
     molecularViewer.domObj = d3.select(div_id).node();
     molecularViewer.parentNode = molecularViewer.domObj.parentNode;
 
+    /* Remove the black background*/
+    d3.select(molecularViewer.parentNode).classed("black-background", false);
+
     /* create a label to display selections */
     let staticLabel = document.createElement('div');
     staticLabel.innerHTML = '&nbsp;';
@@ -117,8 +120,8 @@ let MolecularViewer = function(){
     options = options || {};
 
     /* get/save the width and height of the given DOM element */
-    molecularViewer.width = App.molecularViewerWidth - App.labelHeight;
-    molecularViewer.height = App.molecularViewerHeight - App.labelHeight;
+    molecularViewer.width = App.molecularViewerWidth;
+    molecularViewer.height = parseInt(d3.select(molecularViewer.domObj).style('height'));
 
     /* add the width and height to the options */
     options.width = molecularViewer.width;

@@ -32,22 +32,22 @@ var App = App || {};
 
     /* Calculate the height and width of the molecular viewers */
     App.molecularViewerWidth  = leftDomMol.clientWidth;
-    App.molecularViewerHeight = App.molecularViewerWidth * App.aspectRatio;
+    App.molecularViewerHeight = parseInt((App.molecularViewerWidth + App.labelHeight)* App.aspectRatio);
 
     /* Calculate the height and width of the trend image */
     App.trendWidth   = trendDom.clientWidth;
-    App.trendHeight  = (window.innerHeight - App.molecularViewerHeight) * App.aspectRatio;
+    App.trendHeight  = (window.innerHeight - App.molecularViewerHeight ) * App.aspectRatio;
 
     /* Calculate the height and width of the frequency viewer */
     App.frequencyWidth  = App.trendWidth / 2.0;
     App.frequencyHeight = App.trendHeight * 0.2;
 
     /* Set the div height for the molecular viewers */
-    leftDomMol.style.height  = parseInt(App.molecularViewerHeight)  + App.labelHeight;
-    rightDomMol.style.height = parseInt(App.molecularViewerHeight)  + App.labelHeight;
+    leftDomMol.style.height  = App.molecularViewerHeight;
+    rightDomMol.style.height = App.molecularViewerHeight;
 
-    seqViewDom.parentNode.style.height  = parseInt(App.molecularViewerHeight) + App.labelHeight;
-    seqViewDom.style.height  = parseInt(App.molecularViewerHeight) - App.labelHeight;
+    seqViewDom.parentNode.style.height  = App.molecularViewerHeight ;
+    // seqViewDom.style.height  = App.molecularViewerHeight - App.labelHeight;
 
     /* Set the div height for the trend image */
     trendDom.style.height = App.trendHeight;

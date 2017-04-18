@@ -2,15 +2,30 @@
     overflow-y: hidden;
     overflow-x: hidden;
 }
+/* Disable the scroll bar from rendering */
+.sequence-a::-webkit-scrollbar,
+.sequence-b::-webkit-scrollbar
+{
+    display: none;
+}
+
+#sequenceViewer::-webkit-scrollbar
+{
+    display: none;
+}
+
+.sequence-a, .sequence-b {
+    padding: 0;
+    background-color: black;
+}
 
 .sequence {
+    overflow-y: scroll;
     cursor: pointer;
     display: inline-block;
     vertical-align: bottom;
-    margin: 4px 0 4px 6px;
-    padding: 4px;
     background: #fff;
-    border: solid 1px #aaa;
+    height: 100%
 }
 .residue {
     display: block;
@@ -22,6 +37,8 @@
     border: solid 1px #aaa;
 }
 
-.sequence-viewer {
-
+#sequenceViewer {
+    background-color: black;
+    height: 90%;
+    overflow-y: hidden;
 }

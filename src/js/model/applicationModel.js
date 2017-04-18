@@ -91,25 +91,25 @@ function ApplicationModel() {
     this.modelPointer.sequence = this.view.getSequence(this.modelPointer.structure, 0);
 
     // initialize the sequence viewer
-    //App.sequenceViewer.init(this.viewPosition + "Viewer-Sequence");
+    App.sequenceViewer.init(this.viewPosition + "Viewer-Sequence");
 
     /* Check if a sequence is already added to the list, if so align them*/
-    // if(this.siblingPointer.name){
-    //   /* Align the sequences */
-    //   App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {})
-    //     .then(function(seq){
-    //       /* Set the model sequences */
-    //       this.modelPointer.sequence   = (this.viewPosition === "left")
-    //         ? seq.leftSequence  : seq.rightSequence;
-    //       this.siblingPointer.sequence = (this.siblingPosition === "right")
-    //         ? seq.rightSequence : seq.leftSequence;
-    //
-    //       /* Render the other sequence */
-    //       App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
-    //     }.bind(this));
-    // }
-    // // render the sequence list
-    // App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);
+    if(this.siblingPointer.name){
+      /* Align the sequences */
+      App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {})
+        .then(function(seq){
+          /* Set the model sequences */
+          this.modelPointer.sequence   = (this.viewPosition === "left")
+            ? seq.leftSequence  : seq.rightSequence;
+          this.siblingPointer.sequence = (this.siblingPosition === "right")
+            ? seq.rightSequence : seq.leftSequence;
+
+          /* Render the other sequence */
+          App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
+        }.bind(this));
+    }
+    // render the sequence list
+    App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);
   }
 
 

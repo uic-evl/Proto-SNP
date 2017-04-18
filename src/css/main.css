@@ -9,7 +9,9 @@
     color: white;
 }
 
-
+.black-background {
+    background-color: black;
+}
 
 /* View titles */
 p.view {
@@ -32,4 +34,10 @@ p.view {
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+.center-vertically {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }

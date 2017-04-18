@@ -181,7 +181,6 @@ const TrendImageViewer = function(){
         .setBrushClass("brush horizontal")
         .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
         .onBrush(function(){ trendImageViewer.controller.horizontalBrushed.call(this, trendImageViewer.instanceVariables.protected)})
-        .onEnd( function() { trendImageViewer.controller.horizontalEnd.call(this, trendImageViewer.instanceVariables.protected)})
     ;
 
     /* Construct the left vertical residue-selection paddle */

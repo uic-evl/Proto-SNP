@@ -7,7 +7,12 @@ var App = App || {};
 function ApplicationModel() {
 
   // self reference
-  let self = {};
+  let self = {
+    proteins      : {},
+    leftProtein   : {},
+    rightProtein  : {},
+    proteinFamily : {}
+  };
 
   // Default viewer options
   self.options = {
@@ -16,15 +21,6 @@ function ApplicationModel() {
     background: 'black'
   };
 
-  // array to hold the proteins
-  self.proteins = {};
-
-  // Left and Right Proteins for the Viewers
-  self.leftProtein = {};
-  self.rightProtein = {};
-
-  // Protein Family Object -- Trend Image
-  self.proteinFamily = {};
 
   /* Determines which method to load the protein */
   function load_protein(viewer, file){
@@ -55,6 +51,7 @@ function ApplicationModel() {
     }
   }
 
+
   /* Load the protein from RCMB */
   function load_PDB_From_RCMB(proteinName, pointer){
     /* perform an async download from RCMB to fetch the requested PDB File */
@@ -68,6 +65,7 @@ function ApplicationModel() {
     });
   }
 
+
   /* Load the protein from the uploaded file */
   function load_from_upoaded_file(file, pointer){
     /* perform an async loading of the uploaded file */
@@ -78,6 +76,7 @@ function ApplicationModel() {
       resolve(pointer.structure);
     });
   }
+
 
   /* Render the 3D and Sequence Views */
   function render_views(structure) {
@@ -92,26 +91,27 @@ function ApplicationModel() {
     this.modelPointer.sequence = this.view.getSequence(this.modelPointer.structure, 0);
 
     // initialize the sequence viewer
-    App.sequenceViewer.init(this.viewPosition + "Viewer-Sequence");
+    //App.sequenceViewer.init(this.viewPosition + "Viewer-Sequence");
 
     /* Check if a sequence is already added to the list, if so align them*/
-    if(this.siblingPointer.name){
-      /* Align the sequences */
-      App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {})
-        .then(function(seq){
-          /* Set the model sequences */
-          this.modelPointer.sequence   = (this.viewPosition === "left")
-            ? seq.leftSequence  : seq.rightSequence;
-          this.siblingPointer.sequence = (this.siblingPosition === "right")
-            ? seq.rightSequence : seq.leftSequence;
-
-          /* Render the other sequence */
-          App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
-        }.bind(this));
-    }
-    // render the sequence list
-    App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);
+    // if(this.siblingPointer.name){
+    //   /* Align the sequences */
+    //   App.align(this.modelPointer.sequence, this.siblingPointer.sequence, {})
+    //     .then(function(seq){
+    //       /* Set the model sequences */
+    //       this.modelPointer.sequence   = (this.viewPosition === "left")
+    //         ? seq.leftSequence  : seq.rightSequence;
+    //       this.siblingPointer.sequence = (this.siblingPosition === "right")
+    //         ? seq.rightSequence : seq.leftSequence;
+    //
+    //       /* Render the other sequence */
+    //       App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
+    //     }.bind(this));
+    // }
+    // // render the sequence list
+    // App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);
   }
+
 
   /* Form callback to process the request to load a new protein */
   function fetch_and_store_protein(formData, file) {
@@ -168,6 +168,7 @@ function ApplicationModel() {
     return false;
   }
 
+
   function calculate_all_sorting_scores(protein) {
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
@@ -211,6 +212,7 @@ function ApplicationModel() {
         });
   }
 
+
   /* Form callback to process the family datafile */
   function parse_and_store_family(file) {
 
@@ -231,6 +233,7 @@ function ApplicationModel() {
     /* Render the trend image */
     App.trendImageViewer.render();
   }
+
 
   /* Return the public-facing functions */
   return {

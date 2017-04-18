@@ -13,6 +13,7 @@ const TrendImageController = function(options){
     rightVerticalSelection      : options.initVerticalPosition.right
   };
 
+
   function horizontal_paddle_controller(trendImage) {
 
     /* We only want to capture user events. */
@@ -51,6 +52,7 @@ const TrendImageController = function(options){
     d3.selectAll('#p' + self.currentHorizontalSelection + " > rect")
       .classed("active_protein_selection", true);
   }
+
 
   function vertical_paddle_controller(trendImage, frequencyChart) {
     if (!d3.event.sourceEvent) return; // Only transition after input.
@@ -116,9 +118,12 @@ const TrendImageController = function(options){
     frequencyChart.render(currentSelectionFragments, trendImage.getYAxisSize(), horizontalSelectedResidues);
   }
 
+
   function get_selected_protein() { return self.currentHorizontalSelection }
 
+
   function get_selected_residue_ranges() { return { left: self.leftVerticalSelection, right: self.rightVerticalSelection} }
+
 
   return {
     horizontalBrushed   : horizontal_paddle_controller,

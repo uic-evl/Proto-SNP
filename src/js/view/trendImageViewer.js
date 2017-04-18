@@ -7,10 +7,10 @@ var App = App || {};
 const TrendImageViewer = function(){
 
   /* initialize the molecular trendImageViewer global variable */
-  let trendImageViewer = {};
+  let trendImageViewer = {
+    instanceVariables : {}
+  };
 
-  /* An object storing the public functions of the class */
-  trendImageViewer.instanceVariables = {};
 
   /* Parse the incoming data into row, columns, and values */
   function map_trend_image_data() {
@@ -26,10 +26,12 @@ const TrendImageViewer = function(){
     return { data: data, index : index, columns : columns };
   }
 
+
   /* Clear the chart DOM of all elements */
   function clear_chart_dom() {
     trendImageViewer.domObj.selectAll().remove();
   }
+
 
   /* Create the trend image SVG */
   function create_chart_svg() {
@@ -40,6 +42,7 @@ const TrendImageViewer = function(){
       .style("height", trendImageViewer.height)
     ;
   }
+
 
   /* Create a customized context menu per right-click */
   function create_context_menu() {
@@ -61,6 +64,7 @@ const TrendImageViewer = function(){
       }
     ];
   }
+
 
   /* Initialized the frequency viewers */
   function initialize_frequency_viewers() {
@@ -114,6 +118,7 @@ const TrendImageViewer = function(){
     App.rightFrequencyViewer.render(rightSelectionFragments, trendImageViewer.y_axis_length, rightHorizontalSelectedResidues );
   }
 
+
   /* Vertical brushing cannot be enabled until the column frequencies are computed*/
   function enable_vertical_brushing() {
       /* Enable the paddle brushing callbacks */
@@ -127,6 +132,7 @@ const TrendImageViewer = function(){
       /* Initialize the protein frequency charts with the selection data*/
       initialize_frequency_viewers();
   }
+
 
   /* Function to add the three brush paddles to the svg*/
   function add_brushes() {
@@ -163,6 +169,7 @@ const TrendImageViewer = function(){
     ;
   }
 
+
   /* Function to set the starting positions of the three paddles */
   function initialize_brush_positions() {
     /* Store the initial positions of the brushes */
@@ -171,6 +178,7 @@ const TrendImageViewer = function(){
     trendImageViewer.initRightVerticalBrush = [trendImageViewer.x_axis_length - trendImageViewer.verticalPaddleSize,  trendImageViewer.x_axis_length];
     trendImageViewer.initVerticalBrushes    = {left: trendImageViewer.initLeftVerticalBrush, right: trendImageViewer.initRightVerticalBrush};
   }
+
 
   /* Function to create the three brush paddles*/
   function create_brushes() {
@@ -200,6 +208,7 @@ const TrendImageViewer = function(){
     trendImageViewer.column_frequencies.getFrequencyPromise()
       .then(enable_vertical_brushing);
   }
+
 
   /* Render the brushes to the image */
   function render_brushes(selected_protein, ranges) {
@@ -242,6 +251,7 @@ const TrendImageViewer = function(){
     }
   }
 
+
   /* Function to reset the brushes to be the before-sorted selection */
   function reset_brushes() {
     /* Get the protein that was last selected */
@@ -257,6 +267,7 @@ const TrendImageViewer = function(){
     trendImageViewer.horizonalPaddle.moveBrush( [brush_pos, brush_pos+trendImageViewer.residue_glyph_size] );
   }
 
+
   /* Function to redraw the trend image */
   function recolor() {
     /* If a trend image exists, recolor based on the new color map */
@@ -267,6 +278,7 @@ const TrendImageViewer = function(){
           .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
     }
   }
+
 
   /* Reorder the proteins based on the selected sorting  */
   function reorder() {
@@ -295,6 +307,7 @@ const TrendImageViewer = function(){
           reset_brushes();
         });
   }
+
 
   /* Render the trend image to the svg */
   function render(){
@@ -330,6 +343,7 @@ const TrendImageViewer = function(){
     render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
   }
 
+
   function initialize_chart_dom(){
     /* get/save the width and height of the given DOM element */
     set_chart_dimensions();
@@ -341,6 +355,7 @@ const TrendImageViewer = function(){
     create_chart_svg();
   }
 
+
   /* Initialize the data descriptors -- protein names and sizes*/
   function initialize_data_descriptors() {
     /* Extract and save the protein names from the family*/
@@ -349,6 +364,7 @@ const TrendImageViewer = function(){
     /* Set the dimensions of the trend image */
     set_data_dimensions_sizes();
   }
+
 
   /* Initialize the trend image object, create globals, and create the svg */
   function initialize(div_id) {
@@ -392,6 +408,7 @@ const TrendImageViewer = function(){
     trendImageViewer.column_frequencies = column_frequencies
   }
 
+
   /* Setter for the trend image controller */
   function set_trend_image_controller() {
     trendImageViewer.controller = new TrendImageController({
@@ -400,10 +417,12 @@ const TrendImageViewer = function(){
     });
   }
 
+
   /* Setter for the chart DOM element */
   function set_chart_dom_obj(div_id) {
     trendImageViewer.domObj = d3.select(div_id);
   }
+
 
   function set_y_scale(values) {
     /* construct the y-scale */
@@ -412,6 +431,7 @@ const TrendImageViewer = function(){
         .range([0, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size])
     ;
   }
+
 
   /* Setter for the trend image scales */
   function set_chart_scales() {
@@ -425,25 +445,36 @@ const TrendImageViewer = function(){
 
   }
 
+
   /* Setter for the chart dimensions */
   function set_chart_dimensions() {
 
-    let residue_width = Math.round(App.trendWidth / trendImageViewer.x_axis_length);
-    App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
+    let residue_width = Math.floor(App.trendWidth / trendImageViewer.x_axis_length);
 
-    /*Reset the parent dom heights*/
+    /* Reset the viewers widtth and height*/
+    App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
+    App.frequencyWidth = App.trendWidth / 2.0;
+
+    /*Reset the parent dom width/heights*/
     trendImageViewer.domObj.classed("viewers", false);
-    document.getElementById('trendImageViewer').parentNode.style.height =
-        trendImageViewer.y_axis_length * (residue_width+1);
+
+    document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.y_axis_length * (residue_width+1);
+    document.getElementById('trendImageViewer').parentNode.style.width = App.trendWidth;
+
+
+    document.getElementsByClassName('TrendImageView')[0].style.width = App.trendWidth;
+    document.getElementsByClassName('residueSummaryView')[0].style.width = App.trendWidth;
 
     trendImageViewer.width = App.trendWidth;
     trendImageViewer.height = App.trendHeight;
   }
 
+
   /* Setter for the protein family data*/
   function set_protein_family(protein_family) {
     trendImageViewer.protein_family_data = protein_family;
   }
+
 
   /* Set the dimensions of the data */
   function set_data_dimensions_sizes() {
@@ -457,6 +488,7 @@ const TrendImageViewer = function(){
     trendImageViewer.y_axis_length = get_protein_names().length;
   }
 
+
   /* Setter for the names of the proteins from the family */
   function set_protein_names() {
     trendImageViewer.proteinNames = d3.set(
@@ -464,11 +496,13 @@ const TrendImageViewer = function(){
         .values();
   }
 
+
   /* Setter for the names of the proteins from the family */
   function set_glyph_size() {
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     trendImageViewer.residue_glyph_size = Math.round( trendImageViewer.width / trendImageViewer.x_axis_length);
   }
+
 
   /************ Getters ************/
 
@@ -477,28 +511,36 @@ const TrendImageViewer = function(){
     return trendImageViewer.column_frequencies;
   }
 
+
   /* Getter for the x-Axis scale */
   function get_x_axis_scale() { return trendImageViewer.xScale; }
 
+
   /* Getter for the y-Axis scale */
   function get_y_axis_scale() { return trendImageViewer.yScale; }
+
 
   /* Getter for the protein family data*/
   function get_protein_family_data() {
     return trendImageViewer.protein_family_data ;
   }
 
+
   /* Getter for the x-dimension size */
   function get_x_dimension_size() { return trendImageViewer.x_axis_length; }
+
 
   /* Getter for the y-dimension size */
   function get_y_dimension_size() { return trendImageViewer.y_axis_length; }
 
+
   /* Getter for the names of the proteins from the family */
   function get_protein_names() { return trendImageViewer.proteinNames; }
 
+
   /* Getter for the trend image glyph size */
   function get_glyph_size(){ return trendImageViewer.residue_glyph_size; }
+
 
   /* Set the publicly accessible functions*/
   trendImageViewer.instanceVariables =  {

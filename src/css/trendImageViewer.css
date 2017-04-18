@@ -24,3 +24,7 @@ ul li a.disabled {
     pointer-events:none;
     opacity:0.4;
 }
+
+.trend-column {
+    padding : 0;
+}

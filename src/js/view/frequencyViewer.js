@@ -56,7 +56,7 @@ const FrequencyViewer = function(){
 
     /* Update the color for matching residues*/
     frequencyViewer.svg.selectAll(".frequencies")
-      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#e34a33"; })
+      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
   }
 
   function render(residue_frequencies, family_member_count, selected_residues) {
@@ -112,7 +112,7 @@ const FrequencyViewer = function(){
       .attr('y', function(d) { return frequencyViewer.yScale(d[1]) + frequencyViewer.height * 0.2 } )
       .attr("width", frequencyViewer.bar_glyph_width)
       .attr("height", function(d) { return ( frequencyViewer.height * 0.6 - frequencyViewer.yScale(d[1]) )  })
-      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#e34a33" : "#D3D3D3"; })
+      .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
     ;
 
     /* Remove the unneeded frequency bars */

@@ -20,6 +20,8 @@ var App = App || {};
     let rightDomMol = document.getElementById('rightViewer').parentNode;
     let trendDom    = document.getElementById('trendImageViewer').parentNode;
     let seqViewDom  = document.getElementById('sequenceViewer');
+    let freqOffset  = 25;
+
 
     /* The size of the EVL header */
     let headerHeight = 0;
@@ -39,8 +41,8 @@ var App = App || {};
     App.trendHeight  = (window.innerHeight - App.molecularViewerHeight ) * App.aspectRatio;
 
     /* Calculate the height and width of the frequency viewer */
-    App.frequencyWidth  = App.trendWidth / 2.0;
-    App.frequencyHeight = App.trendHeight * 0.2;
+    App.frequencyWidth  = App.trendWidth / 2.0 + freqOffset;
+    App.frequencyHeight = App.trendHeight * 0.3;
 
     /* Set the div height for the molecular viewers */
     leftDomMol.style.height  = App.molecularViewerHeight;
@@ -68,11 +70,11 @@ var App = App || {};
     App.sequenceViewer = new SequenceViewer();
 
     /* Setup the trend image viewer */
-    App.trendImageViewer = new TrendImageViewer();
+    App.trendImageViewer = new TrendImageViewer({freqOffset: freqOffset});
 
     /* Setup the frequency histogram viewers*/
-    App.leftFrequencyViewer = new FrequencyViewer();
-    App.rightFrequencyViewer = new FrequencyViewer();
+    App.leftFrequencyViewer = new FrequencyViewer({offset: freqOffset});
+    App.rightFrequencyViewer = new FrequencyViewer({offset: freqOffset});
 
     /* Set the initial rendering style and color mapping */
     App.colorMapping      = "side chain";

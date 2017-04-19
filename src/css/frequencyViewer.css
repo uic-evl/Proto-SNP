@@ -5,3 +5,14 @@
 .residueSummaryView {
     font-size: 12px;
 }
+
+.frequency-left, .frequency-right {
+    padding-left: 0;
+}
+
+
+.context-bar {
+    stroke-width: 1;
+    stroke: black;
+    fill: none;
+}

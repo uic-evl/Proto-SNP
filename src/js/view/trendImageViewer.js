@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Protein / Molecule trendImageViewer "Class"
-const TrendImageViewer = function(){
+const TrendImageViewer = function(options){
 
   /* initialize the molecular trendImageViewer global variable */
   let trendImageViewer = {
@@ -110,8 +110,8 @@ const TrendImageViewer = function(){
     let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectedResidues[0], rightSelectedResidues[1]);
 
     /* Initialize the frequency viewers*/
-    App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
-    App.rightFrequencyViewer.init("#rightResidueSummaryViewer");
+    App.leftFrequencyViewer.init("#leftResidueSummaryViewer",   trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize/2);
+    App.rightFrequencyViewer.init("#rightResidueSummaryViewer", trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize/2);
 
     /* Render the frequency view*/
     App.leftFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length, leftHorizontalSelectedResidues );
@@ -386,6 +386,7 @@ const TrendImageViewer = function(){
 
     /* Set the size of the initial vertical paddles */
     trendImageViewer.verticalPaddleSize = 6;
+    trendImageViewer.verticalPaddleMaxSize = 10;
 
     /* Initialize the sizes of the brushing paddles */
     initialize_brush_positions();
@@ -413,7 +414,8 @@ const TrendImageViewer = function(){
   function set_trend_image_controller() {
     trendImageViewer.controller = new TrendImageController({
       initHorizontalPosition : trendImageViewer.initHorizontalBrush,
-      initVerticalPosition   : trendImageViewer.initVerticalBrushes
+      initVerticalPosition   : trendImageViewer.initVerticalBrushes,
+      brushMaxSize           : trendImageViewer.verticalPaddleMaxSize
     });
   }
 
@@ -453,17 +455,17 @@ const TrendImageViewer = function(){
 
     /* Reset the viewers widtth and height*/
     App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
-    App.frequencyWidth = App.trendWidth / 2.0;
+    App.frequencyWidth = App.trendWidth / 2.0 + (2 * options.freqOffset);
 
     /*Reset the parent dom width/heights*/
     trendImageViewer.domObj.classed("trend-viewer", false);
 
-    document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.y_axis_length * (residue_width+1);
+    document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.y_axis_length * (residue_width + 0.5);
     document.getElementById('trendImageViewer').parentNode.style.width = App.trendWidth;
 
 
     document.getElementsByClassName('TrendImageView')[0].style.width = App.trendWidth;
-    document.getElementsByClassName('residueSummaryView')[0].style.width = App.trendWidth;
+    document.getElementsByClassName('residueSummaryView')[0].style.width = App.frequencyWidth * 2;
 
     trendImageViewer.width = App.trendWidth;
     trendImageViewer.height = App.trendHeight;

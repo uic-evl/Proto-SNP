@@ -66,9 +66,6 @@ const TrendImageController = function(options){
     d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size);
     d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/residue_glyph_size)*residue_glyph_size);
 
-    // Snap the brush onto the closest protein
-    d3.select(this).call(d3.event.target.move, d3.event.selection);
-
     /* Get the current protein */
     let currentVerticalSelection = d3.event.selection.map(trendImage.getXAxisScale().invert);
     // (It's sad that I have to do this -- Floating pt errors)
@@ -80,11 +77,47 @@ const TrendImageController = function(options){
 
     /* Keep track of the current selection */
     if(currentPaddle === "vertical-right"){
+      /* Check if paddle is past the half way mark of the trend image*/
+      let halfway = Math.ceil(trendImage.getXAxisSize()/2.0) ;
+      if(currentVerticalSelection[0] < halfway){
+        currentVerticalSelection[0] = halfway;
+        currentVerticalSelection[1] = self.rightVerticalSelection[1];
+      }
+      /* Our max brush size is 10*/
+      if( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ){
+        /* Check which side was brushed */
+        if(currentVerticalSelection[0] === self.rightVerticalSelection[0]){
+          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
+        }
+        else {
+          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
+        }
+      }
       self.rightVerticalSelection = currentVerticalSelection;
     }
     else {
+      /* Check if paddle is past the half way mark of the trend image*/
+      let halfway = Math.floor(trendImage.getXAxisSize()/2.0)+1 ;
+      if(currentVerticalSelection[1] > halfway){
+        currentVerticalSelection[1] = halfway;
+        currentVerticalSelection[0] = self.leftVerticalSelection[0];
+      }
+      /* Our max brush size is 10*/
+      if ( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ) {
+        /* Check which side was brushed */
+        if (currentVerticalSelection[0] === self.leftVerticalSelection[0]) {
+          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
+        }
+        else {
+          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
+        }
+      }
       self.leftVerticalSelection = currentVerticalSelection;
     }
+
+    // Snap the brush onto the closest protein
+    d3.event.selection = currentVerticalSelection.map(trendImage.getXAxisScale());
+    d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Remove the previous selection */
     d3.selectAll('rect.'+ currentPaddle + '.active_res_selection')

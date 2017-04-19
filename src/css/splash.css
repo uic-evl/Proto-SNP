@@ -199,6 +199,7 @@ input {
     width: 150px;
 }
 .overlay.open {
+    overflow: hidden;
     z-index: 15;
     opacity: 1;
     -webkit-transform: translateY(0)f;

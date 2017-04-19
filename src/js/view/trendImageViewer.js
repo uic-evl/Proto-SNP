@@ -110,12 +110,14 @@ const TrendImageViewer = function(options){
     let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectedResidues[0], rightSelectedResidues[1]);
 
     /* Initialize the frequency viewers*/
-    App.leftFrequencyViewer.init("#leftResidueSummaryViewer",   trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize/2);
-    App.rightFrequencyViewer.init("#rightResidueSummaryViewer", trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize/2);
+    App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
+    App.rightFrequencyViewer.init("#rightResidueSummaryViewer");
 
     /* Render the frequency view*/
-    App.leftFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length, leftHorizontalSelectedResidues );
-    App.rightFrequencyViewer.render(rightSelectionFragments, trendImageViewer.y_axis_length, rightHorizontalSelectedResidues );
+    App.leftFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length,
+        leftHorizontalSelectedResidues, trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize/2.0 );
+    App.rightFrequencyViewer.render(rightSelectionFragments, trendImageViewer.y_axis_length,
+        rightHorizontalSelectedResidues, App.frequencyWidth - trendImageViewer.residue_glyph_size*2 - App.rightFrequencyViewer.getOffset()*2);
   }
 
 
@@ -460,15 +462,15 @@ const TrendImageViewer = function(options){
     /*Reset the parent dom width/heights*/
     trendImageViewer.domObj.classed("trend-viewer", false);
 
-    document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.y_axis_length * (residue_width + 0.5);
+    trendImageViewer.height = trendImageViewer.y_axis_length * (residue_width + 0.5);
+    trendImageViewer.width = App.trendWidth;
+
+    document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.height;
+    document.getElementById('trendImageViewer').style.height = trendImageViewer.height;
+
     document.getElementById('trendImageViewer').parentNode.style.width = App.trendWidth;
-
-
     document.getElementsByClassName('TrendImageView')[0].style.width = App.trendWidth;
     document.getElementsByClassName('residueSummaryView')[0].style.width = App.frequencyWidth * 2;
-
-    trendImageViewer.width = App.trendWidth;
-    trendImageViewer.height = App.trendHeight;
   }
 
 

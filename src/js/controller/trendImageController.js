@@ -61,6 +61,7 @@ const TrendImageController = function(options){
 
     /* Get and store the residue glyph size */
     let residue_glyph_size = trendImage.getGlyphSize();
+    let pointer_bar = 0;
 
     // Round the two event extents to the nearest row
     d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size);
@@ -93,7 +94,10 @@ const TrendImageController = function(options){
           currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
         }
       }
+      d3.event.selection = currentVerticalSelection.map(trendImage.getXAxisScale());
       self.rightVerticalSelection = currentVerticalSelection;
+      /* Get the position of the pointer bar */
+      pointer_bar =  (d3.event.selection[0] + d3.event.selection[1] )/2.0 - trendImage.getXAxisScale()(halfway);
     }
     else {
       /* Check if paddle is past the half way mark of the trend image*/
@@ -112,11 +116,12 @@ const TrendImageController = function(options){
           currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
         }
       }
+      d3.event.selection = currentVerticalSelection.map(trendImage.getXAxisScale());
       self.leftVerticalSelection = currentVerticalSelection;
+      pointer_bar = (d3.event.selection[0] + d3.event.selection[1] )/2.0;
     }
 
     // Snap the brush onto the closest protein
-    d3.event.selection = currentVerticalSelection.map(trendImage.getXAxisScale());
     d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Remove the previous selection */
@@ -143,12 +148,11 @@ const TrendImageController = function(options){
 
     /* Get the currently selected protein*/
     let currentProtein = _.find(trendImage.getProteinData(), ["name", d3.event.selection.map(trendImage.getYAxisScale().invert)[0]]);
-
     /* Get the residues that intersect with the vertical paddle*/
     let horizontalSelectedResidues = currentProtein.sequence.slice(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Render the frequency bars */
-    frequencyChart.render(currentSelectionFragments, trendImage.getYAxisSize(), horizontalSelectedResidues);
+    frequencyChart.render(currentSelectionFragments, trendImage.getYAxisSize(), horizontalSelectedResidues, pointer_bar);
   }
 
 

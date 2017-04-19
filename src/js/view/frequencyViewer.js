@@ -15,7 +15,7 @@ const FrequencyViewer = function(options){
       .y(function(d) { return d.y; });
 
   /* Update the text with the current selection */
-  function update_current_selection_text (selected_residues) {
+  function update_current_selection_text_and_bar (selected_residues) {
 
     /* Add the residue text to the bars */
     let selectionText = frequencyViewer.svg.selectAll(".selectionText")
@@ -34,10 +34,8 @@ const FrequencyViewer = function(options){
       .style("text-anchor", "middle")
       .style("font-weight", "bold")
     ;
-
     /* Remove the unneeded selection labels */
     selectionText.exit().remove();
-
     /* Update the color for matching residues*/
     frequencyViewer.svg.selectAll(".frequencies")
       .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
@@ -133,17 +131,33 @@ const FrequencyViewer = function(options){
 
 
   /* Render the line above the bars */
-  function render_context_lines(offset) {
+  function render_context_lines() {
     /* Add the context bar above viewers */
     let context = frequencyViewer.svg
-        .append("path")
-        .attr("d", lineFunction(frequencyViewer.contextPoints))
+        .selectAll(".context-bar").data(frequencyViewer.contextPoints)
+        .enter().append("path")
+        .attr("d", (d) => { return lineFunction(d)})
         .attr("class", "context-bar");
+  }
+
+  /* Render the pointer bar */
+  function render_context_bars() {
+    /* Add the context bar above viewers */
+    let context = frequencyViewer.svg
+        .selectAll(".context-line").data(frequencyViewer.contextBarPoints);
+
+    context.enter().append("path")
+        .merge(context)
+        .attr("d", (d) => {return lineFunction(d)})
+        .attr("class", "context-line");
+
+    /* Remove the unneeded selection labels */
+    context.exit().remove();
   }
 
 
   /* Render with the selected residues */
-  function render(residue_frequencies, family_member_count, selected_residues) {
+  function render(residue_frequencies, family_member_count, selected_residues, bar_position) {
 
     /* Get get width and height for each box*/
     frequencyViewer.bar_glyph_width = frequencyViewer.width / family_member_count - 5;
@@ -154,12 +168,23 @@ const FrequencyViewer = function(options){
     render_labels(residue_frequencies);
 
     /* Add the residue text to the bars */
-    update_current_selection_text(selected_residues);
+    update_current_selection_text_and_bar(selected_residues);
+
+    if(frequencyViewer.id === "#leftResidueSummaryViewer"){
+      frequencyViewer.contextBarPoints = [[{x: options.offset*2 + bar_position, y:0},
+                                           {x: options.offset*2 + bar_position, y: 10}]];
+    }
+    else {
+      frequencyViewer.contextBarPoints = [[{x: bar_position, y:0},
+                                           {x: bar_position, y: 10}]];
+    }
+    render_context_bars();
   }
 
+  function get_offset() { return options.offset };
 
   /* Initialize the frequency viewer */
-  function initialize(div_id, offset) {
+  function initialize(div_id) {
 
     /* get the DOM element by the id parameter */
     frequencyViewer.id     = div_id;
@@ -180,25 +205,25 @@ const FrequencyViewer = function(options){
     ;
 
     /* Store the range for each viewer*/
-    if(div_id === "#leftResidueSummaryViewer"){
-      frequencyViewer.range = [offset*2, frequencyViewer.width ];
-      frequencyViewer.contextPoints = [{x: offset/2.0, y:3}, {x: frequencyViewer.width + offset/2.0, y: 3}];
+    if(frequencyViewer.id === "#leftResidueSummaryViewer"){
+      frequencyViewer.range = [options.offset*2, frequencyViewer.width ];
+      frequencyViewer.contextPoints = [[{x: options.offset, y:10}, {x: frequencyViewer.width + options.offset/2.0, y: 10}]];
     }
     else {
-      frequencyViewer.range = [offset*2, frequencyViewer.width - offset];
-      frequencyViewer.contextPoints = [{x: offset/2.0, y:3}, {x: frequencyViewer.width + offset/2.0, y: 3}];
+      frequencyViewer.range = [options.offset*2, frequencyViewer.width - options.offset*2];
+      frequencyViewer.contextPoints = [[{x: options.offset, y:10}, {x: frequencyViewer.width - options.offset, y: 10}]];
     }
 
     /* Render the context bars above the trend image*/
     frequencyViewer.barOffset = 5;
-    render_context_lines(offset);
+    render_context_lines();
   }
 
-
   return {
-    init   : initialize,
-    render : render,
-    update : update_current_selection_text
+    init      : initialize,
+    render    : render,
+    getOffset : get_offset,
+    update    : update_current_selection_text_and_bar
   };
 
 };

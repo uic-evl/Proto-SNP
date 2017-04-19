@@ -12,7 +12,13 @@
 
 
 .context-bar {
-    stroke-width: 1;
+    stroke-width: 2;
+    stroke: black;
+    fill: none;
+}
+
+.context-line {
+    stroke-width: 2;
     stroke: black;
     fill: none;
 }

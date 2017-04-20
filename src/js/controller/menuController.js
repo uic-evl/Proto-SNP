@@ -29,21 +29,27 @@ const MenuController = function() {
           /*Set the new coloring scheme */
           App.colorMapping = "side chain";
           break;
-
         case "Side Chain Polarity":
           /*Set the new coloring scheme */
           App.colorMapping = "polarity";
           break;
+        case "Frequency (Family Viewer)":
+          /*Set the new coloring scheme */
+          App.colorMapping = "frequency";
+          break;
       }
 
       /* Recolor the molecular viewers */
-      App.leftMolecularViewer.recolor();
-      App.rightMolecularViewer.recolor();
+      if(App.colorMapping !== "frequency"){
+        App.leftMolecularViewer.recolor();
+        App.rightMolecularViewer.recolor();
+      }
 
       /* Recolor the trend image*/
       App.trendImageViewer.recolor();
     });
   }
+
 
   /* Set the callback for the coloring menu options*/
   function init_sorting_on_click() {
@@ -90,11 +96,13 @@ const MenuController = function() {
     });
   }
 
+
   function initialize_coloring_menu(id){
     /* Save the menu element*/
     self.coloring_menu = $(id);
     init_color_on_click();
   }
+
 
   function initialize_sorting_menu(id){
     /* Save the menu element*/

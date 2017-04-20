@@ -18,7 +18,8 @@ function ResidueModel() {
     blue  : {code: "#0772a1", rgba: [7.0,   114.0, 161.0, 255.0] },
     green : {code: "#00b74a", rgba: [0.0,   183.0, 74.0,  255.0] },
     tan   : {code: "#fddbc7", rgba: [253.0, 219.0, 199.0, 255.0] },
-    black : {code: "#000000", rgba: [0.0,   0.0,   0.0,   255.0] }
+    black : {code: "#000000", rgba: [0.0,   0.0,   0.0,   255.0] },
+    gray  : {code: "#A9A9A9", rgba: [128.0, 128.0, 128.0, 255.0]}
   };
 
   let colorCodesBySideChain = {
@@ -30,7 +31,7 @@ function ResidueModel() {
     cyclic    : colorCodes.green,
     acid      : colorCodes.tan,
     amide     : colorCodes.tan,
-    gap       : colorCodes.black
+    gap       : colorCodes.gray
   };
 
   let colorCodesByPolarity = {
@@ -38,7 +39,13 @@ function ResidueModel() {
     nonpolar  : colorCodes.red,
     polar     : colorCodes.blue,
     acidic    : colorCodes.green,
-    gap       : colorCodes.black
+    gap       : colorCodes.gray
+  };
+
+  let colorCodesByResidueFrequency = {
+    match     : colorCodes.red,
+    mismatch  : colorCodes.white,
+    gap       : colorCodes.gray
   };
 
   let residuePropertiesByLetter = [
@@ -66,12 +73,14 @@ function ResidueModel() {
     {abbr: "~", sideClass: "gap",       polarity: "gap",      name:"gap"}
     ];
 
+
   function colorBySideChainClass(residue) {
     let residueProperties = _.find(residuePropertiesByLetter, function(r) {
       return residue === r.abbr || residue === r.name;
     });
     return colorCodesBySideChain[(residueProperties) ? residueProperties.sideClass : "gap"];
   }
+
 
   function colorByPolarity(residue) {
     let residueProperties = _.find(residuePropertiesByLetter, function(r) {
@@ -80,12 +89,35 @@ function ResidueModel() {
     return colorCodesByPolarity[(residueProperties) ? residueProperties.polarity : "gap"];
   }
 
-  function getColorMapping(mapping, residue){
+
+  /* Coloring the sequences, the fragment in the same column with the largest frequency
+   are colored with red for other fragment, if the adjacent fragment(in the column)
+   are same, they will be colored in same color
+ */
+  function colorByFrequency(residue, highest_frequency) {
+    let residues = _.keys(highest_frequency);
+    if(residue === "gap"){
+      return  colorCodesByResidueFrequency["gap"];
+    }
+    else if(_.indexOf(residues, residue) > -1){
+      return  colorCodesByResidueFrequency["match"];
+    }
+    else {
+      return  colorCodesByResidueFrequency["mismatch"];
+    }
+  }
+
+
+  function getColorMapping(mapping, residue, highest_frequency){
     switch(mapping){
       case "side chain":
         return colorBySideChainClass(residue);
+        break;
       case "polarity":
         return colorByPolarity(residue);
+        break;
+      case "frequency":
+        return colorByFrequency(residue, highest_frequency);
     }
   }
 

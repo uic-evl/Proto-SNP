@@ -142,6 +142,7 @@ const SequenceSorting = function(family){
     return self.edit_distance_scores_computed
   }
 
+
   /* Calculates each protein's score based on the edit distance with the protein in question */
   function calculate_residue_commonality(protein_a, normalized){
     /* Store the promise for later use*/
@@ -202,6 +203,7 @@ const SequenceSorting = function(family){
     calculateCommonalityScores       : calculate_residue_commonality,
     /* Getters */
     getFragmentCountsAt              : get_fragment_counts_at,
+    getMostFrequentAt                : get_most_frequent_fragment_at,
     getFragmentCountsFromRange       : get_fragment_counts_from_range,
     getFragmentFrequencyScores       : get_fragment_frequency_scores,
     getEditDistanceScores            : get_edit_distance_scores,

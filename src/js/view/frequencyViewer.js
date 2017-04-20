@@ -14,6 +14,7 @@ const FrequencyViewer = function(options){
       .x(function(d) { return d.x; })
       .y(function(d) { return d.y; });
 
+
   /* Update the text with the current selection */
   function update_current_selection_text_and_bar (selected_residues) {
 
@@ -140,6 +141,7 @@ const FrequencyViewer = function(options){
         .attr("class", "context-bar");
   }
 
+
   /* Render the pointer bar */
   function render_context_bars() {
     /* Add the context bar above viewers */
@@ -181,7 +183,9 @@ const FrequencyViewer = function(options){
     render_context_bars();
   }
 
+
   function get_offset() { return options.offset };
+
 
   /* Initialize the frequency viewer */
   function initialize(div_id) {
@@ -218,6 +222,7 @@ const FrequencyViewer = function(options){
     frequencyViewer.barOffset = 5;
     render_context_lines();
   }
+
 
   return {
     init      : initialize,

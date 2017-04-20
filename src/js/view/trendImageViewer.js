@@ -136,6 +136,16 @@ const TrendImageViewer = function(options){
   }
 
 
+  /* Function to set the starting positions of the three paddles */
+  function initialize_brush_positions() {
+    /* Store the initial positions of the brushes */
+    trendImageViewer.initHorizontalBrush    = get_protein_names()[0];
+    trendImageViewer.initLeftVerticalBrush  = [0, trendImageViewer.verticalPaddleSize];
+    trendImageViewer.initRightVerticalBrush = [trendImageViewer.x_axis_length - trendImageViewer.verticalPaddleSize,  trendImageViewer.x_axis_length];
+    trendImageViewer.initVerticalBrushes    = {left: trendImageViewer.initLeftVerticalBrush, right: trendImageViewer.initRightVerticalBrush};
+  }
+
+
   /* Function to add the three brush paddles to the svg*/
   function add_brushes() {
 
@@ -169,16 +179,6 @@ const TrendImageViewer = function(options){
         .call(trendImageViewer.rightVerticalPaddle.brush.move,
             [trendImageViewer.width - trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize, trendImageViewer.width])
     ;
-  }
-
-
-  /* Function to set the starting positions of the three paddles */
-  function initialize_brush_positions() {
-    /* Store the initial positions of the brushes */
-    trendImageViewer.initHorizontalBrush    = get_protein_names()[0];
-    trendImageViewer.initLeftVerticalBrush  = [0, trendImageViewer.verticalPaddleSize];
-    trendImageViewer.initRightVerticalBrush = [trendImageViewer.x_axis_length - trendImageViewer.verticalPaddleSize,  trendImageViewer.x_axis_length];
-    trendImageViewer.initVerticalBrushes    = {left: trendImageViewer.initLeftVerticalBrush, right: trendImageViewer.initRightVerticalBrush};
   }
 
 
@@ -276,8 +276,16 @@ const TrendImageViewer = function(options){
     if(trendImageViewer.svg) {
       trendImageViewer.svg
           .selectAll(".cell")
-          .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
-          .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
+          .attr('fill',   function(d) {
+            let col = parseInt(d3.select(this).attr("col")),
+                highestFreq = trendImageViewer.column_frequencies.getMostFrequentAt(col);
+            return App.residueModel.getColor(App.colorMapping, d, highestFreq).code;
+          })
+          .attr('stroke', function(d) {
+            let col = parseInt(d3.select(this).attr("col")),
+                highestFreq = trendImageViewer.column_frequencies.getMostFrequentAt(col);
+            return App.residueModel.getColor(App.colorMapping, d, highestFreq).code;
+          })
     }
   }
 

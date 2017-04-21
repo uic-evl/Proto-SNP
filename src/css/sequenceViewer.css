@@ -1,7 +1,14 @@
-.sequenceViewer {
+#sequenceViewer {
+    background-color: black;
+    height: 90%;
+    overflow-y: hidden;
+}
+
+.sequenceViewers {
     overflow-y: hidden;
     overflow-x: hidden;
 }
+
 /* Disable the scroll bar from rendering */
 .sequence::-webkit-scrollbar
 {  display: none;  }
@@ -19,6 +26,7 @@
     background: #fff;
     height: 100%
 }
+
 .residue {
     display: block;
     vertical-align: middle;
@@ -27,10 +35,4 @@
     font-weight: bold;
     background-color: #f7f7f7;
     border: solid 1px #aaa;
-}
-
-#sequenceViewer {
-    background-color: black;
-    height: 90%;
-    overflow-y: hidden;
 }

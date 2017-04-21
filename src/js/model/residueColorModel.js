@@ -5,12 +5,6 @@ var App = App || {};
 
 function ResidueModel() {
 
-  /*List of all the amino acid codes*/
-  let aminoAcidCodes = [
-    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-    "Q", "R", "S", "T", "U", "V", "W", "Y", "Z", ".", "~", "X"
-  ];
-
   let colorCodes = {
     white : {code: "#fbfff4", rgba: [251.0, 255.0, 244.0, 255.0] },
     red   : {code: "#ff3100", rgba: [255.0, 49.0,  0.0,   255.0] },
@@ -73,6 +67,12 @@ function ResidueModel() {
     {abbr: "~", sideClass: "gap",       polarity: "gap",      name:"gap"}
     ];
 
+  /* Color map legend */
+  let legend = d3.select("#colorlegend").append("svg");
+
+  /* The current color mapp*/
+  let currentColorMap = null;
+
 
   function colorBySideChainClass(residue) {
     let residueProperties = _.find(residuePropertiesByLetter, function(r) {
@@ -108,22 +108,52 @@ function ResidueModel() {
   }
 
 
-  function getColorMapping(mapping, residue, highest_frequency){
+  function get_color_mapping(mapping){
     switch(mapping){
       case "side chain":
-        return colorBySideChainClass(residue);
+        currentColorMap = colorCodesBySideChain;
+        return colorBySideChainClass;
         break;
       case "polarity":
-        return colorByPolarity(residue);
+        currentColorMap = colorCodesByPolarity;
+        return colorByPolarity;
         break;
       case "frequency":
-        return colorByFrequency(residue, highest_frequency);
+        currentColorMap = colorCodesByResidueFrequency;
+        return colorByFrequency;
     }
   }
 
+
+  /* Create the legend for the current coloring scheme */
+  function create_legend(){
+
+    let elements = _.toPairs(currentColorMap),
+        legendElementWidth = App.legendElementWidth / elements.length;
+
+    /* Add the color bands to the legend */
+    let legend_bars = legend.selectAll(".legendElement")
+        .data(elements);
+
+    // UPDATE: add new elements if needed
+    legend_bars
+        .enter().append('g').append('rect')
+        /* Merge the old elements (if they exist) with the new data */
+        .merge(legend_bars)
+        .attr("class", "legendElement bordered")
+        .attr("width", App.legendElementWidth)
+        .attr("height", App.legendHeight / 2.0)
+        // .attr('y', function(d) { return frequencyViewer.height * 0.3 + frequencyViewer.barOffset } )
+        .attr('x', function(d, i) { return legendElementWidth * i })
+        .style("fill", (d) => { return d[1].code });
+
+    /* Remove the unneeded bars */
+    legend_bars.exit().remove();
+  }
+
   return {
-    getResidueCodes : function() {   return aminoAcidCodes; },
-    getColor        : getColorMapping
+    createColorLegend : create_legend,
+    getColor          : get_color_mapping
   }
 
 }

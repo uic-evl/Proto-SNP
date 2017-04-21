@@ -272,6 +272,7 @@ const TrendImageViewer = function(options){
 
   /* Function to redraw the trend image */
   function recolor() {
+    let colorMapping = App.residueModel.getColor(App.colorMapping);
     /* If a trend image exists, recolor based on the new color map */
     if(trendImageViewer.svg) {
       trendImageViewer.svg
@@ -279,12 +280,12 @@ const TrendImageViewer = function(options){
           .attr('fill',   function(d) {
             let col = parseInt(d3.select(this).attr("col")),
                 highestFreq = trendImageViewer.column_frequencies.getMostFrequentAt(col);
-            return App.residueModel.getColor(App.colorMapping, d, highestFreq).code;
+            return colorMapping(d, highestFreq).code;
           })
           .attr('stroke', function(d) {
             let col = parseInt(d3.select(this).attr("col")),
                 highestFreq = trendImageViewer.column_frequencies.getMostFrequentAt(col);
-            return App.residueModel.getColor(App.colorMapping, d, highestFreq).code;
+            return colorMapping(d, highestFreq).code;
           })
     }
   }
@@ -321,9 +322,11 @@ const TrendImageViewer = function(options){
 
   /* Render the trend image to the svg */
   function render(){
+
     /* Invoke the tip in the context of your visualization */
     //trendImageViewer.svg.call(trendImageViewer.tooltip);
     let data = map_trend_image_data();
+    let colorMapping = App.residueModel.getColor(App.colorMapping);
 
     /* Create a row for each protein */
     let rows = trendImageViewer.svg.selectAll(".proteinRow")
@@ -343,14 +346,17 @@ const TrendImageViewer = function(options){
         .attr("class", "cell")
         .attr("row", (d, i, j) => { return j; })
         .attr("col", (d, i, j) => { return i; })
-        .attr('fill',  (d) => { return App.residueModel.getColor(App.colorMapping, d).code; })
-        .attr('stroke',(d) => { return App.residueModel.getColor(App.colorMapping, d).code; });
+        .attr('fill',  (d) => { return colorMapping(d).code; })
+        .attr('stroke',(d) => { return colorMapping(d).code; });
 
     /*Add the brushes to the trend image*/
     add_brushes();
 
     /* Render the brushes */
     render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
+
+    /* Create the legend */
+    App.residueModel.createColorLegend()
   }
 
 

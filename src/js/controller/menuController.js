@@ -47,6 +47,10 @@ const MenuController = function() {
 
       /* Recolor the trend image*/
       App.trendImageViewer.recolor();
+
+      /* Update the legend */
+      App.residueModel.createColorLegend();
+
     });
   }
 

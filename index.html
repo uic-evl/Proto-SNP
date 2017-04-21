@@ -57,7 +57,7 @@
 
     <script type='text/javascript' src='src/js/model/applicationModel.js'></script>
     <script type='text/javascript' src='src/js/model/familyModel.js'></script>
-    <script type='text/javascript' src='src/js/model/residueModel.js'></script>
+    <script type='text/javascript' src='src/js/model/residueColorModel.js'></script>
     <script type='text/javascript' src='src/js/model/brushModel.js'></script>
 
     <script type='text/javascript' src='src/js/algorithms/Needleman-Wunsch.js'></script>
@@ -128,13 +128,19 @@
         </div><!-- /.container-fluid -->
     </nav>
 
+    <div class="row legendRow">
+        <div class="col-md-3 md-offset-9">
+            <div id="colorLegend"></div>
+        </div>
+    </div>
+
     <!-- 3D Molecule Viewers -->
-    <div class="row TDView">
+    <div class="row molecularViewersRow">
 
         <!-- Left Viewer-->
         <div class="col-md-5 molecularViewerA">
             <p class="view">&nbsp;</p>
-            <div id=leftViewer class="molecular-viewer">
+            <div id=leftMolecularViewer class="molecular-viewer">
                 <div id="leftSplash">
                     <!-- Select Protein Button -->
                     <button class="popup-trigger sBtn" id="popup-trigger-left">
@@ -182,17 +188,17 @@
         <!-- End Left Viewer -->
 
         <!-- Sequence Viewer -->
-        <div class="col-md-2 sequenceViewer">
+        <div class="col-md-2 sequenceViewers">
             <p class="view">&nbsp;</p>
             <div id="sequenceViewer" class="row">
                 <!-- Left Sequence List View-->
                 <div class="col-md-6 sequence-a black-background">
-                    <div id="leftViewer-Sequence"></div>
+                    <div id="leftMolecularViewer-Sequence"></div>
                 </div>
                 <!-- End Left Sequence List View-->
                 <!-- Right Sequence List View-->
                 <div class="col-md-6 sequence-b black-background">
-                    <div id="rightViewer-Sequence"></div>
+                    <div id="rightMolecularViewer-Sequence"></div>
                 </div>
                 <!-- End Right Sequence List View-->
             </div>
@@ -201,7 +207,7 @@
         <!-- Right Viewer -->
         <div class="col-md-5 molecularViewerB">
             <p class="view">&nbsp;</p>
-            <div id=rightViewer class="molecular-viewer">
+            <div id=rightMolecularViewer class="molecular-viewer">
                 <div id="rightSplash">
                     <!-- Select Protein Button -->
                     <button class="popup-trigger sBtn" id="popup-trigger-right">
@@ -247,9 +253,12 @@
             </div>
         </div>
         <!-- End Right Viewer -->
+
     </div> <!-- End Molecular Viewers -->
+
     <br>
-    <div class="row">
+
+    <div class="row proteinFamilyRow">
         <div class="col-md-12">
             <!-- Trend Image View-->
             <div class="row TrendImageView center-aligned">

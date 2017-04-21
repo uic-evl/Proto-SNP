@@ -80,7 +80,6 @@ function ApplicationModel() {
 
   /* Render the 3D and Sequence Views */
   function render_views(structure) {
-
     /* No structure was returned */
     if(!structure) return;
 
@@ -91,7 +90,7 @@ function ApplicationModel() {
     this.modelPointer.sequence = this.view.getSequence(this.modelPointer.structure, 0);
 
     // initialize the sequence viewer
-    App.sequenceViewer.init(this.viewPosition + "Viewer-Sequence");
+    App.sequenceViewer.init(this.viewPosition + "MolecularViewer-Sequence");
 
     /* Check if a sequence is already added to the list, if so align them*/
     if(this.siblingPointer.name){
@@ -105,17 +104,16 @@ function ApplicationModel() {
             ? seq.rightSequence : seq.leftSequence;
 
           /* Render the other sequence */
-          App.sequenceViewer.render(this.siblingPosition + "Viewer-Sequence", this.siblingPointer.sequence);
+          App.sequenceViewer.render(this.siblingPosition + "MolecularViewer-Sequence", this.siblingPointer.sequence);
         }.bind(this));
     }
     // render the sequence list
-    App.sequenceViewer.render(this.viewPosition + "Viewer-Sequence", this.modelPointer.sequence);
+    App.sequenceViewer.render(this.viewPosition + "MolecularViewer-Sequence", this.modelPointer.sequence);
   }
 
 
   /* Form callback to process the request to load a new protein */
   function fetch_and_store_protein(formData, file) {
-
     // view variable
     let viewOptions = {};
 
@@ -143,7 +141,6 @@ function ApplicationModel() {
 
     /* Parse the input */
     viewOptions.modelPointer.name = (formData.protein_name) ? formData.protein_name : $(formData).serialize().split('=')[1];
-
     /* load the pdb file for each viewer */
     load_protein(viewOptions.modelPointer, file)
     /* Once the data has been loaded, get the sequence and render the view */
@@ -153,11 +150,13 @@ function ApplicationModel() {
         $(viewOptions.viewPosition + 'Splash').remove();
 
         /* initialize the molecular viewer */
-        viewOptions.view.init(viewOptions.viewPosition + 'Viewer', self.options);
+        viewOptions.view.init(viewOptions.viewPosition + 'MolecularViewer', self.options);
 
         /* Render the views */
         render_views.call(viewOptions, structure);
 
+        /* Update the legend */
+        App.residueModel.createColorLegend();
       })
       .catch(function() {
         console.log(arguments);
@@ -169,6 +168,7 @@ function ApplicationModel() {
   }
 
 
+  /* Calculate all of the sorting metrics for family */
   function calculate_all_sorting_scores(protein) {
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
@@ -215,7 +215,6 @@ function ApplicationModel() {
 
   /* Form callback to process the family datafile */
   function parse_and_store_family(file) {
-
     /* Remove the Splash screen */
     $("#trendSplash").remove();
     self.proteinFamily = new ProteinFamily(file);
@@ -232,6 +231,9 @@ function ApplicationModel() {
 
     /* Render the trend image */
     App.trendImageViewer.render();
+
+    /* Update the legend */
+    App.residueModel.createColorLegend();
   }
 
 

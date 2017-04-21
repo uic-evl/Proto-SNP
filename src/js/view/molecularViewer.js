@@ -8,15 +8,14 @@ let MolecularViewer = function(){
 
   /* initialize the molecular viewer global variable */
   let molecularViewer = {};
-  let residueModel = new ResidueModel();
   let molecularController = null;
 
 
   function colorProteinBy() {
+    let colorMapping = App.residueModel.getColor(App.colorMapping);
     return new pv.color.ColorOp(function (atom, out, index) {
-
       /* Select the color corresponding to the residue and mapping*/
-     let color  = residueModel.getColor(App.colorMapping, atom._residue._name).rgba;
+     let color  = colorMapping(atom._residue._name).rgba;
 
      /*Set the RGBA output color */
      out[index+0]= color[0] / 255.0; out[index+1]= color[1] / 255.0;

@@ -465,7 +465,7 @@ const TrendImageViewer = function(options){
 
     /* Reset the viewers widtth and height*/
     App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
-    App.frequencyWidth = App.trendWidth / 2.0 + (2 * options.freqOffset);
+    App.frequencyWidth = Math.floor(App.trendWidth / 2.0 + (2.0 * options.freqOffset));
 
     /*Reset the parent dom width/heights*/
     trendImageViewer.domObj.classed("trend-viewer", false);

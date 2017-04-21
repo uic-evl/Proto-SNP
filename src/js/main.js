@@ -49,7 +49,6 @@ var App = App || {};
     rightDomMol.style.height = App.molecularViewerHeight;
 
     seqViewDom.parentNode.style.height  = App.molecularViewerHeight ;
-    // seqViewDom.style.height  = App.molecularViewerHeight - App.labelHeight;
 
     /* Set the div height for the trend image */
     trendDom.style.height = App.trendHeight;

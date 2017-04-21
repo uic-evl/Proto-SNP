@@ -184,7 +184,7 @@ const FrequencyViewer = function(options){
   }
 
 
-  function get_offset() { return options.offset };
+  function get_offset() { return options.offset }
 
 
   /* Initialize the frequency viewer */
@@ -216,7 +216,7 @@ const FrequencyViewer = function(options){
         [ {x: frequencyViewer.width - 1, y: 10}, { x:frequencyViewer.width - 1, y:20}] ];
     }
     else {
-      frequencyViewer.range = [options.offset*2, frequencyViewer.width - options.offset*2];
+      frequencyViewer.range = [options.offset*2, frequencyViewer.width];
       frequencyViewer.contextPoints = [ [{x: options.offset, y:10}, {x: frequencyViewer.width, y: 10}],
         [ {x: options.offset + 1, y: 10}, { x:options.offset + 1, y:20} ],
         [ {x: frequencyViewer.width -1, y: 10}, { x:frequencyViewer.width - 1, y:20}] ];

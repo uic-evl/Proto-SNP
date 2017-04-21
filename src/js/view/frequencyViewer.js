@@ -211,11 +211,15 @@ const FrequencyViewer = function(options){
     /* Store the range for each viewer*/
     if(frequencyViewer.id === "#leftResidueSummaryViewer"){
       frequencyViewer.range = [options.offset*2, frequencyViewer.width ];
-      frequencyViewer.contextPoints = [[{x: options.offset, y:10}, {x: frequencyViewer.width + options.offset/2.0, y: 10}]];
+      frequencyViewer.contextPoints = [ [{x: options.offset, y:10}, {x: frequencyViewer.width, y: 10}],
+        [ {x: options.offset + 1, y: 10}, { x:options.offset + 1, y:20} ],
+        [ {x: frequencyViewer.width - 1, y: 10}, { x:frequencyViewer.width - 1, y:20}] ];
     }
     else {
       frequencyViewer.range = [options.offset*2, frequencyViewer.width - options.offset*2];
-      frequencyViewer.contextPoints = [[{x: options.offset, y:10}, {x: frequencyViewer.width - options.offset, y: 10}]];
+      frequencyViewer.contextPoints = [ [{x: options.offset, y:10}, {x: frequencyViewer.width, y: 10}],
+        [ {x: options.offset + 1, y: 10}, { x:options.offset + 1, y:20} ],
+        [ {x: frequencyViewer.width -1, y: 10}, { x:frequencyViewer.width - 1, y:20}] ];
     }
 
     /* Render the context bars above the trend image*/

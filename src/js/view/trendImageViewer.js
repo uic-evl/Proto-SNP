@@ -38,7 +38,7 @@ const TrendImageViewer = function(options){
     trendImageViewer.svg = trendImageViewer.domObj
       .append("svg")
       .attr("class", "trendImage")
-      .style("width", trendImageViewer.width)
+      .style("width", trendImageViewer.width + trendImageViewer.margin)
       .style("height", trendImageViewer.height)
     ;
   }
@@ -290,6 +290,21 @@ const TrendImageViewer = function(options){
     }
   }
 
+  /* Reorder the proteins labels based on the selected sorting  */
+  function reorder_labels(ordering) {
+    trendImageViewer.svg
+        .transition().duration(1000)
+        .selectAll(".rowLabel")
+        .attr("y", function(d,i) {
+          let row = parseInt(d3.select(this).attr("row")),
+              new_row = _.indexOf(ordering, trendImageViewer.protein_family_data[row]);
+          return (new_row+1) * trendImageViewer.residue_glyph_size;
+        })
+        .attr("row", function(){
+          let row = parseInt(d3.select(this).attr("row"));
+          return _.indexOf(ordering, trendImageViewer.protein_family_data[row]);
+        });
+  }
 
   /* Reorder the proteins based on the selected sorting  */
   function reorder() {
@@ -311,14 +326,32 @@ const TrendImageViewer = function(options){
           return _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
         })
         .call(function(){
+          /* Reorder the labels*/
+          reorder_labels(ordering_scores);
           /* Set the new y-scale so the brushes have an updated lookup table */
           set_y_scale(_.map(ordering_scores, "name"));
           set_protein_family(ordering_scores);
           /* Reset the brush selections */
+
           reset_brushes();
         });
   }
 
+  /* Render the protein names to the svg */
+  function render_row_labels(labels) {
+    let rowLabels = trendImageViewer.svg.append("g")
+        .attr("class", "rowLabels")
+        .selectAll(".rowLabel")
+        .data(labels)
+        .enter().append("text")
+        .text((d) => {return d;})
+        .attr("x", trendImageViewer.width + 5)
+        .attr("y",(d, i) => { return ( (i+1) * trendImageViewer.residue_glyph_size); })
+        .attr("row", (d, i) => { return i; })
+        .style("text-anchor", "start")
+        .attr("class", "rowLabel mono")
+        .attr("id", (d, i) => { return "rowLabel_" + i; });
+  }
 
   /* Render the trend image to the svg */
   function render(){
@@ -336,7 +369,7 @@ const TrendImageViewer = function(options){
         .attr("class", "proteinRow");
 
     /* For each row, render the residues as columns */
-      rows.selectAll('.cell')
+    rows.selectAll('.cell')
         .data( (d) => { return d} )
         .enter().append('rect')
         .attr("x", (d, i) => { return i * trendImageViewer.residue_glyph_size; })
@@ -348,6 +381,9 @@ const TrendImageViewer = function(options){
         .attr("col", (d, i, j) => { return i; })
         .attr('fill',  (d) => { return colorMapping(d).code; })
         .attr('stroke',(d) => { return colorMapping(d).code; });
+
+    /* Render the labels for each row*/
+    render_row_labels(data.index);
 
     /*Add the brushes to the trend image*/
     add_brushes();
@@ -485,6 +521,10 @@ const TrendImageViewer = function(options){
     document.getElementById('trendImageViewer').parentNode.style.width = App.trendWidth;
     document.getElementsByClassName('TrendImageView')[0].style.width = App.trendWidth;
     document.getElementsByClassName('residueSummaryView')[0].style.width = App.frequencyWidth * 2;
+
+    /* Get the computed margin to set the text for each row */
+    trendImageViewer.margin = parseInt(window.getComputedStyle(document.getElementsByClassName('TrendImageView')[0]).marginRight);
+
   }
 
 

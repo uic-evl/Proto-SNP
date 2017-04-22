@@ -68,7 +68,9 @@ function ResidueModel() {
     ];
 
   /* Color map legend */
-  let legend = d3.select("#colorlegend").append("svg");
+  let legend_svg = d3.select("#colorlegend")
+      .append("svg")
+      .attr("width", App.legendElementWidth);
 
   /* The current color mapp*/
   let currentColorMap = null;
@@ -129,26 +131,44 @@ function ResidueModel() {
   function create_legend(){
 
     let elements = _.toPairs(currentColorMap),
-        legendElementWidth = App.legendElementWidth / elements.length;
+        legendElementWidth = App.legendElementWidth / (elements.length),
+        legendElementHeight = App.legendHeight / 2.0;
 
     /* Add the color bands to the legend */
-    let legend_bars = legend.selectAll(".legendElement")
+    let legend_bars = legend_svg.selectAll(".legendElement")
         .data(elements);
 
     // UPDATE: add new elements if needed
     legend_bars
-        .enter().append('g').append('rect')
+        .enter().append('g')
+        .append('rect')
         /* Merge the old elements (if they exist) with the new data */
         .merge(legend_bars)
-        .attr("class", "legendElement bordered")
-        .attr("width", App.legendElementWidth)
-        .attr("height", App.legendHeight / 2.0)
-        // .attr('y', function(d) { return frequencyViewer.height * 0.3 + frequencyViewer.barOffset } )
-        .attr('x', function(d, i) { return legendElementWidth * i })
+        .attr("class", "legendElement")
+        .attr("width", legendElementWidth)
+        .attr("height", legendElementHeight)
+        .attr('x', (d, i) => { return legendElementWidth * i + 1 })
+        .attr('y', (d) => { return 1; })
         .style("fill", (d) => { return d[1].code });
 
-    /* Remove the unneeded bars */
+    /* Add the text to the legend*/
+    let legend_text = legend_svg.selectAll(".legendText")
+        .data(elements);
+
+    legend_text.enter()
+        .append("g")
+        .append("text")
+        /* Merge the old elements (if they exist) with the new data */
+        .merge(legend_text)
+        .attr("class", "legendText")
+        .text((d) => { return d[0]; })
+        .attr("x", (d, i) => { return legendElementWidth * i + 5; })
+        .attr("y", legendElementHeight + App.utilities.fontSizeToPixels("10pt"))
+    ;
+
+    /* Remove the unneeded bars/text */
     legend_bars.exit().remove();
+    legend_text.exit().remove();
   }
 
   return {

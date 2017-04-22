@@ -1,3 +1,6 @@
+body {
+    overflow: hidden;
+}
 #header_logo {
     height: 104px;
     width: 254px;
@@ -40,9 +43,4 @@ p.view {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-}
-
-rect.bordered {
-    stroke: #E6E6E6;
-    stroke-width:2px;
 }

@@ -1,0 +1,10 @@
+/* Legend */
+rect.legendElement {
+    stroke: #808080;
+    stroke-width:1px;
+}
+
+text.legendText {
+    font-size: 10px;
+    font-family: monospace;
+}

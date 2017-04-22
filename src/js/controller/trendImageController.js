@@ -27,6 +27,32 @@ const TrendImageController = function(options){
     return pointer_bar;
   }
 
+
+  function clamp_brush_sizes(currentVerticalSelection, prevPaddleSelection) {
+    let brush_size = Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]);
+    /* Our max brush size is 10*/
+    if( brush_size > options.brushMaxSize){
+      /* Check which side was brushed */
+      if(currentVerticalSelection[0] === prevPaddleSelection[0]){
+        currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
+      }
+      else {
+        currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
+      }
+    }
+    else if (brush_size < options.brushMinSize) {
+      /* Check which side was brushed */
+      if (currentVerticalSelection[0] === prevPaddleSelection[0]) {
+        currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMinSize;
+      }
+      else {
+        currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMinSize;
+      }
+    }
+    return currentVerticalSelection;
+  }
+
+
   /* Get the new selection */
   function get_vertical_selection(currentPaddle, halfway) {
 
@@ -49,19 +75,12 @@ const TrendImageController = function(options){
         currentVerticalSelection[0] = halfway;
         currentVerticalSelection[1] = self.rightVerticalSelection[1];
       }
-      /* Our max brush size is 10*/
-      if( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ){
-        /* Check which side was brushed */
-        if(currentVerticalSelection[0] === self.rightVerticalSelection[0]){
-          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
-        }
-        else {
-          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
-        }
-      }
+      /* Clamp the brush size */
+      currentVerticalSelection = clamp_brush_sizes(currentVerticalSelection, self.rightVerticalSelection);
+
+      /* Reset the event selection */
       d3.event.selection = currentVerticalSelection.map(options.trendImage.getXAxisScale());
       self.rightVerticalSelection = currentVerticalSelection;
-
     }
     else {
       /* Check if paddle is past the half way mark of the trend image*/
@@ -69,20 +88,13 @@ const TrendImageController = function(options){
         currentVerticalSelection[1] = halfway+1;
         currentVerticalSelection[0] = self.leftVerticalSelection[0];
       }
-      /* Our max brush size is 10*/
-      if ( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ) {
-        /* Check which side was brushed */
-        if (currentVerticalSelection[0] === self.leftVerticalSelection[0]) {
-          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
-        }
-        else {
-          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
-        }
-      }
+      /* Clamp the brush size */
+      currentVerticalSelection = clamp_brush_sizes(currentVerticalSelection, self.leftVerticalSelection);
+
+      /* Reset the event selection */
       d3.event.selection = currentVerticalSelection.map(options.trendImage.getXAxisScale());
       self.leftVerticalSelection = currentVerticalSelection;
     }
-
     return currentVerticalSelection;
   }
 

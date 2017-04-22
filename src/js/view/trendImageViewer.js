@@ -468,7 +468,8 @@ const TrendImageViewer = function(options){
       trendImage             : trendImageViewer.instanceVariables.protected,
       initHorizontalPosition : trendImageViewer.initHorizontalBrush,
       initVerticalPosition   : trendImageViewer.initVerticalBrushes,
-      brushMaxSize           : trendImageViewer.verticalPaddleMaxSize
+      brushMaxSize           : trendImageViewer.verticalPaddleMaxSize,
+      brushMinSize           : trendImageViewer.verticalPaddleSize
     });
   }
 

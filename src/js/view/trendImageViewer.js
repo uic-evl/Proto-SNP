@@ -126,10 +126,10 @@ const TrendImageViewer = function(options){
       /* Enable the paddle brushing callbacks */
       trendImageViewer.leftVerticalPaddle
           .onBrush(function(){
-            trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected, App.leftFrequencyViewer)});
+            trendImageViewer.controller.verticalBrushed.call(this, App.leftFrequencyViewer)});
       trendImageViewer.rightVerticalPaddle
           .onBrush(function(){
-            trendImageViewer.controller.verticalBrushed.call(this, trendImageViewer.instanceVariables.protected, App.rightFrequencyViewer) });
+            trendImageViewer.controller.verticalBrushed.call(this, App.rightFrequencyViewer) });
 
       /* Initialize the protein frequency charts with the selection data*/
       initialize_frequency_viewers();
@@ -190,7 +190,7 @@ const TrendImageViewer = function(options){
         .setPaddleSize(1)
         .setBrushClass("brush horizontal")
         .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
-        .onBrush(function(){ trendImageViewer.controller.horizontalBrushed.call(this, trendImageViewer.instanceVariables.protected)})
+        .onBrush(function(){ trendImageViewer.controller.horizontalBrushed.call(this)})
     ;
 
     /* Construct the left vertical residue-selection paddle */
@@ -465,6 +465,7 @@ const TrendImageViewer = function(options){
   /* Setter for the trend image controller */
   function set_trend_image_controller() {
     trendImageViewer.controller = new TrendImageController({
+      trendImage             : trendImageViewer.instanceVariables.protected,
       initHorizontalPosition : trendImageViewer.initHorizontalBrush,
       initVerticalPosition   : trendImageViewer.initVerticalBrushes,
       brushMaxSize           : trendImageViewer.verticalPaddleMaxSize

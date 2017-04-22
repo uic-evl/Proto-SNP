@@ -4,17 +4,16 @@
 var App = App || {};
 
 // Utilities class for mapping protein names
-var DatabaseMappingUtils = function(){
+const DatabaseMappingUtils = function(){
 
   /* Global Class Variable*/
-  var mappingUtils = {};
+  let mappingUtils = {};
 
   /* A dictionary for all the mapped proteins that were previously queried */
   mappingUtils.mappedProteins = {};
 
   /* Map from uniprot 'mneumonic' to PDB code*/
   function map_mneumonic_to_PDB(mneumonic){
-
     return new Promise(function(resolve, reject) {
       /* Use d3 to query UniProt for the tab-separated name conversion*/
       d3.tsv("http://www.uniprot.org/uniprot/?query=mneumonic:" + mneumonic +

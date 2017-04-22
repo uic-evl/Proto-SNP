@@ -14,7 +14,80 @@ const TrendImageController = function(options){
   };
 
 
-  function horizontal_paddle_controller(trendImage) {
+  /* Get the position of the context line's pointer */
+  function get_context_bar_position(currentPaddle, halfway) {
+    let pointer_bar = 0;
+    /* Get the position of the pointer bar */
+    if(currentPaddle === "vertical-right") {
+      pointer_bar = (d3.event.selection[0] + d3.event.selection[1] ) / 2.0 - options.trendImage.getXAxisScale()(halfway);
+    }
+    else {
+      pointer_bar = (d3.event.selection[0] + d3.event.selection[1] )/2.0;
+    }
+    return pointer_bar;
+  }
+
+  /* Get the new selection */
+  function get_vertical_selection(currentPaddle, halfway) {
+
+    let residue_glyph_size = options.trendImage.getGlyphSize();
+
+    // Round the two event extents to the nearest row
+    d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size);
+    d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/residue_glyph_size)*residue_glyph_size);
+
+    /* Get the current protein */
+    let currentVerticalSelection = d3.event.selection.map(options.trendImage.getXAxisScale().invert);
+    // (It's sad that I have to do this -- Floating pt errors)
+    currentVerticalSelection[0] = parseInt(Math.round(currentVerticalSelection[0]));
+    currentVerticalSelection[1] = parseInt(Math.round(currentVerticalSelection[1]));
+
+    /* Keep track of the current selection */
+    if(currentPaddle === "vertical-right"){
+      /* Check if paddle is past the half way mark of the trend image*/
+      if(currentVerticalSelection[0] < halfway){
+        currentVerticalSelection[0] = halfway;
+        currentVerticalSelection[1] = self.rightVerticalSelection[1];
+      }
+      /* Our max brush size is 10*/
+      if( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ){
+        /* Check which side was brushed */
+        if(currentVerticalSelection[0] === self.rightVerticalSelection[0]){
+          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
+        }
+        else {
+          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
+        }
+      }
+      d3.event.selection = currentVerticalSelection.map(options.trendImage.getXAxisScale());
+      self.rightVerticalSelection = currentVerticalSelection;
+
+    }
+    else {
+      /* Check if paddle is past the half way mark of the trend image*/
+      if(currentVerticalSelection[1] > halfway+1){
+        currentVerticalSelection[1] = halfway+1;
+        currentVerticalSelection[0] = self.leftVerticalSelection[0];
+      }
+      /* Our max brush size is 10*/
+      if ( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ) {
+        /* Check which side was brushed */
+        if (currentVerticalSelection[0] === self.leftVerticalSelection[0]) {
+          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
+        }
+        else {
+          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
+        }
+      }
+      d3.event.selection = currentVerticalSelection.map(options.trendImage.getXAxisScale());
+      self.leftVerticalSelection = currentVerticalSelection;
+    }
+
+    return currentVerticalSelection;
+  }
+
+
+  function horizontal_paddle_controller() {
 
     /* We only want to capture user events. */
     if (!d3.event.sourceEvent) return;
@@ -22,7 +95,7 @@ const TrendImageController = function(options){
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't associated with a mouse move
 
     /* Get and store the residue glyph size */
-    let residue_glyph_size = trendImage.getGlyphSize();
+    let residue_glyph_size = options.trendImage.getGlyphSize();
 
     // Round the two event extents to the nearest row
     d3.event.selection[0] = Math.ceil(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size;
@@ -32,8 +105,8 @@ const TrendImageController = function(options){
     d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Get the current protein */
-    self.currentHorizontalSelection = d3.event.selection.map(trendImage.getYAxisScale().invert)[0];
-    let currentProtein = _.find(trendImage.getProteinData(), ["name", self.currentHorizontalSelection]);
+    self.currentHorizontalSelection = d3.event.selection.map(options.trendImage.getYAxisScale().invert)[0];
+    let currentProtein = _.find(options.trendImage.getProteinData(), ["name", self.currentHorizontalSelection]);
 
     /* Get the residues that intersect with the left vertical paddle*/
     let leftHorizontalSelectedResidues = currentProtein.sequence.slice(self.leftVerticalSelection[0], self.leftVerticalSelection[1]);
@@ -54,72 +127,18 @@ const TrendImageController = function(options){
   }
 
 
-  function vertical_paddle_controller(trendImage, frequencyChart) {
+  function vertical_paddle_controller(frequencyChart) {
     if (!d3.event.sourceEvent) return; // Only transition after input.
     if (d3.event.sourceEvent.type === "brush") return; // if the event isn't a brushing
     if (!d3.event.selection) return; // Ignore empty selections.
 
-    /* Get and store the residue glyph size */
-    let residue_glyph_size = trendImage.getGlyphSize();
-    let pointer_bar = 0;
-
-    // Round the two event extents to the nearest row
-    d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size);
-    d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/residue_glyph_size)*residue_glyph_size);
-
-    /* Get the current protein */
-    let currentVerticalSelection = d3.event.selection.map(trendImage.getXAxisScale().invert);
-    // (It's sad that I have to do this -- Floating pt errors)
-    currentVerticalSelection[0] = parseInt(Math.round(currentVerticalSelection[0]));
-    currentVerticalSelection[1] = parseInt(Math.round(currentVerticalSelection[1]));
-
-    /* Get the current paddle */
+    /* Get the current paddle and selection */
     let currentPaddle = d3.select(this).attr("class").split(" ")[1];
+    let halfway = Math.ceil(options.trendImage.getXAxisSize()/2.0) ;
 
-    /* Keep track of the current selection */
-    if(currentPaddle === "vertical-right"){
-      /* Check if paddle is past the half way mark of the trend image*/
-      let halfway = Math.ceil(trendImage.getXAxisSize()/2.0) ;
-      if(currentVerticalSelection[0] < halfway){
-        currentVerticalSelection[0] = halfway;
-        currentVerticalSelection[1] = self.rightVerticalSelection[1];
-      }
-      /* Our max brush size is 10*/
-      if( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ){
-        /* Check which side was brushed */
-        if(currentVerticalSelection[0] === self.rightVerticalSelection[0]){
-          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
-        }
-        else {
-          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
-        }
-      }
-      d3.event.selection = currentVerticalSelection.map(trendImage.getXAxisScale());
-      self.rightVerticalSelection = currentVerticalSelection;
-      /* Get the position of the pointer bar */
-      pointer_bar =  (d3.event.selection[0] + d3.event.selection[1] )/2.0 - trendImage.getXAxisScale()(halfway);
-    }
-    else {
-      /* Check if paddle is past the half way mark of the trend image*/
-      let halfway = Math.floor(trendImage.getXAxisSize()/2.0)+1 ;
-      if(currentVerticalSelection[1] > halfway){
-        currentVerticalSelection[1] = halfway;
-        currentVerticalSelection[0] = self.leftVerticalSelection[0];
-      }
-      /* Our max brush size is 10*/
-      if ( Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]) > options.brushMaxSize ) {
-        /* Check which side was brushed */
-        if (currentVerticalSelection[0] === self.leftVerticalSelection[0]) {
-          currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
-        }
-        else {
-          currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
-        }
-      }
-      d3.event.selection = currentVerticalSelection.map(trendImage.getXAxisScale());
-      self.leftVerticalSelection = currentVerticalSelection;
-      pointer_bar = (d3.event.selection[0] + d3.event.selection[1] )/2.0;
-    }
+    /* Get the current selection and position of the frequency viewer context bar */
+    let currentVerticalSelection = get_vertical_selection(currentPaddle, halfway);
+    let pointer_bar = get_context_bar_position(currentPaddle, halfway);
 
     // Snap the brush onto the closest protein
     d3.select(this).call(d3.event.target.move, d3.event.selection);
@@ -137,7 +156,7 @@ const TrendImageController = function(options){
     }
 
     /* Get the fragments from the column*/
-    let fragments = trendImage.getColumnFrequency().getFragmentCountsFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
+    let fragments = options.trendImage.getColumnFrequency().getFragmentCountsFromRange(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Iterate over each of the returned fragments */
     let currentSelectionFragments = [];
@@ -147,12 +166,12 @@ const TrendImageController = function(options){
     });
 
     /* Get the currently selected protein*/
-    let currentProtein = _.find(trendImage.getProteinData(), ["name", d3.event.selection.map(trendImage.getYAxisScale().invert)[0]]);
+    let currentProtein = _.find(options.trendImage.getProteinData(), ["name", d3.event.selection.map(options.trendImage.getYAxisScale().invert)[0]]);
     /* Get the residues that intersect with the vertical paddle*/
     let horizontalSelectedResidues = currentProtein.sequence.slice(currentVerticalSelection[0], currentVerticalSelection[1]);
 
     /* Render the frequency bars */
-    frequencyChart.render(currentSelectionFragments, trendImage.getYAxisSize(), horizontalSelectedResidues, pointer_bar);
+    frequencyChart.render(currentSelectionFragments, options.trendImage.getYAxisSize(), horizontalSelectedResidues, pointer_bar);
   }
 
 

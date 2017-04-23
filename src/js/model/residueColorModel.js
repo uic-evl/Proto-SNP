@@ -64,7 +64,8 @@ function ResidueModel() {
     {abbr: "Y", sideClass: "aromatic",  polarity: "polar",    name:"TYR"},
     {abbr: "V", sideClass: "aliphatic", polarity: "nonpolar", name:"VAL"},
     {abbr: ".", sideClass: "gap",       polarity: "gap",      name:"gap"},
-    {abbr: "~", sideClass: "gap",       polarity: "gap",      name:"gap"}
+    {abbr: "~", sideClass: "gap",       polarity: "gap",      name:"gap"},
+    {abbr: "-", sideClass: "gap",       polarity: "gap",      name:"gap"}
     ];
 
   /* Color map legend */

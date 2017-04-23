@@ -10,7 +10,7 @@ const TrendImageController = function(options){
   let self = {
     currentHorizontalSelection : options.initHorizontalPosition,
     leftVerticalSelection      : options.initVerticalPosition.left,
-    rightVerticalSelection      : options.initVerticalPosition.right
+    rightVerticalSelection     : options.initVerticalPosition.right
   };
 
 

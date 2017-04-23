@@ -136,7 +136,8 @@ var App = App || {};
     /* Handle the upload callbacks */
       .on('fileuploadadd', function (e, data) {
         // uploaded file
-        let file = data.files[0];
+        let file = data.files[0],
+            extension = file.name.split('.').pop().toLowerCase();
 
         // JS File reader to parse the uploaded file
         let reader = new FileReader();
@@ -144,7 +145,7 @@ var App = App || {};
         /* Callback to loading the file */
         reader.addEventListener("load", function () {
           /* Pass the file to be processed by the model */
-            App.applicationModel.processProteinFamily(this.result);
+            App.applicationModel.processProteinFamily(this.result, extension);
         }, false);
 
         // parse the file as text

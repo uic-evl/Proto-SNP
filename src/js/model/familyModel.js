@@ -3,17 +3,17 @@
 // Global Application variable
 var App = App || {};
 
-function ProteinFamily(file) {
+function ProteinFamily(options) {
   // self reference
   let self = {
       family : {}
   };
 
 
-  /* Parse the MSF File*/
-  function parse_MSF(file) {
+  /* Parse the MSF File */
+  function parse_MSF(file_data) {
     /* Parse the lines of the file */
-    let lines = file.split('\n');
+    let lines = file_data.split('\n');
 
     /* Iterate over each line*/
     lines.forEach(function(line, idx){
@@ -55,6 +55,38 @@ function ProteinFamily(file) {
   }
 
 
+  /* Parse a FASTA File */
+  function parse_FASTA(file_data) {
+    /* Parse the lines of the file */
+    let lines = file_data.split('>');
+
+    /* Iterate over each line*/
+    lines.forEach(function(line, idx){
+      // If an empty line, continue
+      if(!line.length) return;
+      /* Create a regex pattern to check for the header lines */
+      let regex_data = /((\w*)\/?\d*-?\d*)\s*(\S*)/ ,
+          /* Perform the regex matching on the line */
+        parsedLine = line.match(regex_data);
+
+      /* If parsed, create the dictionary for the entry  */
+      if(parsedLine){
+        /* Create the dictionary entry */
+        self.family[parsedLine[1]] = {
+          name                   : parsedLine[1],
+          protein                : parsedLine[2],
+          length                 : parsedLine[3].length,
+          sequence               : parsedLine[3],
+          scores                 : {initial: lines.length - idx}
+        };
+      }
+    });
+    /* Convert the family object to an array */
+    self.family = _.values(self.family);
+    self.family.forEach((protein) => { protein.sequence = protein.sequence.split(''); });
+  }
+
+
   /*Accessor to return the family */
   function get_family() { return self.family }
 
@@ -69,7 +101,14 @@ function ProteinFamily(file) {
 
 
   /* Parse the family file */
-  parse_MSF(file);
+  switch(options.ext){
+    case "msf":
+      parse_MSF(options.file);
+      break;
+    case "fa":
+      parse_FASTA(options.file);
+      break;
+  }
 
 
   /* Return the publicly accessible functions*/

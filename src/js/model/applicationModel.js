@@ -214,10 +214,10 @@ function ApplicationModel() {
 
 
   /* Form callback to process the family datafile */
-  function parse_and_store_family(file) {
+  function parse_and_store_family(file_data, ext) {
     /* Remove the Splash screen */
     $("#trendSplash").remove();
-    self.proteinFamily = new ProteinFamily(file);
+    self.proteinFamily = new ProteinFamily({file: file_data, ext: ext});
 
     /* Calculate all of the initial sorting scores */
     calculate_all_sorting_scores(self.proteinFamily.getFamily()[0]);

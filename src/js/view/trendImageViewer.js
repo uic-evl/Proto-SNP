@@ -505,17 +505,20 @@ const TrendImageViewer = function(options){
   /* Setter for the chart dimensions */
   function set_chart_dimensions() {
 
-    let residue_width = Math.floor(App.trendWidth / trendImageViewer.x_axis_length);
+    let residue_width = Math.floor(App.trendWidth / trendImageViewer.x_axis_length),
+        temp_height = 0;
 
-    /* Reset the viewers widtth and height*/
+    /* Reset the viewers width and height*/
     App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
     App.frequencyWidth = Math.floor(App.trendWidth / 2.0 + (2.0 * options.freqOffset));
 
     /*Reset the parent dom width/heights*/
     trendImageViewer.domObj.classed("trend-viewer", false);
-
-    trendImageViewer.height = trendImageViewer.y_axis_length * (residue_width + 0.5);
     trendImageViewer.width = App.trendWidth;
+
+    /* Make sure the height of the data does not exceed the height of the container */
+    temp_height = trendImageViewer.y_axis_length * residue_width;
+    trendImageViewer.height = (temp_height < trendImageViewer.height) ? temp_height : trendImageViewer.height;
 
     document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.height;
     document.getElementById('trendImageViewer').style.height = trendImageViewer.height;

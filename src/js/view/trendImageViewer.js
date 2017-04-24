@@ -192,7 +192,7 @@ const TrendImageViewer = function(options){
       App.TrendImageBrushFactory.createBrush(App.HORIZONTAL_PADDLE)
         .setPaddleSize(1)
         .setBrushClass("brush horizontal")
-        .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
+        .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.height] ])
         .onBrush(function(){ trendImageViewer.controller.horizontalBrushed.call(this)})
     ;
 

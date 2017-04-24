@@ -76,7 +76,7 @@ const SequenceSorting = function(family){
             scores = [],
           /* Highest occurring residue column in the entire family  */
             max_frequency = _.chain(frequencies)
-              .maxBy(function(o) { return Math.max(_.values(o)); } )
+              .maxBy((o) => {return _.max(_.values(o));} )
               .toPairs().head().value()[1];
         /* Get the highest residue(s) from each column */
         for(let i = 0; i < max_len; i++) {

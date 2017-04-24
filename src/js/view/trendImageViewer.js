@@ -458,7 +458,7 @@ const TrendImageViewer = function(options){
     set_chart_scales();
 
     /* Set the size of the initial vertical paddles */
-    trendImageViewer.verticalPaddleSize = 4;
+    trendImageViewer.verticalPaddleSize = 6;
     trendImageViewer.verticalPaddleMaxSize = 10;
 
     /* Initialize the sizes of the brushing paddles */

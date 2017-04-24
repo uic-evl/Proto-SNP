@@ -232,7 +232,7 @@ function ApplicationModel() {
 
     /* Render the trend image */
     App.trendImageViewer.render().then(function(element){
-      calculate_all_sorting_scores(self.proteinFamily.getFamily()[0]);
+      setTimeout(()=>{calculate_all_sorting_scores(self.proteinFamily.getFamily()[0])}, 500);
     });
 
   }

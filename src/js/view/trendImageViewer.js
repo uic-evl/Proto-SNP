@@ -382,8 +382,8 @@ const TrendImageViewer = function(options){
             .enter().append('rect')
             .attr("x", (d, i) => { return i * trendImageViewer.residue_glyph_size; })
             .attr("y", (d, i, j) => { return j * trendImageViewer.residue_glyph_size; })
-            .attr("width", trendImageViewer.residue_glyph_size)
-            .attr("height", trendImageViewer.residue_glyph_size)
+            .attr("width", 10)//trendImageViewer.residue_glyph_size)
+            .attr("height", 10)//trendImageViewer.residue_glyph_size)
             .attr("class", "cell")
             .attr("row", (d, i, j) => { return j; })
             .attr("col", (d, i, j) => { return i; })
@@ -458,7 +458,7 @@ const TrendImageViewer = function(options){
     set_chart_scales();
 
     /* Set the size of the initial vertical paddles */
-    trendImageViewer.verticalPaddleSize = 6;
+    trendImageViewer.verticalPaddleSize = 4;
     trendImageViewer.verticalPaddleMaxSize = 10;
 
     /* Initialize the sizes of the brushing paddles */

@@ -161,9 +161,6 @@ const FrequencyViewer = function(options){
   /* Render with the selected residues */
   function render(residue_frequencies, family_member_count, selected_residues, bar_position) {
 
-    /* Get get width and height for each box*/
-    frequencyViewer.bar_glyph_width = frequencyViewer.width / family_member_count - 5;
-
     set_scales(residue_frequencies, family_member_count);
 
     render_bars(residue_frequencies, selected_residues);
@@ -188,7 +185,7 @@ const FrequencyViewer = function(options){
 
 
   /* Initialize the frequency viewer */
-  function initialize(div_id) {
+  function initialize(div_id, max_count) {
 
     /* get the DOM element by the id parameter */
     frequencyViewer.id     = div_id;
@@ -197,6 +194,10 @@ const FrequencyViewer = function(options){
     /* get/save the width and height of the given DOM element */
     frequencyViewer.width = App.frequencyWidth;
     frequencyViewer.height = App.frequencyHeight;
+
+    /* Get get width and height for each box*/
+    frequencyViewer.bar_glyph_width = frequencyViewer.width / (max_count+6);
+    console.log(max_count);
 
     /* clear the frequency viewer DOM */
     frequencyViewer.domObj.selectAll().remove();

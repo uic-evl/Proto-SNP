@@ -73,8 +73,8 @@ function ProteinFamily(options) {
       if(parsedLine){
         /* Create the dictionary entry */
         self.family[parsedLine[1]] = {
-          name                   : parsedLine[1],
-          protein                : parsedLine[2],
+          name                   : parsedLine[2],
+          full_name              : parsedLine[1],
           length                 : parsedLine[3].length,
           sequence               : parsedLine[3],
           scores                 : {initial: lines.length - idx}

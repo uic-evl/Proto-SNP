@@ -39,19 +39,20 @@ var App = App || {};
     /* Set the div height for the molecular viewers */
     leftDomMol.style.height  = App.molecularViewerHeight;
     rightDomMol.style.height = App.molecularViewerHeight;
+    /* Set the div height for the sequence viewer */
+    seqViewDom.parentNode.style.height  = App.molecularViewerHeight ;
 
     /* Calculate the height and width of the trend image and set the div height */
     App.trendWidth   = trendDom.clientWidth;
-    App.trendHeight  = (window.innerHeight - App.molecularViewerHeight ) * App.aspectRatio;
+    let remaining_height = parseInt((window.innerHeight - App.molecularViewerHeight) * App.aspectRatio);
+
+    App.trendHeight  = parseInt(remaining_height * 0.65);
     /* Set the div height for the trend image */
-    trendDom.style.height = App.trendHeight;
+    trendDom.style.height = remaining_height;
 
     /* Calculate the height and width of the frequency viewer */
     App.frequencyWidth  = App.trendWidth / 2.0 + freqOffset;
-    App.frequencyHeight = App.trendHeight * 0.3;
-
-    /* Set the div height for the sequence viewer */
-    seqViewDom.parentNode.style.height  = App.molecularViewerHeight ;
+    App.frequencyHeight = parseInt(remaining_height * 0.25);
 
     /* Set the div height for the legend */
     App.legendHeight = 2.0 * App.labelHeight;

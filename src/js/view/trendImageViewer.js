@@ -110,8 +110,8 @@ const TrendImageViewer = function(options){
     let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectedResidues[0], rightSelectedResidues[1]);
 
     /* Initialize the frequency viewers*/
-    App.leftFrequencyViewer.init("#leftResidueSummaryViewer");
-    App.rightFrequencyViewer.init("#rightResidueSummaryViewer");
+    App.leftFrequencyViewer.init("#leftResidueSummaryViewer", trendImageViewer.verticalPaddleMaxSize);
+    App.rightFrequencyViewer.init("#rightResidueSummaryViewer", trendImageViewer.verticalPaddleMaxSize);
 
     /* Render the frequency view*/
     App.leftFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length,
@@ -311,7 +311,7 @@ const TrendImageViewer = function(options){
     /* Get the new order for the protein rows in descending order */
     let ordering_scores = _.chain(trendImageViewer.protein_family_data)
         .sortBy((protein) => { return protein.scores[App.sorting];})
-        .reverse().value();
+        .reverse().slice(0, trendImageViewer.ppv).value();
 
     trendImageViewer.svg
         .transition().duration(1000)
@@ -358,12 +358,13 @@ const TrendImageViewer = function(options){
 
     /* Invoke the tip in the context of your visualization */
     //trendImageViewer.svg.call(trendImageViewer.tooltip);
-    let data = map_trend_image_data();
-    let colorMapping = App.residueModel.getColor(App.colorMapping);
+    let data = map_trend_image_data(),
+        colorMapping = App.residueModel.getColor(App.colorMapping),
+        protein_data = _.slice(data.data, 0, trendImageViewer.ppv);
 
     /* Create a row for each protein */
     let rows = trendImageViewer.svg.selectAll(".proteinRow")
-        .data(data.data)
+        .data(protein_data)
         .enter().append("g")
         .attr("id", (d,i) => { return "p" + data.index[i];})
         .attr("class", "proteinRow");
@@ -433,6 +434,10 @@ const TrendImageViewer = function(options){
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     set_glyph_size();
 
+
+    /* Initialize the number of visible proteins per view */
+    set_proteins_per_view();
+
     /* Initialize the scales for the trend image*/
     set_chart_scales();
 
@@ -455,6 +460,13 @@ const TrendImageViewer = function(options){
   /*******************************************************************************************************************/
 
   /************ Setters ************/
+
+
+  /* Setter for the number of proteins we can display in a single view */
+  function set_proteins_per_view() {
+    trendImageViewer.ppv = trendImageViewer.height / trendImageViewer.residue_glyph_size;
+  }
+
 
   /* Setter for the column frequency data */
   function set_column_frequency_data(column_frequencies) {
@@ -484,7 +496,7 @@ const TrendImageViewer = function(options){
     /* construct the y-scale */
     trendImageViewer.yScale = d3.scaleBand()
         .domain(values)
-        .range([0, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size])
+        .range([0, trendImageViewer.ppv * trendImageViewer.residue_glyph_size])
     ;
   }
 
@@ -497,16 +509,14 @@ const TrendImageViewer = function(options){
       .range([0, Math.ceil((trendImageViewer.width)/trendImageViewer.residue_glyph_size)*trendImageViewer.residue_glyph_size])
     ;
     /* Set the y scale with the protein names*/
-    set_y_scale(get_protein_names())
-
+    set_y_scale(_.slice(get_protein_names(), 0, trendImageViewer.ppv))
   }
 
 
   /* Setter for the chart dimensions */
   function set_chart_dimensions() {
 
-    let residue_width = Math.floor(App.trendWidth / trendImageViewer.x_axis_length),
-        temp_height = 0;
+    let residue_width = Math.floor(App.trendWidth / trendImageViewer.x_axis_length);
 
     /* Reset the viewers width and height*/
     App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
@@ -517,9 +527,15 @@ const TrendImageViewer = function(options){
     trendImageViewer.width = App.trendWidth;
 
     /* Make sure the height of the data does not exceed the height of the container */
-    temp_height = trendImageViewer.y_axis_length * residue_width;
-    trendImageViewer.height = (temp_height < trendImageViewer.height) ? temp_height : trendImageViewer.height;
+    let temp_height = trendImageViewer.y_axis_length * residue_width;
 
+    /* We must reset the height of the trend image */
+    if(temp_height < App.trendHeight) {
+      App.trendHeight = temp_height;
+    }
+    trendImageViewer.height = App.trendHeight;
+
+    /* Resize the DOM elements*/
     document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.height;
     document.getElementById('trendImageViewer').style.height = trendImageViewer.height;
 
@@ -529,7 +545,6 @@ const TrendImageViewer = function(options){
 
     /* Get the computed margin to set the text for each row */
     trendImageViewer.margin = parseInt(window.getComputedStyle(document.getElementsByClassName('TrendImageView')[0]).marginRight);
-
   }
 
 

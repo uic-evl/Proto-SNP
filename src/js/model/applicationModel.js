@@ -170,6 +170,48 @@ function ApplicationModel() {
 
   /* Calculate all of the sorting metrics for family */
   function calculate_all_sorting_scores(protein) {
+    return new Promise(function(resolve, reject) {
+      /* Calculate the column frequency scores and enable the menu option */
+      self.sortedSequences.calculateFrequencyScores()
+          .then((scores) => {
+            $("#residue_freq_li").find("a").removeClass("disabled");
+            self.proteinFamily.setScores("residue_frequency", scores);
+          });
+      /* Calculate the edit distance scores with the first protein and enable the menu option */
+      self.sortedSequences.calculateEditDistanceScores(protein)
+          .then((scores) => {
+            $("#edit_dist_li").find("a").removeClass("disabled");
+            self.proteinFamily.setScores("edit_distance", scores);
+          });
+      /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
+      self.sortedSequences.calculateEditDistanceScores(protein, {insertion: 3, deletion: 3, substitution: 5})
+          .then((scores) => {
+            $("#weighted_edit_dist_li").find("a").removeClass("disabled");
+            self.proteinFamily.setScores("weighted_edit_distance", scores);
+          });
+      /* Calculate the residue commonality scores with the first protein and enable the menu option */
+      self.sortedSequences.calculateCommonalityScores(protein)
+          .then((scores) => {
+            $("#commonality_li").find("a").removeClass("disabled");
+            self.proteinFamily.setScores("commonality_scores", scores);
+          });
+      /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
+      self.sortedSequences.calculateCommonalityScores(protein, 1)
+          .then((scores) => {
+            $("#normalized_commonality_li").find("a").removeClass("disabled");
+            self.proteinFamily.setScores("normalized_commonality_scores", scores);
+          });
+    });
+
+  }
+
+
+  /* Form callback to process the family datafile */
+  function parse_and_store_family(file_data, ext) {
+    /* Remove the Splash screen */
+    $("#trendSplash").remove();
+    self.proteinFamily = new ProteinFamily({file: file_data, ext: ext});
+
     /* Create the sorting callbacks */
     self.sortedSequences = new SequenceSorting(self.proteinFamily.getFamily());
 
@@ -180,47 +222,6 @@ function ApplicationModel() {
 
     /* Calculate the residue frequencies per column */
     self.sortedSequences.calculateFrequency();
-    /* Calculate the column frequency scores and enable the menu option */
-    self.sortedSequences.calculateFrequencyScores()
-        .then((scores) => {
-          $("#residue_freq_li").find("a").removeClass("disabled");
-          self.proteinFamily.setScores("residue_frequency", scores);
-        });
-    /* Calculate the edit distance scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateEditDistanceScores(protein)
-        .then((scores) => {
-          $("#edit_dist_li").find("a").removeClass("disabled");
-          self.proteinFamily.setScores("edit_distance", scores);
-        });
-    /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateEditDistanceScores(protein, {insertion: 3, deletion: 3, substitution: 5})
-        .then((scores) => {
-          $("#weighted_edit_dist_li").find("a").removeClass("disabled");
-          self.proteinFamily.setScores("weighted_edit_distance", scores);
-        });
-    /* Calculate the residue commonality scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateCommonalityScores(protein)
-        .then((scores) => {
-          $("#commonality_li").find("a").removeClass("disabled");
-          self.proteinFamily.setScores("commonality_scores", scores);
-        });
-    /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
-    self.sortedSequences.calculateCommonalityScores(protein, 1)
-        .then((scores) => {
-          $("#normalized_commonality_li").find("a").removeClass("disabled");
-          self.proteinFamily.setScores("normalized_commonality_scores", scores);
-        });
-  }
-
-
-  /* Form callback to process the family datafile */
-  function parse_and_store_family(file_data, ext) {
-    /* Remove the Splash screen */
-    $("#trendSplash").remove();
-    self.proteinFamily = new ProteinFamily({file: file_data, ext: ext});
-
-    /* Calculate all of the initial sorting scores */
-    calculate_all_sorting_scores(self.proteinFamily.getFamily()[0]);
 
     /* Set the protein family and column sequence data */
     App.trendImageViewer.setProteinFamily(self.proteinFamily.getFamily());
@@ -230,10 +231,13 @@ function ApplicationModel() {
     App.trendImageViewer.init("#trendImageViewer");
 
     /* Render the trend image */
-    App.trendImageViewer.render();
+    App.trendImageViewer.render().then(function(element){
 
-    /* Update the legend */
-    App.residueModel.createColorLegend();
+      /* At present, there is no other way to interleave the rendering of the browser with more computation */
+      setTimeout(()=>{ calculate_all_sorting_scores(self.proteinFamily.getFamily()[0])}, 500);
+
+    });
+
   }
 
 

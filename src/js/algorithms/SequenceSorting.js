@@ -121,10 +121,9 @@ const SequenceSorting = function(family){
         }
         else{
           /* Extract the sequence as a string */
-          let t = protein_b.sequence.join(''),
-              /* Compute the edit distance */
-              distance = App.editDistance(s,t,weights);
-          /* Add the final score to the list of scores */
+          let t = protein_b.sequence.join('');
+          /* Compute the edit distance */
+          let distance = App.editDistance(s,t,weights);
           scores.push({ name: protein_b.name, score : distance });
         }
       });

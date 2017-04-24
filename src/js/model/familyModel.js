@@ -46,7 +46,7 @@ function ProteinFamily(options) {
         /* Get the data */
         parsedLine = line.match(regex_data);
         /* Append the sequence to the dictionary entry*/
-        self.family[parsedLine[1]].sequence += parsedLine[4].split(' ').join('');
+        self.family[parsedLine[1]].sequence += _.toUpper(parsedLine[4].split(' ').join(''));
       }
     });
     /* Convert the family object to an array */
@@ -76,7 +76,7 @@ function ProteinFamily(options) {
           name                   : parsedLine[2],
           full_name              : parsedLine[1],
           length                 : parsedLine[3].length,
-          sequence               : parsedLine[3],
+          sequence               : _.toUpper(parsedLine[3]),
           scores                 : {initial: lines.length - idx}
         };
       }

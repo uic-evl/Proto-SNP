@@ -14,16 +14,19 @@ const TrendImageViewer = function(options){
 
   /* Parse the incoming data into row, columns, and values */
   function map_trend_image_data() {
-    let data = [], index = [], columns = [];
-    /* Extract the rows and data */
-    trendImageViewer.protein_family_data.forEach( (d,i) => {
-      data.push(d.sequence);
-      index.push(d.name);
-    } );
-    /* Extract the columns */
-    data[0].forEach( (d,i) => { columns.push(["R", i]) } );
+    return new Promise(function(resolve, reject) {
+      let data = [], index = [], columns = [];
+      /* Extract the rows and data */
+      trendImageViewer.protein_family_data.forEach( (d,i) => {
+        data.push(d.sequence);
+        index.push(d.name);
+      } );
+      /* Extract the columns */
+      data[0].forEach( (d,i) => { columns.push(["R", i]) } );
 
-    return { data: data, index : index, columns : columns };
+      resolve({ data: data, index : index, columns : columns });
+    });
+
   }
 
 
@@ -327,7 +330,7 @@ const TrendImageViewer = function(options){
         })
         .call(function(){
           /* Reorder the labels*/
-          reorder_labels(ordering_scores);
+          //reorder_labels(ordering_scores);
           /* Set the new y-scale so the brushes have an updated lookup table */
           set_y_scale(_.map(ordering_scores, "name"));
           set_protein_family(ordering_scores);
@@ -356,44 +359,59 @@ const TrendImageViewer = function(options){
   /* Render the trend image to the svg */
   function render(){
 
-    /* Invoke the tip in the context of your visualization */
-    //trendImageViewer.svg.call(trendImageViewer.tooltip);
-    let data = map_trend_image_data(),
-        colorMapping = App.residueModel.getColor(App.colorMapping),
-        protein_data = _.slice(data.data, 0, trendImageViewer.ppv);
+    return new Promise(function(resolve, reject) {
 
-    /* Create a row for each protein */
-    let rows = trendImageViewer.svg.selectAll(".proteinRow")
-        .data(protein_data)
-        .enter().append("g")
-        .attr("id", (d,i) => { return "p" + data.index[i];})
-        .attr("class", "proteinRow");
+      /* Invoke the tip in the context of your visualization */
+      //trendImageViewer.svg.call(trendImageViewer.tooltip);
+      map_trend_image_data().then(function(data){
 
-    /* For each row, render the residues as columns */
-    rows.selectAll('.cell')
-        .data( (d) => { return d} )
-        .enter().append('rect')
-        .attr("x", (d, i) => { return i * trendImageViewer.residue_glyph_size; })
-        .attr("y", (d, i, j) => { return j * trendImageViewer.residue_glyph_size; })
-        .attr("width", trendImageViewer.residue_glyph_size)
-        .attr("height", trendImageViewer.residue_glyph_size)
-        .attr("class", "cell")
-        .attr("row", (d, i, j) => { return j; })
-        .attr("col", (d, i, j) => { return i; })
-        .attr('fill',  (d) => { return colorMapping(d).code; })
-        .attr('stroke',(d) => { return colorMapping(d).code; });
+        let colorMapping = App.residueModel.getColor(App.colorMapping),
+            protein_data = _.slice(data.data, 0, trendImageViewer.ppv),
+            rendered = 0;
 
-    /* Render the labels for each row*/
-    render_row_labels(data.index);
+        /* Create a row for each protein */
+        let rows = trendImageViewer.svg.selectAll(".proteinRow")
+            .data(protein_data)
+            .enter().append("g")
+            .attr("id", (d,i) => { return "p" + data.index[i];})
+            .attr("class", "proteinRow");
 
-    /*Add the brushes to the trend image*/
-    add_brushes();
+        /* For each row, render the residues as columns */
+        rows.selectAll('.cell')
+            .data( (d) => { return d} )
+            .enter().append('rect')
+            .attr("x", (d, i) => { return i * trendImageViewer.residue_glyph_size; })
+            .attr("y", (d, i, j) => { return j * trendImageViewer.residue_glyph_size; })
+            .attr("width", trendImageViewer.residue_glyph_size)
+            .attr("height", trendImageViewer.residue_glyph_size)
+            .attr("class", "cell")
+            .attr("row", (d, i, j) => { return j; })
+            .attr("col", (d, i, j) => { return i; })
+            .attr('fill',  (d) => { return colorMapping(d).code; })
+            .attr('stroke',(d) => { return colorMapping(d).code; })
+            .call(function(sel){
+              let last_element = _.chain(sel._groups).last().last().value();
+              resolve(last_element);
+            })
+            // .on("start", () => { ++rendered; })
+            // .on("end", () => {  if (!--rendered) { resolve() }  })
+        ;
 
-    /* Render the brushes */
-    render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
+        /* Render the labels for each row*/
+        //render_row_labels(data.index);
 
-    /* Create the legend */
-    App.residueModel.createColorLegend()
+        /*Add the brushes to the trend image*/
+        add_brushes();
+
+        /* Render the brushes */
+        render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
+
+        /* Create the legend */
+        App.residueModel.createColorLegend();
+
+      });
+
+    });
   }
 
 

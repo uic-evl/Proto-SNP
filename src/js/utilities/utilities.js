@@ -41,8 +41,20 @@ const Utilities = function(){
     return fontSize_PixelsHeight[font_size].pixels;
   }
 
+  function test_rendered(element) {
+    return new Promise((resolve, reject)=>{
+      if (!$(element).size()) {
+        window.requestAnimationFrame(test_rendered);
+      }else {
+        console.log("rendered");
+        resolve();
+      }
+    });
+  }
+
   return {
-    fontSizeToPixels : font_size_to_pixel_height
+    fontSizeToPixels : font_size_to_pixel_height,
+    testIfRendered   : test_rendered
   }
 
 };

@@ -197,7 +197,6 @@ const FrequencyViewer = function(options){
 
     /* Get get width and height for each box*/
     frequencyViewer.bar_glyph_width = frequencyViewer.width / (max_count+6);
-    console.log(max_count);
 
     /* clear the frequency viewer DOM */
     frequencyViewer.domObj.selectAll().remove();

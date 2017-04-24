@@ -49,7 +49,8 @@ var App = App || {};
       self.deletion = w.deletion;
       self.substitution = w.substitution;
     }
-    /* Perform and return the distance measure */
-    return levenshteinDistance(s,t);
+      /* Perform and return the distance measure */
+      return levenshteinDistance(s,t);
+
   }
 })();

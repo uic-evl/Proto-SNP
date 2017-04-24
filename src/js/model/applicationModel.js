@@ -232,10 +232,7 @@ function ApplicationModel() {
 
     /* Render the trend image */
     App.trendImageViewer.render().then(function(element){
-
-      /* At present, there is no other way to interleave the rendering of the browser with more computation */
-      setTimeout(()=>{ calculate_all_sorting_scores(self.proteinFamily.getFamily()[0])}, 500);
-
+      calculate_all_sorting_scores(self.proteinFamily.getFamily()[0]);
     });
 
   }

@@ -393,8 +393,6 @@ const TrendImageViewer = function(options){
               let last_element = _.chain(sel._groups).last().last().value();
               resolve(last_element);
             })
-            // .on("start", () => { ++rendered; })
-            // .on("end", () => {  if (!--rendered) { resolve() }  })
         ;
 
         /* Render the labels for each row*/

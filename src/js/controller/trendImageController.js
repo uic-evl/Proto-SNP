@@ -110,14 +110,15 @@ const TrendImageController = function(options){
     let residue_glyph_size = options.trendImage.getGlyphSize();
 
     // Round the two event extents to the nearest row
-    d3.event.selection[0] = Math.ceil(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size;
-    d3.event.selection[1] = Math.ceil(d3.event.selection[1]/residue_glyph_size)*residue_glyph_size;
+    d3.event.selection[0] = Math.floor(d3.event.selection[0]/residue_glyph_size)*residue_glyph_size;
+    d3.event.selection[1] = Math.floor(d3.event.selection[1]/residue_glyph_size)*residue_glyph_size;
 
     // Snap the brush onto the closest protein
     d3.select(this).call(d3.event.target.move, d3.event.selection);
 
     /* Get the current protein */
-    self.currentHorizontalSelection = d3.event.selection.map(options.trendImage.getYAxisScale().invert)[0];
+    let middle_selection = parseInt((d3.event.selection[0] + d3.event.selection[1])/2.0);
+    self.currentHorizontalSelection = options.trendImage.getYAxisScale().invert(middle_selection);
     let currentProtein = _.find(options.trendImage.getProteinData(), ["name", self.currentHorizontalSelection]);
 
     /* Get the residues that intersect with the left vertical paddle*/

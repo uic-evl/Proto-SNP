@@ -52,9 +52,14 @@ const Utilities = function(){
     });
   }
 
+  function translate(x,y) {
+    return "translate(" + x + "," + y + ")"
+  }
+
   return {
     fontSizeToPixels : font_size_to_pixel_height,
-    testIfRendered   : test_rendered
+    testIfRendered   : test_rendered,
+    translate        : translate
   }
 
 };

@@ -216,7 +216,7 @@ const TrendImageViewer = function(options){
 
 
   /* Render the brushes to the image */
-  function render_brushes(selected_protein, ranges) {
+  function render_brushes(selected_protein, brush_ranges) {
 
     /* Remove the pointer events from the brush overlays to prevent:
      * 1: Deleting the brush on a wrong click
@@ -243,13 +243,13 @@ const TrendImageViewer = function(options){
         .classed("active_protein_selection", true);
 
     /* Iterate over the left selection and add the active class to the selected fragments */
-    for(let i = ranges.left[0]; i < ranges.left[1]; i++) {
+    for(let i = brush_ranges.left[0]; i < brush_ranges.left[1]; i++) {
       trendImageViewer.svg.selectAll("rect[col='" + i + "']")
           .classed("vertical-left", true)
           .classed("active_res_selection", true);
     }
     /* Iterate over the right selection and add the active class to the selected fragments */
-    for(let i = ranges.right[0]; i < ranges.right[1]; i++) {
+    for(let i = brush_ranges.right[0]; i < brush_ranges.right[1]; i++) {
       trendImageViewer.svg.selectAll("rect[col='" + i + "']")
           .classed("vertical-right", true)
           .classed("active_res_selection", true);
@@ -319,15 +319,19 @@ const TrendImageViewer = function(options){
     trendImageViewer.svg
         .transition().duration(1000)
         .selectAll(".cell")
-        .attr("y", function(d,i) {
-          let row = parseInt(d3.select(this).attr("row")),
-              new_row = _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
-          return new_row * trendImageViewer.residue_glyph_size;
-        })
-        .attr("row", function(){
-          let row = parseInt(d3.select(this).attr("row"));
-          return _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
-        })
+        .attr("transform", function(d,i)
+          {
+            let row = parseInt(d3.select(this).attr("row")),
+                col = parseInt(d3.select(this).attr("col")),
+                x_pos  = col*trendImageViewer.residue_glyph_size,
+                curr_y_pos = _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]) * trendImageViewer.residue_glyph_size;
+            return App.utilities.translate(x_pos, curr_y_pos);
+          })
+        .attr("row", function()
+          {
+            let row = parseInt(d3.select(this).attr("row"));
+            return _.indexOf(ordering_scores, trendImageViewer.protein_family_data[row]);
+          })
         .call(function(){
           /* Reorder the labels*/
           //reorder_labels(ordering_scores);
@@ -335,10 +339,10 @@ const TrendImageViewer = function(options){
           set_y_scale(_.map(ordering_scores, "name"));
           set_protein_family(ordering_scores);
           /* Reset the brush selections */
-
           reset_brushes();
         });
   }
+
 
   /* Render the protein names to the svg */
   function render_row_labels(labels) {
@@ -356,6 +360,7 @@ const TrendImageViewer = function(options){
         .attr("id", (d, i) => { return "rowLabel_" + i; });
   }
 
+
   /* Render the trend image to the svg */
   function render(){
 
@@ -366,8 +371,7 @@ const TrendImageViewer = function(options){
       map_trend_image_data().then(function(data){
 
         let colorMapping = App.residueModel.getColor(App.colorMapping),
-            protein_data = _.slice(data.data, 0, trendImageViewer.ppv),
-            rendered = 0;
+            protein_data = _.slice(data.data, 0, trendImageViewer.ppv);
 
         /* Create a row for each protein */
         let rows = trendImageViewer.svg.selectAll(".proteinRow")
@@ -380,8 +384,10 @@ const TrendImageViewer = function(options){
         rows.selectAll('.cell')
             .data( (d) => { return d} )
             .enter().append('rect')
-            .attr("x", (d, i) => { return i * trendImageViewer.residue_glyph_size; })
-            .attr("y", (d, i, j) => { return j * trendImageViewer.residue_glyph_size; })
+            .attr("transform", (d,i, j) =>
+                {
+                  return App.utilities.translate(i * trendImageViewer.residue_glyph_size, j * trendImageViewer.residue_glyph_size )
+                })
             .attr("width", trendImageViewer.residue_glyph_size)
             .attr("height", trendImageViewer.residue_glyph_size)
             .attr("class", "cell")

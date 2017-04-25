@@ -191,7 +191,7 @@ const SequenceSorting = function(family){
 
 
   /* Get the frequency of each column's residues */
-  function get_common_occurance_scores(n) { return (n) ? self.weighted_residue_commonality_scores : self.residue_commonality_scores; }
+  function get_common_occurrence_scores(n) { return (n) ? self.weighted_residue_commonality_scores : self.residue_commonality_scores; }
 
 
   return {
@@ -206,7 +206,7 @@ const SequenceSorting = function(family){
     getFragmentCountsFromRange       : get_fragment_counts_from_range,
     getFragmentFrequencyScores       : get_fragment_frequency_scores,
     getEditDistanceScores            : get_edit_distance_scores,
-    getOccuranceScores               : get_common_occurance_scores,
+    getOccurrenceScores               : get_common_occurrence_scores,
     getFrequencyPromise              : get_frequency_promise
   }
 

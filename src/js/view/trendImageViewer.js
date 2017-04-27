@@ -554,9 +554,9 @@ const TrendImageViewer = function(options){
     if(temp_height < App.trendHeight) {
       App.trendHeight = temp_height;
     }
-    else if(trendImageViewer.y_axis_length > options.maxProteins){
-      App.trendHeight = options.maxProteins * residue_width;
-    }
+    // else if(trendImageViewer.y_axis_length > options.maxProteins){
+    //   App.trendHeight = options.maxProteins * residue_width;
+    // }
     trendImageViewer.height = App.trendHeight;
 
     /* Resize the DOM elements*/

@@ -76,7 +76,7 @@ var App = App || {};
     App.sequenceViewer = new SequenceViewer();
 
     /* Setup the trend image viewer */
-    App.trendImageViewer = new TrendImageViewer({freqOffset: freqOffset});
+    App.trendImageViewer = new TrendImageViewer({freqOffset: freqOffset, maxProteins:100});
 
     /* Setup the frequency histogram viewers*/
     App.leftFrequencyViewer = new FrequencyViewer({offset: freqOffset});

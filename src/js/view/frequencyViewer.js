@@ -57,7 +57,7 @@ const FrequencyViewer = function(options){
         /* Merge the old elements (if they exist) with the new data */
         .merge(frequencyText)
         .attr('x', function(d, i) { return frequencyViewer.xScale(i) + frequencyViewer.bar_glyph_width / 2 })
-        .attr("y", frequencyViewer.height * 0.8 + frequencyViewer.barOffset )
+        .attr("y", frequencyViewer.height * 0.6 + frequencyViewer.barOffset )
         .attr("dy", ".35em")
         .text(function(d){ return d[0] })
         .style("text-anchor", "middle")
@@ -80,7 +80,7 @@ const FrequencyViewer = function(options){
 
     frequencyViewer.yScale = d3.scaleLinear()
         .domain([0, family_member_count])
-        .range([frequencyViewer.height * 0.4, 0])
+        .range([frequencyViewer.height * 0.2, 0])
     ;
   }
 
@@ -100,7 +100,7 @@ const FrequencyViewer = function(options){
         .merge(bar)
         .attr("class", "freq_bars")
         .attr("width", frequencyViewer.bar_glyph_width)
-        .attr("height", frequencyViewer.height * 0.4)
+        .attr("height", frequencyViewer.height * 0.2)
         .attr('y', function(d) { return frequencyViewer.height * 0.3 + frequencyViewer.barOffset } )
         .attr('x', function(d, i) { return frequencyViewer.xScale(i) })
         .style("fill", "white");
@@ -122,7 +122,7 @@ const FrequencyViewer = function(options){
         .attr('x', function(d, i) { return frequencyViewer.xScale(i) })
         .attr('y', function(d) { return frequencyViewer.yScale(d[1]) + frequencyViewer.height * 0.3 + frequencyViewer.barOffset} )
         .attr("width", frequencyViewer.bar_glyph_width)
-        .attr("height", function(d) { return ( frequencyViewer.height * 0.4 - frequencyViewer.yScale(d[1]) )  })
+        .attr("height", function(d) { return ( frequencyViewer.height * 0.2 - frequencyViewer.yScale(d[1]) )  })
         .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
     ;
 

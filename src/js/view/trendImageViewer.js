@@ -456,7 +456,6 @@ const TrendImageViewer = function(options){
     /* Get and save the size of each residue for the trend image based on the width of the screen */
     set_glyph_size();
 
-
     /* Initialize the number of visible proteins per view */
     set_proteins_per_view();
 
@@ -554,6 +553,9 @@ const TrendImageViewer = function(options){
     /* We must reset the height of the trend image */
     if(temp_height < App.trendHeight) {
       App.trendHeight = temp_height;
+    }
+    else if(trendImageViewer.y_axis_length > options.maxProteins){
+      App.trendHeight = options.maxProteins * residue_width;
     }
     trendImageViewer.height = App.trendHeight;
 

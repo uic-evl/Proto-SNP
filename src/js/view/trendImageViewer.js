@@ -376,49 +376,6 @@ const TrendImageViewer = function(options){
   }
 
 
-  /* Render the trend image to the svg */
-  function render_svg(protein_data, colorMapping){
-    return new Promise(function(resolve, reject) {
-      /* Create a row for each protein */
-      let rows = trendImageViewer.svg.selectAll(".proteinRow")
-          .data(protein_data.sequences)
-          .enter().append("g")
-          .attr("id", (d, i) => { return "p" + protein_data.names[i]; })
-          .attr("class", "proteinRow");
-
-      /* For each row, render the residues as columns */
-      rows.selectAll('.cell')
-          .data((d) => {
-            return d
-          })
-          .enter().append('rect')
-          .attr("transform", (d, i, j) => {
-            return App.utilities.translate(i * trendImageViewer.residue_glyph_size, j * trendImageViewer.residue_glyph_size)
-          })
-          .attr("width", trendImageViewer.residue_glyph_size)
-          .attr("height", trendImageViewer.residue_glyph_size)
-          .attr("class", "cell")
-          .attr("row", (d, i, j) => { return j; })
-          .attr("col", (d, i, j) => { return i; })
-          .attr('fill', (d) => { return colorMapping(d).code; })
-          .attr('stroke', (d) => { return colorMapping(d).code; })
-          .call(() => { console.log("rendered"); resolve(); });
-
-      /* Render the labels for each row*/
-      //render_row_labels(data.index);
-
-      /*Add the brushes to the trend image*/
-      add_brushes();
-
-      /* Render the brushes */
-      render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
-
-      /* Create the legend */
-      App.residueModel.createColorLegend();
-    });
-  }
-
-
   /* Bind the data to a fake dom */
   function bind_data(protein_data, colorScale) {
     /* Fake DOM*/

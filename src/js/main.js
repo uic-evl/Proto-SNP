@@ -46,7 +46,7 @@ var App = App || {};
     App.trendWidth   = trendDom.clientWidth;
     let remaining_height = parseInt((window.innerHeight - App.molecularViewerHeight) * App.aspectRatio);
 
-    App.trendHeight  = parseInt(remaining_height * 0.55);
+    App.trendHeight  = parseInt(remaining_height * 0.7);
     /* Set the div height for the trend image */
     trendDom.style.height = remaining_height;
 

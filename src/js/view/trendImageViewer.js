@@ -47,6 +47,17 @@ const TrendImageViewer = function(options){
   }
 
 
+  function  create_chart_canvas() {
+    let canvas = trendImageViewer.domObj
+        .append('canvas')
+        .attr("class", "trendImage")
+        .attr("width", trendImageViewer.width + trendImageViewer.margin)
+        .attr("height", trendImageViewer.height)
+    ;
+    trendImageViewer.canvasContext = canvas.node().getContext('2d');
+  }
+
+
   /* Create a customized context menu per right-click */
   function create_context_menu() {
 
@@ -293,6 +304,7 @@ const TrendImageViewer = function(options){
     }
   }
 
+
   /* Reorder the proteins labels based on the selected sorting  */
   function reorder_labels(ordering) {
     trendImageViewer.svg
@@ -308,6 +320,7 @@ const TrendImageViewer = function(options){
           return _.indexOf(ordering, trendImageViewer.protein_family_data[row]);
         });
   }
+
 
   /* Reorder the proteins based on the selected sorting  */
   function reorder() {
@@ -362,60 +375,133 @@ const TrendImageViewer = function(options){
 
 
   /* Render the trend image to the svg */
-  function render(){
-
+  function render_svg(protein_data, colorMapping){
     return new Promise(function(resolve, reject) {
+      /* Create a row for each protein */
+      let rows = trendImageViewer.svg.selectAll(".proteinRow")
+          .data(protein_data.sequences)
+          .enter().append("g")
+          .attr("id", (d, i) => { return "p" + protein_data.names[i]; })
+          .attr("class", "proteinRow");
 
-      /* Invoke the tip in the context of your visualization */
-      //trendImageViewer.svg.call(trendImageViewer.tooltip);
-      map_trend_image_data().then(function(data){
+      /* For each row, render the residues as columns */
+      rows.selectAll('.cell')
+          .data((d) => {
+            return d
+          })
+          .enter().append('rect')
+          .attr("transform", (d, i, j) => {
+            return App.utilities.translate(i * trendImageViewer.residue_glyph_size, j * trendImageViewer.residue_glyph_size)
+          })
+          .attr("width", trendImageViewer.residue_glyph_size)
+          .attr("height", trendImageViewer.residue_glyph_size)
+          .attr("class", "cell")
+          .attr("row", (d, i, j) => { return j; })
+          .attr("col", (d, i, j) => { return i; })
+          .attr('fill', (d) => { return colorMapping(d).code; })
+          .attr('stroke', (d) => { return colorMapping(d).code; })
+          .call(() => { console.log("rendered"); resolve(); });
 
-        let colorMapping = App.residueModel.getColor(App.colorMapping),
-            protein_data = _.slice(data.data, 0, trendImageViewer.ppv);
+      /* Render the labels for each row*/
+      //render_row_labels(data.index);
 
-        /* Create a row for each protein */
-        let rows = trendImageViewer.svg.selectAll(".proteinRow")
-            .data(protein_data)
-            .enter().append("g")
-            .attr("id", (d,i) => { return "p" + data.index[i];})
-            .attr("class", "proteinRow");
+      /*Add the brushes to the trend image*/
+      add_brushes();
 
-        /* For each row, render the residues as columns */
-        rows.selectAll('.cell')
-            .data( (d) => { return d} )
-            .enter().append('rect')
-            .attr("transform", (d,i, j) =>
-                {
-                  return App.utilities.translate(i * trendImageViewer.residue_glyph_size, j * trendImageViewer.residue_glyph_size )
-                })
-            .attr("width", trendImageViewer.residue_glyph_size)
-            .attr("height", trendImageViewer.residue_glyph_size)
-            .attr("class", "cell")
-            .attr("row", (d, i, j) => { return j; })
-            .attr("col", (d, i, j) => { return i; })
-            .attr('fill',  (d) => { return colorMapping(d).code; })
-            .attr('stroke',(d) => { return colorMapping(d).code; })
-            .call(function(sel){
-              let last_element = _.chain(sel._groups).last().last().value();
-              resolve(last_element);
-            })
-        ;
+      /* Render the brushes */
+      render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
 
-        /* Render the labels for each row*/
-        //render_row_labels(data.index);
-
-        /*Add the brushes to the trend image*/
-        add_brushes();
-
-        /* Render the brushes */
-        render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
-
-        /* Create the legend */
-        App.residueModel.createColorLegend();
-
-      });
-
+      /* Create the legend */
+      App.residueModel.createColorLegend();
     });
+  }
+
+
+  /* Bind the data to a fake dom */
+  function bind_data(protein_data, colorScale) {
+    /* Fake DOM*/
+    let customBase = document.createElement('custom'),
+        custom = d3.select(customBase),
+    /* Fake Rows */
+        rows = custom.selectAll(".customRows")
+          .data(protein_data.sequences)
+            .enter().append("custom")
+            .attr("id", (d,i) => { return "p" + protein_data.names[i];})
+            .attr("class", "proteinRow"),
+
+        /* Fake columns -- bind the data */
+        elements = rows.selectAll('.cell')
+          .data( (d) => { return d} );
+
+        /* Update: add new items as needed */
+    elements
+        .enter().append('custom')
+        .attr("class", "cell")
+        .merge(elements)
+        .attr("x", (d,i,j) => { return i * trendImageViewer.residue_glyph_size; })
+        .attr("y", (d,i,j) => { return j * trendImageViewer.residue_glyph_size; })
+        .attr('width',  trendImageViewer.residue_glyph_size)
+        .attr('height', trendImageViewer.residue_glyph_size)
+        .attr("row", (d, i, j) => { return j; })
+        .attr("col", (d, i, j) => { return i; })
+        .attr('fill',  (d) => { return colorScale(d).code; })
+        .attr('stroke',(d) => { return colorScale(d).code; });
+
+    /* Remove any unneeded elements */
+    elements
+        .exit()
+        .transition()
+        .attr('width', 0)
+        .attr('height', 0)
+        .remove();
+
+    /* Return the data model */
+    return custom;
+  }
+
+
+  /* Render the trend image to the canvas */
+  function render_canvas(data_model) {
+    return new Promise(function(resolve, reject) {
+      /* First, clear the canvas*/
+      trendImageViewer.canvasContext
+          .clearRect(0,0,trendImageViewer.width + trendImageViewer.margin, trendImageViewer.height);
+
+      //let image = context.createImageData(trendImageViewer.width + trendImageViewer.margin, trendImageViewer.height);
+
+      /* Get the trend image elements from the data model */
+      let elements = data_model.selectAll("custom.cell");
+
+      /* Iterate over each element to render it to the canvas*/
+      elements.each(function(d,i) {
+
+        /* Get the residue from the element */
+        let residue = d3.select(this);
+        /* Set the fill color */
+        trendImageViewer.canvasContext.fillStyle = residue.attr("fill");
+        /* color the area of the residue */
+        trendImageViewer.canvasContext
+            .fillRect( parseInt(residue.attr('x')), parseInt(residue.attr('y')), trendImageViewer.residue_glyph_size, trendImageViewer.residue_glyph_size);
+      });
+      /* resolve when finished */
+      resolve();
+    });
+  }
+
+
+  function render() {
+    /* Invoke the tip in the context of your visualization */
+    //trendImageViewer.svg.call(trendImageViewer.tooltip);
+    return map_trend_image_data().then(function (data) {
+      /* Get the selected color map and data */
+      let colorMapping = App.residueModel.getColor(App.colorMapping),
+          protein_data = _.slice(data.data, 0, trendImageViewer.ppv);
+
+      let data_model = bind_data({sequences: protein_data, names: data.index}, colorMapping);
+      return render_canvas(data_model);
+      //return render_svg({sequences: protein_data, names: data.index}, colorMapping);
+    });
+
   }
 
 
@@ -427,7 +513,8 @@ const TrendImageViewer = function(options){
     clear_chart_dom();
 
     /* Add the svg to the trend image dom*/
-    create_chart_svg();
+    //create_chart_svg();
+    create_chart_canvas();
   }
 
 
@@ -554,9 +641,7 @@ const TrendImageViewer = function(options){
     if(temp_height < App.trendHeight) {
       App.trendHeight = temp_height;
     }
-    // else if(trendImageViewer.y_axis_length > options.maxProteins){
-    //   App.trendHeight = options.maxProteins * residue_width;
-    // }
+
     trendImageViewer.height = App.trendHeight;
 
     /* Resize the DOM elements*/

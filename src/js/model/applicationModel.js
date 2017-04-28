@@ -231,8 +231,10 @@ function ApplicationModel() {
     App.trendImageViewer.init("#trendImageViewer");
 
     /* Render the trend image */
-    App.trendImageViewer.render().then(function(element){
-      setTimeout(()=>{calculate_all_sorting_scores(self.proteinFamily.getFamily()[0])}, 500);
+    App.trendImageViewer.render().then(function(){
+      /* Sadly, the GPU does not match the processor's render calls.
+         Need an ever-so-slightly pause to ensure the trend image appears before we sort*/
+      setTimeout(function(){ calculate_all_sorting_scores(self.proteinFamily.getFamily()[0]); }, 100);
     });
 
   }

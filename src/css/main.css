@@ -44,3 +44,8 @@ p.view {
     top: 50%;
     transform: translateY(-50%);
 }
+
+ul li a.disabled {
+    pointer-events:none;
+    opacity:0.4;
+}

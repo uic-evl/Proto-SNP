@@ -36,12 +36,13 @@ const TrendImageViewer = function(options){
   }
 
 
-  /* Create the trend image SVG */
-  function create_chart_svg() {
-    trendImageViewer.svg = trendImageViewer.domObj
+  /* Create the trend image brush SVG */
+  function create_brush_svg() {
+    trendImageViewer.brushSVG = trendImageViewer.domObj
       .append("svg")
       .attr("class", "trendImage")
-      .style("width", trendImageViewer.width + trendImageViewer.margin)
+        .attr("id", "trendSVG")
+        .style("width", trendImageViewer.width)
       .style("height", trendImageViewer.height)
     ;
   }
@@ -50,8 +51,9 @@ const TrendImageViewer = function(options){
   function  create_chart_canvas() {
     let canvas = trendImageViewer.domObj
         .append('canvas')
+        .attr("id", "trendCanvas")
         .attr("class", "trendImage")
-        .attr("width", trendImageViewer.width + trendImageViewer.margin)
+        .attr("width", trendImageViewer.width)
         .attr("height", trendImageViewer.height)
     ;
     trendImageViewer.canvasContext = canvas.node().getContext('2d');
@@ -161,10 +163,10 @@ const TrendImageViewer = function(options){
 
 
   /* Function to add the three brush paddles to the svg*/
-  function add_brushes() {
+  function add_brushes(parentDom) {
 
     /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
-    trendImageViewer.brushes = trendImageViewer.svg.append("g")
+    trendImageViewer.brushes = parentDom.append("g")
         .attr("class", "brushes")
         .style("width", trendImageViewer.width)
         .style("height", trendImageViewer.residue_glyph_size * trendImageViewer.y_axis_length);
@@ -245,26 +247,26 @@ const TrendImageViewer = function(options){
     /* Highlight the initial selections*/
 
     /* Reset the brush selections */
-    trendImageViewer.svg.selectAll('rect')
-        .classed("active_protein_selection", false)
-        .classed("active_res_selection", false);
-
-    /* Set the first highlighted row's opacity */
-    trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
-        .classed("active_protein_selection", true);
-
-    /* Iterate over the left selection and add the active class to the selected fragments */
-    for(let i = brush_ranges.left[0]; i < brush_ranges.left[1]; i++) {
-      trendImageViewer.svg.selectAll("rect[col='" + i + "']")
-          .classed("vertical-left", true)
-          .classed("active_res_selection", true);
-    }
-    /* Iterate over the right selection and add the active class to the selected fragments */
-    for(let i = brush_ranges.right[0]; i < brush_ranges.right[1]; i++) {
-      trendImageViewer.svg.selectAll("rect[col='" + i + "']")
-          .classed("vertical-right", true)
-          .classed("active_res_selection", true);
-    }
+    // trendImageViewer.svg.selectAll('rect')
+    //     .classed("active_protein_selection", false)
+    //     .classed("active_res_selection", false);
+    //
+    // /* Set the first highlighted row's opacity */
+    // trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
+    //     .classed("active_protein_selection", true);
+    //
+    // /* Iterate over the left selection and add the active class to the selected fragments */
+    // for(let i = brush_ranges.left[0]; i < brush_ranges.left[1]; i++) {
+    //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
+    //       .classed("vertical-left", true)
+    //       .classed("active_res_selection", true);
+    // }
+    // /* Iterate over the right selection and add the active class to the selected fragments */
+    // for(let i = brush_ranges.right[0]; i < brush_ranges.right[1]; i++) {
+    //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
+    //       .classed("vertical-right", true)
+    //       .classed("active_res_selection", true);
+    // }
   }
 
 
@@ -500,6 +502,16 @@ const TrendImageViewer = function(options){
       let data_model = bind_data({sequences: protein_data, names: data.index}, colorMapping);
       return render_canvas(data_model);
       //return render_svg({sequences: protein_data, names: data.index}, colorMapping);
+    }).then(function(){
+
+      /* Add the brushes to the canvas */
+      add_brushes(trendImageViewer.brushSVG);
+
+      /* Render the brushes */
+      render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
+
+      /* Create the legend */
+      App.residueModel.createColorLegend();
     });
 
   }
@@ -512,9 +524,10 @@ const TrendImageViewer = function(options){
     /* clear the trend image DOM */
     clear_chart_dom();
 
-    /* Add the svg to the trend image dom*/
-    //create_chart_svg();
+    /* Add the canvas and brush svg to the trend image dom*/
     create_chart_canvas();
+    create_brush_svg();
+
   }
 
 

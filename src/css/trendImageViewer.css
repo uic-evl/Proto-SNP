@@ -1,24 +1,24 @@
+#trendCanvas, #trendSVG {
+    position: absolute;
+}
+
 .trendImage {
     background-color: #ecf0f1;
+    opacity: 0.2;
 }
 
-.proteinRow {
-    fill-opacity: 0.1;
-    stroke-opacity: 0.0;
-}
+/*.proteinRow {*/
+    /*fill-opacity: 0.1;*/
+    /*stroke-opacity: 0.0;*/
+/*}*/
 
-.active_protein_selection, .active_res_selection {
-    fill-opacity: 1.0;
-    stroke-opacity: 1.0;
-}
+/*.active_protein_selection, .active_res_selection {*/
+    /*fill-opacity: 1.0;*/
+    /*stroke-opacity: 1.0;*/
+/*}*/
 
 g.brush.horizontal > .handle {
     display: none;
-}
-
-ul li a.disabled {
-    pointer-events:none;
-    opacity:0.4;
 }
 
 .trend-column {
@@ -37,3 +37,4 @@ text.mono {
     fill: #000;
     font-weight: bold;
 }
+

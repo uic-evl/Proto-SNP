@@ -47,15 +47,23 @@ const TrendImageViewer = function(options){
     ;
   }
 
+  function create_chart_back_buffer() {
+    trendImageViewer.backBufferCanvas = document.createElement('canvas');
+
+    trendImageViewer.backBufferContext =  d3.select(trendImageViewer.backBufferCanvas)
+        .attr("width", trendImageViewer.width)
+        .attr("height", trendImageViewer.residue_glyph_size * trendImageViewer.y_axis_length)
+        .node().getContext('2d');
+  }
 
   function  create_chart_canvas() {
     let canvas = trendImageViewer.domObj
         .append('canvas')
-        .attr("id", "trendCanvas")
-        .attr("class", "trendImage")
-        .attr("width", trendImageViewer.width)
-        .attr("height", trendImageViewer.height)
-    ;
+          .attr("id", "trendCanvas")
+          .attr("class", "trendImage")
+          .attr("width", trendImageViewer.width)
+          .attr("height", trendImageViewer.height);
+
     trendImageViewer.canvasContext = canvas.node().getContext('2d');
   }
 
@@ -213,13 +221,13 @@ const TrendImageViewer = function(options){
     trendImageViewer.leftVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
       .setPaddleSize(trendImageViewer.verticalPaddleSize)
       .setBrushClass("brush vertical-left")
-      .setPaddleExtent([ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
+      .setPaddleExtent([ [0, 0], [trendImageViewer.width,  trendImageViewer.height] ])
     ;
     /* Construct the right vertical residue-selection paddle */
       trendImageViewer.rightVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
         .setPaddleSize(trendImageViewer.verticalPaddleSize)
         .setBrushClass("brush vertical-right")
-        .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
+        .setPaddleExtent( [ [0, 0], [trendImageViewer.width,  trendImageViewer.height] ])
       ;
 
     /* Once the column frequency sorting is complete, enable the brushing callbacks*/
@@ -382,11 +390,11 @@ const TrendImageViewer = function(options){
     let customBase = document.createElement('custom'),
         custom = d3.select(customBase),
     /* Fake Rows */
-        rows = custom.selectAll(".customRows")
+        rows = custom.selectAll("custom")
           .data(protein_data.sequences)
             .enter().append("custom")
             .attr("id", (d,i) => { return "p" + protein_data.names[i];})
-            .attr("class", "proteinRow"),
+            .attr("class", "row"),
 
         /* Fake columns -- bind the data */
         elements = rows.selectAll('.cell')
@@ -423,24 +431,31 @@ const TrendImageViewer = function(options){
   function render_canvas(data_model) {
     return new Promise(function(resolve, reject) {
       /* First, clear the canvas*/
-      trendImageViewer.canvasContext
-          .clearRect(0,0,trendImageViewer.width + trendImageViewer.margin, trendImageViewer.height);
+      trendImageViewer.backBufferContext
+          .clearRect(0,0,trendImageViewer.width, trendImageViewer.height);
 
       //let image = context.createImageData(trendImageViewer.width + trendImageViewer.margin, trendImageViewer.height);
 
-      /* Get the trend image elements from the data model */
-      let elements = data_model.selectAll("custom.cell");
-
+      /* Get the trend image rows from the data model */
+      let rows = data_model.selectAll("custom.row"), rendered = false;
       /* Iterate over each element to render it to the canvas*/
-      elements.each(function(d,i) {
-
-        /* Get the residue from the element */
-        let residue = d3.select(this);
-        /* Set the fill color */
-        trendImageViewer.canvasContext.fillStyle = residue.attr("fill");
-        /* color the area of the residue */
-        trendImageViewer.canvasContext
-            .fillRect( parseInt(residue.attr('x')), parseInt(residue.attr('y')), trendImageViewer.residue_glyph_size, trendImageViewer.residue_glyph_size);
+      rows.each(function(d,i) {
+        let columns =  d3.select(this).selectAll("custom.cell");
+        columns.each(function(d, i){
+          /* Get the residue from the element */
+          let residue = d3.select(this);
+          /* Set the fill color */
+          trendImageViewer.backBufferContext.fillStyle = residue.attr("fill");
+          /* color the area of the residue */
+          trendImageViewer.backBufferContext
+              .fillRect( parseInt(residue.attr('x')), parseInt(residue.attr('y')), trendImageViewer.residue_glyph_size, trendImageViewer.residue_glyph_size);
+        });
+        /* Render the image */
+        if(!rendered && (i * trendImageViewer.residue_glyph_size) === trendImageViewer.height ){
+          let image = trendImageViewer.backBufferContext.getImageData(0,0,trendImageViewer.width, trendImageViewer.height);
+          trendImageViewer.canvasContext.putImageData(image, 0, 0);
+          rendered = true;
+        }
       });
       /* resolve when finished */
       resolve();
@@ -454,7 +469,7 @@ const TrendImageViewer = function(options){
     return map_trend_image_data().then(function (data) {
       /* Get the selected color map and data */
       let colorMapping = App.residueModel.getColor(App.colorMapping),
-          protein_data = _.slice(data.data, 0, trendImageViewer.ppv);
+          protein_data = data.data;
 
       let data_model = bind_data({sequences: protein_data, names: data.index}, colorMapping);
       return render_canvas(data_model);
@@ -478,13 +493,17 @@ const TrendImageViewer = function(options){
     /* get/save the width and height of the given DOM element */
     set_chart_dimensions();
 
+    /* Get and save the size of each residue for the trend image based on the width of the screen */
+    set_glyph_size();
+
     /* clear the trend image DOM */
     clear_chart_dom();
 
     /* Add the canvas and brush svg to the trend image dom*/
     create_chart_canvas();
-    create_brush_svg();
+    create_chart_back_buffer();
 
+    create_brush_svg();
   }
 
 
@@ -509,9 +528,6 @@ const TrendImageViewer = function(options){
 
     /* Initialize the chart dOM*/
     initialize_chart_dom();
-
-    /* Get and save the size of each residue for the trend image based on the width of the screen */
-    set_glyph_size();
 
     /* Initialize the number of visible proteins per view */
     set_proteins_per_view();

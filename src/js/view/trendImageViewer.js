@@ -8,6 +8,7 @@ const TrendImageViewer = function(options){
 
   /* initialize the molecular trendImageViewer global variable */
   let trendImageViewer = {
+    overviewImage     : false,
     instanceVariables : {}
   };
 
@@ -26,7 +27,6 @@ const TrendImageViewer = function(options){
 
       resolve({ data: data, index : index, columns : columns });
     });
-
   }
 
 
@@ -47,6 +47,7 @@ const TrendImageViewer = function(options){
     ;
   }
 
+
   function create_chart_back_buffer() {
     trendImageViewer.backBufferCanvas = document.createElement('canvas');
 
@@ -56,7 +57,9 @@ const TrendImageViewer = function(options){
         .node().getContext('2d');
   }
 
-  function  create_chart_canvas() {
+
+  function create_chart_canvas() {
+
     let canvas = trendImageViewer.domObj
         .append('canvas')
           .attr("id", "trendCanvas")
@@ -64,6 +67,14 @@ const TrendImageViewer = function(options){
           .attr("width", trendImageViewer.width)
           .attr("height", trendImageViewer.height);
 
+    if(trendImageViewer.overviewImage) {
+      let overview = trendImageViewer.domObj
+        .append('canvas')
+        .attr("id", "trendCanvasOverview")
+        .attr("width", App.trendWidth * 0.1)
+        .attr("height", trendImageViewer.height);
+      trendImageViewer.overviewContext = overview.node().getContext('2d');
+    }
     trendImageViewer.canvasContext = canvas.node().getContext('2d');
   }
 
@@ -427,6 +438,17 @@ const TrendImageViewer = function(options){
   }
 
 
+  function render_overview() {
+
+    let overviewImage = new Image();
+    let width  = parseInt(trendImageViewer.width / 10) ;
+    let height = trendImageViewer.height;
+
+
+
+  }
+
+
   /* Render the trend image to the canvas */
   function render_canvas(data_model) {
     return new Promise(function(resolve, reject) {
@@ -437,7 +459,7 @@ const TrendImageViewer = function(options){
       //let image = context.createImageData(trendImageViewer.width + trendImageViewer.margin, trendImageViewer.height);
 
       /* Get the trend image rows from the data model */
-      let rows = data_model.selectAll("custom.row"), rendered = false;
+      let rows = data_model.selectAll("custom.row");
       /* Iterate over each element to render it to the canvas*/
       rows.each(function(d,i) {
         let columns =  d3.select(this).selectAll("custom.cell");
@@ -450,13 +472,17 @@ const TrendImageViewer = function(options){
           trendImageViewer.backBufferContext
               .fillRect( parseInt(residue.attr('x')), parseInt(residue.attr('y')), trendImageViewer.residue_glyph_size, trendImageViewer.residue_glyph_size);
         });
-        /* Render the image */
-        if(!rendered && (i * trendImageViewer.residue_glyph_size) === trendImageViewer.height ){
-          let image = trendImageViewer.backBufferContext.getImageData(0,0,trendImageViewer.width, trendImageViewer.height);
-          trendImageViewer.canvasContext.putImageData(image, 0, 0);
-          rendered = true;
-        }
       });
+
+      let image = trendImageViewer.backBufferContext.getImageData(0,0,trendImageViewer.width, trendImageViewer.height);
+      trendImageViewer.canvasContext.putImageData(image, 0, 0);
+
+      /* create the overview if the image runs off the page*/
+      if(trendImageViewer.overviewImage){
+
+      }
+
+
       /* resolve when finished */
       resolve();
     });
@@ -549,6 +575,7 @@ const TrendImageViewer = function(options){
     create_brushes();
   }
 
+
   /*******************************************************************************************************************/
   /************                         Instance Accessors (Getters and Setters)                          ************/
   /*******************************************************************************************************************/
@@ -627,8 +654,12 @@ const TrendImageViewer = function(options){
     if(temp_height < App.trendHeight) {
       App.trendHeight = temp_height;
     }
-
+    else if(temp_height > App.trendHeight) {
+      trendImageViewer.width = App.trendWidth;
+      trendImageViewer.overviewImage = true;
+    }
     trendImageViewer.height = App.trendHeight;
+
 
     /* Resize the DOM elements*/
     document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.height;

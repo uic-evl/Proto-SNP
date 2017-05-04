@@ -12,6 +12,72 @@ const TrendImageViewer = function(options){
   };
 
 
+  /* Parse the incoming data into row, columns, and values */
+  function map_trend_image_data() {
+    return new Promise(function(resolve, reject) {
+      let data = [], index = [], columns = [];
+      /* Extract the rows and data */
+      trendImageViewer.protein_family_data.forEach( (d,i) => {
+        data.push(d.sequence);
+        index.push(d.name);
+      } );
+      /* Extract the columns */
+      data[0].forEach( (d,i) => { columns.push(["R", i]) } );
+
+      resolve({ data: data, index : index, columns : columns });
+    });
+  }
+
+
+  /* Clear the chart DOM of all elements */
+  function clear_chart_dom() {
+    trendImageViewer.domObj.selectAll().remove();
+  }
+
+
+  /* Create the trend image brush SVG */
+  function create_brush_svg() {
+    trendImageViewer.brushSVG = trendImageViewer.domObj
+      .append("svg")
+      .attr("class", "trendImage")
+        .attr("id", "trendSVG")
+        .style("width", trendImageViewer.width)
+      .style("height", trendImageViewer.height)
+    ;
+  }
+
+
+  function create_chart_back_buffer() {
+    trendImageViewer.backBufferCanvas = document.createElement('canvas');
+
+    trendImageViewer.backBufferContext =  d3.select(trendImageViewer.backBufferCanvas)
+        .attr("width", trendImageViewer.width)
+        .attr("height", trendImageViewer.residue_glyph_size * trendImageViewer.y_axis_length)
+        .node().getContext('2d');
+  }
+
+
+  function create_chart_canvas() {
+
+    let canvas = trendImageViewer.domObj
+        .append('canvas')
+          .attr("id", "trendCanvas")
+          .attr("class", "trendImage")
+          .attr("width", trendImageViewer.width)
+          .attr("height", trendImageViewer.height);
+
+    if(trendImageViewer.overviewImage) {
+      let overview = trendImageViewer.domObj
+        .append('canvas')
+        .attr("id", "trendCanvasOverview")
+        .attr("width", trendImageViewer.width * 0.1)
+        .attr("height", trendImageViewer.height);
+      trendImageViewer.overviewContext = overview.node().getContext('2d');
+    }
+    trendImageViewer.canvasContext = canvas.node().getContext('2d');
+  }
+
+
   /* Create a customized context menu per right-click */
   function create_context_menu() {
 
@@ -31,6 +97,210 @@ const TrendImageViewer = function(options){
         disabled: false // optional, defaults to false
       }
     ];
+  }
+
+
+  /* Initialized the frequency viewers */
+  function initialize_frequency_viewers() {
+
+    /* Get the currently selected protein and the selected residues */
+    let currentProtein = trendImageViewer.protein_family_data[0];
+
+    /* Get the length of the sequence */
+    let sequence_length = trendImageViewer.x_axis_length;
+
+    /* Get the selected residues from the left paddle */
+    let leftSelectedResidues = [0, trendImageViewer.verticalPaddleSize];
+
+    /* Get the selected residues from the left paddle */
+    let rightSelectedResidues = [sequence_length - trendImageViewer.verticalPaddleSize, sequence_length];
+
+    /* Get the fragments from the left column*/
+    let leftFragments = trendImageViewer.column_frequencies
+      .getFragmentCountsFromRange(leftSelectedResidues[0], leftSelectedResidues[1]);
+
+    /* Get the fragments from the right column*/
+    let rightFragments = trendImageViewer.column_frequencies
+      .getFragmentCountsFromRange(rightSelectedResidues[0], rightSelectedResidues[1]);
+
+    /* Iterate over each of the left returned fragments */
+    let leftSelectionFragments = [];
+    leftFragments.forEach(function(fragment) {
+      /* Get the highest occurring residue and it's frequency */
+      leftSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+    });
+
+    /* Iterate over each of the right returned fragments */
+    let rightSelectionFragments = [];
+    rightFragments.forEach(function(fragment) {
+      /* Get the highest occurring residue and it's frequency */
+      rightSelectionFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+    });
+
+    /* Get the residues that intersect with the left vertical paddle*/
+    let leftHorizontalSelectedResidues = currentProtein.sequence.slice(leftSelectedResidues[0], leftSelectedResidues[1]);
+
+    /* Get the residues that intersect with the vertical paddle*/
+    let rightHorizontalSelectedResidues = currentProtein.sequence.slice(rightSelectedResidues[0], rightSelectedResidues[1]);
+
+    /* Initialize the frequency viewers*/
+    App.leftFrequencyViewer.init("#leftResidueSummaryViewer", trendImageViewer.verticalPaddleMaxSize);
+    App.rightFrequencyViewer.init("#rightResidueSummaryViewer", trendImageViewer.verticalPaddleMaxSize);
+
+    /* Render the frequency view*/
+    App.leftFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length,
+        leftHorizontalSelectedResidues, trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize/2.0 );
+    App.rightFrequencyViewer.render(rightSelectionFragments, trendImageViewer.y_axis_length,
+        rightHorizontalSelectedResidues, trendImageViewer.width - trendImageViewer.residue_glyph_size*2 - App.rightFrequencyViewer.getOffset()*2);
+  }
+
+
+  /* Vertical brushing cannot be enabled until the column frequencies are computed*/
+  function enable_vertical_brushing() {
+      /* Enable the paddle brushing callbacks */
+      trendImageViewer.leftVerticalPaddle
+          .onBrush(function(){
+            trendImageViewer.controller.verticalBrushed.call(this, App.leftFrequencyViewer)});
+      trendImageViewer.rightVerticalPaddle
+          .onBrush(function(){
+            trendImageViewer.controller.verticalBrushed.call(this, App.rightFrequencyViewer) });
+
+      /* Initialize the protein frequency charts with the selection data*/
+      initialize_frequency_viewers();
+  }
+
+
+  /* Function to set the starting positions of the three paddles */
+  function initialize_brush_positions() {
+    /* Store the initial positions of the brushes */
+    trendImageViewer.initHorizontalBrush    = get_protein_names()[0];
+    trendImageViewer.initLeftVerticalBrush  = [0, trendImageViewer.verticalPaddleSize];
+    trendImageViewer.initRightVerticalBrush = [trendImageViewer.x_axis_length - trendImageViewer.verticalPaddleSize,  trendImageViewer.x_axis_length];
+    trendImageViewer.initVerticalBrushes    = {left: trendImageViewer.initLeftVerticalBrush, right: trendImageViewer.initRightVerticalBrush};
+  }
+
+
+  /* Function to add the three brush paddles to the svg*/
+  function add_brushes(parentDom) {
+
+    /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
+    trendImageViewer.brushes = parentDom.append("g")
+        .attr("class", "brushes")
+        .style("width", trendImageViewer.width)
+        .style("height", trendImageViewer.residue_glyph_size * trendImageViewer.y_axis_length);
+
+    /* Add the horizontal paddle to the trend image */
+    trendImageViewer.brushes.append("g")
+        .attr("class", "brush horizontal")
+        .call(trendImageViewer.horizonalPaddle.brush) // add the paddle
+        // initialize the position
+        .call(trendImageViewer.horizonalPaddle.brush.move, [0, trendImageViewer.residue_glyph_size])
+    ;
+
+    /* Add the left vertical paddle to the trend image*/
+    trendImageViewer.brushes.append("g")
+        .attr("class", "brush vertical-left")
+        .call(trendImageViewer.leftVerticalPaddle.brush)
+        // initialize the position
+        .call(trendImageViewer.leftVerticalPaddle.brush.move, [0, trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize])
+    ;
+
+    /* Add the right vertical paddle to the trend image*/
+    trendImageViewer.brushes.append("g")
+        .attr("class", "brush vertical-right")
+        .call(trendImageViewer.rightVerticalPaddle.brush)
+        // initialize the position
+        .call(trendImageViewer.rightVerticalPaddle.brush.move,
+            [trendImageViewer.width - trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize, trendImageViewer.width])
+    ;
+  }
+
+
+  /* Function to create the three brush paddles*/
+  function create_brushes() {
+    /* Construct the horizontal Protein-selection paddle */
+    trendImageViewer.horizonalPaddle =
+      App.TrendImageBrushFactory.createBrush(App.HORIZONTAL_PADDLE)
+        .setPaddleSize(1)
+        .setBrushClass("brush horizontal")
+        .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.height] ])
+        .onBrush(function(){ trendImageViewer.controller.horizontalBrushed.call(this)})
+    ;
+
+    /* Construct the left vertical residue-selection paddle */
+    trendImageViewer.leftVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
+      .setPaddleSize(trendImageViewer.verticalPaddleSize)
+      .setBrushClass("brush vertical-left")
+      .setPaddleExtent([ [0, 0], [trendImageViewer.width,  trendImageViewer.height] ])
+    ;
+    /* Construct the right vertical residue-selection paddle */
+      trendImageViewer.rightVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
+        .setPaddleSize(trendImageViewer.verticalPaddleSize)
+        .setBrushClass("brush vertical-right")
+        .setPaddleExtent( [ [0, 0], [trendImageViewer.width,  trendImageViewer.height] ])
+      ;
+
+    /* Once the column frequency sorting is complete, enable the brushing callbacks*/
+    trendImageViewer.column_frequencies.getFrequencyPromise()
+      .then(enable_vertical_brushing);
+  }
+
+
+  /* Render the brushes to the image */
+  function render_brushes(selected_protein, brush_ranges) {
+
+    /* Remove the pointer events from the brush overlays to prevent:
+     * 1: Deleting the brush on a wrong click
+     * 2: Interference between brushes
+     */
+    trendImageViewer.brushes.selectAll('.overlay')
+        .style("pointer-events", "none");
+    /* Let d3 decide the best rendering for the brushes */
+    trendImageViewer.brushes.selectAll('.selection')
+        .style("shape-rendering", "auto");
+    /* Set the context menu of the vertical brush */
+    trendImageViewer.brushes.select("g.brush.horizontal")
+        .on("contextmenu", d3.contextMenu(create_context_menu));
+
+    /* Highlight the initial selections*/
+
+    /* Reset the brush selections */
+    // trendImageViewer.svg.selectAll('rect')
+    //     .classed("active_protein_selection", false)
+    //     .classed("active_res_selection", false);
+    //
+    // /* Set the first highlighted row's opacity */
+    // trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
+    //     .classed("active_protein_selection", true);
+    //
+    // /* Iterate over the left selection and add the active class to the selected fragments */
+    // for(let i = brush_ranges.left[0]; i < brush_ranges.left[1]; i++) {
+    //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
+    //       .classed("vertical-left", true)
+    //       .classed("active_res_selection", true);
+    // }
+    // /* Iterate over the right selection and add the active class to the selected fragments */
+    // for(let i = brush_ranges.right[0]; i < brush_ranges.right[1]; i++) {
+    //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
+    //       .classed("vertical-right", true)
+    //       .classed("active_res_selection", true);
+    // }
+  }
+
+
+  /* Function to reset the brushes to be the before-sorted selection */
+  function reset_brushes() {
+    /* Get the protein that was last selected */
+    let currentProtein = trendImageViewer.controller.getSelectedProtein();
+    /* Get the protein that was last selected */
+    let currentRanges = trendImageViewer.controller.getSelectedRanges();
+
+    /* Render the brush with the current protein selected */
+    render_brushes(currentProtein, currentRanges);
+
+    /* Move the brush to the current overlay */
+    let brush_pos = trendImageViewer.yScale(currentProtein);
+    trendImageViewer.horizonalPaddle.moveBrush( [brush_pos, brush_pos+trendImageViewer.residue_glyph_size] );
   }
 
 
@@ -244,36 +514,36 @@ const TrendImageViewer = function(options){
   /* Setter for the chart dimensions */
   function set_chart_dimensions() {
 
-    let residue_width = Math.floor(App.trendWidth / trendImageViewer.x_axis_length);
+    let container_width = trendImageViewer.domObj.node().parentNode.clientWidth,
+        container_height = trendImageViewer.domObj.node().parentNode.clientHeight,
+        residue_width = Math.floor(container_width / trendImageViewer.x_axis_length);
 
     /* Reset the viewers width and height*/
-    App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
-    App.frequencyWidth = Math.floor(App.trendWidth / 2.0 + (2.0 * options.freqOffset));
+    let viewer_width = residue_width *  trendImageViewer.x_axis_length;
 
     /*Reset the parent dom width/heights*/
     trendImageViewer.domObj.classed("trend-viewer", false);
-    trendImageViewer.width = App.trendWidth;
+    trendImageViewer.width = viewer_width;
 
     /* Make sure the height of the data does not exceed the height of the container */
     let temp_height = trendImageViewer.y_axis_length * residue_width;
 
     /* We must reset the height of the trend image */
-    if(temp_height < App.trendHeight) {
-      App.trendHeight = temp_height;
+    if(temp_height < container_height) {
+      container_height = temp_height;
     }
-
-    trendImageViewer.height = App.trendHeight;
+    else if(temp_height > container_height) {
+      trendImageViewer.width = container_width;
+      trendImageViewer.overviewImage = true;
+    }
+    trendImageViewer.height = container_height;
 
     /* Resize the DOM elements*/
     document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.height;
     document.getElementById('trendImageViewer').style.height = trendImageViewer.height;
 
-    document.getElementById('trendImageViewer').parentNode.style.width = App.trendWidth;
-    document.getElementsByClassName('TrendImageView')[0].style.width = App.trendWidth;
-    document.getElementsByClassName('residueSummaryView')[0].style.width = App.frequencyWidth * 2;
-
-    /* Get the computed margin to set the text for each row */
-    trendImageViewer.margin = parseInt(window.getComputedStyle(document.getElementsByClassName('TrendImageView')[0]).marginRight);
+    document.getElementById('trendImageViewer').parentNode.style.width = trendImageViewer.width;
+    document.getElementsByClassName('TrendImageView')[0].style.width = trendImageViewer.width;
   }
 
 

@@ -68,13 +68,17 @@ function ResidueModel() {
     {abbr: "-", sideClass: "gap",       polarity: "gap",      name:"gap"}
     ];
 
-  /* Color map legend */
-  let legend_svg = d3.select("#colorlegend")
-      .append("svg")
-      .attr("width", App.legendElementWidth);
+  let legend       = document.getElementById('colorLegend'),
+      legend_width = legend.clientWidth,
+      legend_height = 2.0 * App.labelHeight;
 
-  /* The current color mapp*/
-  let currentColorMap = null;
+  /* Color map legend */
+  let legend_svg = d3.select(legend)
+      .append("svg")
+      .attr("width", legend_width),
+
+  /* The current color map*/
+  currentColorMap = null;
 
 
   function colorBySideChainClass(residue) {
@@ -132,8 +136,8 @@ function ResidueModel() {
   function create_legend(){
 
     let elements = _.toPairs(currentColorMap),
-        legendElementWidth = App.legendElementWidth / (elements.length),
-        legendElementHeight = App.legendHeight / 2.0;
+        legendElementWidth  = legend_width / (elements.length),
+        legendElementHeight = legend_height / 2.0;
 
     /* Add the color bands to the legend */
     let legend_bars = legend_svg.selectAll(".legendElement")

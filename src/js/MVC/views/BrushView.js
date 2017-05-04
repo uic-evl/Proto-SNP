@@ -171,19 +171,38 @@ const BrushView = (function() {
   }
 
 
+  function clamp_brush_sizes(currentVerticalSelection, prevPaddleSelection) {
+    let brush_size = Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]);
+    /* Our max brush size is 10*/
+    if( brush_size > options.brushMaxSize){
+      /* Check which side was brushed */
+      if(currentVerticalSelection[0] === prevPaddleSelection[0]){
+        currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
+      }
+      else {
+        currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
+      }
+    }
+    else if (brush_size < options.brushMinSize) {
+      /* Check which side was brushed */
+      if (currentVerticalSelection[0] === prevPaddleSelection[0]) {
+        currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMinSize;
+      }
+      else {
+        currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMinSize;
+      }
+    }
+    return currentVerticalSelection;
+  }
+
+
   function BrushView(model) {
 
     this._model = model;
 
+    this.render = function(){};
 
-    this.render = function(){
-
-    };
-
-
-    this.redraw = function() {
-
-    }
+    this.redraw = function() {};
 
   }
 

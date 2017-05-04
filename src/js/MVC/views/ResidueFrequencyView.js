@@ -71,6 +71,15 @@ const ResidueFrequencyView = (function() {
 
     this._model = model;
 
+    /* Set the model listeners */
+    this._model.selectedProteinChanged.attach(function(selection){
+
+    });
+
+    this._model.selectedResiduesChanged.attach(function(selection){
+
+    });
+
 
     this.render = function(){
 

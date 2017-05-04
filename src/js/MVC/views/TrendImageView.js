@@ -74,10 +74,7 @@ const TrendImageView = (function() {
   }
 
 
-  function TrendImageView(model) {
-
-    this._model = model;
-    this._elements = bind_data(this._model.getFamily(), App.residueModel.getColor("side chain"));
+  function TrendImageView() {
 
     this.render = function(){
       return new Promise(function(resolve, reject) {
@@ -108,8 +105,12 @@ const TrendImageView = (function() {
       });
     };
 
-    this.redraw = function() {
-    }
+    this.redraw = function() {};
+
+    this.initialize = function(model) {
+      this._model = model;
+      this._elements = bind_data(this._model.getFamily(), App.residueModel.getColor("side chain"));
+    };
 
   }
 

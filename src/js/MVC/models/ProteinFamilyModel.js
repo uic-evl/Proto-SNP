@@ -33,9 +33,9 @@ const ProteinFamilyModel = (function() {
     this._proteinSorting = "";
 
     /* Update Events  */
-    this.selectedProteinChanged = new EventNotification();
-    this.selectedResiduesChanged = new EventNotification();
-    this.proteinSortingChanged = new EventNotification();
+    this.selectedProteinChanged = new EventNotification(this);
+    this.selectedResiduesChanged = new EventNotification(this);
+    this.proteinSortingChanged = new EventNotification(this);
   }
 
   ProteinFamilyModel.prototype = {

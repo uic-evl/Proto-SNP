@@ -8,6 +8,7 @@ const TrendImageViewer = function(options){
 
   /* initialize the molecular trendImageViewer global variable */
   let trendImageViewer = {
+    overviewImage     : false,
     instanceVariables : {}
   };
 
@@ -394,17 +395,141 @@ const TrendImageViewer = function(options){
   }
 
 
+
+  /* Bind the data to a fake dom */
+  function bind_data(protein_data, colorScale) {
+    /* Fake DOM*/
+    let customBase = document.createElement('custom'),
+        custom = d3.select(customBase),
+    /* Fake Rows */
+        rows = custom.selectAll("custom")
+          .data(protein_data.sequences)
+            .enter().append("custom")
+            .attr("id", (d,i) => { return "p" + protein_data.names[i];})
+            .attr("class", "row"),
+
+        /* Fake columns -- bind the data */
+        elements = rows.selectAll('.cell')
+          .data( (d) => { return d} );
+
+        /* Update: add new items as needed */
+    elements
+        .enter().append('custom')
+        .attr("class", "cell")
+        .merge(elements)
+        .attr("x", (d,i,j) => { return i * trendImageViewer.residue_glyph_size; })
+        .attr("y", (d,i,j) => { return j * trendImageViewer.residue_glyph_size; })
+        .attr('width',  trendImageViewer.residue_glyph_size)
+        .attr('height', trendImageViewer.residue_glyph_size)
+        .attr("row", (d, i, j) => { return j; })
+        .attr("col", (d, i, j) => { return i; })
+        .attr('fill',  (d) => { return colorScale(d).code; })
+        .attr('stroke',(d) => { return colorScale(d).code; });
+
+    /* Remove any unneeded elements */
+    elements
+        .exit()
+        .transition()
+        .attr('width', 0)
+        .attr('height', 0)
+        .remove();
+
+    /* Return the data model */
+    return custom;
+  }
+
+
+  function render_overview() {
+
+    let overviewImage = new Image();
+    let width  = parseInt(trendImageViewer.width / 10) ;
+    let height = trendImageViewer.height;
+
+
+
+  }
+
+
+  /* Render the trend image to the canvas */
+  function render_canvas(data_model) {
+    return new Promise(function(resolve, reject) {
+      /* First, clear the canvas*/
+      trendImageViewer.backBufferContext
+          .clearRect(0,0,trendImageViewer.width, trendImageViewer.height);
+
+      //let image = context.createImageData(trendImageViewer.width + trendImageViewer.margin, trendImageViewer.height);
+
+      /* Get the trend image rows from the data model */
+      let rows = data_model.selectAll("custom.row");
+      /* Iterate over each element to render it to the canvas*/
+      rows.each(function(d,i) {
+        let columns =  d3.select(this).selectAll("custom.cell");
+        columns.each(function(d, i){
+          /* Get the residue from the element */
+          let residue = d3.select(this);
+          /* Set the fill color */
+          trendImageViewer.backBufferContext.fillStyle = residue.attr("fill");
+          /* color the area of the residue */
+          trendImageViewer.backBufferContext
+              .fillRect( parseInt(residue.attr('x')), parseInt(residue.attr('y')), trendImageViewer.residue_glyph_size, trendImageViewer.residue_glyph_size);
+        });
+      });
+
+      let image = trendImageViewer.backBufferContext.getImageData(0,0,trendImageViewer.width, trendImageViewer.height);
+      trendImageViewer.canvasContext.putImageData(image, 0, 0);
+
+      /* create the overview if the image runs off the page*/
+      if(trendImageViewer.overviewImage){
+
+      }
+
+
+      /* resolve when finished */
+      resolve();
+    });
+  }
+
+
+  function render() {
+    /* Invoke the tip in the context of your visualization */
+    //trendImageViewer.svg.call(trendImageViewer.tooltip);
+    return map_trend_image_data().then(function (data) {
+      /* Get the selected color map and data */
+      let colorMapping = App.residueModel.getColor(App.colorMapping),
+          protein_data = data.data;
+
+      let data_model = bind_data({sequences: protein_data, names: data.index}, colorMapping);
+      return render_canvas(data_model);
+      //return render_svg({sequences: protein_data, names: data.index}, colorMapping);
+    }).then(function(){
+
+      /* Add the brushes to the canvas */
+      add_brushes(trendImageViewer.brushSVG);
+
+      /* Render the brushes */
+      render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
+
+      /* Create the legend */
+      App.residueModel.createColorLegend();
+    });
+
+  }
+
   function initialize_chart_dom(){
     /* get/save the width and height of the given DOM element */
     set_chart_dimensions();
+
+    /* Get and save the size of each residue for the trend image based on the width of the screen */
+    set_glyph_size();
 
     /* clear the trend image DOM */
     clear_chart_dom();
 
     /* Add the canvas and brush svg to the trend image dom*/
     create_chart_canvas();
-    create_brush_svg();
+    create_chart_back_buffer();
 
+    create_brush_svg();
   }
 
 
@@ -430,9 +555,6 @@ const TrendImageViewer = function(options){
     /* Initialize the chart dOM*/
     initialize_chart_dom();
 
-    /* Get and save the size of each residue for the trend image based on the width of the screen */
-    set_glyph_size();
-
     /* Initialize the number of visible proteins per view */
     set_proteins_per_view();
 
@@ -452,6 +574,7 @@ const TrendImageViewer = function(options){
     /* Create the three brushes */
     create_brushes();
   }
+
 
   /*******************************************************************************************************************/
   /************                         Instance Accessors (Getters and Setters)                          ************/

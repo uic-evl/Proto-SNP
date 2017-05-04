@@ -8,3 +8,7 @@ text.legendText {
     font-size: 10px;
     font-family: monospace;
 }
+
+#colorLegend {
+    height: 5%;
+}

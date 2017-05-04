@@ -7,16 +7,6 @@
     opacity: 0.2;
 }
 
-/*.proteinRow {*/
-    /*fill-opacity: 0.1;*/
-    /*stroke-opacity: 0.0;*/
-/*}*/
-
-/*.active_protein_selection, .active_res_selection {*/
-    /*fill-opacity: 1.0;*/
-    /*stroke-opacity: 1.0;*/
-/*}*/
-
 g.brush.horizontal > .handle {
     display: none;
 }
@@ -28,7 +18,7 @@ g.brush.horizontal > .handle {
 .trend-viewer {
     background-color: black;
     width: 100%;
-    height: 100%;
+    height: 40%;
 }
 
 text.mono {

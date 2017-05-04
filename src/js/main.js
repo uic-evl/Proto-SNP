@@ -17,9 +17,7 @@ var App = App || {};
 
     /* Get the interface's dom elements*/
     let leftDomMol  = document.getElementById('leftMolecularViewer').parentNode;
-    let rightDomMol = document.getElementById('rightMolecularViewer').parentNode;
     let trendDom    = document.getElementById('trendImageViewer').parentNode;
-    let seqViewDom  = document.getElementById('sequenceViewer');
     let legend      = document.getElementById('colorLegend').parentNode;
     let freqOffset  = 25;
 
@@ -35,28 +33,19 @@ var App = App || {};
 
     /* Calculate the height and width of the molecular viewers */
     App.molecularViewerWidth  = leftDomMol.clientWidth;
-    App.molecularViewerHeight = parseInt((App.molecularViewerWidth + App.labelHeight)* App.aspectRatio);
-    /* Set the div height for the molecular viewers */
-    leftDomMol.style.height  = App.molecularViewerHeight;
-    rightDomMol.style.height = App.molecularViewerHeight;
-    /* Set the div height for the sequence viewer */
-    seqViewDom.parentNode.style.height  = App.molecularViewerHeight ;
+    App.molecularViewerHeight = leftDomMol.clientHeight;
 
     /* Calculate the height and width of the trend image and set the div height */
     App.trendWidth   = trendDom.clientWidth;
-    let remaining_height = parseInt((window.innerHeight - App.molecularViewerHeight) * App.aspectRatio);
-
-    App.trendHeight  = parseInt(remaining_height * 0.7);
-    /* Set the div height for the trend image */
-    trendDom.style.height = remaining_height;
+    App.trendHeight  = trendDom.clientHeight;
 
     /* Calculate the height and width of the frequency viewer */
     App.frequencyWidth  = App.trendWidth / 2.0 + freqOffset;
-    App.frequencyHeight = parseInt(remaining_height * 0.25);
+    App.frequencyHeight = App.trendHeight * 0.25;
 
     /* Set the div height for the legend */
     App.legendHeight = 2.0 * App.labelHeight;
-    legend.style.height = App.legendHeight;
+
     /* Set the width for the legend's elements */
     App.legendElementWidth = legend.clientWidth;
 
@@ -76,7 +65,7 @@ var App = App || {};
     App.sequenceViewer = new SequenceViewer();
 
     /* Setup the trend image viewer */
-    App.trendImageViewer = new TrendImageViewer({freqOffset: freqOffset, maxProteins:100});
+    App.trendImageViewer = new TrendImageViewer({freqOffset: freqOffset});
 
     /* Setup the frequency histogram viewers*/
     App.leftFrequencyViewer = new FrequencyViewer({offset: freqOffset});

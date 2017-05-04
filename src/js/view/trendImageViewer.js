@@ -395,6 +395,7 @@ const TrendImageViewer = function(options){
   }
 
 
+
   /* Bind the data to a fake dom */
   function bind_data(protein_data, colorScale) {
     /* Fake DOM*/
@@ -513,7 +514,6 @@ const TrendImageViewer = function(options){
     });
 
   }
-
 
   function initialize_chart_dom(){
     /* get/save the width and height of the given DOM element */

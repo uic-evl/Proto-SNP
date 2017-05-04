@@ -5,6 +5,7 @@
 .residueSummaryView {
     font-size: 12px;
     padding-top: 30px;
+    width:100%;
 }
 
 .frequency-left, .frequency-right {

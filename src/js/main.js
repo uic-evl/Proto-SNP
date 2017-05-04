@@ -5,49 +5,12 @@ var App = App || {};
 
 (function(){
 
-  // Default PV viewer options
-  App.options = {
-    antialias: true,
-    quality : 'medium',
-    background: 'black'
-  };
-
   /* Starting point of the program. Initializes the application */
   function init() {
 
-    /* Get the interface's dom elements*/
-    let leftDomMol  = document.getElementById('leftMolecularViewer').parentNode;
-    let trendDom    = document.getElementById('trendImageViewer').parentNode;
-    let legend      = document.getElementById('colorLegend').parentNode;
     let freqOffset  = 25;
 
-
-    /* The size of the EVL header */
-    let headerHeight = 0;
     App.labelHeight = document.getElementsByClassName('view')[0].clientHeight;
-
-    /* Aspect Ratio */
-    App.aspectRatio = window.innerWidth > ( window.innerHeight - headerHeight ) ?
-        (window.innerHeight - headerHeight)/window.innerWidth :
-        window.innerWidth / (window.innerHeight- headerHeight) ;
-
-    /* Calculate the height and width of the molecular viewers */
-    App.molecularViewerWidth  = leftDomMol.clientWidth;
-    App.molecularViewerHeight = leftDomMol.clientHeight;
-
-    /* Calculate the height and width of the trend image and set the div height */
-    App.trendWidth   = trendDom.clientWidth;
-    App.trendHeight  = trendDom.clientHeight;
-
-    /* Calculate the height and width of the frequency viewer */
-    App.frequencyWidth  = App.trendWidth / 2.0 + freqOffset;
-    App.frequencyHeight = App.trendHeight * 0.25;
-
-    /* Set the div height for the legend */
-    App.legendHeight = 2.0 * App.labelHeight;
-
-    /* Set the width for the legend's elements */
-    App.legendElementWidth = legend.clientWidth;
 
     /* Create the Data Mapping Utility Library */
     App.dataUtils = new DatabaseMappingUtils();
@@ -68,8 +31,8 @@ var App = App || {};
     App.trendImageViewer = new TrendImageViewer({freqOffset: freqOffset});
 
     /* Setup the frequency histogram viewers*/
-    App.leftFrequencyViewer = new FrequencyViewer({offset: freqOffset});
-    App.rightFrequencyViewer = new FrequencyViewer({offset: freqOffset});
+    App.leftFrequencyViewer = new FrequencyViewer({trend_div: "trendImageViewer", offset: freqOffset});
+    App.rightFrequencyViewer = new FrequencyViewer({trend_div: "trendImageViewer", offset: freqOffset});
 
     /* Set the initial rendering style and color mapping */
     App.colorMapping      = "side chain";

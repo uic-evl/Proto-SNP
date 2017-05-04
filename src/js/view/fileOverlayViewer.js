@@ -8,19 +8,6 @@ var App = App || {};
   // initialize the protein selection overlays
   App.setupOverlays = function () {
 
-    $(window).resize(function () {
-
-      if (App.molecularViewerHeight < 560 && App.molecularViewerWidth > 600) {
-        $('#overlay-left').addClass('short');
-        $('#overlay-right').addClass('short');
-      } else {
-        $('#overlay-left').removeClass('short');
-        $('#overlay-right').removeClass('short');
-      }
-    });
-
-    $(window).trigger('resize');
-
     let left = $('#popup-trigger-left');
     let right = $('#popup-trigger-right');
 

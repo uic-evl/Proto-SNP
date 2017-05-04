@@ -119,7 +119,7 @@ let MolecularViewer = function(){
     options = options || {};
 
     /* get/save the width and height of the given DOM element */
-    molecularViewer.width = App.molecularViewerWidth;
+    molecularViewer.width = parseInt(d3.select(molecularViewer.domObj).style('width'));
     molecularViewer.height = parseInt(d3.select(molecularViewer.domObj).style('height'));
 
     /* add the width and height to the options */

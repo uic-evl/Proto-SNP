@@ -71,7 +71,7 @@ const TrendImageViewer = function(options){
       let overview = trendImageViewer.domObj
         .append('canvas')
         .attr("id", "trendCanvasOverview")
-        .attr("width", App.trendWidth * 0.1)
+        .attr("width", trendImageViewer.width * 0.1)
         .attr("height", trendImageViewer.height);
       trendImageViewer.overviewContext = overview.node().getContext('2d');
     }
@@ -152,7 +152,7 @@ const TrendImageViewer = function(options){
     App.leftFrequencyViewer.render(leftSelectionFragments, trendImageViewer.y_axis_length,
         leftHorizontalSelectedResidues, trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize/2.0 );
     App.rightFrequencyViewer.render(rightSelectionFragments, trendImageViewer.y_axis_length,
-        rightHorizontalSelectedResidues, App.frequencyWidth - trendImageViewer.residue_glyph_size*2 - App.rightFrequencyViewer.getOffset()*2);
+        rightHorizontalSelectedResidues, trendImageViewer.width - trendImageViewer.residue_glyph_size*2 - App.rightFrequencyViewer.getOffset()*2);
   }
 
 
@@ -637,40 +637,36 @@ const TrendImageViewer = function(options){
   /* Setter for the chart dimensions */
   function set_chart_dimensions() {
 
-    let residue_width = Math.floor(App.trendWidth / trendImageViewer.x_axis_length);
+    let container_width = trendImageViewer.domObj.node().parentNode.clientWidth,
+        container_height = trendImageViewer.domObj.node().parentNode.clientHeight,
+        residue_width = Math.floor(container_width / trendImageViewer.x_axis_length);
 
     /* Reset the viewers width and height*/
-    App.trendWidth = residue_width *  trendImageViewer.x_axis_length;
-    App.frequencyWidth = Math.floor(App.trendWidth / 2.0 + (2.0 * options.freqOffset));
+    let viewer_width = residue_width *  trendImageViewer.x_axis_length;
 
     /*Reset the parent dom width/heights*/
     trendImageViewer.domObj.classed("trend-viewer", false);
-    trendImageViewer.width = App.trendWidth;
+    trendImageViewer.width = viewer_width;
 
     /* Make sure the height of the data does not exceed the height of the container */
     let temp_height = trendImageViewer.y_axis_length * residue_width;
 
     /* We must reset the height of the trend image */
-    if(temp_height < App.trendHeight) {
-      App.trendHeight = temp_height;
+    if(temp_height < container_height) {
+      container_height = temp_height;
     }
-    else if(temp_height > App.trendHeight) {
-      trendImageViewer.width = App.trendWidth;
+    else if(temp_height > container_height) {
+      trendImageViewer.width = container_width;
       trendImageViewer.overviewImage = true;
     }
-    trendImageViewer.height = App.trendHeight;
-
+    trendImageViewer.height = container_height;
 
     /* Resize the DOM elements*/
     document.getElementById('trendImageViewer').parentNode.style.height = trendImageViewer.height;
     document.getElementById('trendImageViewer').style.height = trendImageViewer.height;
 
-    document.getElementById('trendImageViewer').parentNode.style.width = App.trendWidth;
-    document.getElementsByClassName('TrendImageView')[0].style.width = App.trendWidth;
-    document.getElementsByClassName('residueSummaryView')[0].style.width = App.frequencyWidth * 2;
-
-    /* Get the computed margin to set the text for each row */
-    trendImageViewer.margin = parseInt(window.getComputedStyle(document.getElementsByClassName('TrendImageView')[0]).marginRight);
+    document.getElementById('trendImageViewer').parentNode.style.width = trendImageViewer.width;
+    document.getElementsByClassName('TrendImageView')[0].style.width = trendImageViewer.width;
   }
 
 

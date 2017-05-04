@@ -187,13 +187,15 @@ const FrequencyViewer = function(options){
   /* Initialize the frequency viewer */
   function initialize(div_id, max_count) {
 
+    let trend_div = document.getElementById(options.trend_div);
+
     /* get the DOM element by the id parameter */
     frequencyViewer.id     = div_id;
     frequencyViewer.domObj = d3.select(div_id);
 
-    /* get/save the width and height of the given DOM element */
-    frequencyViewer.width = App.frequencyWidth;
-    frequencyViewer.height = App.frequencyHeight;
+    /* Calculate the height and width of the frequency viewer */
+    frequencyViewer.width = Math.floor(trend_div.clientWidth / 2.0 + (2.0 * options.offset));
+    frequencyViewer.height = trend_div.clientHeight;
 
     /* Get get width and height for each box*/
     frequencyViewer.bar_glyph_width = frequencyViewer.width / (max_count+6);

@@ -11,11 +11,13 @@ let SequenceViewer = function(){
 
   /* Initialize the sequence view */
   function initialize(id, options){
+
+    let domElement = document.getElementById("sequenceViewer");
     /* Get the width and height */
     // The width is twice the client width because of bootstrap
-    list.domWidth  = document.getElementById("sequenceViewer").clientWidth;
+    list.domWidth  = domElement.clientWidth;
     // we want the height to be that of the 3D Viewers
-    list.domHeight = document.getElementById("sequenceViewer").clientHeight;
+    list.domHeight = domElement.clientHeight;
 
     // clear the dom of the previous list
     d3.select(id).selectAll().remove();
@@ -26,6 +28,14 @@ let SequenceViewer = function(){
         .append("span") // span element
         .attr("class", "sequence") // set the styling to the sequence class
     ;
+
+    /* Remove the black background from the viewers*/
+    d3.select(domElement)
+        .classed("black-background", false);
+
+    d3.select(domElement).selectAll(".col-md-6")
+        .classed("black-background", false);
+
   }
 
   /* Render the sequence list */
@@ -45,6 +55,7 @@ let SequenceViewer = function(){
         .style("width", list.domWidth / 2)
         // EXIT: Remove unneeded DOM elements
         .exit().remove();
+
   }
 
   /* return the public-facing functions */

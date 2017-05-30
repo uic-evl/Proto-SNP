@@ -18,6 +18,10 @@ const FilteringMenuView = (function() {
       console.log("notify");
       _this.listModified.notify({ index : e.target.selectedIndex });
     });
+
+    /*  Bind the view with knockoutJS */
+    ko.applyBindings(this, this._elements.list[0]);
+
   }
 
   FilteringMenuView.prototype = {

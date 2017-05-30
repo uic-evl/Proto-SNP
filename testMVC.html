@@ -44,29 +44,12 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="menu-nav">
                 <ul class="nav navbar-nav navbar-right">
-                    <!--<li class="dropdown">-->
-                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>-->
-                        <!--<ul id="sorting-nav" class="dropdown-menu">-->
-                            <!--<li id="initial_sort_li" class="sortingOption">-->
-                                <!--<a href="#" class="disabled">Initial Ordering</a>-->
-                            <!--</li>-->
-                            <!--<li id="residue_freq_li" class="sortingOption">-->
-                                <!--<a href="#" class="disabled">Residue Frequency</a>-->
-                            <!--</li>-->
-                            <!--<li id="edit_dist_li" class="sortingOption">-->
-                                <!--<a href="#" class="disabled">Edit Distance</a>-->
-                            <!--</li>-->
-                            <!--<li id="weighted_edit_dist_li" class="sortingOption">-->
-                                <!--<a href="#" class="disabled">Weighted Edit Distance</a>-->
-                            <!--</li>-->
-                            <!--<li id="commonality_li" class="sortingOption">-->
-                                <!--<a href="#" class="disabled">Residue Commonality with</a>-->
-                            <!--</li>-->
-                            <!--<li id="normalized_commonality_li" class="sortingOption">-->
-                                <!--<a href="#" class="disabled">Normalized Residue Commonality with</a>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                    <!--</li>-->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
+                        <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
+                            <li id="initial_sort_li" class="sortingOption"><a href="#" data-bind="text: filter"></a></li>
+                        </ul>
+                    </li>
                     <li id="coloring-nav" class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
                         <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">

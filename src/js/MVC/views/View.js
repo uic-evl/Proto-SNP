@@ -7,7 +7,7 @@ const View = (function() {
   function View() { }
 
   View.prototype = {
-    constructur: function(model) {
+    constructor: function(model) {
 
     },
     render: function () {

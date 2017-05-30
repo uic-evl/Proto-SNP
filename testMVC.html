@@ -2,25 +2,84 @@
 
 <head>
 
+    <!-- CSS LIB -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
     <!-- JS LIB -->
+    <script type='text/javascript' src='lib/js/knockout-min.js'></script>
     <script type='text/javascript' src='lib/js/d3.js'></script>
+
+    <!-- Bootstrap -->
+    <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
+    <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
 
     <!-- JS SRC -->
     <script type='text/javascript' src='src/js/MVC/Event.js'></script>
-    <script type='text/javascript' src='src/js/MVC/models/ProteinFamilyModel.js'></script>
-    <script type='text/javascript' src='src/js/MVC/views/View.js'></script>
-    <script type='text/javascript' src='src/js/MVC/views/TrendImageView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/models/FilteringMenuModel.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/FilteringMenuView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/controllers/FilteringMenuController.js'></script>
+    <script type='text/javascript' src='src/js/main.js'></script>
 
 </head>
 
 <body>
 
-    <script type='text/javascript'>
 
-        let model = new ProteinFamilyModel();
-        let view = new TrendImageView({});
+<div class="container-fluid">
 
-    </script>
+    <nav id="menu" class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">FixingTIM</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="menu-nav">
+                <ul class="nav navbar-nav navbar-right">
+                    <!--<li class="dropdown">-->
+                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>-->
+                        <!--<ul id="sorting-nav" class="dropdown-menu">-->
+                            <!--<li id="initial_sort_li" class="sortingOption">-->
+                                <!--<a href="#" class="disabled">Initial Ordering</a>-->
+                            <!--</li>-->
+                            <!--<li id="residue_freq_li" class="sortingOption">-->
+                                <!--<a href="#" class="disabled">Residue Frequency</a>-->
+                            <!--</li>-->
+                            <!--<li id="edit_dist_li" class="sortingOption">-->
+                                <!--<a href="#" class="disabled">Edit Distance</a>-->
+                            <!--</li>-->
+                            <!--<li id="weighted_edit_dist_li" class="sortingOption">-->
+                                <!--<a href="#" class="disabled">Weighted Edit Distance</a>-->
+                            <!--</li>-->
+                            <!--<li id="commonality_li" class="sortingOption">-->
+                                <!--<a href="#" class="disabled">Residue Commonality with</a>-->
+                            <!--</li>-->
+                            <!--<li id="normalized_commonality_li" class="sortingOption">-->
+                                <!--<a href="#" class="disabled">Normalized Residue Commonality with</a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                    <li id="coloring-nav" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
+                        <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
+                            <li class="coloringOption"><a href="#" data-bind="text: filter"></a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+</div>
 
 </body>
 

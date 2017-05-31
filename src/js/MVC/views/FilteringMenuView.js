@@ -9,19 +9,17 @@ const FilteringMenuView = (function() {
     this._elements = elements;
     this.filters = ko.observableArray([]);
 
-    this.listModified = new EventNotification(this);
+    this.selectionModified = new EventNotification(this);
 
     let _this = this;
 
-    //attach listeners to HTML controls
-    this._elements.list.change(function (e) {
-      console.log("notify");
-      _this.listModified.notify({ index : e.target.selectedIndex });
-    });
+    /* Create the click listener */
+    this.elementSelected = function(obj, e) {
+      _this.selectionModified.notify({ element : obj.filter });
+    };
 
     /*  Bind the view with knockoutJS */
     ko.applyBindings(this, this._elements.list[0]);
-
   }
 
   FilteringMenuView.prototype = {
@@ -38,9 +36,9 @@ const FilteringMenuView = (function() {
       items = this._model.getItems();
       for (key in items) {
         this.filters.push({filter : items[key] });
-
       }
-      this._model.setSelectedIndex(-1);
+      /* Set the initial item */
+      this._model.setSelectedElement(items[0]);
     }
   };
 

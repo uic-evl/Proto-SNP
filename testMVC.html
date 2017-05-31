@@ -25,7 +25,6 @@
 
 <body>
 
-
 <div class="container-fluid">
 
     <nav id="menu" class="navbar navbar-default">
@@ -34,9 +33,6 @@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">
                     <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">FixingTIM</a>
             </div>
@@ -47,13 +43,13 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
                         <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
-                            <li id="initial_sort_li" class="sortingOption"><a href="#" data-bind="text: filter"></a></li>
+                            <li id="initial_sort_li" class="sortingOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
                         </ul>
                     </li>
                     <li id="coloring-nav" class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
                         <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
-                            <li class="coloringOption"><a href="#" data-bind="text: filter"></a></li>
+                            <li class="coloringOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
                         </ul>
                     </li>
                 </ul>

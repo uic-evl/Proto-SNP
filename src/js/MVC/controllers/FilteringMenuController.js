@@ -11,16 +11,15 @@ const FilteringMenuController = (function() {
 
     let _this = this;
 
-    this._view.listModified.attach(function (sender, args) {
-      _this.updateSelected(args.index);
+    this._view.selectionModified.attach(function (sender, args) {
+      _this.updateSelected(args.element);
     });
-
   }
 
   FilteringMenuController.prototype = {
 
-    updateSelected: function (index) {
-      this._model.setSelectedIndex(index);
+    updateSelected: function (element) {
+      this._model.setSelectedElement(element);
     }
   };
 

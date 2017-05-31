@@ -7,9 +7,9 @@ const FilteringMenuModel = (function() {
   function FilteringMenuModel(items) {
 
     this._items = items;
-    this._selectedIndex = -1;
+    this._selectedElement = '';
 
-    this.selectedIndexChanged = new EventNotification(this);
+    this.selectedElementChanged = new EventNotification(this);
   }
 
   FilteringMenuModel.prototype = {
@@ -19,15 +19,15 @@ const FilteringMenuModel = (function() {
     },
 
     getSelectedIndex : function () {
-      return this._selectedIndex;
+      return this._selectedElement;
     },
 
-    setSelectedIndex : function (index) {
+    setSelectedElement : function (element) {
       let previousIndex;
-      console.log("selected");
-      previousIndex = this._selectedIndex;
-      this._selectedIndex = index;
-      this.selectedIndexChanged.notify({ previous : previousIndex });
+      console.log(element);
+      previousIndex = this._selectedElement;
+      this._selectedElement = element;
+      this.selectedElementChanged.notify({ previous : previousIndex });
     }
   };
 

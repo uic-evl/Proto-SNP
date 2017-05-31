@@ -5,6 +5,9 @@
     <!-- CSS LIB -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+    <!-- CSS SRC -->
+    <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/molecularViewer.css">
 
     <!-- JS LIB -->
     <script type='text/javascript' src='lib/js/knockout-min.js'></script>
@@ -19,44 +22,58 @@
     <script type='text/javascript' src='src/js/MVC/models/FilteringMenuModel.js'></script>
     <script type='text/javascript' src='src/js/MVC/views/FilteringMenuView.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/FilteringMenuController.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/TertiaryStructureView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/controllers/TertiaryStructureController.js'></script>
+
+
     <script type='text/javascript' src='src/js/main.js'></script>
 
 </head>
 
 <body>
 
+<nav id="menu" class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+            </button>
+            <a class="navbar-brand" href="#">FixingTIM</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="menu-nav">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
+                    <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
+                        <li id="initial_sort_li" class="sortingOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
+                    </ul>
+                </li>
+                <li id="coloring-nav" class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
+                    <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
+                        <li class="coloringOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+
+
 <div class="container-fluid">
 
-    <nav id="menu" class="navbar navbar-default">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                </button>
-                <a class="navbar-brand" href="#">FixingTIM</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="menu-nav">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
-                        <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
-                            <li id="initial_sort_li" class="sortingOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
-                        </ul>
-                    </li>
-                    <li id="coloring-nav" class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
-                        <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
-                            <li class="coloringOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
-                        </ul>
-                    </li>
-                </ul>
-
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
+    <!-- 3D Molecule Viewers -->
+    <div id="molecularViewers" class="row molecularViewersRow" data-bind="foreach: views">
+        <div class="col-md-5 molecularViewerA">
+            <p class="view">&nbsp;</p>
+            <div id=leftMolecularViewer class="molecular-viewer"></div>
+        </div>
+    </div>
 
 </div>
 

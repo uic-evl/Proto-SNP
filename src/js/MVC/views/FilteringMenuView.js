@@ -17,9 +17,6 @@ const FilteringMenuView = (function() {
     this.elementSelected = function(obj, e) {
       _this.selectionModified.notify({ element : obj.filter });
     };
-
-    /*  Bind the view with knockoutJS */
-    ko.applyBindings(this, this._elements.list[0]);
   }
 
   FilteringMenuView.prototype = {
@@ -28,10 +25,7 @@ const FilteringMenuView = (function() {
     },
 
     rebuildList : function () {
-      let list, items, key;
-
-      list = this._elements.list;
-      list.html('');
+      let items, key;
 
       items = this._model.getItems();
       for (key in items) {

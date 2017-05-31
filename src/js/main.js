@@ -20,8 +20,8 @@ var App = App || {};
       }),
         sortingController = new FilteringMenuController(sortingModel, sortingView);
 
-    let leftTertiaryStructureView = new TertiaryStructureView(),
-        rightTertiaryStructureView = new TertiaryStructureView(),
+    let leftTertiaryStructureView = new TertiaryStructureView(null, {position:"left"}),
+        rightTertiaryStructureView = new TertiaryStructureView(null, {position:"right"}),
         tertiaryStructuresController = new TertiaryStructureController({}, [leftTertiaryStructureView, rightTertiaryStructureView]);
 
 

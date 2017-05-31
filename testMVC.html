@@ -25,7 +25,6 @@
     <script type='text/javascript' src='src/js/MVC/views/TertiaryStructureView.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/TertiaryStructureController.js'></script>
 
-
     <script type='text/javascript' src='src/js/main.js'></script>
 
 </head>
@@ -63,13 +62,11 @@
     </div><!-- /.container-fluid -->
 </nav>
 
-
-
 <div class="container-fluid">
 
     <!-- 3D Molecule Viewers -->
     <div id="molecularViewers" class="row molecularViewersRow" data-bind="foreach: views">
-        <div class="col-md-5 molecularViewerA">
+        <div class="col-md-5" data-bind="css: {molecularViewerA: $data._position=='left', molecularViewerB: $data._position=='right'}">
             <p class="view">&nbsp;</p>
             <div id=leftMolecularViewer class="molecular-viewer"></div>
         </div>

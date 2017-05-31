@@ -5,17 +5,18 @@ var App = App || {};
 const FilteringMenuController = (function() {
 
   function FilteringMenuController(model, view) {
-    this._model = model;
-    this._view = view;
-
     let _this = this;
+
+    _this._model = model;
+    _this._view = view;
+
 
     this._view.selectionModified.attach(function (sender, args) {
       _this.updateSelected(args.element);
     });
 
     /*  Bind the view with knockoutJS */
-    ko.applyBindings(this._view, this._view._elements.list[0]);
+    ko.applyBindings(_this._view, _this._view._elements.list[0]);
 
   }
 

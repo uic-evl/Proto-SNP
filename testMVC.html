@@ -7,6 +7,7 @@
 
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/main.css">
+    <link rel="stylesheet" href="src/css/splash.css">
     <link rel="stylesheet" href="src/css/molecularViewer.css">
 
     <!-- JS LIB -->
@@ -66,9 +67,11 @@
 
     <!-- 3D Molecule Viewers -->
     <div id="molecularViewers" class="row molecularViewersRow" data-bind="foreach: views">
-        <div class="col-md-5" data-bind="css: {molecularViewerA: $data._position=='left', molecularViewerB: $data._position=='right'}">
+        <div class="col-md-5" data-bind="attr: {id: $data._id}">
             <p class="view">&nbsp;</p>
-            <div id=leftMolecularViewer class="molecular-viewer"></div>
+            <div id=leftMolecularViewer class="molecular-viewer">
+                <div id="leftSplash"></div>
+            </div>
         </div>
     </div>
 

@@ -20,14 +20,16 @@ var App = App || {};
       }),
         sortingController = new FilteringMenuController(sortingModel, sortingView);
 
-    let leftTertiaryStructureView = new TertiaryStructureView(null, {position:"left"}),
-        rightTertiaryStructureView = new TertiaryStructureView(null, {position:"right"}),
+    let leftTertiaryStructureView = new TertiaryStructureView(null, {id: "molecularViewerA", position:"left"}),
+        rightTertiaryStructureView = new TertiaryStructureView(null, {id: "molecularViewerB", position:"right"}),
         tertiaryStructuresController = new TertiaryStructureController({}, [leftTertiaryStructureView, rightTertiaryStructureView]);
 
 
     /* Render the view */
     sortingView.show();
     colorView.show();
+
+    leftTertiaryStructureView.show();
   }
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);

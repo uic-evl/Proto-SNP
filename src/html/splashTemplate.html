@@ -1,21 +1,20 @@
-<!-- Select Protein Button -->
-<button class="popup-trigger sBtn" id="popup-trigger-left">
+<button class="popup-trigger sBtn" id="popup-trigger">
     <i class="fa fa-plus-square-o"></i><span> Add Protein...</span>
 </button>
 
 <!-- Overlay for Select Protein Button -->
-<div class="overlay overlaySplash" id="overlay-left">
-    <div class="overlay-background" id="overlay-background-left"></div>
-    <div class="overlay-content" id="overlay-content-left">
-        <div class="fa fa-times fa-lg overlay-close" id="overlay-close-left"></div>
+<div class="overlay overlaySplash">
+    <div class="overlay-background"></div>
+    <div class="overlay-content">
+        <div class="fa fa-times fa-lg overlay-close"></div>
 
-        <form id="left-form" class="signup-form" data-bind="submit: processProteinRequest">
+        <form class="signup-form" data-bind="submit: processProteinRequest">
             <div class="container-fluid">
                 <br>
                 <div class="row">
                     <div class="col-md-12">
-                        <label for="protein-name-left">PDB Code (ex: 2YPI):</label>
-                        <input id="protein-name-left" type="text" name="name" autocomplete="off"/>
+                        <label for="protein-name">PDB Code (ex: 2YPI):</label>
+                        <input id="protein-name" type="text" name="name" autocomplete="off"/>
                         <button class="sBtn sBtn-outline submit-btn"><span>Download</span></button>
                     </div>
                 </div>
@@ -25,16 +24,14 @@
                         <span class="fileUpload">Choose a file: </span>
                         <br>
                         <span id="upload-left" class="btn btn-success fileinput-button viewer-upload">
-                                         <i class="fa fa-plus-square-o"></i><span> Select file...</span>
-                            <!-- The file input field used as target for the file upload widget -->
-                                        <input id="fileupload-left" type="file" name="files[]" accept=".pdb">
-                                    </span>
+                                             <i class="fa fa-plus-square-o"></i><span> Select file...</span>
+                                            <input type="file" name="files[]" accept=".pdb">
+                        </span>
                         <br><br>
-                        <div id="files-left" class="files"></div>
+                        <div class="files"></div>
                     </div>
                 </div>
             </div>
         </form>
-
     </div>
 </div>

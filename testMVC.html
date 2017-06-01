@@ -26,6 +26,7 @@
     <script type='text/javascript' src='src/js/MVC/views/TertiaryStructureView.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/TertiaryStructureController.js'></script>
 
+    <script type='text/javascript' src='src/js/MVC/utilities/knockout-handlers.js'></script>
     <script type='text/javascript' src='src/js/main.js'></script>
 
 </head>
@@ -66,11 +67,12 @@
 <div class="container-fluid">
 
     <!-- 3D Molecule Viewers -->
-    <div id="molecularViewers" class="row molecularViewersRow" data-bind="foreach: views">
+    <div id="molecularViewers" class="row molecularViewersRow"
+         data-bind="foreach: {data:views}">
         <div class="col-md-5" data-bind="attr: {id: $data._id}">
             <p class="view">&nbsp;</p>
             <div id=leftMolecularViewer class="molecular-viewer">
-                <div id="leftSplash"></div>
+                <div id="splash"></div>
             </div>
         </div>
     </div>

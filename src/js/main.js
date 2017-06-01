@@ -25,11 +25,12 @@ var App = App || {};
         tertiaryStructuresController = new TertiaryStructureController({}, [leftTertiaryStructureView, rightTertiaryStructureView]);
 
 
-    /* Render the view */
+    /* Render the views */
     sortingView.show();
     colorView.show();
 
     leftTertiaryStructureView.show();
+    rightTertiaryStructureView.show();
   }
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);

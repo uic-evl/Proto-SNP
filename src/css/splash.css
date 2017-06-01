@@ -46,7 +46,7 @@ input {
     transition: all 0.3s;
 }
 
-#popup-trigger-left, #popup-trigger-right, #popup-trigger-family {
+#popup-trigger {
     display: block;
     position: absolute;
     top: 50%;

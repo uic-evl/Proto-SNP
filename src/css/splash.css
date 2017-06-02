@@ -15,7 +15,7 @@ input {
     transition: all 0.3s;
 }
 
-#popup-trigger {
+#popup-trigger-molecule,  #popup-trigger-family{
     display: block;
     position: absolute;
     top: 50%;

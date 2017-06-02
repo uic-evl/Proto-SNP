@@ -1,20 +1,45 @@
 <html>
-
 <head>
+    <title>FixingTIM</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <!-- CSS LIB -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
+
+    <link rel="stylesheet" href="lib/css/jQuery-file-upload/jquery.fileupload.css">
+    <link rel="stylesheet" href="lib/css/d3-context-menu.css">
+    <link rel="stylesheet" href="//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css">
+
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/main.css">
-    <link rel="stylesheet" href="src/css/molecularViewer.css">
     <link rel="stylesheet" href="src/css/sequenceViewer.css">
     <link rel="stylesheet" href="src/css/splash.css">
+    <link rel="stylesheet" href="src/css/trendImageViewer.css">
 
+    <link rel="stylesheet" href="src/css/molecularViewer.css">
+    <link rel="stylesheet" href="src/css/colorLegend.css">
 
     <!-- JS LIB -->
-    <script type='text/javascript' src='lib/js/knockout-min.js'></script>
+    <script type='text/javascript' src='lib/js/bio-pv.js'></script>
+
     <script type='text/javascript' src='lib/js/d3.js'></script>
+    <script type='text/javascript' src='lib/js/d3-tip.js'></script>
+    <script type='text/javascript' src='lib/js/d3-context-menu.js'></script>
+    <script type='text/javascript' src='lib/js/colorbrewer.min.js'></script>
+
+    <script type='text/javascript' src='lib/js/lodash.min.js'></script>
+    <!--<script type='text/javascript' src='lib/js/knockout-min.js'></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-debug.js"></script>
+
+    <!-- jQuery File Upload-->
+    <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.ui.widget.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.iframe-transport.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.fileupload.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.fileupload-process.js'></script>
 
     <!-- Bootstrap -->
     <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
@@ -23,15 +48,18 @@
     <!-- JS SRC -->
     <script type='text/javascript' src='src/js/MVC/Event.js'></script>
     <script type='text/javascript' src='src/js/MVC/models/FilteringMenuModel.js'></script>
+
     <script type='text/javascript' src='src/js/MVC/views/FilteringMenuView.js'></script>
-    <script type='text/javascript' src='src/js/MVC/controllers/FilteringMenuController.js'></script>
     <script type='text/javascript' src='src/js/MVC/views/PrimaryStructureView.js'></script>
     <script type='text/javascript' src='src/js/MVC/views/TertiaryStructureView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/ProteinFamilyView.js'></script>
+
+    <script type='text/javascript' src='src/js/MVC/controllers/FilteringMenuController.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/PrimaryStructureController.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/TertiaryStructureController.js'></script>
+    <script type='text/javascript' src='src/js/MVC/controllers/ProteinFamilyController.js'></script>
 
     <script type='text/javascript' src='src/js/main.js'></script>
-
 </head>
 
 <body>
@@ -70,8 +98,7 @@
 <div class="container-fluid">
 
     <!-- 3D Molecule Viewers -->
-    <div  class="row molecularViewersRow">
-
+    <div class="row molecularViewersRow">
         <!-- Tertiary Viewer -->
         <div id="molecularViewers" data-bind="foreach: {data : views}">
             <div class="col-md-5" data-bind="attr: {id: $data._id}">
@@ -81,7 +108,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Sequence Viewer -->
         <div id="sequenceViewers" class="col-md-2 sequenceViewers">
             <p class="view">&nbsp;</p>
@@ -91,9 +117,30 @@
                 </div>
             </div>
         </div>
-
     </div>
 
+    <!-- Color Legend -->
+    <div class="row legendRow center-aligned">
+        <div class="col-md-4 col-md-offset-7">
+            <div id="colorLegend"></div>
+        </div>
+    </div>
+
+    <!-- Trend Image -->
+    <div class="row proteinFamilyRow">
+        <div class="col-md-12">
+            <!-- Trend Image View-->
+            <div class="row TrendImageView center-aligned">
+                <p class="view">Protein Family Viewer</p>
+                <div class="col-md-12 trend-column">
+                    <div id="trendImageViewer" class="trend-viewer">
+                        <!-- Select Protein Button -->
+                        <div id="trendSplash"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Trend Image View-->
+        </div>
 </div>
 
 </body>

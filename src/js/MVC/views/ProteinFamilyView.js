@@ -2,14 +2,15 @@
 
 var App = App || {};
 
-const TrendImageView = (function() {
+const ProteinFamilyView = (function() {
 
   /* initialize the self instance variable */
   let self = {
     height  : 0,
     width   : 0,
     domObj  : null,
-    canvasContext : null
+    canvasContext : null,
+    model : null
   };
 
 
@@ -74,7 +75,7 @@ const TrendImageView = (function() {
   }
 
 
-  function TrendImageView() {
+  function ProteinFamilyView() {
 
     this.render = function(){
       return new Promise(function(resolve, reject) {
@@ -108,14 +109,23 @@ const TrendImageView = (function() {
     this.redraw = function() {};
 
     this.initialize = function(model) {
-      this._model = model;
-      this._elements = bind_data(this._model.getFamily(), App.residueModel.getColor("side chain"));
+      self._model = model;
+      self._elements = bind_data(this._model.getFamily(), App.residueModel.getColor("side chain"));
     };
 
   }
 
-  TrendImageView.prototype = View.prototype;
+  ProteinFamilyView.prototype = {
+    show : function () {
 
-  return TrendImageView;
+      /* load the splash screen if there is no model data*/
+      if(!self._model){
+        $('#trendSplash').load("./src/html/familySplashTemplate.html");
+      }
+
+    }
+  };
+
+  return ProteinFamilyView;
 
 })();

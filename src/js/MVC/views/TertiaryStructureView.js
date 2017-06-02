@@ -21,7 +21,7 @@ const TertiaryStructureView = (function() {
 
       /* load the splash screen if there is no model data*/
       if(!this._model){
-        this._dom.find('#splash').load("./src/html/splashTemplate.html");
+        this._dom.find('#splash').load("./src/html/tertiarySplashTemplate.html");
       }
 
     }

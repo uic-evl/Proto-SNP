@@ -25,12 +25,16 @@ var App = App || {};
         rightPrimaryStructureView = new PrimaryStructureView(null, {id: "rightMolecularViewer-Sequence", position:"right"}),
         primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
 
+    let proteinFamilyView = new ProteinFamilyView(),
+        proteinFamilyController = new ProteinFamilyController();
+
     /* Render the views */
     sortingView.show();
     colorView.show();
 
     leftTertiaryStructureView.show();
     rightTertiaryStructureView.show();
+    proteinFamilyView.show();
   }
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);

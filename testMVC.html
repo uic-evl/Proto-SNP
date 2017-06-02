@@ -7,8 +7,10 @@
 
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/main.css">
-    <link rel="stylesheet" href="src/css/splash.css">
     <link rel="stylesheet" href="src/css/molecularViewer.css">
+    <link rel="stylesheet" href="src/css/sequenceViewer.css">
+    <link rel="stylesheet" href="src/css/splash.css">
+
 
     <!-- JS LIB -->
     <script type='text/javascript' src='lib/js/knockout-min.js'></script>
@@ -23,10 +25,11 @@
     <script type='text/javascript' src='src/js/MVC/models/FilteringMenuModel.js'></script>
     <script type='text/javascript' src='src/js/MVC/views/FilteringMenuView.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/FilteringMenuController.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/PrimaryStructureView.js'></script>
     <script type='text/javascript' src='src/js/MVC/views/TertiaryStructureView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/controllers/PrimaryStructureController.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/TertiaryStructureController.js'></script>
 
-    <script type='text/javascript' src='src/js/MVC/utilities/knockout-handlers.js'></script>
     <script type='text/javascript' src='src/js/main.js'></script>
 
 </head>
@@ -67,14 +70,28 @@
 <div class="container-fluid">
 
     <!-- 3D Molecule Viewers -->
-    <div id="molecularViewers" class="row molecularViewersRow"
-         data-bind="foreach: {data:views}">
-        <div class="col-md-5" data-bind="attr: {id: $data._id}">
-            <p class="view">&nbsp;</p>
-            <div id=leftMolecularViewer class="molecular-viewer">
-                <div id="splash"></div>
+    <div  class="row molecularViewersRow">
+
+        <!-- Tertiary Viewer -->
+        <div id="molecularViewers" data-bind="foreach: {data : views}">
+            <div class="col-md-5" data-bind="attr: {id: $data._id}">
+                <p class="view">&nbsp;</p>
+                <div class="molecular-viewer">
+                    <div id="splash"></div>
+                </div>
             </div>
         </div>
+
+        <!-- Sequence Viewer -->
+        <div id="sequenceViewers" class="col-md-2 sequenceViewers">
+            <p class="view">&nbsp;</p>
+            <div id="sequenceViewer" class="row" data-bind="foreach: {data : views}">
+                <div class="col-md-6 sequence-container black-background">
+                    <div data-bind="attr: {id: $data._id}"></div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </div>

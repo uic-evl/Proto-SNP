@@ -2,6 +2,7 @@
     background-color: black;
     height: 40%;
     overflow-y: hidden;
+    margin-right: 0;
 }
 
 .sequenceViewers {
@@ -13,7 +14,7 @@
 .sequence::-webkit-scrollbar
 {  display: none;  }
 
-.sequence-a, .sequence-b {
+.sequence-container {
     padding: 0;
     background-color: black;
 }
@@ -24,7 +25,8 @@
     display: inline-block;
     vertical-align: bottom;
     background: #fff;
-    height: 100%
+    height: 100%;
+    padding: 0;
 }
 
 .residue {

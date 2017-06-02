@@ -9,7 +9,8 @@ input {
     font-size: 14px;
 }
 
-.animate, .sBtn, .sBtn span, .overlaySplash .overlay-content, .overlaySplash .overlay-content .overlay-close, .overlaySplash .overlay-content .signup-form input {
+.animate, .sBtn, .sBtn span, .overlaySplash .overlay-content, .overlaySplash .overlay-content .overlay-close,
+.overlaySplash .overlay-content .signup-form input {
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 }

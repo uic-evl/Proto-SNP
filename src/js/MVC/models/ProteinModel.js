@@ -47,7 +47,7 @@ const ProteinModel = (function() {
     addProtein : function(metadata, file) {
       load_protein(metadata, file).then(function(structure){
         this.proteinStructure = structure;
-        this.proteinAdded.notify({structure:this.proteinStructure, name:metadata.name});
+        this.proteinAdded.notify({structure:this.proteinStructure, name:metadata.protein_name});
       }.bind(this));
     },
 

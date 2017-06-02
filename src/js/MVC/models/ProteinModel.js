@@ -36,7 +36,6 @@ const ProteinModel = (function() {
 
     this.proteinStructure = null;
     this.proteinAdded = new EventNotification(this);
-
   }
 
   ProteinModel.prototype = {
@@ -48,7 +47,7 @@ const ProteinModel = (function() {
     addProtein : function(metadata, file) {
       load_protein(metadata, file).then(function(structure){
         this.proteinStructure = structure;
-        this.proteinAdded.notify(this.proteinStructure);
+        this.proteinAdded.notify({structure:this.proteinStructure, name:metadata.name});
       }.bind(this));
     },
 

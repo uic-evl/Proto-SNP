@@ -60,6 +60,7 @@
     <script type='text/javascript' src='src/js/MVC/controllers/ProteinFamilyController.js'></script>
 
     <script type='text/javascript' src='src/js/MVC/utilities/fileUtilities.js'></script>
+    <script type='text/javascript' src='src/js/MVC/utilities/residueMappingUtility.js'></script>
     <script type='text/javascript' src='src/js/utilities/databaseMappingUtils.js'></script>
 
     <script type='text/javascript' src='src/js/main.js'></script>
@@ -106,7 +107,7 @@
         <div id="molecularViewers" data-bind="foreach: {data : views}">
             <div class="col-md-5" data-bind="attr: {id: $data._id}">
                 <p class="view">&nbsp;</p>
-                <div class="molecular-viewer">
+                <div id="pvDiv" class="molecular-viewer">
                     <div id="splash"></div>
                 </div>
             </div>

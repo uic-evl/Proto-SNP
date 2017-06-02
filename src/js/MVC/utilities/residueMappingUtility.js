@@ -3,7 +3,7 @@
 // Global Application variable
 var App = App || {};
 
-function ResidueModel() {
+function ResidueMappingUtility() {
 
   let colorCodes = {
     white : {code: "#fbfff4", rgba: [251.0, 255.0, 244.0, 255.0] },
@@ -68,17 +68,17 @@ function ResidueModel() {
     {abbr: "-", sideClass: "gap",       polarity: "gap",      name:"gap"}
     ];
 
-  let legend       = document.getElementById('colorLegend'),
-      legend_width = legend.clientWidth,
-      legend_height = 2.0 * App.labelHeight;
-
-  /* Color map legend */
-  let legend_svg = d3.select(legend)
-      .append("svg")
-      .attr("width", legend_width),
-
+  // let legend       = document.getElementById('colorLegend'),
+  //     legend_width = legend.clientWidth,
+  //     legend_height = 2.0 * App.labelHeight;
+  //
+  // /* Color map legend */
+  // let legend_svg = d3.select(legend)
+  //     .append("svg")
+  //     .attr("width", legend_width),
+  //
   /* The current color map*/
-  currentColorMap = null;
+  let currentColorMap = null;
 
 
   function colorBySideChainClass(residue) {
@@ -181,4 +181,5 @@ function ResidueModel() {
     getColor          : get_color_mapping
   }
 
-}
+};
+

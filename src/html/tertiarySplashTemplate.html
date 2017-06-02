@@ -3,10 +3,10 @@
 </button>
 
 <!-- Overlay for Select Protein Button -->
-<div class="overlay overlaySplash">
-    <div class="overlay-background"></div>
-    <div class="overlay-content">
-        <div class="fa fa-times fa-lg overlay-close"></div>
+<div class="overlay overlaySplash" id="splashOverlay">
+    <div class="overlay-background" id="overlayBackground"></div>
+    <div class="overlay-content" id="overlayContent">
+        <div class="fa fa-times fa-lg overlay-close" id="overlayClose"></div>
 
         <form class="signup-form" data-bind="submit: processProteinRequest">
             <div class="container-fluid">
@@ -23,12 +23,12 @@
                     <div class="col-md-12">
                         <span class="fileUpload">Choose a file: </span>
                         <br>
-                        <span id="upload-left" class="btn btn-success fileinput-button viewer-upload">
+                        <span id="upload" class="btn btn-success fileinput-button viewer-upload">
                                              <i class="fa fa-plus-square-o"></i><span> Select file...</span>
-                                            <input type="file" name="files[]" accept=".pdb">
+                                            <input id="fileUploadInput" type="file" name="files[]" accept=".pdb">
                         </span>
                         <br><br>
-                        <div class="files"></div>
+                        <div id="files" class="files"></div>
                     </div>
                 </div>
             </div>

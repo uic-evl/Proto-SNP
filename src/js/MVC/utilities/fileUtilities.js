@@ -83,6 +83,7 @@ const FileUtilities = function(){
   }
 
 
+  /* Entry into selecting which family file has been uploaded*/
   function parse(file_data, type){
     switch(type){
       case "fasta":
@@ -93,8 +94,79 @@ const FileUtilities = function(){
 
   }
 
+
+  function file_upload_setup(viewer, cb){
+    /* Setup the file-upload callback */
+    $(viewer).fileupload({
+      url: "",
+      dataType: 'json',
+      autoUpload: false
+    })
+    /* Handle the upload callbacks */
+        .on('fileuploadadd', function (e, data) {
+          // The select button
+          let select = $(this).prop('disabled', true);
+          // uploaded file
+          let file = data.files[0];
+
+          /*Upload Button - loads the file into the viewer*/
+          let uploadButton = $('<button/>')
+              .addClass('btn btn-primary uploadPDB')
+              .text('Upload')
+              .on('click', function () {
+
+                // JS File reader to parse the uploaded file
+                let reader = new FileReader(),
+                    /* Save the file name in the closure scope */
+                    fileName = file.name.split('.')[0];
+
+                /* Event to fire once the file loads*/
+                reader.addEventListener("load", function () {
+                  /* Pass the file to be processed by the model */
+                  cb({protein_name: fileName}, this.result);
+                }, false);
+
+                // parse the file as text
+                reader.readAsText(file);
+
+                // Remove the div and buttons
+                $(this).parent().remove();
+                // abort the upload (we aren't passing it to a server)
+                data.abort();
+
+                // re-enable the select protein button
+                select.prop('disabled', false);
+              });
+
+          /* Cancel button -- removes the chosen file and removes the div items*/
+          let cancelButton = $('<button/>')
+              .addClass('btn btn-primary uploadPDB')
+              .text('Cancel')
+              .on('click', function () {
+                let $this = $(this),
+                    data = $this.data();
+                $this.parent().remove();
+                data.abort();
+                select.prop('disabled', false);
+              });
+
+          /* Create a div and attach it beneath the Choose File button */
+          data.context = $('<div/>').appendTo('#files');
+          let node = $('<p/>')
+              .append($('<span/>').text(file.name));
+
+          /* Append the Upload and Cancel Buttons */
+          node.appendTo(data.context)
+              .append(uploadButton.clone(true).data(data))
+              .append(cancelButton.clone(true).data(data));
+        })
+        .prop('disabled', !$.support.fileInput)
+        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+  }
+
   return {
-   parseFile: parse
+   parseFile   : parse,
+   uploadSetup : file_upload_setup
   }
 
 };

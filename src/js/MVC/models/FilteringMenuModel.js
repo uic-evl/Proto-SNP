@@ -24,7 +24,6 @@ const FilteringMenuModel = (function() {
 
     setSelectedElement : function (element) {
       let previousIndex;
-      console.log(element);
       previousIndex = this._selectedElement;
       this._selectedElement = element;
       this.selectedElementChanged.notify({ previous : previousIndex });

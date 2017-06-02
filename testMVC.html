@@ -42,11 +42,11 @@
     <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.fileupload-process.js'></script>
 
     <!-- Bootstrap -->
-    <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
 
     <!-- JS SRC -->
     <script type='text/javascript' src='src/js/MVC/Event.js'></script>
+    <script type='text/javascript' src='src/js/MVC/models/ProteinModel.js'></script>
     <script type='text/javascript' src='src/js/MVC/models/FilteringMenuModel.js'></script>
 
     <script type='text/javascript' src='src/js/MVC/views/FilteringMenuView.js'></script>
@@ -58,6 +58,8 @@
     <script type='text/javascript' src='src/js/MVC/controllers/PrimaryStructureController.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/TertiaryStructureController.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/ProteinFamilyController.js'></script>
+
+    <script type='text/javascript' src='src/js/MVC/utilities/fileUtilities.js'></script>
 
     <script type='text/javascript' src='src/js/main.js'></script>
 </head>
@@ -134,7 +136,7 @@
                 <p class="view">Protein Family Viewer</p>
                 <div class="col-md-12 trend-column">
                     <div id="trendImageViewer" class="trend-viewer">
-                        <!-- Select Protein Button -->
+                        <!-- Select Alignment Button -->
                         <div id="trendSplash"></div>
                     </div>
                 </div>

@@ -26,6 +26,8 @@ const TertiaryStructureView = (function() {
       /* Close the splash screen */
       $('#'+self._id)
         .find('#splash').remove();
+
+      this.initialize(protein);
     });
   }
 
@@ -68,7 +70,34 @@ const TertiaryStructureView = (function() {
       }
     },
 
-    initialize : function() { }
+    initialize : function() {
+
+      /* Remove the black background*/
+      d3.select(molecularViewer.parentNode).classed("black-background", false);
+
+      /* create a label to display selections */
+      let staticLabel = document.createElement('div');
+      staticLabel.innerHTML = '&nbsp;';
+      staticLabel.className = 'static-label';
+
+      /* Add the label to the model */
+      molecularViewer.domObj.appendChild(staticLabel);
+
+      /* check if viewing options were passed in */
+      let options = options || {};
+
+      /* get/save the width and height of the given DOM element */
+      molecularViewer.width = parseInt(d3.select(molecularViewer.domObj).style('width'));
+      molecularViewer.height = parseInt(d3.select(molecularViewer.domObj).style('height'));
+
+      /* add the width and height to the options */
+      options.width = molecularViewer.width;
+      options.height = molecularViewer.height;
+
+      /* insert the molecularViewer under the DOM element */
+      molecularViewer.pvViewer = pv.Viewer(molecularViewer.domObj, options);
+
+    }
 
 
   };

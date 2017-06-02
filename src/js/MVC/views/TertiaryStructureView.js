@@ -25,8 +25,7 @@ const TertiaryStructureView = (function() {
 
       /* Close the splash screen */
       $('#'+self._id)
-        .find('#splashOverlay').removeClass('open')
-        .find("#popup-trigger-molecule").hide();
+        .find('#splash').remove();
     });
   }
 
@@ -67,8 +66,9 @@ const TertiaryStructureView = (function() {
               })
         });
       }
-    }
+    },
 
+    initialize : function() { }
 
 
   };

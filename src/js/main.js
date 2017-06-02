@@ -10,6 +10,7 @@ var App = App || {};
 
     /* File utility setup */
     App.fileUtilities = new FileUtilities();
+    App.dataUtilities = new DatabaseMappingUtils();
 
     let colorModel = new FilteringMenuModel(['Side Chain Class', 'Side Chain Polarity', 'Frequency (Family Viewer)']),
       colorView = new FilteringMenuView(colorModel, { 'list' : $('#coloring_list') }),

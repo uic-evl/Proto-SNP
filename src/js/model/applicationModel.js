@@ -22,62 +22,6 @@ function ApplicationModel() {
   };
 
 
-  /* Determines which method to load the protein */
-  function load_protein(viewer, file){
-    // if the data method is from an uploaded file
-    if(file){
-      return load_from_upoaded_file(file, viewer);
-    }
-    // else from a download
-    else {
-
-      /* create a variable to use to test a promise */
-      let protein_name = viewer.name;
-
-      /* If the name is greater than 4 characters, it is not PDB format*/
-      if(viewer.name.length > 4) {
-        protein_name = App.dataUtils.mneumonicToPDB(viewer.name);
-      }
-
-      /* Fetch/Load the model from RCMP PDB */
-      return Promise.resolve(protein_name)
-        .then(function(name){
-          return load_PDB_From_RCMB(name, viewer);
-        })
-        .catch(function() {
-          /* Reject the operation */
-          return Promise.reject(null);
-        });
-    }
-  }
-
-
-  /* Load the protein from RCMB */
-  function load_PDB_From_RCMB(proteinName, pointer){
-    /* perform an async download from RCMB to fetch the requested PDB File */
-    return new Promise(function(resolve, reject){
-      pv.io.fetchPdb('https://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {
-        /*Save the protein structure*/
-        pointer.structure = structure;
-        /* Resolve the promise */
-        resolve(pointer.structure);
-      });
-    });
-  }
-
-
-  /* Load the protein from the uploaded file */
-  function load_from_upoaded_file(file, pointer){
-    /* perform an async loading of the uploaded file */
-    return new Promise(function(resolve, reject){
-      /*Save the protein structure*/
-      pointer.structure = pv.io.pdb(file, {loadAllModels:true})[0];
-      /* Resolve the promise */
-      resolve(pointer.structure);
-    });
-  }
-
-
   /* Render the 3D and Sequence Views */
   function render_views(structure) {
     /* No structure was returned */
@@ -113,7 +57,7 @@ function ApplicationModel() {
 
 
   /* Form callback to process the request to load a new protein */
-  function fetch_and_store_protein(formData, file) {
+  function fetch_and_store_protein(formData, file, viewer) {
     // view variable
     let viewOptions = {};
 

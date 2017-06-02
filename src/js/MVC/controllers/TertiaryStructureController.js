@@ -12,7 +12,8 @@ const TertiaryStructureController = (function() {
     this._views.forEach(function(view, idx){
       /* Add Protein Callback */
       view.fileUploaded.attach(function(sender, args) {
-        sender._model.addProtein(args);
+        console.log(args);
+        sender._model.addProtein(args.metaData, args.file);
       });
     });
 

@@ -164,9 +164,36 @@ const FileUtilities = function(){
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
   }
 
+  /* Load the protein from RCMB */
+  function load_PDB_From_RCMB(proteinName, pointer){
+    /* perform an async download from RCMB to fetch the requested PDB File */
+    return new Promise(function(resolve, reject){
+      pv.io.fetchPdb('https://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {
+        /*Save the protein structure*/
+        pointer.structure = structure;
+        /* Resolve the promise */
+        resolve(pointer.structure);
+      });
+    });
+  }
+
+
+  /* Load the protein from the uploaded file */
+  function load_from_uploaded_PDB(file, pointer){
+    /* perform an async loading of the uploaded file */
+    return new Promise(function(resolve, reject){
+      /*Save the protein structure*/
+      pointer.structure = pv.io.pdb(file, {loadAllModels:true})[0];
+      /* Resolve the promise */
+      resolve(pointer.structure);
+    });
+  }
+
   return {
-   parseFile   : parse,
-   uploadSetup : file_upload_setup
+   parseAlignmentFile   : parse,
+   uploadPDB            : load_from_uploaded_PDB,
+   downloadFromRCMB     : load_PDB_From_RCMB,
+   uploadSetup          : file_upload_setup
   }
 
 };

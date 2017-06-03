@@ -12,9 +12,14 @@ const TertiaryStructureController = (function() {
     this._views.forEach(function(view, idx){
       /* Add Protein Callback */
       view.fileUploaded.attach(function(sender, args) {
-        console.log(args);
         sender._model.addProtein(args.metaData, args.file);
       });
+
+      /* Add residue selection */
+      view.residueSelected.attach(function(sender, args) {
+        sender._model.selectResidue(args.selection);
+      });
+
     });
 
     /*  Bind the view with knockoutJS */

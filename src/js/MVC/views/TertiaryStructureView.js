@@ -18,10 +18,10 @@ function TertiaryStructureView(model, element) {
 
   /* The user has uploaded or downloaded a PDB file */
   this.fileUploaded = new EventNotification(this);
+  this.residueSelected = new EventNotification(this);
 
   /* Attach the listeners */
   this._model.proteinAdded.attach(function (sender, protein) {
-
     /* Close the splash screen */
     $('#' + self._id)
       .find('#splash').remove();
@@ -29,6 +29,15 @@ function TertiaryStructureView(model, element) {
     self.initialize();
     self.render(protein.structure, protein.name)
   });
+
+  /* Update the model once the selection has been added to the model */
+  self._model.residueSelected.attach(function(sender, selection){
+    self.picked.node().setSelection(selection);
+    self.pvViewer.requestRedraw();
+  });
+
+  /* Mixin the utilities */
+  _.mixin(self, new pvUtils(self));
 }
 
 TertiaryStructureView.prototype = {
@@ -78,11 +87,11 @@ TertiaryStructureView.prototype = {
     d3.select(this._dom[0]).classed("black-background", false);
 
     /* create a label to display selections */
-    let staticLabel = document.createElement('div');
-    staticLabel.innerHTML = '&nbsp;';
-    staticLabel.className = 'static-label';
+    this.staticLabel = document.createElement('div');
+    this.staticLabel.innerHTML = '&nbsp;';
+    this.staticLabel.className = 'static-label';
     /* Add the label to the model */
-    dom.appendChild(staticLabel);
+    dom.appendChild(this.staticLabel);
 
     /* set the options for the PV viewer*/
     let options = {
@@ -95,6 +104,13 @@ TertiaryStructureView.prototype = {
 
     /* insert the molecularViewer under the DOM element */
     this.pvViewer = pv.Viewer(dom, options);
+
+    /* Setup the event callbacks */
+    dom.addEventListener('mousemove', this.mouseMoveEvent);
+    this.pvViewer.on('click', this.mouseClickEvent);
+
+    /* Register the enter key to reset the selections of the view */
+    keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);
   },
 
   /* Render the title of the viewer */
@@ -125,7 +141,7 @@ TertiaryStructureView.prototype = {
     /* Display the protein in the specified rendering, coloring by the specified property */
     // switch(App.renderingStyle){
     //   case "cartoon":
-    this.pvViewer.cartoon(proteinName, structure, {color: this.colorProteinBy()});
+    this.geom = this.pvViewer.cartoon(proteinName, structure, {color: this.colorProteinBy()});
     //     break;
     // }
 
@@ -134,10 +150,23 @@ TertiaryStructureView.prototype = {
     this.pvViewer.centerOn(structure);
     // auto zoom to fit
     this.pvViewer.autoZoom();
+  },
+
+  /* Recolor the protein according to the current coloring scheme */
+  recolor : function(){
+
+    let geometry = this.geom(),
+        viewer   = this.pvViewer;
+
+    /* Check to make sure the view is active*/
+    if(geometry){
+      /* Recolor */
+      geometry.colorBy(this.colorProteinBy());
+      /* Redraw */
+      viewer.requestRedraw();
+    }
   }
 };
 
 return TertiaryStructureView;
-
-})
-();
+})();

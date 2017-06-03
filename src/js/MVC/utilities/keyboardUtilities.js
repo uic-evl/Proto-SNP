@@ -4,7 +4,7 @@
 var App = App || {};
 
 // Application-wide callback handler
-App.ApplicationCallbackListener = (function() {
+const keyboardUtilities = (function() {
 
   let registeredKeys = {};
 

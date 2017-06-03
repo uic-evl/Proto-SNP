@@ -35,13 +35,31 @@ const ProteinModel = (function() {
   function ProteinModel() {
 
     this.proteinStructure = null;
+    this.selectedResidue = null;
+    this.previousSelectedResidue = null;
+
     this.proteinAdded = new EventNotification(this);
+    this.residueSelected = new EventNotification(this);
+
   }
 
   ProteinModel.prototype = {
+    /* Accessor to get the underlying structure in the molecularViewer */
+    getStructure: function() { return this.proteinStructure; },
 
-    getProteinStructure : function () {
-      return this.proteinStructure;
+    /* Accessor to get the underlying geometry in the molecularViewer */
+    getGeometry: function() { return this.proteinStructure.geom; },
+
+    getSequence: function(structure, chain) {
+      // Array to store the sequence
+      let seq = [];
+
+      /* Iterate over the residues of the chain and add them to the array*/
+      structure.chains()[chain || 0].eachResidue(function(res){
+        seq.push(res.name());
+      });
+      // return the sequence
+      return seq;
     },
 
     addProtein : function(metadata, file) {
@@ -50,6 +68,15 @@ const ProteinModel = (function() {
         this.proteinAdded.notify({structure:this.proteinStructure, name:metadata.protein_name});
       }.bind(this));
     },
+
+    selectResidue : function(selection) {
+      this.previousSelectedResidue = this.selectedResidue;
+      this.selectedResidue = selection;
+      /* Notify the listeners that the selection has been changed */
+      this.residueSelected.notify(this.selectedResidue);
+    },
+
+    getResidueSelection : function() { return this.selectedResidue },
 
     isEmpty : function() {
       return !!this.proteinStructure;

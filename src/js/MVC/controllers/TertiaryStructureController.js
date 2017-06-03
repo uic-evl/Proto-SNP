@@ -23,7 +23,7 @@ const TertiaryStructureController = (function() {
     });
 
     /*  Bind the view with knockoutJS */
-    ko.applyBindings({views: this._views}, $("#molecularViewers")[0]);
+    ko.applyBindings({views: this._views}, $("#molecularViewerTemplate")[0]);
   }
 
   TertiaryStructureController.prototype = {};

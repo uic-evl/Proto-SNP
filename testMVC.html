@@ -62,7 +62,7 @@
     <script type='text/javascript' src='src/js/MVC/utilities/fileUtilities.js'></script>
     <script type='text/javascript' src='src/js/MVC/utilities/keyboardUtilities.js'></script>
     <script type='text/javascript' src='src/js/MVC/utilities/pvUtilities.js'></script>
-    <script type='text/javascript' src='src/js/MVC/utilities/residueMappingUtility.js'></script>
+    <script type='text/javascript' src='src/js/MVC/utilities/residueMappingUtilities.js'></script>
     <script type='text/javascript' src='src/js/utilities/databaseMappingUtils.js'></script>
 
     <script type='text/javascript' src='src/js/main.js'></script>
@@ -105,22 +105,28 @@
 
     <!-- 3D Molecule Viewers -->
     <div class="row molecularViewersRow">
-        <!-- Tertiary Viewer -->
-        <div id="molecularViewers" data-bind="foreach: {data : views}">
-            <div class="col-md-5" data-bind="attr: {id: $data._id}">
-                <p class="view">&nbsp;</p>
-                <div id="pvDiv" class="molecular-viewer">
-                    <div id="splash"></div>
+        <div id="molecularViewerTemplate" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
+
+        <script type="text/html" id="molecularViewers">
+            <!-- Tertiary Viewer -->
+                <div class="col-md-5" data-bind="attr: {id: $data._id}">
+                    <p class="view">&nbsp;</p>
+                    <div id="pvDiv" class="molecular-viewer">
+                        <div id="splash"></div>
+                    </div>
                 </div>
-            </div>
-        </div>
+        </script>
+
         <!-- Sequence Viewer -->
-        <div id="sequenceViewers" class="col-md-2 sequenceViewers">
+        <div class="col-md-2 sequenceViewers">
             <p class="view">&nbsp;</p>
-            <div id="sequenceViewer" class="row" data-bind="foreach: {data : views}">
-                <div class="col-md-6 sequence-container black-background">
-                    <div data-bind="attr: {id: $data._id}"></div>
-                </div>
+            <div id="sequenceViewer" class="row">
+                <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
+                <script type="text/html" id="sequenceViewers">
+                    <div class="col-md-6 sequence-container black-background">
+                        <div data-bind="attr: {id: $data._id}"></div>
+                    </div>
+                </script>
             </div>
         </div>
     </div>
@@ -147,8 +153,9 @@
             </div>
             <!-- End Trend Image View-->
         </div>
-</div>
+    </div>
 
+</div>
 </body>
 
 </html>

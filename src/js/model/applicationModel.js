@@ -58,30 +58,6 @@ function ApplicationModel() {
 
   /* Form callback to process the request to load a new protein */
   function fetch_and_store_protein(formData, file, viewer) {
-    // view variable
-    let viewOptions = {};
-
-    viewOptions.view = App.leftMolecularViewer;
-
-    // model pointers
-    viewOptions.modelPointer   = self.leftProtein;
-    viewOptions.siblingPointer = self.rightProtein;
-
-    // left or right view
-    viewOptions.viewPosition    =  "#";
-    viewOptions.viewPosition += (formData.position) ? formData.position : formData.id.split('-')[0];
-    viewOptions.siblingPosition = "#right";
-
-    // Determine the viewer
-    if(viewOptions.viewPosition === "#right") {
-      /* Swap the views */
-      viewOptions.view           = App.rightMolecularViewer;
-      /* Swap the views */
-      viewOptions.modelPointer   = self.rightProtein;
-      viewOptions.siblingPointer = self.leftProtein;
-      /* Swap the positions */
-      viewOptions.siblingPosition    = "#left";
-    }
 
     /* Parse the input */
     viewOptions.modelPointer.name = (formData.protein_name) ? formData.protein_name : $(formData).serialize().split('=')[1];

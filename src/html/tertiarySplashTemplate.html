@@ -8,14 +8,16 @@
     <div class="overlay-content" id="overlayContent">
         <div class="fa fa-times fa-lg overlay-close" id="overlayClose"></div>
 
-        <form class="signup-form" data-bind="submit: processProteinRequest">
+        <div id="splashTemplate" data-bind="template: {name: 'uploadForm'}"></div>
+        <script type="text/html" id="uploadForm">
+            <form class="signup-form" data-bind="submit: $data.downloadPDB">
             <div class="container-fluid">
                 <br>
                 <div class="row">
                     <div class="col-md-12">
                         <label for="protein-name">PDB Code (ex: 2YPI):</label>
                         <input id="protein-name" type="text" name="name" autocomplete="off"/>
-                        <button class="sBtn sBtn-outline submit-btn"><span>Download</span></button>
+                        <button id="downloadButton" class="sBtn sBtn-outline submit-btn"><span>Download</span></button>
                     </div>
                 </div>
                 <br><br>
@@ -33,5 +35,6 @@
                 </div>
             </div>
         </form>
+        </script>
     </div>
 </div>

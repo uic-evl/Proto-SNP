@@ -177,7 +177,6 @@ const FileUtilities = function(){
     });
   }
 
-
   /* Load the protein from the uploaded file */
   function load_from_uploaded_PDB(file, pointer){
     /* perform an async loading of the uploaded file */

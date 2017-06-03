@@ -70,13 +70,22 @@ TertiaryStructureView.prototype = {
           splash_trigger.show();
         });
 
-        /* Setup the uoload callback for files */
+        /* Setup the upload callback for files */
         App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"),
           function (metadata, result) {
             view.fileUploaded.notify({metaData: metadata, file: result});
-          })
+          });
+
+        ko.applyBindings(view, splash.find("#splashTemplate")[0]);
+
       });
     }
+  },
+
+  /* Accept the data from the download form  */
+  downloadPDB: function(formData) {
+    this.fileUploaded.notify({metaData: {protein_name:$(formData).serialize().split('=')[1]}, file: null});
+    return false;
   },
 
   initialize: function () {

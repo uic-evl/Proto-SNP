@@ -11,7 +11,7 @@ const PrimaryStructureController = (function() {
     let _this = this;
 
     /*  Bind the view with knockoutJS */
-    ko.applyBindings({views: this._views}, $("#sequenceViewers")[0]);
+    ko.applyBindings({views: this._views}, $("#sequenceViewerTemplate")[0]);
 
   }
 

@@ -20,25 +20,28 @@ const ProteinFamilyModel = (function() {
     });
   }
 
-
-  function ProteinFamilyModel(raw_data) {
-
-    this._rawData = App.fileUtilities.parse(raw_data.data, raw_data.type);
-    map_trend_image_data(this._rawData).then(function(parsed_data) {
-      this._parsedData = parsed_data;
-    });
+  function ProteinFamilyModel() {
 
     this._selectedProtein = null;
     this._selectedResidues = {left: [], right: []};
     this._proteinSorting = "";
 
-    /* Update Events  */
+    /* Update Events */
+    this.proteinFamilyAdded = new EventNotification(this);
     this.selectedProteinChanged = new EventNotification(this);
     this.selectedResiduesChanged = new EventNotification(this);
     this.proteinSortingChanged = new EventNotification(this);
   }
 
   ProteinFamilyModel.prototype = {
+
+    setFamily : function(data, type) {
+      this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
+      map_trend_image_data(this._rawData).then(function(parsed_data) {
+        this._parsedData = parsed_data;
+        this.proteinFamilyAdded.notify({data: this._parsedData});
+      }.bind(this));
+    },
 
     getFamily: function() {
       return this._parsedData;
@@ -72,6 +75,10 @@ const ProteinFamilyModel = (function() {
       this._proteinSorting = sorting;
       this.proteinSortingChanged.notify({algorithm: sorting});
       return this;
+    },
+
+    isEmpty : function() {
+      return !!this._parsedData;
     }
   };
 

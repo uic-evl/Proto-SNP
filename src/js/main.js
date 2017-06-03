@@ -32,8 +32,9 @@ var App = App || {};
         rightPrimaryStructureView = new PrimaryStructureView(null, {id: "rightMolecularViewer-Sequence", position:"right"}),
         primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
 
-    let proteinFamilyView = new ProteinFamilyView(),
-        proteinFamilyController = new ProteinFamilyController();
+    let proteinFamilyModel = new ProteinFamilyModel(),
+        proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
+        proteinFamilyController = new ProteinFamilyController(proteinFamilyModel, proteinFamilyView);
 
     /* Render the views */
     sortingView.show();

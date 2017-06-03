@@ -41,6 +41,7 @@ function TertiaryStructureView(model, element) {
 }
 
 TertiaryStructureView.prototype = {
+
   show: function () {
 
     let view = this;

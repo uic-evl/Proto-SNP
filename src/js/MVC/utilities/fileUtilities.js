@@ -6,10 +6,18 @@ var App = App || {};
 // Utilities class generic operations and conversions
 const FileUtilities = function(){
 
+  function split_sequence(family){
+    /* Convert the family object to an array */
+    family = _.values(family);
+    family.forEach((protein) => { protein.sequence = protein.sequence.split(''); });
+    return family;
+  }
+
   /* Parse the MSF File */
   function parse_MSF(file_data) {
     /* Parse the lines of the file */
-    let lines = file_data.split('\n');
+    let lines = file_data.split('\n'),
+        family = {};
 
     /* Iterate over each line*/
     lines.forEach(function(line, idx){
@@ -26,7 +34,7 @@ const FileUtilities = function(){
       /* If parsed, create the dictionary for the entry  */
       if(parsedLine){
         /* Create the dictionary entry */
-        self.family[parsedLine[1]] = {
+        family[parsedLine[1]] = {
           name                   : parsedLine[1],
           firstResiduePosition   : parseInt(parsedLine[2]),
           lastResiduePosition    : parseInt(parsedLine[3]),
@@ -42,20 +50,18 @@ const FileUtilities = function(){
         /* Get the data */
         parsedLine = line.match(regex_data);
         /* Append the sequence to the dictionary entry*/
-        self.family[parsedLine[1]].sequence += _.toUpper(parsedLine[4].split(' ').join(''));
+        family[parsedLine[1]].sequence += _.toUpper(parsedLine[4].split(' ').join(''));
       }
     });
-    /* Convert the family object to an array */
-    self.family = _.values(self.family);
-    self.family.forEach((protein) => { protein.sequence = protein.sequence.split(''); });
+    return split_sequence(family);
   }
 
 
   /* Parse a FASTA File */
   function parse_FASTA(file_data) {
     /* Parse the lines of the file */
-    let lines = file_data.split('>');
-
+    let lines = file_data.split('>'),
+      family = {};
     /* Iterate over each line*/
     lines.forEach(function(line, idx){
       // If an empty line, continue
@@ -68,7 +74,7 @@ const FileUtilities = function(){
       /* If parsed, create the dictionary for the entry  */
       if(parsedLine){
         /* Create the dictionary entry */
-        self.family[parsedLine[1]] = {
+        family[parsedLine[1]] = {
           name                   : parsedLine[2],
           full_name              : parsedLine[1],
           length                 : parsedLine[3].length,
@@ -77,9 +83,7 @@ const FileUtilities = function(){
         };
       }
     });
-    /* Convert the family object to an array */
-    self.family = _.values(self.family);
-    self.family.forEach((protein) => { protein.sequence = protein.sequence.split(''); });
+    return split_sequence(family);
   }
 
 
@@ -91,7 +95,6 @@ const FileUtilities = function(){
       case "msf":
         return parse_MSF(file_data);
     }
-
   }
 
 
@@ -164,6 +167,41 @@ const FileUtilities = function(){
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
   }
 
+  // initialize the family file uploader
+  function family_upload_setup(viewer, cb) {
+    /* Setup the fileupload callback */
+    $(viewer).fileupload({
+      url: "",
+      dataType: 'json',
+      autoUpload: false
+    })
+    /* Handle the upload callbacks */
+        .on('fileuploadadd', function (e, data) {
+          // uploaded file
+          let file = data.files[0],
+              extension = file.name.split('.').pop().toLowerCase();
+
+          // JS File reader to parse the uploaded file
+          let reader = new FileReader();
+
+          /* Callback to loading the file */
+          reader.addEventListener("load", function () {
+            /* Pass the file to be processed by the model */
+            cb(this.result, extension);
+          }, false);
+
+          // parse the file as text
+          reader.readAsText(file);
+
+          // abort the upload (we aren't passing it to a server)
+          data.abort();
+
+        })
+        .prop('disabled', !$.support.fileInput)
+        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+  }
+
+
   /* Load the protein from RCMB */
   function load_PDB_From_RCMB(proteinName, pointer){
     /* perform an async download from RCMB to fetch the requested PDB File */
@@ -177,6 +215,7 @@ const FileUtilities = function(){
     });
   }
 
+
   /* Load the protein from the uploaded file */
   function load_from_uploaded_PDB(file, pointer){
     /* perform an async loading of the uploaded file */
@@ -188,11 +227,14 @@ const FileUtilities = function(){
     });
   }
 
+
+
   return {
    parseAlignmentFile   : parse,
    uploadPDB            : load_from_uploaded_PDB,
    downloadFromRCMB     : load_PDB_From_RCMB,
-   uploadSetup          : file_upload_setup
+   uploadSetup          : file_upload_setup,
+   familyUploadSetup    : family_upload_setup
   }
 
 };

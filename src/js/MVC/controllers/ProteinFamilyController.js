@@ -4,11 +4,16 @@ var App = App || {};
 
 const ProteinFamilyController = (function() {
 
-  function ProteinFamilyController(model, views) {
+  function ProteinFamilyController(model, view) {
     this._model = model;
-    this._views = views;
+    this._view = view;
 
     let _this = this;
+
+    /* Add residue selection */
+    this._view.fileUploaded.attach(function(sender, args) {
+      sender._model.setFamily(args.data, args.type);
+    });
 
   }
 

@@ -9,15 +9,16 @@ const ProteinFamilyView = (function() {
     let self = this;
 
     self._model = model;
-    self.residueMappingUtility = new ResidueMappingUtility();
     self._id = element.id;
     self._dom = d3.select("#"+self._id);
+    self.residueMappingUtility = new ResidueMappingUtility();
 
     /* The user has uploaded or downloaded an alignment file */
-    this.fileUploaded = new EventNotification(this);
+    self.fileUploaded = new EventNotification(this);
+    self.imageRendered = new EventNotification(this);
 
     /* Bind the protein family listener */
-    this._model.proteinFamilyAdded.attach(function(sender, msg){
+    self._model.proteinFamilyAdded.attach(function(sender, msg){
 
       let family = msg.family;
 
@@ -28,16 +29,35 @@ const ProteinFamilyView = (function() {
           data_model = d3Utils.bind_data({sequences: family.data, names: family.index}, colorMapping, self.residue_glyph_size);
 
       self.render(data_model).then(function () {
-        /* Add the brushes to the canvas */
-        //add_brushes(trendImageViewer.brushSVG);
-        /* Render the brushes */
-        //render_brushes(trendImageViewer.initHorizontalBrush, trendImageViewer.initVerticalBrushes);
+
+        let verticalPaddleSize   = 6,
+            horizontalPaddleSize = 1;
+
+        self.imageRendered.notify({
+          brushes : [
+            {orientation:App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
+              extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
+              position: [0, self.residue_glyph_size]}
+              // ,
+            // {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-left",
+            //   extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
+            //   position: [0, self.residue_glyph_size * self.verticalPaddleSize]},
+            // {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-right",
+            //   extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
+            //   position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
+          ]
+        });
+
         /* Create the legend */
         //App.residueModel.createColorLegend();
       });
-
-
     });
+
+    /* Getter for the x-Axis scale */
+    self.getXAxisScale = function() { return self.xScale; };
+
+    /* Getter for the y-Axis scale */
+    self.getYAxisScale = function() { return self.yScale; };
 
     /* Set the dimensions of the data */
     self.set_data_dimensions_sizes = function(family_data) {
@@ -243,7 +263,33 @@ const ProteinFamilyView = (function() {
               return colorMapping(d, highestFreq).code;
             })
       }
+    },
+
+    attachBrushes: function(brushViews) {
+      /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
+      let brushSVG = d3Utils.create_brush_svg(this._dom, this.width, this.height)
+          .append("g")
+          .attr("class", "brushes")
+          .style("width", this.width)
+          .style("height", this.residue_glyph_size * this.y_axis_length);
+      /* Attach the brushes to the svg */
+      brushViews.forEach(function(view){
+        let brush = view.getBrush(),
+            brushObj = brushSVG.append("g")
+              .attr("class", view.brushObj.getBrushClass)
+              .call(brush)
+              .call(brush.move, view.getInitialPosition());
+        /*render the brush */
+        view.render(brushObj);
+      });
+    },
+
+    enableBrushing : function() {
+      // /* Once the column frequency sorting is complete, enable the brushing callbacks*/
+      // trendImageViewer.column_frequencies.getFrequencyPromise()
+      //     .then(enable_vertical_brushing);
     }
+
   };
   return ProteinFamilyView;
 

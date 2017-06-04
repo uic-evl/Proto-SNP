@@ -62,9 +62,10 @@ const ProteinFamilyModel = (function() {
       return this._selectedProtein;
     },
 
-    setSelectedProtein: function (protein) {
-      this._selectedProtein = protein;
-      this.selectedProteinChanged.notify({protein: protein});
+    setSelectedProtein: function (proteinName) {
+      this._selectedProtein = proteinName;
+      /* Notify all listeners */
+      this.selectedProteinChanged.notify({selection: this._selectedProtein});
       return this;
     },
 

@@ -3,13 +3,13 @@
 // Global Application variable
 var App = App || {};
 
-const d3Utils = function (context) {
+const d3Utils = function () {
 
   return {
     /* Clear the chart DOM of all elements */
     clear_chart_dom : function (domObj) {
       domObj.selectAll().remove();
-  },
+    },
 
     create_chart_canvas : function(domObj, width, height) {
       let canvas = domObj
@@ -22,6 +22,16 @@ const d3Utils = function (context) {
       return canvas.node().getContext('2d');
     },
 
+    /* Create the trend image brush SVG */
+    create_brush_svg: function(domObj, width, height) {
+      return domObj
+          .append("svg")
+          .attr("class", "trendImage")
+          .attr("id", "trendSVG")
+          .style("width", width)
+          .style("height", height);
+    },
+
     create_svg_overlay : function(domOb, width, height) {
       let overview = domObj
           .append('canvas')
@@ -31,16 +41,16 @@ const d3Utils = function (context) {
       return overview.node().getContext('2d');
     },
 
-     create_chart_back_buffer : function(width, height) {
-        let backBufferCanvas = document.createElement('canvas');
-        return d3.select(backBufferCanvas)
-            .attr("width", width)
-            .attr("height", height)
-            .node().getContext('2d');
-     },
+    create_chart_back_buffer : function(width, height) {
+      let backBufferCanvas = document.createElement('canvas');
+      return d3.select(backBufferCanvas)
+          .attr("width", width)
+          .attr("height", height)
+          .node().getContext('2d');
+    },
 
     /* Bind the data to a fake dom */
-     bind_data : function(family, colorScale, size) {
+    bind_data : function(family, colorScale, size) {
       /* Fake DOM*/
       let customBase = document.createElement('custom'),
           custom = d3.select(customBase),
@@ -79,7 +89,7 @@ const d3Utils = function (context) {
 
       /* Return the data model */
       return custom;
-  }
+    }
 
   }
 

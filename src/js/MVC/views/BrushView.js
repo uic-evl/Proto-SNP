@@ -4,156 +4,41 @@ var App = App || {};
 
 const BrushView = (function() {
 
-  /* initialize the self instance variable */
-  let self = {
-
-  };
-
-
-  /* Create the trend image brush SVG */
-  function create_brush_svg() {
-    trendImageViewer.brushSVG = trendImageViewer.domObj
-      .append("svg")
-      .attr("class", "trendImage")
-      .attr("id", "trendSVG")
-      .style("width", trendImageViewer.width)
-      .style("height", trendImageViewer.height)
-    ;
-  }
-
-
   /* Vertical brushing cannot be enabled until the column frequencies are computed*/
   function enable_vertical_brushing() {
     /* Enable the paddle brushing callbacks */
     trendImageViewer.leftVerticalPaddle
       .onBrush(function(){
         trendImageViewer.controller.verticalBrushed.call(this, App.leftFrequencyViewer)});
+
     trendImageViewer.rightVerticalPaddle
       .onBrush(function(){
         trendImageViewer.controller.verticalBrushed.call(this, App.rightFrequencyViewer) });
 
     /* Initialize the protein frequency charts with the selection data*/
-    initialize_frequency_viewers();
+    //initialize_frequency_viewers();
   }
 
+  /* Create a customized context menu per right-click */
+  function create_context_menu() {
 
-  /* Function to set the starting positions of the three paddles */
-  function initialize_brush_positions() {
-    /* Store the initial positions of the brushes */
-    trendImageViewer.initHorizontalBrush    = get_protein_names()[0];
-    trendImageViewer.initLeftVerticalBrush  = [0, trendImageViewer.verticalPaddleSize];
-    trendImageViewer.initRightVerticalBrush = [trendImageViewer.x_axis_length - trendImageViewer.verticalPaddleSize,  trendImageViewer.x_axis_length];
-    trendImageViewer.initVerticalBrushes    = {left: trendImageViewer.initLeftVerticalBrush, right: trendImageViewer.initRightVerticalBrush};
+    /* Get the horizontal brush extent */
+    let brush_selection = d3.brushSelection(this);
+
+    /* Get the name of the protein currently selected*/
+    let selected_protein = brush_selection.map(trendImageViewer.yScale.invert)[0];
+
+    /* Return the customized context menu */
+    return [
+      {
+        title: function() {return "Load Protein: " + selected_protein; },
+        action: function() {
+          App.applicationModel.processProteinRequest({position: "left", protein_name: selected_protein});
+        },
+        disabled: false // optional, defaults to false
+      }
+    ];
   }
-
-
-  /* Function to add the three brush paddles to the svg*/
-  function add_brushes(parentDom) {
-
-    /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
-    trendImageViewer.brushes = parentDom.append("g")
-      .attr("class", "brushes")
-      .style("width", trendImageViewer.width)
-      .style("height", trendImageViewer.residue_glyph_size * trendImageViewer.y_axis_length);
-
-    /* Add the horizontal paddle to the trend image */
-    trendImageViewer.brushes.append("g")
-      .attr("class", "brush horizontal")
-      .call(trendImageViewer.horizonalPaddle.brush) // add the paddle
-      // initialize the position
-      .call(trendImageViewer.horizonalPaddle.brush.move, [0, trendImageViewer.residue_glyph_size])
-    ;
-
-    /* Add the left vertical paddle to the trend image*/
-    trendImageViewer.brushes.append("g")
-      .attr("class", "brush vertical-left")
-      .call(trendImageViewer.leftVerticalPaddle.brush)
-      // initialize the position
-      .call(trendImageViewer.leftVerticalPaddle.brush.move, [0, trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize])
-    ;
-
-    /* Add the right vertical paddle to the trend image*/
-    trendImageViewer.brushes.append("g")
-      .attr("class", "brush vertical-right")
-      .call(trendImageViewer.rightVerticalPaddle.brush)
-      // initialize the position
-      .call(trendImageViewer.rightVerticalPaddle.brush.move,
-        [trendImageViewer.width - trendImageViewer.residue_glyph_size * trendImageViewer.verticalPaddleSize, trendImageViewer.width])
-    ;
-  }
-
-
-  /* Function to create the three brush paddles*/
-  function create_brushes() {
-    /* Construct the horizontal Protein-selection paddle */
-    trendImageViewer.horizonalPaddle =
-      App.TrendImageBrushFactory.createBrush(App.HORIZONTAL_PADDLE)
-        .setPaddleSize(1)
-        .setBrushClass("brush horizontal")
-        .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.height] ])
-        .onBrush(function(){ trendImageViewer.controller.horizontalBrushed.call(this)})
-    ;
-
-    /* Construct the left vertical residue-selection paddle */
-    trendImageViewer.leftVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
-      .setPaddleSize(trendImageViewer.verticalPaddleSize)
-      .setBrushClass("brush vertical-left")
-      .setPaddleExtent([ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
-    ;
-    /* Construct the right vertical residue-selection paddle */
-    trendImageViewer.rightVerticalPaddle = App.TrendImageBrushFactory.createBrush(App.VERTICAL_PADDLE)
-      .setPaddleSize(trendImageViewer.verticalPaddleSize)
-      .setBrushClass("brush vertical-right")
-      .setPaddleExtent( [ [0, 0], [trendImageViewer.width, trendImageViewer.y_axis_length * trendImageViewer.residue_glyph_size] ])
-    ;
-
-    /* Once the column frequency sorting is complete, enable the brushing callbacks*/
-    trendImageViewer.column_frequencies.getFrequencyPromise()
-      .then(enable_vertical_brushing);
-  }
-
-
-  /* Render the brushes to the image */
-  function render_brushes(selected_protein, brush_ranges) {
-
-    /* Remove the pointer events from the brush overlays to prevent:
-     * 1: Deleting the brush on a wrong click
-     * 2: Interference between brushes
-     */
-    trendImageViewer.brushes.selectAll('.overlay')
-      .style("pointer-events", "none");
-    /* Let d3 decide the best rendering for the brushes */
-    trendImageViewer.brushes.selectAll('.selection')
-      .style("shape-rendering", "auto");
-    /* Set the context menu of the vertical brush */
-    trendImageViewer.brushes.select("g.brush.horizontal")
-      .on("contextmenu", d3.contextMenu(create_context_menu));
-
-    /* Highlight the initial selections*/
-
-    /* Reset the brush selections */
-    // trendImageViewer.svg.selectAll('rect')
-    //     .classed("active_protein_selection", false)
-    //     .classed("active_res_selection", false);
-    //
-    // /* Set the first highlighted row's opacity */
-    // trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
-    //     .classed("active_protein_selection", true);
-    //
-    // /* Iterate over the left selection and add the active class to the selected fragments */
-    // for(let i = brush_ranges.left[0]; i < brush_ranges.left[1]; i++) {
-    //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
-    //       .classed("vertical-left", true)
-    //       .classed("active_res_selection", true);
-    // }
-    // /* Iterate over the right selection and add the active class to the selected fragments */
-    // for(let i = brush_ranges.right[0]; i < brush_ranges.right[1]; i++) {
-    //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
-    //       .classed("vertical-right", true)
-    //       .classed("active_res_selection", true);
-    // }
-  }
-
 
   /* Function to reset the brushes to be the before-sorted selection */
   function reset_brushes() {
@@ -196,17 +81,117 @@ const BrushView = (function() {
   }
 
 
-  function BrushView(model) {
+  function BrushView(model, options) {
 
-    this._model = model;
+    let self = this;
 
-    this.render = function(){};
+    self._model = model;
+    let block_size = options.block_size;
 
-    this.redraw = function() {};
+    /* Initialize the d3 brush */
+    self.initialize(options);
+
+    /* Brush event handlers */
+    self.brushMoved = new EventNotification(this);
+
+    /* Bind the event listens */
+    self._model.selectedProteinChanged.attach(function(sender, msg) {
+      self.redraw(msg.selection);
+    });
+
+    self.onBrush = function() {
+      /* We only want to capture user events. */
+      if (!d3.event.sourceEvent) return;
+      if (!d3.event.selection) return; // Ignore empty selections.
+      if (d3.event.sourceEvent.type === "brush") return; // if the event isn't associated with a mouse move
+
+      if(options.orientation === App.HORIZONTAL_PADDLE) {
+        // Round the two event extents to the nearest row
+        d3.event.selection[0] = Math.floor(d3.event.selection[0] / block_size) * block_size;
+        d3.event.selection[1] = Math.floor(d3.event.selection[1] / block_size) * block_size;
+
+        // Snap the brush onto the closest protein
+        d3.select(this).call(d3.event.target.move, d3.event.selection);
+      }
+      else {
+        // Round the two event extents to the nearest row
+        d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/block_size)*block_size);
+        d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/block_size)*block_size);
+      }
+      /* Notify the listeners of the move */
+      self.brushMoved.notify({orientation: options.orientation, selection:d3.event.selection});
+    };
 
   }
 
-  BrushView.prototype = View.prototype;
+  BrushView.prototype = {
+
+    initialize: function(options) {
+      let view = this;
+      /* Construct the brush based on the orientation */
+      view.brushObj =
+          App.BrushFactory.createBrush(options.orientation)
+              .setPaddleSize(options.paddleSize)
+              .setBrushClass(options.class)
+              .setPaddleExtent(options.extent)
+              .setInitialPosition(options.position)
+              .onBrush(function(){ view.onBrush.call(this)} );
+    },
+
+    getInitialPosition : function() { return this.brushObj.getInitialPosition(); },
+
+    getBrush: function() { return this.brushObj.brush; },
+
+    render: function(brushObj) {
+      /* Remove the pointer events from the brush overlays to prevent:
+       * 1: Deleting the brush on a wrong click
+       * 2: Interference between brushes
+       */
+      brushObj.selectAll('.overlay')
+          .style("pointer-events", "none");
+      /* Let d3 decide the best rendering for the brushes */
+      brushObj.selectAll('.selection')
+          .style("shape-rendering", "auto");
+      /* Set the context menu of the vertical brush */
+      // this.brush.select("g.brush.horizontal")
+      //     .on("contextmenu", d3.contextMenu(create_context_menu));
+
+      /* Highlight the initial selections*/
+
+      /* Reset the brush selections */
+      // trendImageViewer.svg.selectAll('rect')
+      //     .classed("active_protein_selection", false)
+      //     .classed("active_res_selection", false);
+      //
+      // /* Set the first highlighted row's opacity */
+      // trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
+      //     .classed("active_protein_selection", true);
+      //
+      // /* Iterate over the left selection and add the active class to the selected fragments */
+      // for(let i = brush_ranges.left[0]; i < brush_ranges.left[1]; i++) {
+      //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
+      //       .classed("vertical-left", true)
+      //       .classed("active_res_selection", true);
+      // }
+      // /* Iterate over the right selection and add the active class to the selected fragments */
+      // for(let i = brush_ranges.right[0]; i < brush_ranges.right[1]; i++) {
+      //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
+      //       .classed("vertical-right", true)
+      //       .classed("active_res_selection", true);
+      // }
+  },
+
+    redraw: function(selection) {
+      /* Reset the opacity of unselected rows */
+      d3.selectAll('rect.active_protein_selection')
+          .classed("active_protein_selection", false);
+
+      /* Set the opacity of the highlighted row */
+      d3.selectAll('#p' + selection + " > rect")
+          .classed("active_protein_selection", true);
+    }
+
+  };
 
   return BrushView;
 

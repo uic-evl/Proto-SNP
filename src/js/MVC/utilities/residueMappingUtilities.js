@@ -180,6 +180,5 @@ function ResidueMappingUtility() {
     createColorLegend : create_legend,
     getColor          : get_color_mapping
   }
-
-};
+}
 

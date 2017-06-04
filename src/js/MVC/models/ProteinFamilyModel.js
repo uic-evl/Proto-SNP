@@ -25,6 +25,8 @@ const ProteinFamilyModel = (function() {
     this._selectedProtein = null;
     this._selectedResidues = {left: [], right: []};
     this._proteinSorting = "";
+    this._proteinNames = null;
+    this._parsedData = null;
 
     /* Update Events */
     this.proteinFamilyAdded = new EventNotification(this);
@@ -39,13 +41,22 @@ const ProteinFamilyModel = (function() {
       this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
       map_trend_image_data(this._rawData).then(function(parsed_data) {
         this._parsedData = parsed_data;
-        this.proteinFamilyAdded.notify({data: this._parsedData});
+        this.setProteinNames();
+        this.proteinFamilyAdded.notify({family: this._parsedData});
       }.bind(this));
     },
 
     getFamily: function() {
       return this._parsedData;
     },
+
+    /* Setter for the names of the proteins from the family */
+    setProteinNames : function () {
+      this._proteinNames = d3.set(this._rawData.map(function( residue ) { return residue.name; } ))
+          .values();
+    },
+
+    getProteinNames : function() { return this._proteinNames; },
 
     getSelectedProtein: function () {
       return this._selectedProtein;

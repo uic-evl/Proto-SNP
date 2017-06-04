@@ -29,18 +29,21 @@ const ProteinFamilyView = (function() {
       self.render(data_model).then(function () {
 
         let verticalPaddleSize   = 6,
-            horizontalPaddleSize = 1;
+            horizontalPaddleSize = 1,
+            maxPaddleSize = 10;
 
         self.imageRendered.notify({
           brushes : [
             {orientation:App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
               extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
               position: [0, self.residue_glyph_size]},
-            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-left",
-              extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size, semantic: "left",
+            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+              class:"brush vertical-left", extent: [[0, 0], [self.width, self.height]],
+              block_size: self.residue_glyph_size, semantic: "left",
               position: [0, self.residue_glyph_size * verticalPaddleSize]},
-            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-right",
-              extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size, semantic: "right",
+            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+              class:"brush vertical-right", extent: [[0, 0], [self.width, self.height]],
+              block_size:self.residue_glyph_size, semantic: "right",
               position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
           ]
         });
@@ -279,14 +282,7 @@ const ProteinFamilyView = (function() {
         /*render the brush */
         view.render(brushObj);
       });
-    },
-
-    enableBrushing : function() {
-      // /* Once the column frequency sorting is complete, enable the brushing callbacks*/
-      // trendImageViewer.column_frequencies.getFrequencyPromise()
-      //     .then(enable_vertical_brushing);
     }
-
   };
   return ProteinFamilyView;
 

@@ -71,7 +71,10 @@ const ProteinFamilyModel = (function() {
     },
 
     getSelectedResidues: function (position) {
-      return this._selectedResidues[position];
+      return {
+        selection: this._selectedResidues[position],
+        previous: this._previousSelectedResidues[position]
+      }
     },
 
     setSelectedResidues: function (position, selection) {

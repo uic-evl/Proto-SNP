@@ -19,30 +19,6 @@ const BrushView = (function() {
     trendImageViewer.horizonalPaddle.moveBrush( [brush_pos, brush_pos+trendImageViewer.residue_glyph_size] );
   }
 
-  function clamp_brush_sizes(currentVerticalSelection, prevPaddleSelection) {
-    let brush_size = Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]);
-    /* Our max brush size is 10*/
-    if( brush_size > options.brushMaxSize){
-      /* Check which side was brushed */
-      if(currentVerticalSelection[0] === prevPaddleSelection[0]){
-        currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMaxSize;
-      }
-      else {
-        currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMaxSize;
-      }
-    }
-    else if (brush_size < options.brushMinSize) {
-      /* Check which side was brushed */
-      if (currentVerticalSelection[0] === prevPaddleSelection[0]) {
-        currentVerticalSelection[1] = currentVerticalSelection[0] + options.brushMinSize;
-      }
-      else {
-        currentVerticalSelection[0] = currentVerticalSelection[1] - options.brushMinSize;
-      }
-    }
-    return currentVerticalSelection;
-  }
-
   /* Get the new selection */
   function snap_brush(selection) {
     /* determine the halfway point */
@@ -99,6 +75,33 @@ const BrushView = (function() {
 
     });
 
+    /* Utility to clamp the brush sizes */
+    function clamp_brush_sizes(selection, previousSelection) {
+      let brush_size = Math.abs(selection[1] - selection[0]),
+          maxPaddleSize = options.maxPaddleSize * block_size,
+          minPaddleSize = options.paddleSize * block_size;
+
+      if( brush_size > maxPaddleSize){
+        /* Check which side was brushed */
+        if(selection[0] === previousSelection[0]){
+          selection[1] = selection[0] + maxPaddleSize;
+        }
+        else {
+          selection[0] = selection[1] - maxPaddleSize;
+        }
+      }
+      else if (brush_size < minPaddleSize) {
+        /* Check which side was brushed */
+        if (selection[0] === previousSelection[0]) {
+          selection[1] = selection[0] + minPaddleSize;
+        }
+        else {
+          selection[0] = selection[1] - minPaddleSize;
+        }
+      }
+      return selection;
+    }
+
     /* onBrushEnd Callback */
     self.onBrush = function() {
       /* We only want to capture user events. */
@@ -118,15 +121,15 @@ const BrushView = (function() {
         d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/block_size)*block_size);
         d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/block_size)*block_size);
 
-        // TODO clamp the selection size!
+        // clamp the paddle to the min/max size
+        clamp_brush_sizes(d3.event.selection, self._model.getSelectedResidues(options.semantic).previous);
 
-        // Snap the brush onto the closest protein
+        /* Programatically move to the clamp*/
         d3.select(this).call(d3.event.target.move, d3.event.selection)
       }
       /* Notify the listeners */
       self.brushMoved.notify({options: options, selection:d3.event.selection});
     };
-
   }
 
   BrushView.prototype = {
@@ -137,6 +140,7 @@ const BrushView = (function() {
       view.brushObj =
           App.BrushFactory.createBrush(options.orientation)
               .setPaddleSize(options.paddleSize)
+              .setMaxPaddleSize(options.maxPaddleSize)
               .setBrushClass(options.class)
               .setPaddleExtent(options.extent)
               .setInitialPosition(options.position)

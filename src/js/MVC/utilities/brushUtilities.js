@@ -27,7 +27,6 @@ App.VERTICAL_PADDLE   = 2;
     }
 
     function set_initial_position(pos) {
-      console.log(pos);
       self.initial_position = pos;
       return this;
     }
@@ -41,6 +40,12 @@ App.VERTICAL_PADDLE   = 2;
     /* Set the brush paddle size */
     function set_brush_paddle_size(size) {
       self.paddleSize = size;
+      return this
+    }
+
+    /* Set the max brush paddle size */
+    function set_max_brush_paddle_size(size) {
+      self.maxPaddleSize = size;
       return this
     }
 
@@ -82,6 +87,9 @@ App.VERTICAL_PADDLE   = 2;
     /* Get the brush paddle size */
     function get_brush_paddle_size() { return self.paddleSize; }
 
+    /* Get the brush paddle size */
+    function get_max_brush_paddle_size() { return self.maxPaddleSize; }
+
     /* Get the brush selection */
     function get_current_selection() {
       /* Get the DOM element */
@@ -94,9 +102,11 @@ App.VERTICAL_PADDLE   = 2;
       setInitialPosition  : set_initial_position,
       setPaddleExtent     : set_brush_extent,
       setPaddleSize       : set_brush_paddle_size,
+      setMaxPaddleSize    : set_max_brush_paddle_size,
       setFrequencyViewer  : set_frequency_viewer_pointer,
       setBrushClass       : set_brush_class,
       getPaddleSize       : get_brush_paddle_size,
+      getMaxPaddleSize    : get_max_brush_paddle_size,
       getInitialPosition  : get_initial_position,
       getBrushClass       : get_brush_class,
       getFrequencyViewer  : get_frequency_viewer,

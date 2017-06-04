@@ -19,9 +19,7 @@ const ProteinFamilyView = (function() {
 
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
-
       let family = msg.family;
-
       /* Initialize the trend image */
       self.initialize(family);
 
@@ -37,14 +35,13 @@ const ProteinFamilyView = (function() {
           brushes : [
             {orientation:App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
               extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
-              position: [0, self.residue_glyph_size]}
-              // ,
-            // {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-left",
-            //   extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
-            //   position: [0, self.residue_glyph_size * self.verticalPaddleSize]},
-            // {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-right",
-            //   extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
-            //   position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
+              position: [0, self.residue_glyph_size]},
+            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-left",
+              extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size, semantic: "left",
+              position: [0, self.residue_glyph_size * verticalPaddleSize]},
+            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, class:"brush vertical-right",
+              extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size, semantic: "right",
+              position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
           ]
         });
 

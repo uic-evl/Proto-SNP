@@ -24,6 +24,7 @@ const ProteinFamilyModel = (function() {
 
     this._selectedProtein = null;
     this._selectedResidues = {left: [], right: []};
+    this._previousSelectedResidues = {left: [], right: []};
     this._proteinSorting = "";
     this._proteinNames = null;
     this._parsedData = null;
@@ -74,8 +75,15 @@ const ProteinFamilyModel = (function() {
     },
 
     setSelectedResidues: function (position, selection) {
+      this._previousSelectedResidues[position] = this._selectedResidues[position];
       this._selectedResidues[position] = selection;
-      this.selectedResiduesChanged.notify({residues: selection});
+      /* Notify all listeners */
+      this.selectedResiduesChanged.notify(
+          {
+            selection: this._selectedResidues[position],
+            previous: this._previousSelectedResidues[position]
+          }
+      );
       return this;
     },
 

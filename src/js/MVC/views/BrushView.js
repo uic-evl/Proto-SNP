@@ -4,42 +4,6 @@ var App = App || {};
 
 const BrushView = (function() {
 
-  /* Vertical brushing cannot be enabled until the column frequencies are computed*/
-  function enable_vertical_brushing() {
-    /* Enable the paddle brushing callbacks */
-    trendImageViewer.leftVerticalPaddle
-      .onBrush(function(){
-        trendImageViewer.controller.verticalBrushed.call(this, App.leftFrequencyViewer)});
-
-    trendImageViewer.rightVerticalPaddle
-      .onBrush(function(){
-        trendImageViewer.controller.verticalBrushed.call(this, App.rightFrequencyViewer) });
-
-    /* Initialize the protein frequency charts with the selection data*/
-    //initialize_frequency_viewers();
-  }
-
-  /* Create a customized context menu per right-click */
-  function create_context_menu() {
-
-    /* Get the horizontal brush extent */
-    let brush_selection = d3.brushSelection(this);
-
-    /* Get the name of the protein currently selected*/
-    let selected_protein = brush_selection.map(trendImageViewer.yScale.invert)[0];
-
-    /* Return the customized context menu */
-    return [
-      {
-        title: function() {return "Load Protein: " + selected_protein; },
-        action: function() {
-          App.applicationModel.processProteinRequest({position: "left", protein_name: selected_protein});
-        },
-        disabled: false // optional, defaults to false
-      }
-    ];
-  }
-
   /* Function to reset the brushes to be the before-sorted selection */
   function reset_brushes() {
     /* Get the protein that was last selected */
@@ -54,7 +18,6 @@ const BrushView = (function() {
     let brush_pos = trendImageViewer.yScale(currentProtein);
     trendImageViewer.horizonalPaddle.moveBrush( [brush_pos, brush_pos+trendImageViewer.residue_glyph_size] );
   }
-
 
   function clamp_brush_sizes(currentVerticalSelection, prevPaddleSelection) {
     let brush_size = Math.abs(currentVerticalSelection[1] - currentVerticalSelection[0]);
@@ -80,6 +43,38 @@ const BrushView = (function() {
     return currentVerticalSelection;
   }
 
+  /* Get the new selection */
+  function snap_brush(selection) {
+    /* determine the halfway point */
+    let halfway = Math.ceil(options.width/2.0) ;
+
+    /* Keep track of the current selection */
+    if(options.semantic === "right"){
+      /* Check if paddle is past the half way mark of the trend image*/
+      if(selection[0] < halfway){
+        selection[0] = halfway;
+        selection[1] = self.rightVerticalSelection[1];
+      }
+      /* Clamp the brush size */
+      selection = clamp_brush_sizes(selection, self.rightVerticalSelection);
+
+      /* Reset the event selection */
+      d3.event.selection = selection.map(options.trendImage.getXAxisScale());
+    }
+    else {
+      /* Check if paddle is past the half way mark of the trend image*/
+      if(selection[1] > halfway+1){
+        selection[1] = halfway+1;
+        selection[0] = self.leftVerticalSelection[0];
+      }
+      /* Clamp the brush size */
+      selection = clamp_brush_sizes(selection, self.leftVerticalSelection);
+
+      /* Reset the event selection */
+      d3.event.selection = selection.map(options.trendImage.getXAxisScale());
+    }
+    return selection;
+  }
 
   function BrushView(model, options) {
 
@@ -98,7 +93,13 @@ const BrushView = (function() {
     self._model.selectedProteinChanged.attach(function(sender, msg) {
       self.redraw(msg.selection);
     });
+    self._model.selectedResiduesChanged.attach(function(sender, msg){
 
+      // self.redraw(msg.selection);
+
+    });
+
+    /* onBrushEnd Callback */
     self.onBrush = function() {
       /* We only want to capture user events. */
       if (!d3.event.sourceEvent) return;
@@ -109,7 +110,6 @@ const BrushView = (function() {
         // Round the two event extents to the nearest row
         d3.event.selection[0] = Math.floor(d3.event.selection[0] / block_size) * block_size;
         d3.event.selection[1] = Math.floor(d3.event.selection[1] / block_size) * block_size;
-
         // Snap the brush onto the closest protein
         d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
@@ -117,9 +117,14 @@ const BrushView = (function() {
         // Round the two event extents to the nearest row
         d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/block_size)*block_size);
         d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/block_size)*block_size);
+
+        // TODO clamp the selection size!
+
+        // Snap the brush onto the closest protein
+        d3.select(this).call(d3.event.target.move, d3.event.selection)
       }
-      /* Notify the listeners of the move */
-      self.brushMoved.notify({orientation: options.orientation, selection:d3.event.selection});
+      /* Notify the listeners */
+      self.brushMoved.notify({options: options, selection:d3.event.selection});
     };
 
   }

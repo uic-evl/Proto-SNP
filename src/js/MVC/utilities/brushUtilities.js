@@ -27,6 +27,7 @@ App.VERTICAL_PADDLE   = 2;
     }
 
     function set_initial_position(pos) {
+      console.log(pos);
       self.initial_position = pos;
       return this;
     }

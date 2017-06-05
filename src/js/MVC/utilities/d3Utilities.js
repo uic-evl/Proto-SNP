@@ -22,6 +22,23 @@ const d3Utils = function () {
       return canvas.node().getContext('2d');
     },
 
+    create_chart_svg : function(domObj, width, height) {
+      return domObj.append("svg")
+          .style("width", width)
+          .style("height", height);
+    },
+
+    /* Simple d3 function to construct a line*/
+    lineFunction : function() {
+      return d3.line()
+          .x(function (d) {
+            return d.x;
+          })
+          .y(function (d) {
+            return d.y;
+          });
+    },
+
     /* Create the trend image brush SVG */
     create_brush_svg: function(domObj, width, height) {
       return domObj

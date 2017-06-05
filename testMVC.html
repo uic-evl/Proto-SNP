@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="src/css/sequenceViewer.css">
     <link rel="stylesheet" href="src/css/splash.css">
     <link rel="stylesheet" href="src/css/trendImageViewer.css">
-
+    <link rel="stylesheet" href="src/css/frequencyViewer.css">
     <link rel="stylesheet" href="src/css/molecularViewer.css">
     <link rel="stylesheet" href="src/css/colorLegend.css">
 
@@ -45,6 +45,12 @@
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
 
     <!-- JS SRC -->
+
+    <!-- Algorithms -->
+    <script type='text/javascript' src='src/js/algorithms/Needleman-Wunsch.js'></script>
+    <script type='text/javascript' src='src/js/algorithms/SequenceSorting.js'></script>
+    <script type='text/javascript' src='src/js/algorithms/LevenshteinDistance.js'></script>
+
     <script type='text/javascript' src='src/js/MVC/Event.js'></script>
     <script type='text/javascript' src='src/js/MVC/models/ProteinModel.js'></script>
     <script type='text/javascript' src='src/js/MVC/models/ProteinFamilyModel.js'></script>
@@ -55,6 +61,7 @@
     <script type='text/javascript' src='src/js/MVC/views/TertiaryStructureView.js'></script>
     <script type='text/javascript' src='src/js/MVC/views/ProteinFamilyView.js'></script>
     <script type='text/javascript' src='src/js/MVC/views/BrushView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/ResidueFrequencyView.js'></script>
 
     <script type='text/javascript' src='src/js/MVC/controllers/FilteringMenuController.js'></script>
     <script type='text/javascript' src='src/js/MVC/controllers/PrimaryStructureController.js'></script>
@@ -156,6 +163,17 @@
                 </div>
             </div>
             <!-- End Trend Image View-->
+            <!-- Residue Frequency Viewer-->
+            <div class="row residueSummaryView center-aligned">
+                <div class="col-md-6 frequency-left">
+                    <div id="leftResidueSummaryViewer">
+                    </div>
+                </div>
+                <div class="col-md-6 frequency-right">
+                    <div id="rightResidueSummaryViewer" >
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

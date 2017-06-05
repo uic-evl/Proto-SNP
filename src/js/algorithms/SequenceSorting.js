@@ -193,6 +193,8 @@ const SequenceSorting = function(family){
   /* Get the frequency of each column's residues */
   function get_common_occurrence_scores(n) { return (n) ? self.weighted_residue_commonality_scores : self.residue_commonality_scores; }
 
+  /* Calculate the frequencies to start */
+  calculate_fragment_frequency(family);
 
   return {
     /* Setters */

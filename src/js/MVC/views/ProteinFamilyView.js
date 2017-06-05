@@ -45,6 +45,12 @@ const ProteinFamilyView = (function() {
               class:"brush vertical-right", extent: [[0, 0], [self.width, self.height]],
               block_size:self.residue_glyph_size, semantic: "right",
               position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
+          ],
+          frequencyViewers : [
+            {id: 'leftResidueSummaryViewer',  semantic: "left",  max_items: maxPaddleSize,
+              block_size: self.residue_glyph_size, offset: 25, width: Math.floor(self.width/2.0), height: self.height},
+            {id: 'rightResidueSummaryViewer', semantic: "right", max_items: maxPaddleSize,
+              block_size: self.residue_glyph_size, offset: 25, width: Math.floor(self.width/2.0), height: self.height}
           ]
         });
 
@@ -131,7 +137,6 @@ const ProteinFamilyView = (function() {
       /* Set the y scale with the protein names*/
       self.set_y_scale(_.slice(self._model.getProteinNames(), 0, self.ppv))
     }
-
   }
 
   ProteinFamilyView.prototype = {
@@ -282,8 +287,13 @@ const ProteinFamilyView = (function() {
         /*render the brush */
         view.render(brushObj);
       });
-    }
-  };
+    },
+
+    getXDimensionSize: function() { return this.x_axis_length; },
+
+    getYDimensionSize: function() { return this.y_axis_length; }
+
+};
   return ProteinFamilyView;
 
 })();

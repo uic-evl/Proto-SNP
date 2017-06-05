@@ -69,6 +69,7 @@ const BrushView = (function() {
     self._model.selectedProteinChanged.attach(function(sender, msg) {
       self.redraw(msg.selection);
     });
+
     self._model.selectedResiduesChanged.attach(function(sender, msg){
 
       // self.redraw(msg.selection);

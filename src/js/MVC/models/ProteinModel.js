@@ -5,13 +5,19 @@ var App = App || {};
 const ProteinModel = (function() {
 
   function ProteinModel() {
+    let self = this;
 
-    this.proteinStructure = null;
-    this.selectedResidue = null;
-    this.previousSelectedResidue = null;
+    self.proteinStructure = null;
+    self.selectedResidue = null;
+    self.previousSelectedResidue = null;
 
-    this.proteinAdded = new EventNotification(this);
-    this.residueSelected = new EventNotification(this);
+    self._proteinSorting = "";
+    self._proteinColoring = "";
+
+    self.proteinAdded = new EventNotification(this);
+    self.residueSelected = new EventNotification(this);
+    self.proteinSortingChanged       = new EventNotification(this);
+    self.proteinColoringingChanged   = new EventNotification(this);
 
     /* Determines which method to load the protein */
     this.load_protein = function (metadata, file){
@@ -77,6 +83,18 @@ const ProteinModel = (function() {
     },
 
     getResidueSelection : function() { return this.selectedResidue },
+
+    setProteinSorting: function (sorting) {
+      this._proteinSorting = sorting;
+      this.proteinSortingChanged.notify({algorithm: sorting});
+      return this;
+    },
+
+    setProteinColoring: function (coloring) {
+      this._proteinColoring = coloring;
+      this.proteinSortingChanged.notify({algorithm: coloring});
+      return this;
+    },
 
     isEmpty : function() {
       return !!this.proteinStructure;

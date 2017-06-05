@@ -4,9 +4,9 @@ var App = App || {};
 
 const FilteringMenuModel = (function() {
 
-  function FilteringMenuModel(items, models) {
+  function FilteringMenuModel(options) {
 
-    this._items = items;
+    this._items = options.items;
     this._selectedElement = '';
 
     this.selectedElementChanged = new EventNotification(this);

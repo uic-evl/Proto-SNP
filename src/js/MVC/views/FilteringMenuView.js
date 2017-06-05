@@ -15,7 +15,6 @@ const FilteringMenuView = (function() {
 
     /* Create the click listener */
     self.elementSelected = function(obj, e) {
-      console.log(obj);
       self.selectionModified.notify({ element : obj.filter });
     };
   }

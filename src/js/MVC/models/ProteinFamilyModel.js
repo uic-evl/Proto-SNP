@@ -26,15 +26,17 @@ const ProteinFamilyModel = (function() {
     this._selectedResidues = {left: [], right: []};
     this._previousSelectedResidues = {left: [], right: []};
     this._proteinSorting = "";
+    this._proteinColoring = "";
     this._proteinNames = null;
     this._parsedData = null;
     this._sequenceSortingAlgorithms = null;
 
     /* Update Events */
-    this.proteinFamilyAdded      = new EventNotification(this);
-    this.selectedProteinChanged  = new EventNotification(this);
-    this.selectedResiduesChanged = new EventNotification(this);
-    this.proteinSortingChanged   = new EventNotification(this);
+    this.proteinFamilyAdded          = new EventNotification(this);
+    this.selectedProteinChanged      = new EventNotification(this);
+    this.selectedResiduesChanged     = new EventNotification(this);
+    this.proteinSortingChanged       = new EventNotification(this);
+    this.proteinColoringingChanged   = new EventNotification(this);
   }
 
   ProteinFamilyModel.prototype = {
@@ -114,6 +116,12 @@ const ProteinFamilyModel = (function() {
     setProteinSorting: function (sorting) {
       this._proteinSorting = sorting;
       this.proteinSortingChanged.notify({algorithm: sorting});
+      return this;
+    },
+
+    setProteinColoring: function (coloring) {
+      this._proteinColoring = coloring;
+      this.proteinSortingChanged.notify({algorithm: coloring});
       return this;
     },
 

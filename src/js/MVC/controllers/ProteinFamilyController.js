@@ -5,7 +5,6 @@ var App = App || {};
 const ProteinFamilyController = (function() {
 
   function ProteinFamilyController(model, view) {
-
     let self = this;
 
     self._model = model;
@@ -41,6 +40,7 @@ const ProteinFamilyController = (function() {
             self._model.setSelectedResidues(options.semantic, currentSelection);
           }
         });
+
         /* Add the brush to the list of views */
         self._brushViews[brushSpec.semantic] = brushView;
       });
@@ -59,10 +59,13 @@ const ProteinFamilyController = (function() {
         self._frequencyViews[freqSpec.semantic] = freqView;
 
         /* Render the viewers depending on the brush's position */
-        console.log(self._model);
         let selection = _.map(self._brushViews[freqSpec.semantic].getInitialPosition(),
             (o)=>{ return parseInt(o/freqSpec.block_size); }),
             residues  = self._model.getSequenceFrequenciesFromRange(selection);
+
+        /* Set the initial selections in the model */
+        self._model.setSelectedResidues(freqSpec.semantic, selection);
+
         /*Render the view */
         freqView.render(residues, numberOfRows, currentProtein.sequence.slice(selection[0], selection[1]) );
       });
@@ -83,7 +86,6 @@ const ProteinFamilyController = (function() {
       /* Inform the view that the brushes are created */
       self._view.attachBrushes(_.values(self._brushViews));
     });
-
   }
 
   ProteinFamilyController.prototype = {

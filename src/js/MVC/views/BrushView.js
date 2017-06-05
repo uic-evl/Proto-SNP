@@ -67,13 +67,13 @@ const BrushView = (function() {
 
     /* Bind the event listens */
     self._model.selectedProteinChanged.attach(function(sender, msg) {
+      // TODO Update overlays that make everything else opaque
       self.redraw(msg.selection);
     });
 
     self._model.selectedResiduesChanged.attach(function(sender, msg){
-
+      // TODO Update overlays that make everything else opaque
       // self.redraw(msg.selection);
-
     });
 
     /* Utility to clamp the brush sizes */
@@ -151,6 +151,8 @@ const BrushView = (function() {
     getInitialPosition : function() { return this.brushObj.getInitialPosition(); },
 
     getBrush: function() { return this.brushObj.brush; },
+
+    getBrushElement: function() { return document.getElementsByClassName(this.brushObj.getBrushClass())[0]; },
 
     render: function(brushObj) {
       /* Remove the pointer events from the brush overlays to prevent:

@@ -12,7 +12,6 @@ App.VERTICAL_PADDLE   = 2;
   /* Generic Brush Class */
   let Brush = function()
   {
-
     let self = {};
 
     /* Move the brush to a specified position */
@@ -21,7 +20,7 @@ App.VERTICAL_PADDLE   = 2;
       let brush = d3.select(document.getElementsByClassName(this.brush_class)[0]);
       /* Move the brush */
       brush
-          .transition().duration(1000)
+          .transition().duration(100)
           .call(this.brush.move, pos);
       return this;
     }

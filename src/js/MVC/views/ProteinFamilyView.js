@@ -34,16 +34,16 @@ const ProteinFamilyView = (function() {
 
         self.imageRendered.notify({
           brushes : [
-            {orientation:App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
+            {orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
               extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
               position: [0, self.residue_glyph_size]},
-            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+            {orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
               class:"brush vertical-left", extent: [[0, 0], [self.width, self.height]],
               block_size: self.residue_glyph_size, semantic: "left",
               position: [0, self.residue_glyph_size * verticalPaddleSize]},
-            {orientation:App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+            {orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
               class:"brush vertical-right", extent: [[0, 0], [self.width, self.height]],
-              block_size:self.residue_glyph_size, semantic: "right",
+              block_size: self.residue_glyph_size, semantic: "right",
               position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
           ],
           frequencyViewers : [

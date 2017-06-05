@@ -16,11 +16,11 @@ const ResidueFrequencyView = (function() {
 
     /* Set the model listeners */
     this._model.selectedProteinChanged.attach(function(selection){
-
+      console.log(selection);
     });
 
     this._model.selectedResiduesChanged.attach(function(selection){
-
+      console.log(selection);
     });
 
     self.set_scales = function(residue_frequencies, family_member_count) {
@@ -133,7 +133,6 @@ const ResidueFrequencyView = (function() {
 
     /* Initialize the viewer */
     self.initialize(options);
-
   }
 
   ResidueFrequencyView.prototype = {
@@ -171,6 +170,7 @@ const ResidueFrequencyView = (function() {
       this.set_scales(residue_frequencies, family_member_count, selected_residues);
       /* Render the bars */
       this.render_bars(residue_frequencies, family_member_count);
+      this.render_labels(residue_frequencies);
       /* Update the labels */
       this.update(selected_residues);
     },

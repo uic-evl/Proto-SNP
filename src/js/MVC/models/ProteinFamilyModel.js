@@ -95,6 +95,7 @@ const ProteinFamilyModel = (function() {
     },
 
     setSelectedResidues: function (position, selection) {
+      console.log(selection);
       this._previousSelectedResidues[position] = this._selectedResidues[position];
       this._selectedResidues[position] = selection;
       /* Notify all listeners */

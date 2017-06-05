@@ -25,8 +25,8 @@ var App = App || {};
         rightProteinModel = new ProteinModel(),
         leftTertiaryStructureView = new TertiaryStructureView(leftProteinModel, {id: "molecularViewerA", position:"left"}),
         rightTertiaryStructureView = new TertiaryStructureView(rightProteinModel, {id: "molecularViewerB", position:"right"}),
-        tertiaryStructuresController = new TertiaryStructureController([leftProteinModel, rightProteinModel],
-            [leftTertiaryStructureView, rightTertiaryStructureView]);
+        tertiaryStructuresController = new TertiaryStructureController(
+            [leftProteinModel, rightProteinModel], [leftTertiaryStructureView, rightTertiaryStructureView]);
 
     let leftPrimaryStructureView  = new PrimaryStructureView(null, {id: "leftMolecularViewer-Sequence", position:"left"}),
         rightPrimaryStructureView = new PrimaryStructureView(null, {id: "rightMolecularViewer-Sequence", position:"right"}),

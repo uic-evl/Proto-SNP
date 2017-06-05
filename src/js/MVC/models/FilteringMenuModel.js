@@ -4,7 +4,7 @@ var App = App || {};
 
 const FilteringMenuModel = (function() {
 
-  function FilteringMenuModel(items) {
+  function FilteringMenuModel(items, models) {
 
     this._items = items;
     this._selectedElement = '';

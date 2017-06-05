@@ -5,17 +5,18 @@ var App = App || {};
 const FilteringMenuView = (function() {
 
   function FilteringMenuView(model, elements) {
-    this._model = model;
-    this._elements = elements;
-    this.filters = ko.observableArray([]);
+    let self = this;
 
-    this.selectionModified = new EventNotification(this);
+    self._model = model;
+    self._elements = elements;
+    self.filters = ko.observableArray([]);
 
-    let _this = this;
+    self.selectionModified = new EventNotification(this);
 
     /* Create the click listener */
-    this.elementSelected = function(obj, e) {
-      _this.selectionModified.notify({ element : obj.filter });
+    self.elementSelected = function(obj, e) {
+      console.log(obj);
+      self.selectionModified.notify({ element : obj.filter });
     };
   }
 

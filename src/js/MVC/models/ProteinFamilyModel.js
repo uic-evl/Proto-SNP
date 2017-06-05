@@ -71,17 +71,17 @@ const ProteinFamilyModel = (function() {
       this._proteinNames = d3.set(this._rawData.map(function( residue )
       { return residue.name; } )).values();
       /* Set the initial selected protein to the first name */
-      this._selectedProtein = this._proteinNames[0];
+      this.setSelectedProtein(this._proteinNames[0]);
     },
 
     getProteinNames : function() { return this._proteinNames; },
 
     getSelectedProtein: function () {
-      return _.filter(this._rawData, ['name', this._selectedProtein])[0];
+      return this._selectedProtein;
     },
 
     setSelectedProtein: function (proteinName) {
-      this._selectedProtein = proteinName;
+      this._selectedProtein = _.filter(this._rawData, ['name', proteinName])[0];
       /* Notify all listeners */
       this.selectedProteinChanged.notify({selection: this._selectedProtein});
       return this;
@@ -95,14 +95,13 @@ const ProteinFamilyModel = (function() {
     },
 
     setSelectedResidues: function (position, selection) {
-      console.log(selection);
       this._previousSelectedResidues[position] = this._selectedResidues[position];
       this._selectedResidues[position] = selection;
       /* Notify all listeners */
       this.selectedResiduesChanged.notify(
-          {
+          { semantic : position,
             selection: this._selectedResidues[position],
-            previous: this._previousSelectedResidues[position]
+            previous : this._previousSelectedResidues[position]
           }
       );
       return this;

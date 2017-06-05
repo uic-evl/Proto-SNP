@@ -36,8 +36,12 @@ const ProteinFamilyController = (function() {
             // (It's sad that I have to do this -- Floating pt errors)
             currentSelection[0] = parseInt(Math.round(currentSelection[0]));
             currentSelection[1] = parseInt(Math.round(currentSelection[1]));
+
             /* Set the current selection in the model*/
-            self._model.setSelectedResidues(options.semantic, currentSelection);
+            let previousSelection = self._model.getSelectedResidues(options.semantic).selection;
+            if(previousSelection[0] !== currentSelection[0] || previousSelection[1] !== currentSelection[1]){
+              self._model.setSelectedResidues(options.semantic, currentSelection);
+            }
           }
         });
 
@@ -54,7 +58,7 @@ const ProteinFamilyController = (function() {
       /* Create the frequency viewers for the family*/
       residueViewers.forEach(function(freqSpec){
         /* Create the frequency viewers */
-        let freqView = new ResidueFrequencyView(self._model, freqSpec);
+        let freqView = new ResidueFrequencyView(self._model, _.assign(freqSpec, {'rows': numberOfRows}));
         /* Attach the listeners */
         self._frequencyViews[freqSpec.semantic] = freqView;
 
@@ -67,7 +71,7 @@ const ProteinFamilyController = (function() {
         self._model.setSelectedResidues(freqSpec.semantic, selection);
 
         /*Render the view */
-        freqView.render(residues, numberOfRows, currentProtein.sequence.slice(selection[0], selection[1]) );
+        freqView.render(residues, currentProtein.sequence.slice(selection[0], selection[1]) );
       });
     }
 
@@ -88,9 +92,7 @@ const ProteinFamilyController = (function() {
     });
   }
 
-  ProteinFamilyController.prototype = {
-
-  };
+  ProteinFamilyController.prototype = {};
 
   return ProteinFamilyController;
 })();

@@ -12,15 +12,32 @@ const ResidueFrequencyView = (function() {
     self._id = options.id;
     self._dom = d3.select("#"+self._id);
     self._barOffset = 5;
-    this._svg = null;
+    self._familyMemberCount = options.rows;
+    self._svg = null;
+    self._visible = false;
 
     /* Set the model listeners */
-    this._model.selectedProteinChanged.attach(function(selection){
-      console.log(selection);
+    /* Update on horizontal paddle move */
+    self._model.selectedProteinChanged.attach(function(sender, msg){
+      /* Not initialized yet */
+      if(!self._visible) return;
+      /* Render the view */
+      let selection = self._model.getSelectedResidues(options.semantic).selection,
+          protein = msg.selection;
+      /*Render the view */
+      self.update(protein.sequence.slice(selection[0], selection[1]));
     });
 
-    this._model.selectedResiduesChanged.attach(function(selection){
-      console.log(selection);
+    /* Update on vertical paddle move */
+    self._model.selectedResiduesChanged.attach(function(sender, msg){
+      /* Not initialized yet */
+      if(!self._visible || (msg.semantic !== options.semantic) ) return;
+      /* Update the labels to the new selection */
+      let selection = msg.selection,
+          residues = self._model.getSequenceFrequenciesFromRange(selection),
+          protein = self._model.getSelectedProtein();
+      /*Render the view */
+      self.render(residues, protein.sequence.slice(selection[0], selection[1]));
     });
 
     self.set_scales = function(residue_frequencies, family_member_count) {
@@ -165,16 +182,17 @@ const ResidueFrequencyView = (function() {
       // render_context_lines();
     },
 
-    render : function(residue_frequencies, family_member_count, selected_residues) {
+    render : function(residue_frequencies, selected_residues) {
       /* Set the scales based on the new selection */
-      this.set_scales(residue_frequencies, family_member_count, selected_residues);
+      this.set_scales(residue_frequencies, this._familyMemberCount, selected_residues);
       /* Render the bars */
-      this.render_bars(residue_frequencies, family_member_count);
+      this.render_bars(residue_frequencies, this._familyMemberCount);
       this.render_labels(residue_frequencies);
       /* Update the labels */
       this.update(selected_residues);
+      /* Set the visibility flag to true*/
+      this._visible = true;
     },
-
   };
 
   return ResidueFrequencyView;

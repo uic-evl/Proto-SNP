@@ -195,12 +195,12 @@ const BrushView = (function() {
 
     redraw: function(selection) {
       /* Reset the opacity of unselected rows */
-      d3.selectAll('rect.active_protein_selection')
-          .classed("active_protein_selection", false);
-
-      /* Set the opacity of the highlighted row */
-      d3.selectAll('#p' + selection + " > rect")
-          .classed("active_protein_selection", true);
+      // d3.selectAll('rect.active_protein_selection')
+      //     .classed("active_protein_selection", false);
+      //
+      // /* Set the opacity of the highlighted row */
+      // d3.selectAll('#p' + selection + " > rect")
+      //     .classed("active_protein_selection", true);
     }
 
   };

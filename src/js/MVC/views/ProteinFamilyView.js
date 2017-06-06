@@ -21,7 +21,7 @@ const ProteinFamilyView = (function() {
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
-          colorMapping = self.residueMappingUtility.getColor();
+          colorMapping = self.residueMappingUtility.getColor(self._model.getProteinColoring());
 
       /* Initialize the trend image */
       self.initialize(family);
@@ -183,7 +183,6 @@ const ProteinFamilyView = (function() {
       this.backBufferContext = d3Utils.create_chart_back_buffer(this.width, this.height);
 
       this.set_chart_scales();
-
       d3Utils.clear_chart_dom(this._dom);
     },
 
@@ -264,9 +263,8 @@ const ProteinFamilyView = (function() {
     /* Function to redraw the trend image */
     recolor: function (colorMapping) {
       let colorScale = this.residueMappingUtility.getColor(colorMapping),
-
           view = this;
-      /* If a trend image exists, recolor based on the new color map */
+      /* If a protein family exists, recolor based on the new color map */
       if (this._dataModel) {
         this._dataModel
             .selectAll("custom.cell")

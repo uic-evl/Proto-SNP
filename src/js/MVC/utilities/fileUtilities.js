@@ -56,7 +56,6 @@ const FileUtilities = function(){
     return split_sequence(family);
   }
 
-
   /* Parse a FASTA File */
   function parse_FASTA(file_data) {
     /* Parse the lines of the file */
@@ -86,7 +85,6 @@ const FileUtilities = function(){
     return split_sequence(family);
   }
 
-
   /* Entry into selecting which family file has been uploaded*/
   function parse(file_data, type){
     switch(type){
@@ -96,7 +94,6 @@ const FileUtilities = function(){
         return parse_MSF(file_data);
     }
   }
-
 
   function file_upload_setup(viewer, cb){
     /* Setup the file-upload callback */
@@ -183,24 +180,20 @@ const FileUtilities = function(){
 
           // JS File reader to parse the uploaded file
           let reader = new FileReader();
-
           /* Callback to loading the file */
           reader.addEventListener("load", function () {
             /* Pass the file to be processed by the model */
             cb(this.result, extension);
           }, false);
-
           // parse the file as text
           reader.readAsText(file);
 
           // abort the upload (we aren't passing it to a server)
           data.abort();
-
         })
         .prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
   }
-
 
   /* Load the protein from RCMB */
   function load_PDB_From_RCMB(proteinName, pointer){
@@ -215,7 +208,6 @@ const FileUtilities = function(){
     });
   }
 
-
   /* Load the protein from the uploaded file */
   function load_from_uploaded_PDB(file, pointer){
     /* perform an async loading of the uploaded file */
@@ -226,8 +218,6 @@ const FileUtilities = function(){
       resolve(pointer.structure);
     });
   }
-
-
 
   return {
    parseAlignmentFile   : parse,

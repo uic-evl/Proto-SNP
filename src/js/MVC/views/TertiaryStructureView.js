@@ -4,6 +4,26 @@ var App = App || {};
 
 const TertiaryStructureView = (function () {
 
+  function colorProteinBy(colorMap) {
+    let colorMapping = this.residueMappingUtility.getColor(colorMap);
+    return new pv.color.ColorOp(function (atom, out, index) {
+      /* Select the color corresponding to the residue and mapping*/
+      let color = colorMapping(atom._residue._name).rgba;
+
+      /*Set the RGBA output color */
+      out[index + 0] = color[0] / 255.0;
+      out[index + 1] = color[1] / 255.0;
+      out[index + 2] = color[2] / 255.0;
+      out[index + 3] = color[3] / 255.0;
+    })
+  }
+
+  /* Render the title of the viewer */
+  function updateViewTitle(dom, title) {
+    d3.select(dom).select('p.view')
+        .html(_.toUpper(title));
+  }
+
 function TertiaryStructureView(model, element) {
 
   let self = this;
@@ -41,20 +61,6 @@ function TertiaryStructureView(model, element) {
     self.recolor(msg.scheme);
   });
 
-  self.colorProteinBy = function (colorMap) {
-    let colorMapping = this.residueMappingUtility.getColor(colorMap);
-    return new pv.color.ColorOp(function (atom, out, index) {
-      /* Select the color corresponding to the residue and mapping*/
-      let color = colorMapping(atom._residue._name).rgba;
-
-      /*Set the RGBA output color */
-      out[index + 0] = color[0] / 255.0;
-      out[index + 1] = color[1] / 255.0;
-      out[index + 2] = color[2] / 255.0;
-      out[index + 3] = color[3] / 255.0;
-    })
-  };
-
   /* Mixin the utilities */
   _.mixin(self, new pvUtils(self));
 }
@@ -90,13 +96,14 @@ TertiaryStructureView.prototype = {
           splash_trigger.show();
         });
 
+        /* Apply the bindings */
+        ko.applyBindings(view, splash.find("#splashTemplate")[0]);
+
         /* Setup the upload callback for files */
         App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"),
           function (metadata, result) {
             view.fileUploaded.notify({metaData: metadata, file: result});
           });
-
-        ko.applyBindings(view, splash.find("#splashTemplate")[0]);
 
       });
     }
@@ -139,34 +146,26 @@ TertiaryStructureView.prototype = {
     this.pvViewer.on('click', this.mouseClickEvent);
 
     /* Register the enter key to reset the selections of the view */
-    keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);
-  },
-
-  /* Render the title of the viewer */
-  updateViewTitle: function (dom, title) {
-    d3.select(dom).select('p.view')
-      .html(_.toUpper(title));
+    //keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);
   },
 
   render: function (structure, proteinName, renderingStyle) {
-
     /* Place the name of the protein above the viewer*/
-    this.updateViewTitle(this._dom[0], proteinName);
+    updateViewTitle(this._dom[0], proteinName);
     let geom = null;
 
     /* Display the protein in the specified rendering, coloring by the specified property */
     switch(renderingStyle){
       case "cartoon":
       default:
-        geom = this.pvViewer.cartoon(proteinName, structure, {color: this.colorProteinBy()});
+        geom = this.pvViewer.cartoon(proteinName, structure,
+            {color: colorProteinBy.call(this, this._model.getProteinColoring())});
         break;
     }
-
     /* Save the geometry to the model */
     this._model.setGeometry(geom);
 
     /* center the structure in the view */
-    // center in molecularViewer
     this.pvViewer.centerOn(structure);
     // auto zoom to fit
     this.pvViewer.autoZoom();
@@ -177,11 +176,10 @@ TertiaryStructureView.prototype = {
 
     let geometry = this._model.getGeometry(),
         viewer   = this.pvViewer;
-
     /* Check to make sure the view is active*/
     if(geometry){
       /* Recolor */
-      geometry.colorBy(this.colorProteinBy(colorMap));
+      geometry.colorBy(colorProteinBy.call(this, colorMap));
       /* Redraw */
       viewer.requestRedraw();
     }

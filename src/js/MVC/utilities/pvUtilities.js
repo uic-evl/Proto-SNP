@@ -10,14 +10,13 @@ const pvUtils = function (context) {
 
   return {
     zoomToSelections: function () {
-
       let allSelections = [];
       self.pvViewer.forEach(function (go) {
         if (go.selection !== undefined) {
           allSelections.push(go.selection());
         }
       });
-      view.fitTo(allSelections);
+      self.pvViewer.fitTo(allSelections);
     },
 
     setColorForAtom: function (go, atom, color) {

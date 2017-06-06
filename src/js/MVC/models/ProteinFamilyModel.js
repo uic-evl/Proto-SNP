@@ -25,11 +25,14 @@ const ProteinFamilyModel = (function() {
     this._selectedProtein = null;
     this._selectedResidues = {left: [], right: []};
     this._previousSelectedResidues = {left: [], right: []};
+
+    this._sequenceSortingAlgorithms = null;
+
     this._proteinSorting = "";
     this._proteinColoring = "";
+
     this._proteinNames = null;
     this._parsedData = null;
-    this._sequenceSortingAlgorithms = null;
 
     /* Update Events */
     this.proteinFamilyAdded          = new EventNotification(this);
@@ -114,9 +117,9 @@ const ProteinFamilyModel = (function() {
       return this;
     },
 
-    getProteinSorting: function () {
-      return this._proteinSorting;
-    },
+    getProteinSorting: function () { return this._proteinSorting; },
+
+    getProteinColoring: function () { return this._proteinColoring; },
 
     setProteinSorting: function (sorting) {
       this._proteinSorting = sorting;

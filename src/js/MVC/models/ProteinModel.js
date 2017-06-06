@@ -93,11 +93,15 @@ const ProteinModel = (function() {
       return this;
     },
 
+    getProteinSorting: function() { return this._proteinSorting; },
+
     setProteinColoring: function (coloring) {
       this._proteinColoring = coloring;
       this.proteinColoringChanged.notify({scheme: coloring});
       return this;
     },
+
+    getProteinColoring: function() { return this._proteinColoring; },
 
     isEmpty : function() {
       return !!this._proteinStructure;

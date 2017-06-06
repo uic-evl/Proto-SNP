@@ -65,8 +65,6 @@ const ProteinFamilyModel = (function() {
       ;
       /* Resolve when all promises return */
       Promise.all([edit_dist, weighted_edit_dist, commonality, weighted_commonality]).then(values => {
-
-        console.log("done");
         /* Enable sorting menu */
         $("#sorting_list").find("li").removeClass("disabled");
         /* Set the family scores */

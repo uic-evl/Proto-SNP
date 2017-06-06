@@ -49,7 +49,7 @@ const d3Utils = function () {
           .style("height", height);
     },
 
-    create_svg_overlay : function(domOb, width, height) {
+    create_svg_overlay : function(domObj, width, height) {
       let overview = domObj
           .append('canvas')
           .attr("id", "trendCanvasOverview")
@@ -64,6 +64,13 @@ const d3Utils = function () {
           .attr("width", width)
           .attr("height", height)
           .node().getContext('2d');
+    },
+
+    bind_data_new : function(family, colorScale, size){
+      let data = [];
+      family.forEach(function(protein){
+
+      });
     },
 
     /* Bind the data to a fake dom */

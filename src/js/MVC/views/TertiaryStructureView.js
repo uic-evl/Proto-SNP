@@ -47,7 +47,10 @@ function TertiaryStructureView(model, element) {
       .find('#splash').remove();
 
     self.initialize();
-    self.render(protein.structure, protein.name)
+    self.render(protein.structure, protein.name);
+
+    /* Enable the coloring menu */
+    $("#coloring_list").find("li").removeClass("disabled");
   });
 
   /* Update the model once the selection has been added to the model */

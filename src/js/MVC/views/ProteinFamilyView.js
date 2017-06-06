@@ -12,7 +12,6 @@ const ProteinFamilyView = (function() {
     self._id = element.id;
     self._dom = d3.select("#"+self._id);
     self.residueMappingUtility = new ResidueMappingUtility();
-    self._dataModel = null;
 
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded = new EventNotification(this);
@@ -26,9 +25,8 @@ const ProteinFamilyView = (function() {
       /* Initialize the trend image */
       self.initialize(family);
 
-      self._dataModel = d3Utils.bind_data({sequences: family.data, names: family.index}, colorMapping, self.residue_glyph_size);
-
-      self.render().then(function () {
+      //self._dataModel = d3Utils.bind_data({sequences: family.data, names: family.index}, colorMapping, self.residue_glyph_size);
+      self.render(family.data, colorMapping).then(function () {
 
         let verticalPaddleSize   = 6,
             horizontalPaddleSize = 1,
@@ -59,6 +57,9 @@ const ProteinFamilyView = (function() {
           ]
         });
 
+        /* Enable the coloring menu */
+        $("#coloring_list").find("li").removeClass("disabled");
+
         /* Create the legend */
         //App.residueModel.createColorLegend();
       });
@@ -66,10 +67,10 @@ const ProteinFamilyView = (function() {
 
     /* The coloring scheme changed */
     self._model.proteinColoringChanged.attach(function(sender, msg){
-      if (!self._dataModel) return;
-      let colorMap = msg.scheme;
-      self.recolor(colorMap);
-      self.render();
+      if (!self._model.isEmpty()) return;
+      let colorMap = msg.scheme,
+          colorScale = self.residueMappingUtility.getColor(colorMap);
+      self.render(self._model.getFamily().data, colorScale);
     });
 
     /* Getter for the x-Axis scale */
@@ -186,29 +187,21 @@ const ProteinFamilyView = (function() {
       d3Utils.clear_chart_dom(this._dom);
     },
 
-    render: function () {
+    render: function (family, colorMapping) {
       let view = this;
       return new Promise(function (resolve, reject) {
         /* First, clear the canvas*/
         view.backBufferContext
             .clearRect(0, 0, view.width, view.height);
-
         //let image = context.createImageData(view.width + view.margin, view.height);
 
         /* Get the trend image rows from the data model */
-        let rows = view._dataModel.selectAll("custom.proteinRow");
-
-        /* Iterate over each element to render it to the canvas*/
-        rows.each(function (d, i) {
-          let columns = d3.select(this).selectAll("custom.cell");
-          columns.each(function (d, i) {
-            /* Get the residue from the element */
-            let residue = d3.select(this);
-            /* Set the fill color */
-            view.backBufferContext.fillStyle = residue.attr("fill");
-            /* color the area of the residue */
-            view.backBufferContext
-                .fillRect(parseInt(residue.attr('x')), parseInt(residue.attr('y')), view.residue_glyph_size, view.residue_glyph_size);
+        family.forEach(function(sequence,row){
+          sequence.forEach(function(residue, col){
+            let mostFreq = view._model.getSequenceFrequencyAt(col);
+            view.backBufferContext.fillStyle = colorMapping(residue, mostFreq).code;
+            view.backBufferContext.fillRect(col*view.residue_glyph_size, row*view.residue_glyph_size,
+                view.residue_glyph_size, view.residue_glyph_size);
           });
         });
 
@@ -258,27 +251,6 @@ const ProteinFamilyView = (function() {
             /* Reset the brush selections */
             //reset_brushes();
           });
-    },
-
-    /* Function to redraw the trend image */
-    recolor: function (colorMapping) {
-      let colorScale = this.residueMappingUtility.getColor(colorMapping),
-          view = this;
-      /* If a protein family exists, recolor based on the new color map */
-      if (this._dataModel) {
-        this._dataModel
-            .selectAll("custom.cell")
-            .attr('fill',   function(d) {
-              let col = parseInt(d3.select(this).attr("col")),
-                  mostFreq = view._model.getSequenceFrequencyAt(col);
-              return colorScale(d, mostFreq).code;
-            })
-            .attr('stroke', function(d){
-              let col = parseInt(d3.select(this).attr("col")),
-                  mostFreq = view._model.getSequenceFrequencyAt(col);
-              return colorScale(d, mostFreq).code;
-            });
-      }
     },
 
     attachBrushes: function(brushViews) {

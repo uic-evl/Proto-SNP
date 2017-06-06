@@ -61,9 +61,12 @@ const ProteinFamilyModel = (function() {
       /* Calculate the residue commonality scores with the first protein and enable the menu option */
       commonality = self._sequenceSortingAlgorithms.calculateCommonalityScores(protein),
       /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
-      weighted_commonality = self._sequenceSortingAlgorithms.calculateCommonalityScores(protein, 1);
+      weighted_commonality = self._sequenceSortingAlgorithms.calculateCommonalityScores(protein, 1)
+      ;
       /* Resolve when all promises return */
       Promise.all([edit_dist, weighted_edit_dist, commonality, weighted_commonality]).then(values => {
+
+        console.log("done");
         /* Enable sorting menu */
         $("#sorting_list").find("li").removeClass("disabled");
         /* Set the family scores */

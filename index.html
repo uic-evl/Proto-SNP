@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="src/css/colorLegend.css">
     <link rel="stylesheet" href="src/css/menuView.css">
 
-    <!-- JS LIB-->
+    <!-- JS LIB -->
     <script type='text/javascript' src='lib/js/bio-pv.js'></script>
 
     <script type='text/javascript' src='lib/js/d3.js'></script>
@@ -31,225 +31,131 @@
     <script type='text/javascript' src='lib/js/d3-context-menu.js'></script>
     <script type='text/javascript' src='lib/js/colorbrewer.min.js'></script>
 
+    <script type='text/javascript' src='lib/js/lodash.min.js'></script>
+    <script type='text/javascript' src='lib/js/levenshtein.js'></script>
+    <!--<script type='text/javascript' src='lib/js/knockout-min.js'></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-debug.js"></script>
+
+    <!-- jQuery File Upload-->
+    <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.ui.widget.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.iframe-transport.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.fileupload.js'></script>
+    <script type='text/javascript' src='lib/js/jQuery-file-upload/jquery.fileupload-process.js'></script>
+
     <!-- Bootstrap -->
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
 
-    <!-- JS SRC-->
-
-    <!-- Views -->
-    <script type='text/javascript' src='src/js/view/sequenceViewer.js'></script>
-    <script type='text/javascript' src='src/js/view/trendImageViewer.js'></script>
-    <script type='text/javascript' src='src/js/view/frequencyViewer.js'></script>
-
-    <!-- Controllers -->
-    <script type='text/javascript' src='src/js/controller/trendImageController.js'></script>
-    <script type='text/javascript' src='src/js/controller/menuController.js'></script>
-
-    <!-- Data Models -->
-    <script type='text/javascript' src='src/js/model/applicationModel.js'></script>
-    <script type='text/javascript' src='src/js/model/familyModel.js'></script>
-
+    <!-- JS SRC -->
 
     <!-- Algorithms -->
     <script type='text/javascript' src='src/js/algorithms/Needleman-Wunsch.js'></script>
     <script type='text/javascript' src='src/js/algorithms/SequenceSorting.js'></script>
     <script type='text/javascript' src='src/js/algorithms/LevenshteinDistance.js'></script>
 
-    <!-- Utilities -->
+    <script type='text/javascript' src='src/js/MVC/Event.js'></script>
+    <script type='text/javascript' src='src/js/MVC/models/ProteinModel.js'></script>
+    <script type='text/javascript' src='src/js/MVC/models/ProteinFamilyModel.js'></script>
+    <script type='text/javascript' src='src/js/MVC/models/FilteringMenuModel.js'></script>
+
+    <script type='text/javascript' src='src/js/MVC/views/FilteringMenuView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/PrimaryStructureView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/TertiaryStructureView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/ProteinFamilyView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/BrushView.js'></script>
+    <script type='text/javascript' src='src/js/MVC/views/ResidueFrequencyView.js'></script>
+
+    <script type='text/javascript' src='src/js/MVC/controllers/FilteringMenuController.js'></script>
+    <script type='text/javascript' src='src/js/MVC/controllers/PrimaryStructureController.js'></script>
+    <script type='text/javascript' src='src/js/MVC/controllers/TertiaryStructureController.js'></script>
+    <script type='text/javascript' src='src/js/MVC/controllers/ProteinFamilyController.js'></script>
+
+    <script type='text/javascript' src='src/js/utilities/fileUtilities.js'></script>
+    <script type='text/javascript' src='src/js/utilities/keyboardUtilities.js'></script>
+    <script type='text/javascript' src='src/js/utilities/pvUtilities.js'></script>
+    <script type='text/javascript' src='src/js/utilities/d3Utilities.js'></script>
+    <script type='text/javascript' src='src/js/utilities/brushUtilities.js'></script>
+    <script type='text/javascript' src='src/js/utilities/residueMappingUtilities.js'></script>
     <script type='text/javascript' src='src/js/utilities/databaseMappingUtils.js'></script>
-    <script type='text/javascript' src='src/js/utilities/applicationCallbacks.js'></script>
-    <script type='text/javascript' src='src/js/utilities/utilities.js'></script>
 
-    <!-- Application Entry Point -->
     <script type='text/javascript' src='src/js/main.js'></script>
-
 </head>
+
 <body>
+
+<nav id="menu" class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+            </button>
+            <a class="navbar-brand" href="#">FixingTIM</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="menu-nav">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
+                    <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
+                        <li class="sortingOption disabled">
+                            <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
+                        </li>
+                    </ul>
+                </li>
+                <li id="coloring-nav" class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
+                    <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
+                        <li class="coloringOption disabled">
+                            <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
 
 <div class="container-fluid">
 
-    <nav id="menu" class="navbar navbar-default">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">FixingTIM</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="menu-nav">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
-                        <ul id="sorting-nav" class="dropdown-menu">
-                            <li id="initial_sort_li" class="sortingOption">
-                                <a href="#" class="disabled">Initial Ordering</a>
-                            </li>
-                            <li id="residue_freq_li" class="sortingOption">
-                                <a href="#" class="disabled">Residue Frequency</a>
-                            </li>
-                            <li id="edit_dist_li" class="sortingOption">
-                                <a href="#" class="disabled">Edit Distance</a>
-                            </li>
-                            <li id="weighted_edit_dist_li" class="sortingOption">
-                                <a href="#" class="disabled">Weighted Edit Distance</a>
-                            </li>
-                            <li id="commonality_li" class="sortingOption">
-                                <a href="#" class="disabled">Residue Commonality with</a>
-                            </li>
-                            <li id="normalized_commonality_li" class="sortingOption">
-                                <a href="#" class="disabled">Normalized Residue Commonality with</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li id="coloring-nav" class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="coloringOption active-selection"><a href="#">Side Chain Class</a></li>
-                            <li class="coloringOption"><a href="#">Side Chain Polarity</a></li>
-                            <li class="coloringOption"><a href="#">Frequency (Family Viewer)</a></li>
-                        </ul>
-                    </li>
-                </ul>
-
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
-
     <!-- 3D Molecule Viewers -->
     <div class="row molecularViewersRow">
+        <div id="molecularViewerTemplate" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
 
-        <!-- Left Viewer-->
-        <div class="col-md-5 molecularViewerA">
-            <p class="view">&nbsp;</p>
-            <div id=leftMolecularViewer class="molecular-viewer">
-                <div id="leftSplash">
-                    <!-- Select Protein Button -->
-                    <button class="popup-trigger sBtn" id="popup-trigger-left">
-                        <i class="fa fa-plus-square-o"></i><span> Add Protein...</span>
-                    </button>
-
-                    <!-- Overlay for Select Protein Button -->
-                    <div class="overlay overlaySplash" id="overlay-left">
-                        <div class="overlay-background" id="overlay-background-left"></div>
-                        <div class="overlay-content" id="overlay-content-left">
-                            <div class="fa fa-times fa-lg overlay-close" id="overlay-close-left"></div>
-
-                            <form id="left-form" class="signup-form" data-bind="submit: processProteinRequest">
-                                <div class="container-fluid">
-                                    <br>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <label for="protein-name-left">PDB Code (ex: 2YPI):</label>
-                                            <input id="protein-name-left" type="text" name="name" autocomplete="off"/>
-                                            <button class="sBtn sBtn-outline submit-btn"><span>Download</span></button>
-                                        </div>
-                                    </div>
-                                    <br><br>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <span class="fileUpload">Choose a file: </span>
-                                            <br>
-                                            <span id="upload-left" class="btn btn-success fileinput-button viewer-upload">
-                                             <i class="fa fa-plus-square-o"></i><span> Select file...</span>
-                                                <!-- The file input field used as target for the file upload widget -->
-                                            <input id="fileupload-left" type="file" name="files[]" accept=".pdb">
-                                        </span>
-                                            <br><br>
-                                            <div id="files-left" class="files"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+        <script type="text/html" id="molecularViewers">
+            <!-- Tertiary Viewer -->
+                <div class="col-md-5" data-bind="attr: {id: $data._id}">
+                    <p class="view">&nbsp;</p>
+                    <div id="pvDiv" class="molecular-viewer">
+                        <div id="splash"></div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <!-- End Left Viewer -->
+        </script>
 
         <!-- Sequence Viewer -->
         <div class="col-md-2 sequenceViewers">
             <p class="view">&nbsp;</p>
             <div id="sequenceViewer" class="row">
-                <!-- Left Sequence List View-->
-                <div class="col-md-6 sequence-a black-background">
-                    <div id="leftMolecularViewer-Sequence"></div>
-                </div>
-                <!-- End Left Sequence List View-->
-                <!-- Right Sequence List View-->
-                <div class="col-md-6 sequence-b black-background">
-                    <div id="rightMolecularViewer-Sequence"></div>
-                </div>
-                <!-- End Right Sequence List View-->
-            </div>
-        </div>
-
-        <!-- Right Viewer -->
-        <div class="col-md-5 molecularViewerB">
-            <p class="view">&nbsp;</p>
-            <div id=rightMolecularViewer class="molecular-viewer">
-                <div id="rightSplash">
-                    <!-- Select Protein Button -->
-                    <button class="popup-trigger sBtn" id="popup-trigger-right">
-                        <i class="fa fa-plus-square-o"></i><span> Add Protein...</span>
-                    </button>
-
-                    <!-- Overlay for Select Protein Button -->
-                    <div class="overlay overlaySplash" id="overlay-right">
-                        <div class="overlay-background" id="overlay-background-right"></div>
-                        <div class="overlay-content" id="overlay-content-right">
-                            <div class="fa fa-times fa-lg overlay-close" id="overlay-close-right"></div>
-
-                            <form id="right-form" class="signup-form" data-bind="submit: processProteinRequest">
-                                <div class="container-fluid">
-                                    <br>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <label for="protein-name-left">PDB Code (ex: 2YPI):</label>
-                                            <input id="protein-name-right" type="text" name="name" autocomplete="off"/>
-                                            <button class="sBtn sBtn-outline submit-btn"><span>Download</span></button>
-                                        </div>
-                                    </div>
-                                    <br><br>
-                                    <div class="row ">
-                                        <div class="col-md-12">
-                                            <span class="fileUpload">Choose a file: </span>
-                                            <br>
-                                            <span id="upload-right" class="btn btn-success fileinput-button viewer-upload">
-                                             <i class="fa fa-plus-square-o"></i><span> Select file...</span>
-                                                <!-- The file input field used as target for the file upload widget -->
-                                            <input id="fileupload-right" type="file" name="files[]" accept=".pdb">
-                                        </span>
-                                            <br><br>
-                                            <div id="files-right" class="files"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-
-                        </div>
+                <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
+                <script type="text/html" id="sequenceViewers">
+                    <div class="col-md-6 sequence-container black-background">
+                        <div data-bind="attr: {id: $data._id}"></div>
                     </div>
-                </div>
+                </script>
             </div>
         </div>
-        <!-- End Right Viewer -->
+    </div>
 
-    </div> <!-- End Molecular Viewers -->
-
-    <br>
-
+    <!-- Color Legend -->
     <div class="row legendRow center-aligned">
         <div class="col-md-4 col-md-offset-7">
             <div id="colorLegend"></div>
         </div>
     </div>
 
+    <!-- Trend Image -->
     <div class="row proteinFamilyRow">
         <div class="col-md-12">
             <!-- Trend Image View-->
@@ -257,13 +163,8 @@
                 <p class="view">Protein Family Viewer</p>
                 <div class="col-md-12 trend-column">
                     <div id="trendImageViewer" class="trend-viewer">
-                        <!-- Select Protein Button -->
-                        <div id="trendSplash">
-                            <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-family">
-                                <i class="fa fa-plus-square-o"></i><span> Upload Family </span>
-                                <input id="fileupload-family" type="file" name="files[]" accept=".msf, .fa">
-                            </span>
-                        </div>
+                        <!-- Select Alignment Button -->
+                        <div id="trendSplash"></div>
                     </div>
                 </div>
             </div>
@@ -279,11 +180,10 @@
                     </div>
                 </div>
             </div>
-            <!-- End Residue Frequency Viewer -->
         </div>
     </div>
 
-</div> <!-- end container -->
-
+</div>
 </body>
+
 </html>

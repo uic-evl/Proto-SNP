@@ -88,7 +88,7 @@ const FileUtilities = function(){
   /* Entry into selecting which family file has been uploaded*/
   function parse(file_data, type){
     switch(type){
-      case "fasta":
+      case "fa":
         return parse_FASTA(file_data);
       case "msf":
         return parse_MSF(file_data);

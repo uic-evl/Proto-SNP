@@ -7,20 +7,21 @@ const ProteinModel = (function() {
   function ProteinModel() {
     let self = this;
 
-    self.proteinStructure = null;
-    self.selectedResidue = null;
-    self.previousSelectedResidue = null;
+    self._proteinStructure = null;
+    self._geometry = null;
+    self._selectedResidue = null;
+    self._previousSelectedResidue = null;
 
     self._proteinSorting = "";
     self._proteinColoring = "";
 
     self.proteinAdded = new EventNotification(this);
     self.residueSelected = new EventNotification(this);
-    self.proteinSortingChanged       = new EventNotification(this);
-    self.proteinColoringingChanged   = new EventNotification(this);
+    self.proteinSortingChanged    = new EventNotification(this);
+    self.proteinColoringChanged   = new EventNotification(this);
 
     /* Determines which method to load the protein */
-    this.load_protein = function (metadata, file){
+    self.load_protein = function (metadata, file){
       // if the data method is from an uploaded file
       if(file){
         return App.fileUtilities.uploadPDB(file, metadata);
@@ -46,15 +47,17 @@ const ProteinModel = (function() {
             });
       }
     }
-
   }
 
   ProteinModel.prototype = {
     /* Accessor to get the underlying structure in the molecularViewer */
-    getStructure: function() { return this.proteinStructure; },
+    getStructure: function() { return this._proteinStructure; },
 
     /* Accessor to get the underlying geometry in the molecularViewer */
-    getGeometry: function() { return this.proteinStructure.geom; },
+    setGeometry: function(geometry) { this._geometry = geometry; },
+
+    /* Accessor to get the underlying geometry in the molecularViewer */
+    getGeometry: function() { return this._geometry; },
 
     getSequence: function(structure, chain) {
       // Array to store the sequence
@@ -70,34 +73,34 @@ const ProteinModel = (function() {
 
     addProtein : function(metadata, file) {
       this.load_protein(metadata, file).then(function(structure){
-        this.proteinStructure = structure;
-        this.proteinAdded.notify({structure:this.proteinStructure, name:metadata.protein_name});
+        this._proteinStructure = structure;
+        this.proteinAdded.notify({structure:this._proteinStructure, name:metadata.protein_name});
       }.bind(this));
     },
 
     selectResidue : function(selection) {
-      this.previousSelectedResidue = this.selectedResidue;
-      this.selectedResidue = selection;
+      this._previousSelectedResidue = this._selectedResidue;
+      this._selectedResidue = selection;
       /* Notify the listeners that the selection has been changed */
-      this.residueSelected.notify(this.selectedResidue);
+      this.residueSelected.notify(this._selectedResidue);
     },
 
-    getResidueSelection : function() { return this.selectedResidue },
+    getResidueSelection : function() { return this._selectedResidue },
 
     setProteinSorting: function (sorting) {
       this._proteinSorting = sorting;
-      this.proteinSortingChanged.notify({algorithm: sorting});
+      this.proteinSortingChanged.notify({scheme: sorting});
       return this;
     },
 
     setProteinColoring: function (coloring) {
       this._proteinColoring = coloring;
-      this.proteinSortingChanged.notify({algorithm: coloring});
+      this.proteinColoringChanged.notify({scheme: coloring});
       return this;
     },
 
     isEmpty : function() {
-      return !!this.proteinStructure;
+      return !!this._proteinStructure;
     }
 
   };

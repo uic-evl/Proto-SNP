@@ -66,6 +66,7 @@ const ProteinFamilyView = (function() {
 
     /* The coloring scheme changed */
     self._model.proteinColoringChanged.attach(function(sender, msg){
+      if (!self._dataModel) return;
       let colorMap = msg.scheme;
       self.recolor(colorMap);
       self.render();

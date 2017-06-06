@@ -17,11 +17,11 @@ function TertiaryStructureView(model, element) {
   self.residueMappingUtility = new ResidueMappingUtility();
 
   /* The user has uploaded or downloaded a PDB file */
-  this.fileUploaded = new EventNotification(this);
-  this.residueSelected = new EventNotification(this);
+  self.fileUploaded = new EventNotification(this);
+  self.residueSelected = new EventNotification(this);
 
   /* Attach the listeners */
-  this._model.proteinAdded.attach(function (sender, protein) {
+  self._model.proteinAdded.attach(function (sender, protein) {
     /* Close the splash screen */
     $('#' + self._id)
       .find('#splash').remove();
@@ -35,6 +35,25 @@ function TertiaryStructureView(model, element) {
     self.picked.node().setSelection(selection);
     self.pvViewer.requestRedraw();
   });
+
+  /* Update the coloring of the view */
+  self._model.proteinColoringChanged.attach(function(sender, msg){
+    self.recolor(msg.scheme);
+  });
+
+  self.colorProteinBy = function (colorMap) {
+    let colorMapping = this.residueMappingUtility.getColor(colorMap);
+    return new pv.color.ColorOp(function (atom, out, index) {
+      /* Select the color corresponding to the residue and mapping*/
+      let color = colorMapping(atom._residue._name).rgba;
+
+      /*Set the RGBA output color */
+      out[index + 0] = color[0] / 255.0;
+      out[index + 1] = color[1] / 255.0;
+      out[index + 2] = color[2] / 255.0;
+      out[index + 3] = color[3] / 255.0;
+    })
+  };
 
   /* Mixin the utilities */
   _.mixin(self, new pvUtils(self));
@@ -129,31 +148,22 @@ TertiaryStructureView.prototype = {
       .html(_.toUpper(title));
   },
 
-  colorProteinBy: function () {
-    let colorMapping = this.residueMappingUtility.getColor("side chain");
-    return new pv.color.ColorOp(function (atom, out, index) {
-      /* Select the color corresponding to the residue and mapping*/
-      let color = colorMapping(atom._residue._name).rgba;
-
-      /*Set the RGBA output color */
-      out[index + 0] = color[0] / 255.0;
-      out[index + 1] = color[1] / 255.0;
-      out[index + 2] = color[2] / 255.0;
-      out[index + 3] = color[3] / 255.0;
-    })
-  },
-
-  render: function (structure, proteinName) {
+  render: function (structure, proteinName, renderingStyle) {
 
     /* Place the name of the protein above the viewer*/
     this.updateViewTitle(this._dom[0], proteinName);
+    let geom = null;
 
     /* Display the protein in the specified rendering, coloring by the specified property */
-    // switch(App.renderingStyle){
-    //   case "cartoon":
-    this.geom = this.pvViewer.cartoon(proteinName, structure, {color: this.colorProteinBy()});
-    //     break;
-    // }
+    switch(renderingStyle){
+      case "cartoon":
+      default:
+        geom = this.pvViewer.cartoon(proteinName, structure, {color: this.colorProteinBy()});
+        break;
+    }
+
+    /* Save the geometry to the model */
+    this._model.setGeometry(geom);
 
     /* center the structure in the view */
     // center in molecularViewer
@@ -163,15 +173,15 @@ TertiaryStructureView.prototype = {
   },
 
   /* Recolor the protein according to the current coloring scheme */
-  recolor : function(){
+  recolor : function(colorMap){
 
-    let geometry = this.geom(),
+    let geometry = this._model.getGeometry(),
         viewer   = this.pvViewer;
 
     /* Check to make sure the view is active*/
     if(geometry){
       /* Recolor */
-      geometry.colorBy(this.colorProteinBy());
+      geometry.colorBy(this.colorProteinBy(colorMap));
       /* Redraw */
       viewer.requestRedraw();
     }

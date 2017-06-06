@@ -40,41 +40,6 @@ function ApplicationModel() {
   }
 
 
-  /* Calculate all of the sorting metrics for family */
-  function calculate_all_sorting_scores(protein) {
-    return new Promise(function(resolve, reject) {
-      /* Calculate the column frequency scores and enable the menu option */
-      self.sortedSequences.calculateFrequencyScores()
-          .then((scores) => {
-            $("#residue_freq_li").find("a").removeClass("disabled");
-            self.proteinFamily.setScores("residue_frequency", scores);
-          });
-      /* Calculate the edit distance scores with the first protein and enable the menu option */
-      self.sortedSequences.calculateEditDistanceScores(protein)
-          .then((scores) => {
-            $("#edit_dist_li").find("a").removeClass("disabled");
-            self.proteinFamily.setScores("edit_distance", scores);
-          });
-      /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
-      self.sortedSequences.calculateEditDistanceScores(protein, {insertion: 3, deletion: 3, substitution: 5})
-          .then((scores) => {
-            $("#weighted_edit_dist_li").find("a").removeClass("disabled");
-            self.proteinFamily.setScores("weighted_edit_distance", scores);
-          });
-      /* Calculate the residue commonality scores with the first protein and enable the menu option */
-      self.sortedSequences.calculateCommonalityScores(protein)
-          .then((scores) => {
-            $("#commonality_li").find("a").removeClass("disabled");
-            self.proteinFamily.setScores("commonality_scores", scores);
-          });
-      /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
-      self.sortedSequences.calculateCommonalityScores(protein, 1)
-          .then((scores) => {
-            $("#normalized_commonality_li").find("a").removeClass("disabled");
-            self.proteinFamily.setScores("normalized_commonality_scores", scores);
-          });
-    });
 
-  }
 
 }

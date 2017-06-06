@@ -97,13 +97,17 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by <span class="caret"></span></a>
                     <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
-                        <li id="initial_sort_li" class="sortingOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
+                        <li class="sortingOption disabled">
+                            <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
+                        </li>
                     </ul>
                 </li>
                 <li id="coloring-nav" class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by <span class="caret"></span></a>
                     <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
-                        <li class="coloringOption"><a href="#" data-bind="text: filter, click: $parent.elementSelected"></a></li>
+                        <li class="coloringOption disabled">
+                            <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
+                        </li>
                     </ul>
                 </li>
             </ul>

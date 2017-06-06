@@ -5,11 +5,12 @@ var App = App || {};
 const FilteringMenuModel = (function() {
 
   function FilteringMenuModel(options) {
+    let self = this;
 
-    this._items = options.items;
-    this._selectedElement = '';
+    self._items = options.items;
+    self._selectedElement = '';
 
-    this.selectedElementChanged = new EventNotification(this);
+    self.selectedElementChanged = new EventNotification(this);
   }
 
   FilteringMenuModel.prototype = {

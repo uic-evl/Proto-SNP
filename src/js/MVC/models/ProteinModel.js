@@ -46,7 +46,7 @@ const ProteinModel = (function() {
               return Promise.reject(null);
             });
       }
-    }
+    };
   }
 
   ProteinModel.prototype = {

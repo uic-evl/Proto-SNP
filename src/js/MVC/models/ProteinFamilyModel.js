@@ -21,38 +21,70 @@ const ProteinFamilyModel = (function() {
   }
 
   function ProteinFamilyModel() {
+    let self = this;
+    
+    self._selectedProtein = null;
+    self._selectedResidues = {left: [], right: []};
+    self._previousSelectedResidues = {left: [], right: []};
 
-    this._selectedProtein = null;
-    this._selectedResidues = {left: [], right: []};
-    this._previousSelectedResidues = {left: [], right: []};
+    self._sequenceSortingAlgorithms = null;
 
-    this._sequenceSortingAlgorithms = null;
+    self._proteinSorting = "";
+    self._proteinColoring = "";
 
-    this._proteinSorting = "";
-    this._proteinColoring = "";
-
-    this._proteinNames = null;
-    this._parsedData = null;
+    self._proteinNames = null;
+    self._parsedData = null;
 
     /* Update Events */
-    this.proteinFamilyAdded          = new EventNotification(this);
-    this.selectedProteinChanged      = new EventNotification(this);
-    this.selectedResiduesChanged     = new EventNotification(this);
+    self.proteinFamilyAdded          = new EventNotification(this);
+    self.selectedProteinChanged      = new EventNotification(this);
+    self.selectedResiduesChanged     = new EventNotification(this);
     /* Menu Filtering */
-    this.proteinSortingChanged       = new EventNotification(this);
-    this.proteinColoringChanged      = new EventNotification(this);
+    self.proteinSortingChanged       = new EventNotification(this);
+    self.proteinColoringChanged      = new EventNotification(this);
+
+    /* Setter for the different types of similarity scores */
+     self.set_scores = function(metric, scores) {
+      scores.forEach( (o) => {
+        let member = _.find(self._rawData, (m) => { return o.name === m.name} );
+        member.scores[metric] = o.score;
+      });
+    };
+
+    /* Calculate all of the sorting metrics for family */
+    self.calculate_all_sorting_scores = function(protein) {
+      /* Calculate the edit distance scores with the first protein and enable the menu option */
+      let edit_dist = self._sequenceSortingAlgorithms.calculateEditDistanceScores(protein),
+      /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
+      weighted_edit_dist = self._sequenceSortingAlgorithms.calculateEditDistanceScores(protein,
+          {insertion: 3, deletion: 3, substitution: 5}),
+      /* Calculate the residue commonality scores with the first protein and enable the menu option */
+      commonality = self._sequenceSortingAlgorithms.calculateCommonalityScores(protein),
+      /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
+      weighted_commonality = self._sequenceSortingAlgorithms.calculateCommonalityScores(protein, 1);
+      /* Resolve when all promises return */
+      Promise.all([edit_dist, weighted_edit_dist, commonality, weighted_commonality]).then(values => {
+        /* Enable sorting menu */
+        $("#sorting_list").find("li").removeClass("disabled");
+        /* Set the family scores */
+        self.set_scores("edit_distance", values[0]);
+        self.set_scores("weighted_edit_distance", values[1]);
+        self.set_scores("commonality_scores", values[2]);
+        self.set_scores("normalized_commonality_scores", values[3]);
+      });
+    }
   }
 
   ProteinFamilyModel.prototype = {
-
     setFamily : function(data, type) {
       this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
       map_trend_image_data(this._rawData).then(function(parsed_data) {
         this._parsedData = parsed_data;
         this.setProteinNames();
 
-        /* Setup the sequence sorting algorithms */
+        /* Setup the sequence sorting algorithms and calculate the initial scores */
         this._sequenceSortingAlgorithms = new SequenceSorting(this._rawData);
+        this.calculate_all_sorting_scores(this._rawData[0]);
 
         this.proteinFamilyAdded.notify({family: this._parsedData});
       }.bind(this));

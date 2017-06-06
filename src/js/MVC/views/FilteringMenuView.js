@@ -37,5 +37,4 @@ const FilteringMenuView = (function() {
   };
 
   return FilteringMenuView;
-
 })();

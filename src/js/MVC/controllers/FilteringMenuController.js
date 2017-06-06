@@ -22,7 +22,6 @@ const FilteringMenuController = (function() {
 
     /*  Bind the view with knockoutJS */
     ko.applyBindings(self._view, self._view._elements.list[0]);
-
   }
 
   FilteringMenuController.prototype = {

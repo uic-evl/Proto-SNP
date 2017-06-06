@@ -117,17 +117,19 @@ function ResidueMappingUtility() {
 
   function get_color_mapping(mapping){
     switch(mapping){
-      case "side chain":
+      case "Side Chain Class":
+      default:
         currentColorMap = colorCodesBySideChain;
         return colorBySideChainClass;
         break;
-      case "polarity":
+      case "Side Chain Polarity":
         currentColorMap = colorCodesByPolarity;
         return colorByPolarity;
         break;
-      case "frequency":
+      case "Frequency (Family Viewer)":
         currentColorMap = colorCodesByResidueFrequency;
         return colorByFrequency;
+        break;
     }
   }
 

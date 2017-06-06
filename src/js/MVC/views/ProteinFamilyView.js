@@ -12,6 +12,7 @@ const ProteinFamilyView = (function() {
     self._id = element.id;
     self._dom = d3.select("#"+self._id);
     self.residueMappingUtility = new ResidueMappingUtility();
+    self._dataModel = null;
 
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded = new EventNotification(this);
@@ -19,14 +20,15 @@ const ProteinFamilyView = (function() {
 
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
-      let family = msg.family;
+      let family = msg.family,
+          colorMapping = self.residueMappingUtility.getColor();
+
       /* Initialize the trend image */
       self.initialize(family);
 
-      let colorMapping = self.residueMappingUtility.getColor("side chain"),//App.colorMapping);
-          data_model = d3Utils.bind_data({sequences: family.data, names: family.index}, colorMapping, self.residue_glyph_size);
+      self._dataModel = d3Utils.bind_data({sequences: family.data, names: family.index}, colorMapping, self.residue_glyph_size);
 
-      self.render(data_model).then(function () {
+      self.render().then(function () {
 
         let verticalPaddleSize   = 6,
             horizontalPaddleSize = 1,
@@ -34,14 +36,17 @@ const ProteinFamilyView = (function() {
 
         self.imageRendered.notify({
           brushes : [
-            {orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
+            {
+              orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
               extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
-              position: [0, self.residue_glyph_size]},
-            {orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+              position: [0, self.residue_glyph_size]
+            }, {
+              orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
               class:"brush vertical-left", extent: [[0, 0], [self.width, self.height]],
               block_size: self.residue_glyph_size, semantic: "left",
-              position: [0, self.residue_glyph_size * verticalPaddleSize]},
-            {orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+              position: [0, self.residue_glyph_size * verticalPaddleSize]
+            }, {
+              orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
               class:"brush vertical-right", extent: [[0, 0], [self.width, self.height]],
               block_size: self.residue_glyph_size, semantic: "right",
               position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
@@ -57,6 +62,13 @@ const ProteinFamilyView = (function() {
         /* Create the legend */
         //App.residueModel.createColorLegend();
       });
+    });
+
+    /* The coloring scheme changed */
+    self._model.proteinColoringChanged.attach(function(sender, msg){
+      let colorMap = msg.scheme;
+      self.recolor(colorMap);
+      self.render();
     });
 
     /* Getter for the x-Axis scale */
@@ -171,12 +183,10 @@ const ProteinFamilyView = (function() {
 
       this.set_chart_scales();
 
-      // create_brush_svg();
-
       d3Utils.clear_chart_dom(this._dom);
     },
 
-    render: function (data_model) {
+    render: function () {
       let view = this;
       return new Promise(function (resolve, reject) {
         /* First, clear the canvas*/
@@ -186,7 +196,7 @@ const ProteinFamilyView = (function() {
         //let image = context.createImageData(view.width + view.margin, view.height);
 
         /* Get the trend image rows from the data model */
-        let rows = data_model.selectAll("custom.proteinRow");
+        let rows = view._dataModel.selectAll("custom.proteinRow");
 
         /* Iterate over each element to render it to the canvas*/
         rows.each(function (d, i) {
@@ -251,22 +261,24 @@ const ProteinFamilyView = (function() {
     },
 
     /* Function to redraw the trend image */
-    recolor: function () {
-      let colorMapping = this.residueMappingUtility.getColor(App.colorMapping);
+    recolor: function (colorMapping) {
+      let colorScale = this.residueMappingUtility.getColor(colorMapping),
+
+          view = this;
       /* If a trend image exists, recolor based on the new color map */
-      if (self.svg) {
-        self.svg
-            .selectAll(".cell")
-            .attr('fill', function (d) {
+      if (this._dataModel) {
+        this._dataModel
+            .selectAll("custom.cell")
+            .attr('fill',   function(d) {
               let col = parseInt(d3.select(this).attr("col")),
-                  highestFreq = self.column_frequencies.getMostFrequentAt(col);
-              return colorMapping(d, highestFreq).code;
+                  mostFreq = view._model.getSequenceFrequencyAt(col);
+              return colorScale(d, mostFreq).code;
             })
-            .attr('stroke', function (d) {
+            .attr('stroke', function(d){
               let col = parseInt(d3.select(this).attr("col")),
-                  highestFreq = self.column_frequencies.getMostFrequentAt(col);
-              return colorMapping(d, highestFreq).code;
-            })
+                  mostFreq = view._model.getSequenceFrequencyAt(col);
+              return colorScale(d, mostFreq).code;
+            });
       }
     },
 

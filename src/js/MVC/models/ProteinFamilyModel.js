@@ -35,8 +35,9 @@ const ProteinFamilyModel = (function() {
     this.proteinFamilyAdded          = new EventNotification(this);
     this.selectedProteinChanged      = new EventNotification(this);
     this.selectedResiduesChanged     = new EventNotification(this);
+    /* Menu Filtering */
     this.proteinSortingChanged       = new EventNotification(this);
-    this.proteinColoringingChanged   = new EventNotification(this);
+    this.proteinColoringChanged      = new EventNotification(this);
   }
 
   ProteinFamilyModel.prototype = {
@@ -62,6 +63,10 @@ const ProteinFamilyModel = (function() {
         curFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
       });
       return curFragments;
+    },
+
+    getSequenceFrequencyAt: function(position) {
+      return this._sequenceSortingAlgorithms.getMostFrequentAt(position)
     },
 
     getFamily: function() {
@@ -115,13 +120,13 @@ const ProteinFamilyModel = (function() {
 
     setProteinSorting: function (sorting) {
       this._proteinSorting = sorting;
-      this.proteinSortingChanged.notify({algorithm: sorting});
+      this.proteinSortingChanged.notify({scheme: this._proteinSorting});
       return this;
     },
 
     setProteinColoring: function (coloring) {
       this._proteinColoring = coloring;
-      this.proteinSortingChanged.notify({algorithm: coloring});
+      this.proteinColoringChanged.notify({scheme: this._proteinColoring});
       return this;
     },
 

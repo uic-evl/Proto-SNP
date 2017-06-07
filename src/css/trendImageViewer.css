@@ -21,6 +21,10 @@ g.brush.horizontal > .handle {
     height: 40%;
 }
 
+.proteinFamilyViewer {
+    height: 20%;
+}
+
 text.mono {
     font-size: 8px;
     font-family: monospace;

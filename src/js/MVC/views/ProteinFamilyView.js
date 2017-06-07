@@ -49,10 +49,10 @@ const ProteinFamilyView = (function() {
               position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
           ],
           frequencyViewers : [
-            {id: 'leftResidueSummaryViewer',  semantic: "left",  max_items: maxPaddleSize,
-              block_size: self.residue_glyph_size, offset: 25, width: Math.floor(self.width/2.0), height: self.height},
-            {id: 'rightResidueSummaryViewer', semantic: "right", max_items: maxPaddleSize,
-              block_size: self.residue_glyph_size, offset: 25, width: Math.floor(self.width/2.0), height: self.height}
+            {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
+              block_size: self.residue_glyph_size, offset: 25},
+            {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
+              block_size: self.residue_glyph_size, offset: 25}
           ]
         });
 
@@ -91,28 +91,28 @@ const ProteinFamilyView = (function() {
     self.set_chart_dimensions = function() {
 
       let container_width = self._dom.node().parentNode.clientWidth,
-          container_height = self._dom.node().parentNode.clientHeight,
           residue_width = Math.floor(container_width / self.x_axis_length);
 
       /* Reset the viewers width and height*/
       let viewer_width = residue_width *  self.x_axis_length;
 
-      /*Reset the parent dom width/heights*/
-      self._dom.classed("trend-viewer", false);
+      /*Reset the parent dom width/heights */
+      self._dom.classed("trend-viewer", false)
+               .classed("proteinFamilyViewer", true);
       self.width = viewer_width;
 
       /* Make sure the height of the data does not exceed the height of the container */
       let temp_height = self.y_axis_length * residue_width;
+      let new_height = self._dom.node().clientHeight;
 
       /* We must reset the height of the trend image */
-      if(temp_height < container_height) {
-        container_height = temp_height;
+      if(temp_height < new_height) {
+        self.height = temp_height;
       }
-      else if(temp_height > container_height) {
-        self.width = container_width;
+      else if(temp_height > new_height) {
+        self.height = new_height;
         self.overviewImage = true;
       }
-      self.height = container_height;
 
       /* Resize the DOM elements*/
       document.getElementById('trendImageViewer').parentNode.style.height = self.height;

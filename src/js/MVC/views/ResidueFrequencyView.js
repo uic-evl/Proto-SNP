@@ -9,8 +9,11 @@ const ResidueFrequencyView = (function() {
     let self = this;
 
     self._model = model;
+
     self._id = options.id;
     self._dom = d3.select("#"+self._id);
+    self._parent = d3.select("div."+options.parent);
+
     self._barOffset = 5;
     self._familyMemberCount = options.rows;
     self._svg = null;
@@ -56,6 +59,7 @@ const ResidueFrequencyView = (function() {
 
     /* Render the bars for each residue */
     self.render_bars = function(residue_frequencies, selected_residues) {
+
       /* Add the bars to the viewer */
       let bar = self._svg
           .selectAll(".freq_bars")
@@ -155,9 +159,12 @@ const ResidueFrequencyView = (function() {
   ResidueFrequencyView.prototype = {
 
     initialize : function (options) {
+      /* Show the viewer */
+      this._parent.classed("hidden", false);
 
-      this.width   = options.width;
-      this.height  = options.height;
+      this.width   = this._parent.node().clientWidth/2.0;
+      this.height  = this._parent.node().clientHeight;
+
       this.glyph_width = this.width / options.max_items;
 
       /* Clear the dom element */

@@ -34,6 +34,10 @@ body {
     background-color: black;
 }
 
+.hidden {
+    display: none;
+}
+
 /* View titles */
 p.view {
     color: dimgray;

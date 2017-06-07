@@ -66,13 +66,6 @@ const d3Utils = function () {
           .node().getContext('2d');
     },
 
-    bind_data_new : function(family, colorScale, size){
-      let data = [];
-      family.forEach(function(protein){
-
-      });
-    },
-
     /* Bind the data to a fake dom */
     bind_data : function(family, colorScale, size) {
       /* Fake DOM*/

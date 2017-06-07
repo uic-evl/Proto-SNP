@@ -144,7 +144,7 @@ function ResidueMappingUtility() {
   /* Create the legend for the current coloring scheme */
   function create_legend(){
 
-    if(!self.legend){
+    if(!self.legend_svg){
       initialize_legend();
     }
 

@@ -36,6 +36,8 @@ const FilteringMenuController = (function() {
         this._tertiaryModels.forEach(function(model){
           model.setProteinColoring(element);
         });
+        /* Create the legend */
+        App.residueMappingUtility.createColorLegend();
       }
       else if (this._menuDescription === "sorting"){
         this._familyModel.setProteinSorting(element);

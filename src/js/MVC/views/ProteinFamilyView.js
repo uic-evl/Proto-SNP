@@ -11,7 +11,7 @@ const ProteinFamilyView = (function() {
     self._model = model;
     self._id = element.id;
     self._dom = d3.select("#"+self._id);
-    self.residueMappingUtility = new ResidueMappingUtility();
+    App.residueMappingUtility = new ResidueMappingUtility();
 
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded = new EventNotification(this);
@@ -20,7 +20,7 @@ const ProteinFamilyView = (function() {
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
-          colorMapping = self.residueMappingUtility.getColor(self._model.getProteinColoring());
+          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
 
       /* Initialize the trend image */
       self.initialize(family);
@@ -58,9 +58,8 @@ const ProteinFamilyView = (function() {
 
         /* Enable the coloring menu */
         $("#coloring_list").find("li").removeClass("disabled");
-
         /* Create the legend */
-        self.residueMappingUtility.createColorLegend();
+        App.residueMappingUtility.createColorLegend();
       });
     });
 
@@ -68,7 +67,7 @@ const ProteinFamilyView = (function() {
     self._model.proteinColoringChanged.attach(function(sender, msg){
       if (!self._model.isEmpty()) return;
       let colorMap = msg.scheme,
-          colorScale = self.residueMappingUtility.getColor(colorMap);
+          colorScale = App.residueMappingUtility.getColor(colorMap);
       self.render(self._model.getFamily().data, colorScale);
     });
 

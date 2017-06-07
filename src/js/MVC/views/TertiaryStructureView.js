@@ -5,7 +5,7 @@ var App = App || {};
 const TertiaryStructureView = (function () {
 
   function colorProteinBy(colorMap) {
-    let colorMapping = this.residueMappingUtility.getColor(colorMap);
+    let colorMapping = App.residueMappingUtility.getColor(colorMap);
     return new pv.color.ColorOp(function (atom, out, index) {
       /* Select the color corresponding to the residue and mapping*/
       let color = colorMapping(atom._residue._name).rgba;
@@ -34,7 +34,6 @@ function TertiaryStructureView(model, element) {
   self._dom = null;
 
   self.pvViewer = null;
-  self.residueMappingUtility = new ResidueMappingUtility();
 
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
@@ -52,7 +51,7 @@ function TertiaryStructureView(model, element) {
     /* Enable the coloring menu */
     $("#coloring_list").find("li").removeClass("disabled");
     /* Create the legend */
-    self.residueMappingUtility.createColorLegend();
+    App.residueMappingUtility.createColorLegend();
   });
 
   /* Update the model once the selection has been added to the model */

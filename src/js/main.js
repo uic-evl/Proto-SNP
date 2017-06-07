@@ -11,6 +11,7 @@ var App = App || {};
     /* File utility setup */
     App.fileUtilities = new FileUtilities();
     App.dataUtilities = new DatabaseMappingUtils();
+    App.residueMappingUtility = new ResidueMappingUtility();
 
     let leftProteinModel = new ProteinModel(), rightProteinModel = new ProteinModel(),
         leftTertiaryStructureView = new TertiaryStructureView(leftProteinModel, {id: "molecularViewerA", position:"left"}),

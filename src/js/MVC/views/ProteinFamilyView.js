@@ -25,7 +25,6 @@ const ProteinFamilyView = (function() {
       /* Initialize the trend image */
       self.initialize(family);
 
-      //self._dataModel = d3Utils.bind_data({sequences: family.data, names: family.index}, colorMapping, self.residue_glyph_size);
       self.render(family.data, colorMapping).then(function () {
 
         let verticalPaddleSize   = 6,
@@ -61,7 +60,7 @@ const ProteinFamilyView = (function() {
         $("#coloring_list").find("li").removeClass("disabled");
 
         /* Create the legend */
-        //App.residueModel.createColorLegend();
+        self.residueMappingUtility.createColorLegend();
       });
     });
 

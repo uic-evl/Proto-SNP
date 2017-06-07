@@ -51,6 +51,8 @@ function TertiaryStructureView(model, element) {
 
     /* Enable the coloring menu */
     $("#coloring_list").find("li").removeClass("disabled");
+    /* Create the legend */
+    self.residueMappingUtility.createColorLegend();
   });
 
   /* Update the model once the selection has been added to the model */
@@ -103,7 +105,7 @@ TertiaryStructureView.prototype = {
         ko.applyBindings(view, splash.find("#splashTemplate")[0]);
 
         /* Setup the upload callback for files */
-        App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"),
+        App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"), splash.find("#files"),
           function (metadata, result) {
             view.fileUploaded.notify({metaData: metadata, file: result});
           });

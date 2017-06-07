@@ -5,6 +5,8 @@ var App = App || {};
 
 function ResidueMappingUtility() {
 
+  let self = {};
+
   let colorCodes = {
     white : {code: "#fbfff4", rgba: [251.0, 255.0, 244.0, 255.0] },
     red   : {code: "#ff3100", rgba: [255.0, 49.0,  0.0,   255.0] },
@@ -68,18 +70,9 @@ function ResidueMappingUtility() {
     {abbr: "-", sideClass: "gap",       polarity: "gap",      name:"gap"}
     ];
 
-  // let legend       = document.getElementById('colorLegend'),
-  //     legend_width = legend.clientWidth,
-  //     legend_height = 2.0 * App.labelHeight;
-  //
-  // /* Color map legend */
-  // let legend_svg = d3.select(legend)
-  //     .append("svg")
-  //     .attr("width", legend_width),
-  //
+
   /* The current color map*/
   let currentColorMap = null;
-
 
   function colorBySideChainClass(residue) {
     let residueProperties = _.find(residuePropertiesByLetter, function(r) {
@@ -134,15 +127,33 @@ function ResidueMappingUtility() {
   }
 
 
+  /* Initialize the legend DOM */
+  function initialize_legend() {
+    self.legend        = document.getElementById('colorLegend');
+    self.legend_width  = self.legend.clientWidth;
+    self.legend_height = 2.0 * document.getElementsByClassName('view')[0].clientHeight;
+
+    /* Color map legend */
+    self.legend_svg =
+        d3.select(self.legend)
+            .append("svg")
+            .attr("width", self.legend_width);
+
+  }
+
   /* Create the legend for the current coloring scheme */
   function create_legend(){
 
+    if(!self.legend){
+      initialize_legend();
+    }
+
     let elements = _.toPairs(currentColorMap),
-        legendElementWidth  = legend_width / (elements.length),
-        legendElementHeight = legend_height / 2.0;
+        legendElementWidth  = self.legend_width / (elements.length),
+        legendElementHeight = self.legend_height / 2.0;
 
     /* Add the color bands to the legend */
-    let legend_bars = legend_svg.selectAll(".legendElement")
+    let legend_bars = self.legend_svg.selectAll(".legendElement")
         .data(elements);
 
     // UPDATE: add new elements if needed
@@ -159,7 +170,7 @@ function ResidueMappingUtility() {
         .style("fill", (d) => { return d[1].code });
 
     /* Add the text to the legend*/
-    let legend_text = legend_svg.selectAll(".legendText")
+    let legend_text = self.legend_svg.selectAll(".legendText")
         .data(elements);
 
     legend_text.enter()
@@ -170,7 +181,7 @@ function ResidueMappingUtility() {
         .attr("class", "legendText")
         .text((d) => { return d[0]; })
         .attr("x", (d, i) => { return legendElementWidth * i + 5; })
-        .attr("y", legendElementHeight + App.utilities.fontSizeToPixels("10pt"))
+        .attr("y", legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"))
     ;
 
     /* Remove the unneeded bars/text */

@@ -95,7 +95,7 @@ const FileUtilities = function(){
     }
   }
 
-  function file_upload_setup(viewer, cb){
+  function file_upload_setup(viewer, files, cb){
     /* Setup the file-upload callback */
     $(viewer).fileupload({
       url: "",
@@ -108,6 +108,10 @@ const FileUtilities = function(){
           let select = $(this).prop('disabled', true);
           // uploaded file
           let file = data.files[0];
+          /* Create a div and attach it beneath the Choose File button */
+          data.context = $('<div/>').appendTo(files);
+          let node = $('<p/>')
+              .append($('<span/>').text(file.name));
 
           /*Upload Button - loads the file into the viewer*/
           let uploadButton = $('<button/>')
@@ -149,11 +153,6 @@ const FileUtilities = function(){
                 data.abort();
                 select.prop('disabled', false);
               });
-
-          /* Create a div and attach it beneath the Choose File button */
-          data.context = $('<div/>').appendTo('#files');
-          let node = $('<p/>')
-              .append($('<span/>').text(file.name));
 
           /* Append the Upload and Cancel Buttons */
           node.appendTo(data.context)

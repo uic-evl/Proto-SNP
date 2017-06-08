@@ -117,7 +117,7 @@ const BrushView = (function() {
         // Snap the brush onto the closest protein
         d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
-      else {
+      else if(options.orientation === App.VERTICAL_PADDLE){
         // Round the two event extents to the nearest row
         d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/block_size)*block_size);
         d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/block_size)*block_size);
@@ -127,6 +127,10 @@ const BrushView = (function() {
 
         /* Programatically move to the clamp*/
         d3.select(this).call(d3.event.target.move, d3.event.selection)
+      }
+      /* Overview Brush */
+      else{
+
       }
       /* Notify the listeners */
       self.brushMoved.notify({options: options, selection:d3.event.selection});

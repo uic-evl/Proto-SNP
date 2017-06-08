@@ -13,7 +13,26 @@ const ProteinFamilyController = (function() {
     self._brushViews = {};
     self._frequencyViews = {};
 
-    function createsBrush(brushes) {
+    function createOverviewPaddle(overviewSpec) {
+      console.log(overviewSpec);
+
+      /* construct the y-scale */
+      let yScale = d3.scaleLinear()
+        .domain([0, overviewSpec.familySize])
+        .range([0, overviewSpec.familySize]),
+      brushHeight = Math.floor(yScale(overviewSpec.proteinsPerView)),
+      overview_glyph_size = overviewSpec.familySize - overviewSpec.height;
+
+      let overviewBrush = new BrushView(self._model,
+        {
+          orientation: App.OVERVIEW_PADDLE, paddleSize: brushHeight, class:"brush horizontal",
+          extent: [[0, 0], [overviewSpec.width, brushHeight]], block_size: overview_glyph_size,
+          position: [0, brushHeight]
+        });
+
+    }
+
+    function createFamilyPaddles(brushes) {
       brushes.forEach(function(brushSpec){
         /* Create the brush and link the listeners */
         let brushView = new BrushView(self._model, brushSpec);
@@ -44,7 +63,6 @@ const ProteinFamilyController = (function() {
             }
           }
         });
-
         /* Add the brush to the list of views */
         self._brushViews[brushSpec.semantic] = brushView;
       });
@@ -75,22 +93,31 @@ const ProteinFamilyController = (function() {
       });
     }
 
-    /* Add residue selection */
+    /* On Alignment File Load */
     self._view.fileUploaded.attach(function(sender, args) {
       sender._model.setFamily(args.data, args.type);
     });
 
+    /* On Family View Rendered */
     /* Add residue selection */
     self._view.imageRendered.attach(function(sender, args) {
       /* Create new brush views as requested by the family */
-      createsBrush(args.brushes);
+      createFamilyPaddles(args.brushes);
       /* Create the new residue views */
       createResidueViewers(args.frequencyViewers);
-
       /* Inform the view that the brushes are created */
       self._view.attachBrushes(_.values(self._brushViews));
     });
+
+    /* On Overview */
+    self._view.overviewRendered.attach(function(sender, args) {
+
+      createOverviewPaddle(args);
+
+    });
+
   }
+
 
   ProteinFamilyController.prototype = {};
 

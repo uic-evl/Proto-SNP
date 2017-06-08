@@ -6,6 +6,7 @@ var App = App || {};
 /* Setup some constants to specify the paddle orientation */
 App.HORIZONTAL_PADDLE = 1;
 App.VERTICAL_PADDLE   = 2;
+App.OVERVIEW_PADDLE   = 3;
 
 (function() {
 

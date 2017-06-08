@@ -19,6 +19,7 @@ const ProteinFamilyView = (function() {
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded = new EventNotification(this);
     self.imageRendered = new EventNotification(this);
+    self.overviewRendered = new EventNotification(this);
 
     function build_brushes_and_viewers() {
       let verticalPaddleSize   = 6,
@@ -58,6 +59,14 @@ const ProteinFamilyView = (function() {
       /* Add the image to the canvas once it is loaded */
       overview.onload = function(){
         self.canvasContext.drawImage(overview, self.width, 0, overview_width, self.height);
+        /* Notify the listens that the overview has been rendered */
+        self.overviewRendered.notify(
+          {
+            width           : overview_width,
+            height          : self.height,
+            familySize      : self._model.getProteinCount(),
+            proteinsPerView :self.ppv
+          });
       };
       /* Add the data to the image*/
       overview.src = self.backBufferCanvas.toDataURL();
@@ -101,16 +110,13 @@ const ProteinFamilyView = (function() {
     /* Set the dimensions of the data */
     self.set_data_dimensions_sizes = function(family_data) {
       /* Get/store the length of the longest sequence */
-      self.x_axis_length = parseInt(_.max(d3.set(family_data
-          .map((residue) => { return residue.length; } ))
-          .values()));
+      self.x_axis_length = parseInt(_.max(d3.set(family_data.map((residue) => {return residue.length;})).values()));
       /* Get/store the length of the y-axis -- i.e. how many proteins it contains */
       self.y_axis_length =  this._model.getProteinNames().length;
     };
 
     /* Setter for the chart dimensions */
     self.set_chart_dimensions = function() {
-
       let container_width = self._parentDom.node().parentNode.clientWidth,
           residue_width = Math.floor(container_width / self.x_axis_length),
           viewer_width = residue_width * self.x_axis_length;
@@ -118,21 +124,21 @@ const ProteinFamilyView = (function() {
       /*Reset the parent dom width/heights */
       self._parentDom.classed("trend-viewer", false)
                .classed("proteinFamilyViewer", true);
-
       /* Make sure the height of the data does not exceed the height of the container */
-      let temp_height = self.y_axis_length * residue_width;
-      let new_height = self._parentDom.node().clientHeight;
+      let protein_height = self.y_axis_length * residue_width,
+          new_height = self._parentDom.node().clientHeight,
+          proteins_per_view = protein_height / residue_width;
+
 
       /* Trend image fits in the DIV's space */
-      if(temp_height < new_height) {
-        self.height = temp_height;
+      if(protein_height < new_height) {
+        self.height = protein_height;
         self.width = container_width = viewer_width;
       }
       /* We must reset the height of the trend image */
-      else if(temp_height > new_height) {
+      else if(protein_height > new_height) {
         self.overviewImage = true;
         /* Set the new height/width */
-        self.height = new_height;
         /* Create a new width that is 90% of the previous, giving us room for the viewer */
         if( (viewer_width + (viewer_width * 0.1)) > container_width ){
           let temp_width = (container_width - (viewer_width * 0.1));
@@ -142,8 +148,11 @@ const ProteinFamilyView = (function() {
         else {
           self.width = viewer_width;
         }
+        proteins_per_view = Math.floor(new_height/residue_width);
+        self.height = proteins_per_view * residue_width;
       }
       this.set_glyph_size(residue_width);
+      this.set_proteins_per_view(proteins_per_view);
 
       /* Resize the DOM elements*/
       document.getElementById('trendImageViewer').parentNode.style.height = self.height;
@@ -159,8 +168,8 @@ const ProteinFamilyView = (function() {
     };
 
     /* Setter for the number of proteins we can display in a single view */
-    self.set_proteins_per_view = function() {
-      self.ppv = self.height / self.residue_glyph_size;
+    self.set_proteins_per_view = function(proteins_per_view) {
+      self.ppv = (proteins_per_view)?proteins_per_view:Math.floor(self.height/self.residue_glyph_size);
     };
 
     self.set_y_scale = function(values) {
@@ -207,7 +216,7 @@ const ProteinFamilyView = (function() {
       this.set_proteins_per_view();
 
       /* Find the width of the div */
-      let width = (this.overviewImage)? parseInt(this.width*1.1) : this.width;
+      let width = (this.overviewImage)?parseInt(this.width*1.1) : this.width;
 
       /* Set the DOM's width/height so it centers in it's parent */
       this._dom
@@ -314,5 +323,4 @@ const ProteinFamilyView = (function() {
 
 };
   return ProteinFamilyView;
-
 })();

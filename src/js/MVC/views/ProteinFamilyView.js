@@ -5,57 +5,78 @@ var App = App || {};
 const ProteinFamilyView = (function() {
 
   function ProteinFamilyView(model, element) {
-
     let self = this;
 
     self._model = model;
     self._id = element.id;
-    self._dom = d3.select("#"+self._id);
-    App.residueMappingUtility = new ResidueMappingUtility();
+    self.overviewImage = false;
+
+    self._parentDom = d3.select("#"+self._id);
+    self._dom = self._parentDom.append("div")
+        .classed("trendDiv", true)
+        .classed("center-aligned", true);
 
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded = new EventNotification(this);
     self.imageRendered = new EventNotification(this);
 
+    function build_brushes_and_viewers() {
+      let verticalPaddleSize   = 6,
+          horizontalPaddleSize = 1,
+          maxPaddleSize = 10;
+      return {
+        brushes : [
+          {
+            orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
+            extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
+            position: [0, self.residue_glyph_size]
+          }, {
+            orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+            class:"brush vertical-left", extent: [[0, 0], [self.width, self.height]],
+            block_size: self.residue_glyph_size, semantic: "left",
+            position: [0, self.residue_glyph_size * verticalPaddleSize]
+          }, {
+            orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
+            class:"brush vertical-right", extent: [[0, 0], [self.width, self.height]],
+            block_size: self.residue_glyph_size, semantic: "right",
+            position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
+        ],
+            frequencyViewers : [
+        {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
+          block_size: self.residue_glyph_size, offset: 25},
+        {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
+          block_size: self.residue_glyph_size, offset: 25}
+      ]
+      };
+    }
+
+    function render_overview() {
+      /* Create the overview if the image runs off the page*/
+      let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
+      /* The overview will be 1/10th of the view */
+      overview = new Image();
+      /* Add the image to the canvas once it is loaded */
+      overview.onload = function(){
+        self.canvasContext.drawImage(overview, self.width, 0, overview_width, self.height);
+      };
+      /* Add the data to the image*/
+      overview.src = self.backBufferCanvas.toDataURL();
+    }
+
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
           colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
-
       /* Initialize the trend image */
       self.initialize(family);
-
+      /* Render the family view */
       self.render(family.data, colorMapping).then(function () {
-
-        let verticalPaddleSize   = 6,
-            horizontalPaddleSize = 1,
-            maxPaddleSize = 10;
-
-        self.imageRendered.notify({
-          brushes : [
-            {
-              orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
-              extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
-              position: [0, self.residue_glyph_size]
-            }, {
-              orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-              class:"brush vertical-left", extent: [[0, 0], [self.width, self.height]],
-              block_size: self.residue_glyph_size, semantic: "left",
-              position: [0, self.residue_glyph_size * verticalPaddleSize]
-            }, {
-              orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-              class:"brush vertical-right", extent: [[0, 0], [self.width, self.height]],
-              block_size: self.residue_glyph_size, semantic: "right",
-              position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
-          ],
-          frequencyViewers : [
-            {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
-              block_size: self.residue_glyph_size, offset: 25},
-            {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
-              block_size: self.residue_glyph_size, offset: 25}
-          ]
-        });
-
+        /* Notify the controller that the image has been rendered */
+        self.imageRendered.notify(build_brushes_and_viewers());
+        /* Render the overview if one is needed */
+        if (self.overviewImage) {
+          render_overview();
+        }
         /* Enable the coloring menu */
         $("#coloring_list").find("li").removeClass("disabled");
         /* Create the legend */
@@ -90,42 +111,51 @@ const ProteinFamilyView = (function() {
     /* Setter for the chart dimensions */
     self.set_chart_dimensions = function() {
 
-      let container_width = self._dom.node().parentNode.clientWidth,
-          residue_width = Math.floor(container_width / self.x_axis_length);
-
-      /* Reset the viewers width and height*/
-      let viewer_width = residue_width *  self.x_axis_length;
+      let container_width = self._parentDom.node().parentNode.clientWidth,
+          residue_width = Math.floor(container_width / self.x_axis_length),
+          viewer_width = residue_width * self.x_axis_length;
 
       /*Reset the parent dom width/heights */
-      self._dom.classed("trend-viewer", false)
+      self._parentDom.classed("trend-viewer", false)
                .classed("proteinFamilyViewer", true);
-      self.width = viewer_width;
 
       /* Make sure the height of the data does not exceed the height of the container */
       let temp_height = self.y_axis_length * residue_width;
-      let new_height = self._dom.node().clientHeight;
+      let new_height = self._parentDom.node().clientHeight;
 
-      /* We must reset the height of the trend image */
+      /* Trend image fits in the DIV's space */
       if(temp_height < new_height) {
         self.height = temp_height;
+        self.width = container_width = viewer_width;
       }
+      /* We must reset the height of the trend image */
       else if(temp_height > new_height) {
-        self.height = new_height;
         self.overviewImage = true;
+        /* Set the new height/width */
+        self.height = new_height;
+        /* Create a new width that is 90% of the previous, giving us room for the viewer */
+        if( (viewer_width + (viewer_width * 0.1)) > container_width ){
+          let temp_width = (container_width - (viewer_width * 0.1));
+          residue_width = Math.floor(temp_width / self.x_axis_length);
+          self.width = residue_width * self.x_axis_length;
+        }
+        else {
+          self.width = viewer_width;
+        }
       }
+      this.set_glyph_size(residue_width);
 
       /* Resize the DOM elements*/
       document.getElementById('trendImageViewer').parentNode.style.height = self.height;
       document.getElementById('trendImageViewer').style.height = self.height;
-
-      document.getElementById('trendImageViewer').parentNode.style.width = self.width;
-      document.getElementsByClassName('TrendImageView')[0].style.width = self.width;
+      document.getElementById('trendImageViewer').parentNode.style.width = container_width;
+      document.getElementsByClassName('TrendImageView')[0].style.width = container_width;
     };
 
     /* Setter for the names of the proteins from the family */
-    self.set_glyph_size = function() {
+    self.set_glyph_size = function(size) {
       /* Get and save the size of each residue for the trend image based on the width of the screen */
-      self.residue_glyph_size = Math.round( self.width /self.x_axis_length);
+      self.residue_glyph_size = (size)?size:Math.round( self.width /self.x_axis_length);
     };
 
     /* Setter for the number of proteins we can display in a single view */
@@ -164,22 +194,33 @@ const ProteinFamilyView = (function() {
               function (data, extension) {
                 view.fileUploaded.notify({data: data, type: extension});
                 /* Remove the splash screen */
-                view._dom.select('#trendSplash').remove();
+                view._parentDom.select('#trendSplash').remove();
               });
         });
       }
     },
 
     initialize: function (family) {
-
+      /* Initialize the chart and data dimensions */
       this.set_data_dimensions_sizes(family.data);
       this.set_chart_dimensions();
-      this.set_glyph_size();
       this.set_proteins_per_view();
 
+      /* Find the width of the div */
+      let width = (this.overviewImage)? parseInt(this.width*1.1) : this.width;
+
+      /* Set the DOM's width/height so it centers in it's parent */
+      this._dom
+          .style("width", width)
+          .style("height", this.height);
+
       /* Add the canvas and brush svg to the trend image dom*/
-      this.canvasContext = d3Utils.create_chart_canvas(this._dom, this.width, this.height);
-      this.backBufferContext = d3Utils.create_chart_back_buffer(this.width, this.height);
+      this.canvasContext = d3Utils.create_chart_canvas(this._dom,
+            {width:width, height:this.height, id:"trendCanvas", class:"trendImage"})
+          .getContext('2d');
+
+      this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height:this.height});
+      this.backBufferContext = this.backBufferCanvas.getContext('2d');
 
       this.set_chart_scales();
       d3Utils.clear_chart_dom(this._dom);
@@ -188,11 +229,10 @@ const ProteinFamilyView = (function() {
     render: function (family, colorMapping) {
       let view = this;
       return new Promise(function (resolve, reject) {
+        /* Find the width of the div */
+        let width = (view.overviewImage)?parseInt(view.width*1.1) : view.width;
         /* First, clear the canvas*/
-        view.backBufferContext
-            .clearRect(0, 0, view.width, view.height);
-        //let image = context.createImageData(view.width + view.margin, view.height);
-
+        view.backBufferContext.clearRect(0, 0, width, view.height);
         /* Get the trend image rows from the data model */
         family.forEach(function(sequence,row){
           sequence.forEach(function(residue, col){
@@ -202,14 +242,12 @@ const ProteinFamilyView = (function() {
                 view.residue_glyph_size, view.residue_glyph_size);
           });
         });
-
+        /* Get the image data */
         let image = view.backBufferContext.getImageData(0, 0, view.width, view.height);
-        view.canvasContext.putImageData(image, 0, 0);
-        /* create the overview if the image runs off the page*/
-        if (view.overviewImage) {
-        }
+        /* Draw the family */
+        view.canvasContext.putImageData(image, 0, 0, 0, 0, view.width, view.height);
         /* resolve when finished */
-        resolve();
+        resolve(image);
       });
     },
 
@@ -253,7 +291,7 @@ const ProteinFamilyView = (function() {
 
     attachBrushes: function(brushViews) {
       /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
-      let brushSVG = d3Utils.create_brush_svg(this._dom, this.width, this.height)
+      let brushSVG = d3Utils.create_brush_svg(this._dom, {width:this.width, height:this.height})
           .append("g")
           .attr("class", "brushes")
           .style("width", this.width)

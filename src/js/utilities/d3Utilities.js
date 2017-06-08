@@ -11,21 +11,21 @@ const d3Utils = function () {
       domObj.selectAll().remove();
     },
 
-    create_chart_canvas : function(domObj, width, height) {
+    create_chart_canvas : function(domObj, options) {
       let canvas = domObj
           .append('canvas')
-          .attr("id", "trendCanvas")
-          .attr("class", "trendImage")
-          .attr("width", width)
-          .attr("height", height)
+          .attr("id", options.id)
+          .attr("class", options.class)
+          .attr("width", options.width)
+          .attr("height", options.height)
       ;
-      return canvas.node().getContext('2d');
+      return canvas.node();
     },
 
-    create_chart_svg : function(domObj, width, height) {
+    create_chart_svg : function(domObj, options) {
       return domObj.append("svg")
-          .style("width", width)
-          .style("height", height);
+          .attr("width", options.width)
+          .attr("height", options.height);
     },
 
     /* Simple d3 function to construct a line*/
@@ -40,13 +40,13 @@ const d3Utils = function () {
     },
 
     /* Create the trend image brush SVG */
-    create_brush_svg: function(domObj, width, height) {
+    create_brush_svg: function(domObj, options) {
       return domObj
           .append("svg")
           .attr("class", "trendImage")
           .attr("id", "trendSVG")
-          .style("width", width)
-          .style("height", height);
+          .attr("width", options.width)
+          .attr("height", options.height)
     },
 
     create_svg_overlay : function(domObj, width, height) {
@@ -58,12 +58,12 @@ const d3Utils = function () {
       return overview.node().getContext('2d');
     },
 
-    create_chart_back_buffer : function(width, height) {
+    create_chart_back_buffer : function(options) {
       let backBufferCanvas = document.createElement('canvas');
       return d3.select(backBufferCanvas)
-          .attr("width", width)
-          .attr("height", height)
-          .node().getContext('2d');
+          .attr("width", options.width)
+          .attr("height", options.height)
+          .node();
     },
 
     /* Bind the data to a fake dom */

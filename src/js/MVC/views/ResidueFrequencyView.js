@@ -169,7 +169,7 @@ const ResidueFrequencyView = (function() {
 
       /* Clear the dom element */
       d3Utils.clear_chart_dom(this._dom);
-      this._svg = d3Utils.create_chart_svg(this._dom, this.width, this.height);
+      this._svg = d3Utils.create_chart_svg(this._dom, {width:this.width, height:this.height});
 
       if(options.semantic === "left"){
         this.range = [options.offset*2, this.width];

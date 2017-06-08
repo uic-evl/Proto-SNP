@@ -53,7 +53,7 @@ const ResidueFrequencyView = (function() {
 
       self.yScale = d3.scaleLinear()
           .domain([0, family_member_count])
-          .range([self.height * 0.2, 0])
+          .range([self.bar_height, 0])
       ;
     };
 
@@ -73,8 +73,8 @@ const ResidueFrequencyView = (function() {
           .merge(bar)
           .attr("class", "freq_bars")
           .attr("width", self.glyph_width)
-          .attr("height", self.height * 0.2)
-          .attr('y', function(d) { return self.height * 0.3 + self._barOffset } )
+          .attr("height", self.bar_height)
+          .attr('y', function(d) { return self.bar_y + self._barOffset } )
           .attr('x', function(d, i) { return self.xScale(i) })
           .style("fill", "white");
 
@@ -93,9 +93,9 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequency)
           .attr('x', function(d, i) { return self.xScale(i) })
-          .attr('y', function(d) { return self.yScale(d[1]) + self.height * 0.3 + self._barOffset} )
+          .attr('y', function(d) { return self.yScale(d[1]) + self.bar_y + self._barOffset} )
           .attr("width", self.glyph_width)
-          .attr("height", function(d) { return ( self.height * 0.2 - self.yScale(d[1]) )  })
+          .attr("height", function(d) { return ( self.bar_height - self.yScale(d[1]) )  })
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
       ;
 
@@ -116,7 +116,7 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequencyText)
           .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", self.height * 0.6 + self._barOffset )
+          .attr("y", self.bar_y * 2.0 + self._barOffset )
           .attr("dy", ".35em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
@@ -139,7 +139,7 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(selectionText)
           .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", self.height * 0.2 + self._barOffset)
+          .attr("y", self.bar_height + self._barOffset)
           .attr("dy", ".3em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
@@ -164,8 +164,11 @@ const ResidueFrequencyView = (function() {
 
       this.width   = this._parent.node().clientWidth/2.0;
       this.height  = this._parent.node().clientHeight;
+      this.aspectRatio  = this.height/this.width;
 
-      this.glyph_width = this.width / options.max_items;
+      this.bar_y = this.height  * 0.4;
+      this.bar_height = this.height  * 0.3;
+      this.glyph_width = this.bar_height * 2;
 
       /* Clear the dom element */
       d3Utils.clear_chart_dom(this._dom);

@@ -4,15 +4,15 @@
 
 .residueSummaryView {
     font-size: 12px;
-    padding-top: 30px;
+    margin-top: 30px;
     width:100%;
-    height: 90%;
+    /* 20% the size of the trend image */
+    height: 20%;
 }
 
 .frequency-left, .frequency-right {
     padding-left: 0;
 }
-
 
 .context-bar {
     stroke-width: 2;

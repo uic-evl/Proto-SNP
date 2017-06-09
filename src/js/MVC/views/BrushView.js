@@ -128,10 +128,13 @@ const BrushView = (function() {
         /* Programatically move to the clamp*/
         d3.select(this).call(d3.event.target.move, d3.event.selection)
       }
-      /* Overview Brush */
-      else{
-
+      else {
+        d3.event.selection[0] = Math.round(d3.event.selection[0] / block_size) * block_size;
+        d3.event.selection[1] = Math.round(d3.event.selection[1] / block_size) * block_size;
+        // Snap the brush onto the closest protein
+        d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
+
       /* Notify the listeners */
       self.brushMoved.notify({options: options, selection:d3.event.selection});
     };
@@ -171,30 +174,6 @@ const BrushView = (function() {
       /* Set the context menu of the vertical brush */
       // this.brush.select("g.brush.horizontal")
       //     .on("contextmenu", d3.contextMenu(create_context_menu));
-
-      /* Highlight the initial selections*/
-
-      /* Reset the brush selections */
-      // trendImageViewer.svg.selectAll('rect')
-      //     .classed("active_protein_selection", false)
-      //     .classed("active_res_selection", false);
-      //
-      // /* Set the first highlighted row's opacity */
-      // trendImageViewer.svg.selectAll("#p" + selected_protein + " > rect")
-      //     .classed("active_protein_selection", true);
-      //
-      // /* Iterate over the left selection and add the active class to the selected fragments */
-      // for(let i = brush_ranges.left[0]; i < brush_ranges.left[1]; i++) {
-      //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
-      //       .classed("vertical-left", true)
-      //       .classed("active_res_selection", true);
-      // }
-      // /* Iterate over the right selection and add the active class to the selected fragments */
-      // for(let i = brush_ranges.right[0]; i < brush_ranges.right[1]; i++) {
-      //   trendImageViewer.svg.selectAll("rect[col='" + i + "']")
-      //       .classed("vertical-right", true)
-      //       .classed("active_res_selection", true);
-      // }
   },
 
     redraw: function(selection) {

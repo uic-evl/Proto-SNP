@@ -51,6 +51,30 @@ const ProteinFamilyView = (function() {
       };
     }
 
+    /* Builds the brush that lies on top of the overview */
+    function build_overview_brush(width, height) {
+      let count = self._model.getProteinCount(),
+          block_size = height / count,
+          paddleSize = Math.round(self.ppv * block_size),
+          scale = d3.scaleLinear()
+              .domain([0, count])
+              .range([0, height]);
+      console.log(self.ppv);
+      return {
+        orientation: App.OVERVIEW_PADDLE,
+        width:  width,
+        height: height,
+        paddleSize : paddleSize,
+        scale      : scale,
+        class      : "brush horizontal",
+        block_size: block_size,
+        extent: [[self.width, 0], [self.width + width, height]],
+        position: [0, paddleSize],
+        proteinsPerView: self.ppv
+      }
+    }
+
+    /* Renders the image overview onto the canvas */
     function render_overview() {
       /* Create the overview if the image runs off the page*/
       let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
@@ -60,13 +84,7 @@ const ProteinFamilyView = (function() {
       overview.onload = function(){
         self.canvasContext.drawImage(overview, self.width, 0, overview_width, self.height);
         /* Notify the listens that the overview has been rendered */
-        self.overviewRendered.notify(
-          {
-            width           : overview_width,
-            height          : self.height,
-            familySize      : self._model.getProteinCount(),
-            proteinsPerView :self.ppv
-          });
+        self.overviewRendered.notify({brushSpec: build_overview_brush(overview_width, this.height)});
       };
       /* Add the data to the image*/
       overview.src = self.backBufferCanvas.toDataURL();
@@ -80,6 +98,7 @@ const ProteinFamilyView = (function() {
       self.initialize(family);
       /* Render the family view */
       self.render(family.data, colorMapping).then(function () {
+
         /* Notify the controller that the image has been rendered */
         self.imageRendered.notify(build_brushes_and_viewers());
         /* Render the overview if one is needed */
@@ -187,7 +206,16 @@ const ProteinFamilyView = (function() {
           .range([0, Math.ceil((self.width)/self.residue_glyph_size)*self.residue_glyph_size]);
       /* Set the y scale with the protein names*/
       self.set_y_scale(_.slice(self._model.getProteinNames(), 0, self.ppv))
-    }
+    };
+
+    self.set_brush_SVG = function(dom, width, height) {
+      /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
+      return d3Utils.create_brush_svg(dom, {width:width, height:height})
+          .append("g")
+          .attr("class", "brushes")
+          .style("width", width)
+          .style("height", height);
+    };
   }
 
   ProteinFamilyView.prototype = {
@@ -216,7 +244,7 @@ const ProteinFamilyView = (function() {
       this.set_proteins_per_view();
 
       /* Find the width of the div */
-      let width = (this.overviewImage)?parseInt(this.width*1.1) : this.width;
+      let width = (this.overviewImage) ? parseInt(this.width*1.1) : this.width;
 
       /* Set the DOM's width/height so it centers in it's parent */
       this._dom
@@ -225,7 +253,7 @@ const ProteinFamilyView = (function() {
 
       /* Add the canvas and brush svg to the trend image dom*/
       this.canvasContext = d3Utils.create_chart_canvas(this._dom,
-            {width:width, height:this.height, id:"trendCanvas", class:"trendImage"})
+          {width:width, height:this.height, id:"trendCanvas", class:"trendImage"})
           .getContext('2d');
 
       this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height:this.height});
@@ -233,6 +261,8 @@ const ProteinFamilyView = (function() {
 
       this.set_chart_scales();
       d3Utils.clear_chart_dom(this._dom);
+
+      this.brushSVG = this.set_brush_SVG(this._dom, width, this.height);
     },
 
     render: function (family, colorMapping) {
@@ -299,21 +329,16 @@ const ProteinFamilyView = (function() {
     },
 
     attachBrushes: function(brushViews) {
-      /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
-      let brushSVG = d3Utils.create_brush_svg(this._dom, {width:this.width, height:this.height})
-          .append("g")
-          .attr("class", "brushes")
-          .style("width", this.width)
-          .style("height", this.residue_glyph_size * this.y_axis_length);
+      let view = this;
       /* Attach the brushes to the svg */
-      brushViews.forEach(function(view){
-        let brush = view.getBrush(),
-            brushObj = brushSVG.append("g")
-              .attr("class", view.brushObj.getBrushClass)
+      brushViews.forEach(function(brushView){
+        let brush = brushView.getBrush(),
+            brushObj = view.brushSVG.append("g")
+              .attr("class", brushView.brushObj.getBrushClass)
               .call(brush)
-              .call(brush.move, view.getInitialPosition());
+              .call(brush.move, brushView.getInitialPosition());
         /*render the brush */
-        view.render(brushObj);
+        brushView.render(brushObj);
       });
     },
 

@@ -136,13 +136,14 @@ App.OVERVIEW_PADDLE   = 3;
     createBrush: function(orientation) {
 
       /* Check the orientation */
-      if(orientation === App.HORIZONTAL_PADDLE) {
-        return _.assign( {}, new HorizontalPaddle, new Brush );
-}
-      else if(orientation === App.VERTICAL_PADDLE) {
-        return _.assign( {}, new VerticalPaddle, new Brush );
+      switch(orientation){
+        case App.HORIZONTAL_PADDLE:
+        case App.OVERVIEW_PADDLE:
+          return _.assign( {}, new HorizontalPaddle, new Brush );
+          break;
+        case App.VERTICAL_PADDLE:
+          return _.assign( {}, new VerticalPaddle, new Brush );
       }
-
     }
 
   };

@@ -14,29 +14,30 @@ const ProteinFamilyController = (function() {
     self._frequencyViews = {};
 
     function createOverviewPaddle(overviewSpec) {
-      console.log(overviewSpec);
-
       /* construct the y-scale */
-      let yScale = d3.scaleLinear()
-        .domain([0, overviewSpec.familySize])
-        .range([0, overviewSpec.familySize]),
-      brushHeight = Math.floor(yScale(overviewSpec.proteinsPerView)),
-      overview_glyph_size = overviewSpec.familySize - overviewSpec.height;
+      let yScale = overviewSpec.brushSpec.scale,
+          overviewBrush = new BrushView(self._model, overviewSpec.brushSpec),
+          ppv = overviewSpec.brushSpec.proteinsPerView;
+      /* Setup the onMove observer */
+      overviewBrush.brushMoved.attach(function(sender, msg){
+        /* Map the selection into the protein family scale */
+        let selection = msg.selection.map(yScale.invert);
+        selection[0] = Math.round(selection[0]);
+        selection[1] = Math.round(selection[1]);
 
-      let overviewBrush = new BrushView(self._model,
-        {
-          orientation: App.OVERVIEW_PADDLE, paddleSize: brushHeight, class:"brush horizontal",
-          extent: [[0, 0], [overviewSpec.width, brushHeight]], block_size: overview_glyph_size,
-          position: [0, brushHeight]
-        });
 
+
+      });
+
+      self._brushViews['overview'] = overviewBrush;
+      return overviewBrush;
     }
 
     function createFamilyPaddles(brushes) {
       brushes.forEach(function(brushSpec){
         /* Create the brush and link the listeners */
         let brushView = new BrushView(self._model, brushSpec);
-        /* Setup the on-move listener */
+        /* Setup the onMove observer */
         brushView.brushMoved.attach(function(sender, msg){
           let options = msg.options;
           if(options.orientation === App.HORIZONTAL_PADDLE){
@@ -109,13 +110,11 @@ const ProteinFamilyController = (function() {
       self._view.attachBrushes(_.values(self._brushViews));
     });
 
-    /* On Overview */
+    /* On Overview Rendered*/
     self._view.overviewRendered.attach(function(sender, args) {
-
-      createOverviewPaddle(args);
-
+      /* Create the brush and inform the view */
+      self._view.attachBrushes([createOverviewPaddle(args)]);
     });
-
   }
 
 

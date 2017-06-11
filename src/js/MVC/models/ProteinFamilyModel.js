@@ -52,7 +52,7 @@ const ProteinFamilyModel = (function() {
     };
 
     /* Calculate all of the sorting metrics for family */
-    self.calculate_all_sorting_scores = function(protein) {
+    self.calculate_all_sorting_scores_main = function(protein) {
       /* Calculate the edit distance scores with the first protein and enable the menu option */
       let edit_dist = self._sequenceSortingAlgorithms.calculateEditDistanceScores(protein),
       /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
@@ -73,7 +73,7 @@ const ProteinFamilyModel = (function() {
         self.set_scores("commonality_scores", values[2]);
         self.set_scores("normalized_commonality_scores", values[3]);
       });
-    }
+    };
   }
 
   ProteinFamilyModel.prototype = {
@@ -85,7 +85,39 @@ const ProteinFamilyModel = (function() {
 
         /* Setup the sequence sorting algorithms and calculate the initial scores */
         this._sequenceSortingAlgorithms = new SequenceSorting(this._rawData);
-        this.calculate_all_sorting_scores(this._rawData[0]);
+
+        /* If the browser does not support web workers, execute the code sequentially */
+        if (!window.Worker) {
+          this.calculate_all_sorting_scores_main(this._rawData[0]);
+        }
+        else {
+
+          let algorithms = this._sequenceSortingAlgorithms.getAlgorithms(),
+              workers = algorithms.length,
+              finished = 0,
+              model = this;
+
+          /* Iterate over each algorithm and launch a worker*/
+          algorithms.forEach(function(algorithm){
+            let myWorker = new Worker("src/js/utilities/sequenceSortingProcessing.js");
+            myWorker.postMessage({
+              family: model._rawData,
+              algorithm: algorithm,
+              protein: model._rawData[0]
+            });
+
+            /* Add the scores to the model once it returns */
+            myWorker.onmessage = function(response) {
+              model.set_scores(response.data.algorithm, response.data.score);
+              finished++;
+
+              if(workers === finished){
+                $("#sorting_list").find("li").removeClass("disabled");
+              }
+
+            };
+          });
+        }
 
         this.proteinFamilyAdded.notify({family: this._parsedData});
       }.bind(this));

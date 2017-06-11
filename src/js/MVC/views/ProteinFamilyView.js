@@ -59,7 +59,7 @@ const ProteinFamilyView = (function() {
           scale = d3.scaleLinear()
               .domain([0, count])
               .range([0, height]);
-      console.log(self.ppv);
+      /* Return the specs for the new */
       return {
         orientation: App.OVERVIEW_PADDLE,
         width:  width,
@@ -90,26 +90,47 @@ const ProteinFamilyView = (function() {
       overview.src = self.backBufferCanvas.toDataURL();
     }
 
+    function initialize_back_buffer(family, colorMapping) {
+      /* Find the width of the div */
+      let width = (self.overviewImage) ? parseInt(self.width*1.1) : self.width;
+      /* First, clear the canvas*/
+      self.backBufferContext.clearRect(0, 0, width, self.height);
+      return new Promise(function(resolve, reject) {
+        /* Get the trend image rows from the data model */
+        family.forEach(function(sequence,row){
+          sequence.forEach(function(residue, col){
+            let mostFreq = self._model.getSequenceFrequencyAt(col);
+            self.backBufferContext.fillStyle = colorMapping(residue, mostFreq).code;
+            self.backBufferContext.fillRect(col*self.residue_glyph_size, row*self.residue_glyph_size,
+                self.residue_glyph_size, self.residue_glyph_size);
+          });
+        });
+        resolve();
+      });
+    }
+
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
           colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
-      /* Initialize the trend image */
+      /* Initialize the trend image view*/
       self.initialize(family);
-      /* Render the family view */
-      self.render(family.data, colorMapping).then(function () {
-
-        /* Notify the controller that the image has been rendered */
-        self.imageRendered.notify(build_brushes_and_viewers());
-        /* Render the overview if one is needed */
-        if (self.overviewImage) {
-          render_overview();
-        }
-        /* Enable the coloring menu */
-        $("#coloring_list").find("li").removeClass("disabled");
-        /* Create the legend */
-        App.residueMappingUtility.createColorLegend();
-      });
+      /* Initialize the back buffer with the family data */
+      initialize_back_buffer(family.data, colorMapping)
+          /* Render the family view */
+          .then(self.render.bind(self))
+          .then(function(){
+            /* Notify the controller that the image has been rendered */
+            self.imageRendered.notify(build_brushes_and_viewers());
+            /* Render the overview if one is needed */
+            if (self.overviewImage) {
+              render_overview();
+            }
+            /* Enable the coloring menu */
+            $("#coloring_list").find("li").removeClass("disabled");
+            /* Create the legend */
+            App.residueMappingUtility.createColorLegend();
+          }).catch(console.log.bind(console));
     });
 
     /* The coloring scheme changed */
@@ -265,22 +286,9 @@ const ProteinFamilyView = (function() {
       this.brushSVG = this.set_brush_SVG(this._dom, width, this.height);
     },
 
-    render: function (family, colorMapping) {
+    render: function () {
       let view = this;
       return new Promise(function (resolve, reject) {
-        /* Find the width of the div */
-        let width = (view.overviewImage)?parseInt(view.width*1.1) : view.width;
-        /* First, clear the canvas*/
-        view.backBufferContext.clearRect(0, 0, width, view.height);
-        /* Get the trend image rows from the data model */
-        family.forEach(function(sequence,row){
-          sequence.forEach(function(residue, col){
-            let mostFreq = view._model.getSequenceFrequencyAt(col);
-            view.backBufferContext.fillStyle = colorMapping(residue, mostFreq).code;
-            view.backBufferContext.fillRect(col*view.residue_glyph_size, row*view.residue_glyph_size,
-                view.residue_glyph_size, view.residue_glyph_size);
-          });
-        });
         /* Get the image data */
         let image = view.backBufferContext.getImageData(0, 0, view.width, view.height);
         /* Draw the family */

@@ -9,6 +9,10 @@ const SequenceSorting = function(family){
   /* Internal private variable*/
   let self = {};
 
+  let algorithms = ["editDistance", "weightedEditDistance", "commonality", "normalizedCommonality"];
+
+  /* Return the list of algorithms */
+  function get_algorithms() { return algorithms; }
   /* Get the fragment frequency */
   function get_fragment_counts_at(column_index) {
     /* return the fragment that occurs the most often in the column */
@@ -203,12 +207,13 @@ const SequenceSorting = function(family){
     calculateEditDistanceScores      : calculate_edit_distance_scores,
     calculateCommonalityScores       : calculate_residue_commonality,
     /* Getters */
+    getAlgorithms                    : get_algorithms,
     getFragmentCountsAt              : get_fragment_counts_at,
     getMostFrequentAt                : get_most_frequent_fragment_at,
     getFragmentCountsFromRange       : get_fragment_counts_from_range,
     getFragmentFrequencyScores       : get_fragment_frequency_scores,
     getEditDistanceScores            : get_edit_distance_scores,
-    getOccurrenceScores               : get_common_occurrence_scores,
+    getOccurrenceScores              : get_common_occurrence_scores,
     getFrequencyPromise              : get_frequency_promise
   }
 

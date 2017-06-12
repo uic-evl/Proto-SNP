@@ -24,9 +24,8 @@ const ProteinFamilyController = (function() {
         let selection = msg.selection.map(yScale.invert);
         selection[0] = Math.round(selection[0]);
         selection[1] = Math.round(selection[1]);
-
-
-
+        /* Render the new view*/
+        self._view.render(0, selection[0]*self._view.getGlyphSize());
       });
 
       self._brushViews['overview'] = overviewBrush;

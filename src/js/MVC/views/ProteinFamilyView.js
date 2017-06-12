@@ -59,6 +59,7 @@ const ProteinFamilyView = (function() {
           scale = d3.scaleLinear()
               .domain([0, count])
               .range([0, height]);
+
       /* Return the specs for the new */
       return {
         orientation: App.OVERVIEW_PADDLE,
@@ -78,23 +79,24 @@ const ProteinFamilyView = (function() {
     function render_overview() {
       /* Create the overview if the image runs off the page*/
       let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
+          view = self,
       /* The overview will be 1/10th of the view */
       overview = new Image();
       /* Add the image to the canvas once it is loaded */
       overview.onload = function(){
         self.canvasContext.drawImage(overview, self.width, 0, overview_width, self.height);
         /* Notify the listens that the overview has been rendered */
-        self.overviewRendered.notify({brushSpec: build_overview_brush(overview_width, this.height)});
+        self.overviewRendered.notify({brushSpec: build_overview_brush(overview_width, view.height)});
       };
       /* Add the data to the image*/
-      overview.src = self.backBufferCanvas.toDataURL();
+      overview.src = self._backBufferImage;
     }
 
     function initialize_back_buffer(family, colorMapping) {
       /* Find the width of the div */
       let width = (self.overviewImage) ? parseInt(self.width*1.1) : self.width;
       /* First, clear the canvas*/
-      self.backBufferContext.clearRect(0, 0, width, self.height);
+      self.backBufferContext.clearRect(0, 0, width,  self._backBufferHeight);
       return new Promise(function(resolve, reject) {
         /* Get the trend image rows from the data model */
         family.forEach(function(sequence,row){
@@ -105,7 +107,14 @@ const ProteinFamilyView = (function() {
                 self.residue_glyph_size, self.residue_glyph_size);
           });
         });
-        resolve();
+        /* Get the back buffer data */
+        self._backBufferImage = self.backBufferCanvas.toDataURL();
+        /* Create the family image */
+        self._familyImage = new Image();
+        /* Add the image to the canvas once it is loaded */
+        self._familyImage.onload = function(){ resolve(); };
+        /* Add the data to the image*/
+        self._familyImage.src = self._backBufferImage;
       });
     }
 
@@ -118,7 +127,7 @@ const ProteinFamilyView = (function() {
       /* Initialize the back buffer with the family data */
       initialize_back_buffer(family.data, colorMapping)
           /* Render the family view */
-          .then(self.render.bind(self))
+          .then(self.render.bind(self,0,0))
           .then(function(){
             /* Notify the controller that the image has been rendered */
             self.imageRendered.notify(build_brushes_and_viewers());
@@ -263,6 +272,7 @@ const ProteinFamilyView = (function() {
       this.set_data_dimensions_sizes(family.data);
       this.set_chart_dimensions();
       this.set_proteins_per_view();
+      this._backBufferHeight = this._model.getProteinCount() * this.residue_glyph_size;
 
       /* Find the width of the div */
       let width = (this.overviewImage) ? parseInt(this.width*1.1) : this.width;
@@ -277,7 +287,7 @@ const ProteinFamilyView = (function() {
           {width:width, height:this.height, id:"trendCanvas", class:"trendImage"})
           .getContext('2d');
 
-      this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height:this.height});
+      this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height: this._backBufferHeight});
       this.backBufferContext = this.backBufferCanvas.getContext('2d');
 
       this.set_chart_scales();
@@ -286,15 +296,12 @@ const ProteinFamilyView = (function() {
       this.brushSVG = this.set_brush_SVG(this._dom, width, this.height);
     },
 
-    render: function () {
+    render: function (x,y) {
       let view = this;
+      // view.canvasContext.clearRect(0, 0, view.width, view.height);
       return new Promise(function (resolve, reject) {
-        /* Get the image data */
-        let image = view.backBufferContext.getImageData(0, 0, view.width, view.height);
-        /* Draw the family */
-        view.canvasContext.putImageData(image, 0, 0, 0, 0, view.width, view.height);
-        /* resolve when finished */
-        resolve(image);
+        view.canvasContext.drawImage(view._familyImage, x, y, view.width, view.height, 0, 0, view.width, view.height);
+        resolve();
       });
     },
 
@@ -349,6 +356,8 @@ const ProteinFamilyView = (function() {
         brushView.render(brushObj);
       });
     },
+
+    getGlyphSize: function() { return this.residue_glyph_size; },
 
     getXDimensionSize: function() { return this.x_axis_length; },
 

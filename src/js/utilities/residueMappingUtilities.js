@@ -109,7 +109,7 @@ function ResidueMappingUtility() {
 
 
   function get_color_mapping(mapping){
-    switch(mapping){
+    switch(mapping.trim()){
       case "Side Chain Class":
       default:
         currentColorMap = colorCodesBySideChain;

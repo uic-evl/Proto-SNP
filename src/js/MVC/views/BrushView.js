@@ -57,6 +57,9 @@ const BrushView = (function() {
     let self = this;
 
     self._model = model;
+    self._selection = [0,0];
+    self._scale = options.scale || null;
+
     let block_size = options.block_size;
 
     /* Initialize the d3 brush */
@@ -68,7 +71,7 @@ const BrushView = (function() {
     /* Bind the event listens */
     self._model.selectedProteinChanged.attach(function(sender, msg) {
       // TODO Update overlays that make everything else opaque
-      self.redraw(msg.selection);
+      //self.redraw(msg.selection);
     });
 
     self._model.selectedResiduesChanged.attach(function(sender, msg){
@@ -135,6 +138,9 @@ const BrushView = (function() {
         d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
 
+      /* store the selection*/
+      self._selection = d3.event.selection;
+
       /* Notify the listeners */
       self.brushMoved.notify({options: options, selection:d3.event.selection});
     };
@@ -158,6 +164,10 @@ const BrushView = (function() {
     getInitialPosition : function() { return this.brushObj.getInitialPosition(); },
 
     getBrush: function() { return this.brushObj.brush; },
+
+    getSelection: function() { return this._selection},
+
+    getScale: function() { return this._scale },
 
     getBrushElement: function() { return document.getElementsByClassName(this.brushObj.getBrushClass())[0]; },
 

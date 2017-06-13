@@ -16,8 +16,7 @@ const ProteinFamilyController = (function() {
     function createOverviewPaddle(overviewSpec) {
       /* construct the y-scale */
       let yScale = overviewSpec.brushSpec.scale,
-          overviewBrush = new BrushView(self._model, overviewSpec.brushSpec),
-          ppv = overviewSpec.brushSpec.proteinsPerView;
+          overviewBrush = new BrushView(self._model, overviewSpec.brushSpec);
       /* Setup the onMove observer */
       overviewBrush.brushMoved.attach(function(sender, msg){
         /* Map the selection into the protein family scale */
@@ -25,7 +24,7 @@ const ProteinFamilyController = (function() {
         selection[0] = Math.round(selection[0]);
         selection[1] = Math.round(selection[1]);
         /* Render the new view*/
-        self._view.render(0, selection[0]*self._view.getGlyphSize());
+        self._view.render(self._view._familyImage, 0, selection[0]*self._view.getGlyphSize());
       });
 
       self._brushViews['overview'] = overviewBrush;
@@ -93,13 +92,29 @@ const ProteinFamilyController = (function() {
       });
     }
 
+    /* The coloring scheme changed */
+    self._model.proteinColoringChanged.attach(function(sender, msg){
+      if (!self._model.isEmpty()) return;
+      let colorMap = msg.scheme,
+          colorScale = App.residueMappingUtility.getColor(colorMap);
+      /* Recolor the family viewer  */
+      let selection = self._brushViews['overview'].getSelection(),
+          scale =  self._brushViews['overview'].getScale();
+      /* Map the scale from the overview to the family view */
+      selection = selection.map(scale.invert);
+      /* Round to the nearest protein */
+      selection[0] = Math.round(selection[0]);
+      selection[1] = Math.round(selection[1]);
+      /* Recolor the trend image */
+      self._view.recolor(colorScale, 0, selection[0]*self._view.getGlyphSize());
+    });
+
     /* On Alignment File Load */
     self._view.fileUploaded.attach(function(sender, args) {
       sender._model.setFamily(args.data, args.type);
     });
 
     /* On Family View Rendered */
-    /* Add residue selection */
     self._view.imageRendered.attach(function(sender, args) {
       /* Create new brush views as requested by the family */
       createFamilyPaddles(args.brushes);

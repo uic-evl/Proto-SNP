@@ -80,7 +80,7 @@ const ProteinFamilyView = (function() {
     }
 
     /* Renders the image overview onto the canvas */
-    function render_overview() {
+    self.render_overview = function() {
       /* Create the overview if the image runs off the page*/
       let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
           view = self,
@@ -94,9 +94,33 @@ const ProteinFamilyView = (function() {
       };
       /* Add the data to the image*/
       overview.src = self._backBufferImage;
-    }
+    };
 
-    function initialize_back_buffer(family, colorMapping) {
+    /* Bind the protein family listener */
+    self._model.proteinFamilyAdded.attach(function(sender, msg){
+      let family = msg.family,
+          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
+      /* Initialize the trend image view*/
+      self.initialize(family);
+      /* Initialize the back buffer with the family data */
+      self.initialize_back_buffer(family.data, colorMapping)
+          /* Render the family view */
+          .then(self.render.bind(self,self._familyImage,0,0))
+          .then(function(){
+            /* Notify the controller that the image has been rendered */
+            self.imageRendered.notify(build_brushes_and_viewers());
+            /* Render the overview if one is needed */
+            if (self.overviewImage) {
+              self.render_overview();
+            }
+            /* Enable the coloring menu */
+            $("#coloring_list").find("li").removeClass("disabled");
+            /* Create the legend */
+            App.residueMappingUtility.createColorLegend();
+          }).catch(console.log.bind(console));
+    });
+
+    self.initialize_back_buffer = function(family, colorMapping) {
       /* Find the width of the div */
       let width = (self.overviewImage) ? parseInt(self.width*1.1) : self.width;
       /* First, clear the canvas*/
@@ -116,43 +140,11 @@ const ProteinFamilyView = (function() {
         /* Create the family image */
         self._familyImage = new Image();
         /* Add the image to the canvas once it is loaded */
-        self._familyImage.onload = function(){ resolve(); };
+        self._familyImage.onload = function(){ resolve(this); };
         /* Add the data to the image*/
         self._familyImage.src = self._backBufferImage;
       });
-    }
-
-    /* Bind the protein family listener */
-    self._model.proteinFamilyAdded.attach(function(sender, msg){
-      let family = msg.family,
-          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
-      /* Initialize the trend image view*/
-      self.initialize(family);
-      /* Initialize the back buffer with the family data */
-      initialize_back_buffer(family.data, colorMapping)
-          /* Render the family view */
-          .then(self.render.bind(self,0,0))
-          .then(function(){
-            /* Notify the controller that the image has been rendered */
-            self.imageRendered.notify(build_brushes_and_viewers());
-            /* Render the overview if one is needed */
-            if (self.overviewImage) {
-              render_overview();
-            }
-            /* Enable the coloring menu */
-            $("#coloring_list").find("li").removeClass("disabled");
-            /* Create the legend */
-            App.residueMappingUtility.createColorLegend();
-          }).catch(console.log.bind(console));
-    });
-
-    /* The coloring scheme changed */
-    self._model.proteinColoringChanged.attach(function(sender, msg){
-      if (!self._model.isEmpty()) return;
-      let colorMap = msg.scheme,
-          colorScale = App.residueMappingUtility.getColor(colorMap);
-      self.render(self._model.getFamily().data, colorScale);
-    });
+    };
 
     /* Getter for the x-Axis scale */
     self.getXAxisScale = function() { return self.xScale; };
@@ -300,11 +292,11 @@ const ProteinFamilyView = (function() {
       this.brushSVG = this.set_brush_SVG(this._dom, width, this.height);
     },
 
-    render: function (x,y) {
+    render: function (image, x,y) {
       let view = this;
       // view.canvasContext.clearRect(0, 0, view.width, view.height);
       return new Promise(function (resolve, reject) {
-        view.canvasContext.drawImage(view._familyImage, x, y, view.width, view.height, 0, 0, view.width, view.height);
+        view.canvasContext.drawImage(image, x, y, view.width, view.height, 0, 0, view.width, view.height);
         resolve();
       });
     },
@@ -344,6 +336,16 @@ const ProteinFamilyView = (function() {
 
             /* Reset the brush selections */
             //reset_brushes();
+          });
+    },
+
+    recolor: function(colorScale, x, y) {
+      let view = this;
+      view.initialize_back_buffer(view._model.getFamily().data, colorScale)
+          .then(function(image){
+            view.canvasContext.clearRect(0, 0, view.width, view.height);
+            view.render(image,x,y)
+                .then(view.render_overview.bind(view));
           });
     },
 

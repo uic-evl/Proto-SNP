@@ -25,6 +25,10 @@ const ProteinFamilyView = (function() {
       let verticalPaddleSize   = 6,
           horizontalPaddleSize = 1,
           maxPaddleSize = 10;
+
+      /* Get the calculated margin of the family viewer to align the frequency viewer */
+      let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-left"]);
+
       return {
         brushes : [
           {
@@ -44,9 +48,9 @@ const ProteinFamilyView = (function() {
         ],
             frequencyViewers : [
         {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: 25},
+          block_size: self.residue_glyph_size, offset: 25, class: "center-align", margin: margin, width: self.width},
         {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: 25}
+          block_size: self.residue_glyph_size, offset: 25, class: "center-align",  margin: margin, width: self.width}
       ]
       };
     }

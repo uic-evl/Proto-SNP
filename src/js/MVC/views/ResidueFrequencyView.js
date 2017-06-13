@@ -162,13 +162,22 @@ const ResidueFrequencyView = (function() {
       /* Show the viewer */
       this._parent.classed("hidden", false);
 
-      this.width   = this._parent.node().clientWidth/2.0;
+      this.width   = options.width / 2.0;
       this.height  = this._parent.node().clientHeight;
       this.aspectRatio  = this.height/this.width;
 
       this.bar_y = this.height  * 0.4;
       this.bar_height = this.height  * 0.3;
       this.glyph_width = this.bar_height * 2;
+
+      /* Set the DOM's width/height so it centers in it's parent */
+      this._dom
+          .style("width", this.width)
+          .style("height", this.height);
+
+      this._parent
+          .style("width", options.width)
+          .style("margin-left", options.margin);
 
       /* Clear the dom element */
       d3Utils.clear_chart_dom(this._dom);

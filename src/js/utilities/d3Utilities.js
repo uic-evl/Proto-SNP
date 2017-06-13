@@ -25,7 +25,8 @@ const d3Utils = function () {
     create_chart_svg : function(domObj, options) {
       return domObj.append("svg")
           .attr("width", options.width)
-          .attr("height", options.height);
+          .attr("height", options.height)
+          .attr("class", options.class);
     },
 
     /* Simple d3 function to construct a line*/

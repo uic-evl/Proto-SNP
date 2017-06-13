@@ -48,9 +48,9 @@ const ProteinFamilyView = (function() {
         ],
             frequencyViewers : [
         {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: 25, class: "center-align", margin: margin, width: self.width},
+          block_size: self.residue_glyph_size, offset: 5, class: "center-align", margin: margin, width: self.width},
         {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: 25, class: "center-align",  margin: margin, width: self.width}
+          block_size: self.residue_glyph_size, offset: 5, class: "center-align",  margin: margin, width: self.width}
       ]
       };
     }

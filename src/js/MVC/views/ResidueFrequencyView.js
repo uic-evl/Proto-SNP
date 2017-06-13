@@ -14,7 +14,7 @@ const ResidueFrequencyView = (function() {
     self._dom = d3.select("#"+self._id);
     self._parent = d3.select("div."+options.parent);
 
-    self._barOffset = 5;
+    self._barOffset = 10;
     self._familyMemberCount = options.rows;
     self._svg = null;
     self._visible = false;
@@ -74,7 +74,7 @@ const ResidueFrequencyView = (function() {
           .attr("class", "freq_bars")
           .attr("width", self.glyph_width)
           .attr("height", self.bar_height)
-          .attr('y', function(d) { return self.bar_y + self._barOffset } )
+          .attr('y', function(d) { return (self.height - self.bar_height)/2.0; })
           .attr('x', function(d, i) { return self.xScale(i) })
           .style("fill", "white");
 
@@ -93,7 +93,7 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequency)
           .attr('x', function(d, i) { return self.xScale(i) })
-          .attr('y', function(d) { return self.yScale(d[1]) + self.bar_y + self._barOffset} )
+          .attr('y', function(d) { return self.yScale(d[1]) + (self.height - self.bar_height)/2.0; })
           .attr("width", self.glyph_width)
           .attr("height", function(d) { return ( self.bar_height - self.yScale(d[1]) )  })
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
@@ -116,7 +116,7 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequencyText)
           .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", self.bar_y * 2.0 + self._barOffset )
+          .attr("y", ()=>{return (self.height - self.bar_height)/2.0 - self._barOffset;})//
           .attr("dy", ".35em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
@@ -139,7 +139,8 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(selectionText)
           .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", self.bar_height + self._barOffset)
+          .attr("y", ()=>{return self.bar_height + self._barOffset + (self.height - self.bar_height)/2.0;})//
+
           .attr("dy", ".3em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
@@ -166,8 +167,8 @@ const ResidueFrequencyView = (function() {
       this.height  = this._parent.node().clientHeight;
       this.aspectRatio  = this.height/this.width;
 
-      this.bar_y = this.height  * 0.4;
-      this.bar_height = this.height  * 0.3;
+      this.bar_y = this.height  * 0.5;
+      this.bar_height = this.height  * 0.4;
       this.glyph_width = this.bar_height * 2;
 
       /* Set the DOM's width/height so it centers in it's parent */

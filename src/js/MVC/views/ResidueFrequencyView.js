@@ -116,7 +116,7 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequencyText)
           .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", ()=>{return (self.height - self.bar_height)/2.0 - self._barOffset;})//
+          .attr("y", ()=>{return self.bar_height + self._barOffset + (self.height - self.bar_height)/2.0;})
           .attr("dy", ".35em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
@@ -139,8 +139,7 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(selectionText)
           .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", ()=>{return self.bar_height + self._barOffset + (self.height - self.bar_height)/2.0;})//
-
+          .attr("y", ()=>{return (self.height - self.bar_height)/2.0 - self._barOffset;})
           .attr("dy", ".3em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")

@@ -4,6 +4,27 @@ var App = App || {};
 
 const FilteringMenuController = (function() {
 
+  function mapSortingLabel(label) {
+    switch(label){
+      case 'Initial Ordering':
+      default:
+        return "default";
+        break;
+      case 'Residue Frequency':
+        return "edit_distance";
+        break;
+      case 'Weighted Edit Distance':
+        return "weighted_edit_distance";
+        break;
+      case 'Residue Commonality with':
+        return "commonality_scores";
+        break;
+      case 'Normalized Residue Commonality with':
+        return "normalized_commonality_scores";
+        break;
+    }
+  }
+
   function FilteringMenuController(options) {
     let self = this;
 
@@ -40,10 +61,7 @@ const FilteringMenuController = (function() {
         App.residueMappingUtility.createColorLegend();
       }
       else if (this._menuDescription === "sorting"){
-        this._familyModel.setProteinSorting(element);
-        this._tertiaryModels.forEach(function(model){
-          model.setProteinSorting(element);
-        });
+        this._familyModel.setProteinSorting(mapSortingLabel(element));
       }
 
     }

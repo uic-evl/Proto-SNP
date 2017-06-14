@@ -92,12 +92,7 @@ const ProteinFamilyController = (function() {
       });
     }
 
-    /* The coloring scheme changed */
-    self._model.proteinColoringChanged.attach(function(sender, msg){
-      if (!self._model.isEmpty()) return;
-      let colorMap = msg.scheme,
-          colorScale = App.residueMappingUtility.getColor(colorMap);
-      /* Recolor the family viewer  */
+    function getOverviewSelection() {
       let selection = self._brushViews['overview'].getSelection(),
           scale =  self._brushViews['overview'].getScale();
       /* Map the scale from the overview to the family view */
@@ -105,8 +100,27 @@ const ProteinFamilyController = (function() {
       /* Round to the nearest protein */
       selection[0] = Math.round(selection[0]);
       selection[1] = Math.round(selection[1]);
+      return selection;
+    }
+
+    /* The coloring scheme changed */
+    self._model.proteinColoringChanged.attach(function(sender, msg){
+      if (!self._model.isEmpty()) return;
+      let colorMap = msg.scheme,
+          colorScale = App.residueMappingUtility.getColor(colorMap),
+      /* Recolor the family viewer  */
+      selection = getOverviewSelection();
       /* Recolor the trend image */
-      self._view.recolor(colorScale, 0, selection[0]*self._view.getGlyphSize());
+      self._view.recolor({color:colorScale, x:0, y:selection[0]*self._view.getGlyphSize()});
+    });
+
+    /* The coloring scheme changed */
+    self._model.proteinSortingChanged.attach(function(sender, msg){
+      let sorted_data = msg.data,
+          colorMap = msg.colorScheme,
+          colorScale = App.residueMappingUtility.getColor(colorMap),
+          selection = getOverviewSelection();
+      self._view.reorder({family:sorted_data, color:colorScale, x:0, y: selection[0]*self._view.getGlyphSize()});
     });
 
     /* On Alignment File Load */

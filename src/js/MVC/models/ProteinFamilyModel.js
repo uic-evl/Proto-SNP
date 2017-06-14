@@ -77,6 +77,12 @@ const ProteinFamilyModel = (function() {
   }
 
   ProteinFamilyModel.prototype = {
+
+    isEmpty : function() {
+      return !!this._parsedData;
+    },
+
+    /* Setter for the names of the proteins from the family */
     setFamily : function(data, type) {
       this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
       map_trend_image_data(this._rawData).then(function(parsed_data) {
@@ -141,7 +147,6 @@ const ProteinFamilyModel = (function() {
       return this._parsedData;
     },
 
-    /* Setter for the names of the proteins from the family */
     setProteinNames : function () {
       this._proteinNames = d3.set(this._rawData.map(function( residue )
       { return residue.name; } )).values();
@@ -190,7 +195,25 @@ const ProteinFamilyModel = (function() {
 
     setProteinSorting: function (sorting) {
       this._proteinSorting = sorting;
-      this.proteinSortingChanged.notify({scheme: this._proteinSorting});
+      /* Reorder the raw data */
+      let ordering_scores = _.chain(this._rawData)
+          .sortBy((protein) => {
+            return protein.scores[sorting];
+          }).reverse().slice(0, this.ppv).value(),
+      /* Save a reference to the model */
+          model = this;
+      /* Remap the data then notify the controller */
+      map_trend_image_data(ordering_scores).then(function(parsed_data){
+        /* Save the new parsed data and names */
+        model._parsedData = parsed_data;
+        model.setProteinNames();
+        /* notify the listeners */
+        model.proteinSortingChanged.notify({
+          scheme: model._proteinSorting,
+          data : parsed_data,
+          colorScheme: model._proteinColoring});
+        return Promise.resolve();
+      });
       return this;
     },
 
@@ -198,11 +221,8 @@ const ProteinFamilyModel = (function() {
       this._proteinColoring = coloring;
       this.proteinColoringChanged.notify({scheme: this._proteinColoring});
       return this;
-    },
-
-    isEmpty : function() {
-      return !!this._parsedData;
     }
+
   };
 
   return ProteinFamilyModel;

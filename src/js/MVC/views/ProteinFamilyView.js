@@ -81,27 +81,29 @@ const ProteinFamilyView = (function() {
 
     /* Renders the image overview onto the canvas */
     self.render_overview = function() {
-      /* Create the overview if the image runs off the page*/
-      let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
-          view = self,
-      /* The overview will be 1/10th of the view */
-      overview = new Image();
-      /* Add the image to the canvas once it is loaded */
-      overview.onload = function(){
-        self.canvasContext.drawImage(overview, self.width, 0, overview_width, self.height);
-        /* Notify the listens that the overview has been rendered */
-        self.overviewRendered.notify({brushSpec: build_overview_brush(overview_width, view.height)});
-      };
-      /* Add the data to the image*/
-      overview.src = self._backBufferImage;
+      return new Promise(function(resolve, reject){
+        /* Create the overview if the image runs off the page*/
+        let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
+            view = self,
+            /* The overview will be 1/10th of the view */
+            overview = new Image();
+        /* Add the image to the canvas once it is loaded */
+        overview.onload = function(){
+          self.canvasContext.drawImage(overview, self.width, 0, overview_width, self.height);
+          resolve();
+        };
+        /* Add the data to the image*/
+        overview.src = self._backBufferImage;
+      });
+
     };
 
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
-          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
+          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring()),
       /* Initialize the trend image view*/
-      self.initialize(family);
+      width = self.initialize(family);
       /* Initialize the back buffer with the family data */
       self.initialize_back_buffer(family.data, colorMapping)
           /* Render the family view */
@@ -111,7 +113,11 @@ const ProteinFamilyView = (function() {
             self.imageRendered.notify(build_brushes_and_viewers());
             /* Render the overview if one is needed */
             if (self.overviewImage) {
-              self.render_overview();
+              self.render_overview()
+                  .then(function(){
+                    /* Notify the listens that the overview has been rendered and render the brush  */
+                    self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
+                  });
             }
             /* Enable the coloring menu */
             $("#coloring_list").find("li").removeClass("disabled");
@@ -288,8 +294,9 @@ const ProteinFamilyView = (function() {
 
       this.set_chart_scales();
       d3Utils.clear_chart_dom(this._dom);
-
       this.brushSVG = this.set_brush_SVG(this._dom, width, this.height);
+      /* let the caller know the width */
+      return width;
     },
 
     render: function (image, x,y) {
@@ -301,50 +308,26 @@ const ProteinFamilyView = (function() {
       });
     },
 
-    reorder: function () {
-      let protein_family = this._model.getProteinData();
-      /* Get the new order for the protein rows in descending order */
-      let ordering_scores = _.chain(protein_family)
-          .sortBy((protein) => {
-            return protein.scores[App.sorting];
-          })
-          .reverse().slice(0, this.ppv).value();
-
-      this.svg
-          .transition().duration(1000)
-          .selectAll(".cell")
-          .attr("transform", function (d, i) {
-            let row = parseInt(d3.select(this).attr("row")),
-                col = parseInt(d3.select(this).attr("col")),
-                x_pos = col * this.residue_glyph_size,
-                curr_y_pos = _.indexOf(ordering_scores, protein_family[row]) * this.residue_glyph_size;
-            return App.utilities.translate(x_pos, curr_y_pos);
-          })
-          .attr("row", function () {
-            let row = parseInt(d3.select(this).attr("row"));
-            return _.indexOf(ordering_scores, protein_family[row]);
-          })
-          .call(function () {
-            /* Reorder the labels*/
-            //reorder_labels(ordering_scores);
-            /* Set the new y-scale so the brushes have an updated lookup table */
-            this.set_y_scale(_.map(ordering_scores, "name"));
-
-            // TODO make event to pass to controller for reordering
-            set_protein_family(ordering_scores);
-
-
-            /* Reset the brush selections */
-            //reset_brushes();
+    reorder: function (options) {
+      let view = this;
+      view.initialize_back_buffer(options.family.data, options.color)
+          .then(function(image){
+            view.canvasContext.clearRect(0, 0, view.width, view.height);
+            view.render(image,options.x,options.y)
+                .then(view.render_overview.bind(view))
+                .then(function(){
+                  /* Set the y scale with the protein updated name order */
+                  view.set_y_scale(_.slice(view._model.getProteinNames(), 0, view.ppv))
+                });
           });
     },
 
-    recolor: function(colorScale, x, y) {
+    recolor: function(options) {
       let view = this;
-      view.initialize_back_buffer(view._model.getFamily().data, colorScale)
+      view.initialize_back_buffer(view._model.getFamily().data, options.color)
           .then(function(image){
             view.canvasContext.clearRect(0, 0, view.width, view.height);
-            view.render(image,x,y)
+            view.render(image,options.x,options.y)
                 .then(view.render_overview.bind(view));
           });
     },

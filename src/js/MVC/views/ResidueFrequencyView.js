@@ -48,16 +48,12 @@ const ResidueFrequencyView = (function() {
 
     self.set_scales = function(residue_frequencies, family_member_count) {
       /*Set the scale for the x-axis */
-      /* construct the x-scale */
       self.xScale = d3.scaleLinear()
           .domain([0, residue_frequencies.length])
-          .range(self.range)
-      ;
-
+          .range(self.range);
       self.yScale = d3.scaleLinear()
           .domain([0, family_member_count])
-          .range([self.bar_height, 0])
-      ;
+          .range([self.bar_height, 0]);
     };
 
     /* Render the bars for each residue */
@@ -198,6 +194,15 @@ const ResidueFrequencyView = (function() {
       /* Show the viewer */
       this._parent.classed("hidden", false);
 
+      /* Set the DOM's width/height so it centers in it's parent */
+      this._parent
+          .style("width", options.width)
+          .style("margin-left", options.margin)
+          .style("height", function(){
+            return (options.overviewImage) ? this.clientHeight : 75;
+          });
+
+
       this.width   = options.width / 2.0;
       this.height  = this._parent.node().clientHeight;
       this.aspectRatio  = this.height/this.width;
@@ -208,14 +213,9 @@ const ResidueFrequencyView = (function() {
       this.y_offset = (this.height - this.bar_height + this._barOffset)/2.0;
       this.glyph_width = this.bar_height * 2.0;
 
-      /* Set the DOM's width/height so it centers in it's parent */
       this._dom
           .style("width", this.width)
           .style("height", this.height);
-
-      this._parent
-          .style("width", options.width)
-          .style("margin-left", options.margin);
 
       /* Clear the dom element */
       d3Utils.clear_chart_dom(this._dom);

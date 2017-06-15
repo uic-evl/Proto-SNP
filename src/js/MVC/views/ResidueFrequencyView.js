@@ -5,7 +5,6 @@ var App = App || {};
 const ResidueFrequencyView = (function() {
 
   function ResidueFrequencyView(model, options) {
-
     let self = this;
 
     self._model = model;
@@ -43,7 +42,8 @@ const ResidueFrequencyView = (function() {
       self.render({
         frequencies:frequencies,
         residues:protein.sequence.slice(selection[0], selection[1]),
-        brush_pos: selection[0] + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0});
+        brush_pos: selection[0]*options.block_size + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0
+      });
     });
 
     self.set_scales = function(residue_frequencies, family_member_count) {
@@ -165,18 +165,27 @@ const ResidueFrequencyView = (function() {
     };
 
     /* Render the pointer bar */
-    self.render_context_bars = function(points) {
-      /* Add the context bar above viewers */
-      let context = self._svg
-        .selectAll(".context-line").data(points);
+    self.render_context_bars = function(render_options) {
+      /* Add the bars to the viewer */
+      let bar = self._svg
+          .selectAll(".context-line")
+          .data([render_options]);
 
-      context.enter().append("path")
-        .merge(context)
-        .attr("d", (d) => {return d3Utils.lineFunction(d)})
-        .attr("class", "context-line");
+      // UPDATE: add new elements if needed
+      bar
+          .enter().append('g')
+          .append('rect')
+          /* Merge the old elements (if they exist) with the new data */
+          .merge(bar)
+          .attr("class", "context-line")
+          .attr("width", render_options.width)
+          .attr("height", render_options.height)
+          .attr('y', render_options.y)
+          .attr('x', render_options.x)
+          .style("fill", "black");
 
-      /* Remove the unneeded selection labels */
-      context.exit().remove();
+      /* Remove the unneeded bars */
+      bar.exit().remove();
     };
 
       /* Initialize the viewer */
@@ -192,6 +201,7 @@ const ResidueFrequencyView = (function() {
       this.width   = options.width / 2.0;
       this.height  = this._parent.node().clientHeight;
       this.aspectRatio  = this.height/this.width;
+      this.semantic = options.semantic;
 
       this.bar_height = this.height  * 0.3;
       this.bar_y = this.height  * 0.4;
@@ -210,18 +220,17 @@ const ResidueFrequencyView = (function() {
       /* Clear the dom element */
       d3Utils.clear_chart_dom(this._dom);
       this._svg = d3Utils.create_chart_svg(this._dom, {width:this.width, height:this.height});
-
       this.range = [options.offset*2, this.width];
       let scale = d3.scaleLinear().domain([0, options.max_items]).range(this.range),
         y_position = this._barOffset/2.0,
         /* Set the width of the context line */
         width_offset = scale(options.max_items-1);
-        width_offset += (scale(options.max_items) - width_offset) * 0.85;
+        width_offset += (scale(options.max_items) - width_offset) * 0.9;
 
       let contextPoints = [
-          [ {x: 0, y:y_position},                   { x: width_offset, y: y_position}],
-          [ {x: 1, y: y_position},                  { x: 1, y:y_position + this._barOffset} ],
-          [ {x: width_offset -1, y: y_position},    { x: width_offset - 1, y:y_position + this._barOffset}] ];
+          [ {x: this._barOffset,   y:y_position},     { x: width_offset, y: y_position}],
+          [ {x: this._barOffset+1, y: y_position},    { x: this._barOffset+1, y:y_position + this._barOffset} ],
+          [ {x: width_offset-1,    y: y_position},    { x: width_offset-1, y:y_position + this._barOffset}] ];
 
       this.render_context_lines(contextPoints);
     },
@@ -235,7 +244,12 @@ const ResidueFrequencyView = (function() {
       /* Update the labels */
       this.update(render_options.residues);
       /* Render the context bars */
-      //this.render_context_bars([[{x:render_options.brush_pos, y:1},{x:render_options.brush_pos, y:11}]]);
+      this.render_context_bars({
+        x: (this.semantic==="left") ? render_options.brush_pos:render_options.brush_pos-this.width,
+        y: 1,
+        height: 10,
+        width:1
+      });
       /* Set the visibility flag to true*/
       this._visible = true;
     },

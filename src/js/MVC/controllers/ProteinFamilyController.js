@@ -71,7 +71,6 @@ const ProteinFamilyController = (function() {
       /* Get information about the trend image */
       let numberOfRows    = self._view.getYDimensionSize(),
           currentProtein  = self._model.getSelectedProtein();
-
       /* Create the frequency viewers for the family*/
       residueViewers.forEach(function(freqSpec){
         /* Create the frequency viewers */
@@ -85,7 +84,6 @@ const ProteinFamilyController = (function() {
         /* Set the initial selections in the model */
         self._model.setSelectedResidues(freqSpec.semantic, selection);
         /*Render the view */
-        console.log(brushPos);
         freqView.render({
           frequencies:frequencies,
           residues:currentProtein.sequence.slice(selection[0], selection[1]),
@@ -146,7 +144,6 @@ const ProteinFamilyController = (function() {
       self._view.attachBrushes([createOverviewPaddle(args)]);
     });
   }
-
 
   ProteinFamilyController.prototype = {};
 

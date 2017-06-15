@@ -13,7 +13,7 @@ const ProteinFamilyController = (function() {
     self._brushViews = {};
     self._frequencyViews = {};
 
-    function createOverviewPaddle(overviewSpec) {
+    function createOverviewPaddle(overviewSpec){
       /* construct the y-scale */
       let yScale = overviewSpec.brushSpec.scale,
           overviewBrush = new BrushView(self._model, overviewSpec.brushSpec);
@@ -78,17 +78,19 @@ const ProteinFamilyController = (function() {
         let freqView = new ResidueFrequencyView(self._model, _.assign(freqSpec, {'rows': numberOfRows}));
         /* Attach the listeners */
         self._frequencyViews[freqSpec.semantic] = freqView;
-
         /* Render the viewers depending on the brush's position */
-        let selection = _.map(self._brushViews[freqSpec.semantic].getInitialPosition(),
-            (o)=>{ return parseInt(o/freqSpec.block_size); }),
-            residues  = self._model.getSequenceFrequenciesFromRange(selection);
-
+        let brushPos = self._brushViews[freqSpec.semantic].getInitialPosition(),
+            selection = _.map(brushPos, (o)=>{ return parseInt(o/freqSpec.block_size); }),
+            frequencies  = self._model.getSequenceFrequenciesFromRange(selection);
         /* Set the initial selections in the model */
         self._model.setSelectedResidues(freqSpec.semantic, selection);
-
         /*Render the view */
-        freqView.render(residues, currentProtein.sequence.slice(selection[0], selection[1]) );
+        console.log(brushPos);
+        freqView.render({
+          frequencies:frequencies,
+          residues:currentProtein.sequence.slice(selection[0], selection[1]),
+          brush_pos: brushPos[0] + (brushPos[1]-brushPos[0])/2.0
+        });
       });
     }
 

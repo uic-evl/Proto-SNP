@@ -37,10 +37,13 @@ const ResidueFrequencyView = (function() {
       if(!self._visible || (msg.semantic !== options.semantic) ) return;
       /* Update the labels to the new selection */
       let selection = msg.selection,
-          residues = self._model.getSequenceFrequenciesFromRange(selection),
+          frequencies = self._model.getSequenceFrequenciesFromRange(selection),
           protein = self._model.getSelectedProtein();
       /*Render the view */
-      self.render(residues, protein.sequence.slice(selection[0], selection[1]));
+      self.render({
+        frequencies:frequencies,
+        residues:protein.sequence.slice(selection[0], selection[1]),
+        brush_pos: selection[0] + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0});
     });
 
     self.set_scales = function(residue_frequencies, family_member_count) {
@@ -74,7 +77,7 @@ const ResidueFrequencyView = (function() {
           .attr("class", "freq_bars")
           .attr("width", self.glyph_width)
           .attr("height", self.bar_height)
-          .attr('y', function(d) { return (self.height - self.bar_height)/2.0; })
+          .attr('y', function(d) { return self.y_offset; })
           .attr('x', function(d, i) { return self.xScale(i) })
           .style("fill", "white");
 
@@ -93,7 +96,7 @@ const ResidueFrequencyView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequency)
           .attr('x', function(d, i) { return self.xScale(i) })
-          .attr('y', function(d) { return self.yScale(d[1]) + (self.height - self.bar_height)/2.0; })
+          .attr('y', function(d) { return self.yScale(d[1]) + self.y_offset; })
           .attr("width", self.glyph_width)
           .attr("height", function(d) { return ( self.bar_height - self.yScale(d[1]) )  })
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
@@ -115,19 +118,18 @@ const ResidueFrequencyView = (function() {
           .attr("class", "residueText")
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequencyText)
-          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", ()=>{return self.bar_height + self._barOffset + (self.height - self.bar_height)/2.0;})
+          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2.0 })
+          .attr("y", ()=>{return self.bar_height + self._barOffset + self.y_offset;})
           .attr("dy", ".35em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
           .style("font-weight", "bold")
       ;
-
       /* Remove the unneeded frequency labels */
       frequencyText.exit().remove();
     };
 
-    self.update = function(selected_residues){
+    self.update = function(selected_residues) {
       /* Add the residue text to the bars */
       let selectionText = self._svg.selectAll(".selectionText")
           .data(selected_residues);
@@ -138,8 +140,8 @@ const ResidueFrequencyView = (function() {
           .attr("class", "selectionText")
           /* Merge the old elements (if they exist) with the new data */
           .merge(selectionText)
-          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2 })
-          .attr("y", ()=>{return (self.height - self.bar_height)/2.0 - self._barOffset;})
+          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2.0 })
+          .attr("y", () => {return self.y_offset - self._barOffset;})
           .attr("dy", ".3em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
@@ -152,7 +154,32 @@ const ResidueFrequencyView = (function() {
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
     };
 
-    /* Initialize the viewer */
+    /* Render the line above the bars */
+    self.render_context_lines = function(points) {
+      /* Add the context bar above viewers */
+      let context = this._svg
+        .selectAll(".context-bar").data(points)
+        .enter().append("path")
+        .attr("d", (d) => { return d3Utils.lineFunction(d)})
+        .attr("class", "context-bar");
+    };
+
+    /* Render the pointer bar */
+    self.render_context_bars = function(points) {
+      /* Add the context bar above viewers */
+      let context = self._svg
+        .selectAll(".context-line").data(points);
+
+      context.enter().append("path")
+        .merge(context)
+        .attr("d", (d) => {return d3Utils.lineFunction(d)})
+        .attr("class", "context-line");
+
+      /* Remove the unneeded selection labels */
+      context.exit().remove();
+    };
+
+      /* Initialize the viewer */
     self.initialize(options);
   }
 
@@ -166,9 +193,10 @@ const ResidueFrequencyView = (function() {
       this.height  = this._parent.node().clientHeight;
       this.aspectRatio  = this.height/this.width;
 
-      this.bar_y = this.height  * 0.5;
-      this.bar_height = this.height  * 0.4;
-      this.glyph_width = this.bar_height * 2;
+      this.bar_height = this.height  * 0.3;
+      this.bar_y = this.height  * 0.4;
+      this.y_offset = (this.height - this.bar_height + this._barOffset)/2.0;
+      this.glyph_width = this.bar_height * 2.0;
 
       /* Set the DOM's width/height so it centers in it's parent */
       this._dom
@@ -183,32 +211,31 @@ const ResidueFrequencyView = (function() {
       d3Utils.clear_chart_dom(this._dom);
       this._svg = d3Utils.create_chart_svg(this._dom, {width:this.width, height:this.height});
 
-      if(options.semantic === "left"){
-        this.range = [options.offset*2, this.width];
-        this.contextPoints = [
-            [ {x: options.offset, y:10},      { x: this.width, y: 10}],
-            [ {x: options.offset + 1, y: 10}, { x: options.offset + 1, y:20} ],
-            [ {x: this.width -1, y: 10},      { x: this.width - 1, y:20}] ];
-      }
-      else {
-        this.range = [options.offset*2, this.width];
-        this.contextPoints = [
-          [ {x: options.offset, y:10},      {x: this.width, y: 10}],
-          [ {x: options.offset + 1, y: 10}, {x: options.offset + 1, y:20} ],
-          [ {x: this.width -1, y: 10},      {x: this.width - 1, y:20}] ];
-      }
+      this.range = [options.offset*2, this.width];
+      let scale = d3.scaleLinear().domain([0, options.max_items]).range(this.range),
+        y_position = this._barOffset/2.0,
+        /* Set the width of the context line */
+        width_offset = scale(options.max_items-1);
+        width_offset += (scale(options.max_items) - width_offset) * 0.85;
 
-      // render_context_lines();
+      let contextPoints = [
+          [ {x: 0, y:y_position},                   { x: width_offset, y: y_position}],
+          [ {x: 1, y: y_position},                  { x: 1, y:y_position + this._barOffset} ],
+          [ {x: width_offset -1, y: y_position},    { x: width_offset - 1, y:y_position + this._barOffset}] ];
+
+      this.render_context_lines(contextPoints);
     },
 
-    render : function(residue_frequencies, selected_residues) {
+    render : function(render_options) {
       /* Set the scales based on the new selection */
-      this.set_scales(residue_frequencies, this._familyMemberCount, selected_residues);
+      this.set_scales(render_options.frequencies, this._familyMemberCount, render_options.residues);
       /* Render the bars */
-      this.render_bars(residue_frequencies, this._familyMemberCount);
-      this.render_labels(residue_frequencies);
+      this.render_bars(render_options.frequencies, this._familyMemberCount);
+      this.render_labels(render_options.frequencies);
       /* Update the labels */
-      this.update(selected_residues);
+      this.update(render_options.residues);
+      /* Render the context bars */
+      //this.render_context_bars([[{x:render_options.brush_pos, y:1},{x:render_options.brush_pos, y:11}]]);
       /* Set the visibility flag to true*/
       this._visible = true;
     },

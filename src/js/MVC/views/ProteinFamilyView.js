@@ -4,12 +4,19 @@ var App = App || {};
 
 const ProteinFamilyView = (function() {
 
+  let PADDLE_SIZE = 6,
+      MAX_PADDLE_SIZE = 10;
+
   function ProteinFamilyView(model, element) {
     let self = this;
 
     self._model = model;
     self._id = element.id;
     self.overviewImage = false;
+
+    /* Set according to the glyph size */
+    self.x_offset = 0;
+    self.y_offset = 0;
 
     self._parentDom = d3.select("#"+self._id);
     self._dom = self._parentDom.append("div")
@@ -22,9 +29,9 @@ const ProteinFamilyView = (function() {
     self.overviewRendered = new EventNotification(this);
 
     function build_brushes_and_viewers() {
-      let verticalPaddleSize   = 6,
+      let verticalPaddleSize   = PADDLE_SIZE,
           horizontalPaddleSize = 1,
-          maxPaddleSize = 10;
+          maxPaddleSize = MAX_PADDLE_SIZE;
 
       /* Get the calculated margin of the family viewer to align the frequency viewer */
       let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-left"]);
@@ -33,25 +40,25 @@ const ProteinFamilyView = (function() {
         brushes : [
           {
             orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
-            extent: [[0, 0], [self.width, self.height]], block_size: self.residue_glyph_size,
-            position: [0, self.residue_glyph_size]
+            extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]], block_size: self.residue_glyph_size,
+            position: [self.y_offset, self.residue_glyph_size+self.y_offset]
           }, {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-            class:"brush vertical-left", extent: [[0, 0], [self.width, self.height]],
+            class:"brush vertical-left", extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]],
             block_size: self.residue_glyph_size, semantic: "left",
-            position: [0, self.residue_glyph_size * verticalPaddleSize]
+            position: [0, self.residue_glyph_size * verticalPaddleSize + self.y_offset]
           }, {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-            class:"brush vertical-right", extent: [[0, 0], [self.width, self.height]],
+            class:"brush vertical-right", extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]],
             block_size: self.residue_glyph_size, semantic: "right",
             position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
         ],
             frequencyViewers : [
         {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: 5, class: "center-align", margin: margin, width: self.width,
+          block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
           overview: self.overviewImage},
         {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: 5, class: "center-align",  margin: margin, width: self.width,
+          block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: margin, width: self.width,
           overview: self.overviewImage
         }
       ]
@@ -65,7 +72,7 @@ const ProteinFamilyView = (function() {
           paddleSize = Math.round(self.ppv * block_size),
           scale = d3.scaleLinear()
               .domain([0, count])
-              .range([0, height]);
+              .range([self.y_offset, height+self.y_offset]);
 
       /* Return the specs for the new */
       return {
@@ -76,8 +83,8 @@ const ProteinFamilyView = (function() {
         scale      : scale,
         class      : "brush horizontal",
         block_size: block_size,
-        extent: [[self.width, 0], [self.width + width, height]],
-        position: [0, paddleSize],
+        extent: [[self.width+self.x_offset, self.y_offset], [self.width+self.x_offset+width, height+self.y_offset]],
+        position: [self.y_offset, paddleSize],
         proteinsPerView: self.ppv
       }
     }
@@ -87,12 +94,11 @@ const ProteinFamilyView = (function() {
       return new Promise(function(resolve, reject){
         /* Create the overview if the image runs off the page*/
         let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
-            view = self,
             /* The overview will be 1/10th of the view */
             overview = new Image();
         /* Add the image to the canvas once it is loaded */
         overview.onload = function(){
-          self.canvasContext.drawImage(overview, self.width, 0, overview_width, self.height);
+          self.canvasContext.drawImage(overview, self.width+self.x_offset, self.y_offset, overview_width, self.height);
           resolve();
         };
         /* Add the data to the image*/
@@ -183,7 +189,6 @@ const ProteinFamilyView = (function() {
           new_height = self._parentDom.node().clientHeight,
           proteins_per_view = protein_height / residue_width;
 
-
       /* Trend image fits in the DIV's space */
       if(protein_height < new_height) {
         self.height = protein_height;
@@ -208,9 +213,11 @@ const ProteinFamilyView = (function() {
       this.set_glyph_size(residue_width);
       this.set_proteins_per_view(proteins_per_view);
 
-      /* Resize the DOM elements*/
-      document.getElementById('trendImageViewer').parentNode.style.height = self.height;
-      document.getElementById('trendImageViewer').style.height = self.height;
+      /* Remove the template class so that the div fits to our new sizes */
+      self._parentDom.classed("proteinFamilyViewer", false);
+      /* Resize the DOM elements to accommodate our family view*/
+      document.getElementById('trendImageViewer').parentNode.style.height = self.height+self.y_offset;
+      document.getElementById('trendImageViewer').style.height = self.height+self.y_offset;
       document.getElementById('trendImageViewer').parentNode.style.width = container_width;
       document.getElementsByClassName('TrendImageView')[0].style.width = container_width;
     };
@@ -219,6 +226,13 @@ const ProteinFamilyView = (function() {
     self.set_glyph_size = function(size) {
       /* Get and save the size of each residue for the trend image based on the width of the screen */
       self.residue_glyph_size = (size)?size:Math.round( self.width /self.x_axis_length);
+      self.set_offsets(self.residue_glyph_size);
+    };
+
+    /* Setter size of the offsets */
+    self.set_offsets = function(size) {
+      self.x_offset = size * PADDLE_SIZE;
+      self.y_offset = size * 2.0;
     };
 
     /* Setter for the number of proteins we can display in a single view */
@@ -230,7 +244,7 @@ const ProteinFamilyView = (function() {
       /* construct the y-scale */
       self.yScale = d3.scaleBand()
           .domain(values)
-          .range([0, self.ppv * self.residue_glyph_size]);
+          .range([self.y_offset, self.ppv * self.residue_glyph_size+self.y_offset]);
     };
 
     /* Setter for the trend image scales */
@@ -245,7 +259,7 @@ const ProteinFamilyView = (function() {
 
     self.set_brush_SVG = function(dom, width, height) {
       /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
-      return d3Utils.create_brush_svg(dom, {width:width, height:height})
+      return d3Utils.create_brush_svg(dom, {width:width, height:height, y: self.y_offset})
           .append("g")
           .attr("class", "brushes")
           .style("width", width)
@@ -280,24 +294,24 @@ const ProteinFamilyView = (function() {
       this._backBufferHeight = this._model.getProteinCount() * this.residue_glyph_size;
 
       /* Find the width of the div */
-      let width = (this.overviewImage) ? parseInt(this.width*1.1) : this.width;
+      let width = ((this.overviewImage) ? parseInt(this.width*1.1): this.width);
 
       /* Set the DOM's width/height so it centers in it's parent */
       this._dom
-          .style("width", width)
-          .style("height", this.height);
+          .style("width", width+this.x_offset)
+          .style("height", this.height + 2.0*this.y_offset);
 
       /* Add the canvas and brush svg to the trend image dom*/
       this.canvasContext = d3Utils.create_chart_canvas(this._dom,
-          {width:width, height:this.height, id:"trendCanvas", class:"trendImage"})
+          {width:width, height:this.height+ 2.0*this.y_offset, id:"trendCanvas", class:"trendImage"})
           .getContext('2d');
 
-      this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height: this._backBufferHeight});
+      this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height:this._backBufferHeight});
       this.backBufferContext = this.backBufferCanvas.getContext('2d');
 
       this.set_chart_scales();
       d3Utils.clear_chart_dom(this._dom);
-      this.brushSVG = this.set_brush_SVG(this._dom, width, this.height);
+      this.brushSVG = this.set_brush_SVG(this._dom, width, this.height+2.0*this.y_offset);
       /* let the caller know the width */
       return width;
     },
@@ -306,7 +320,7 @@ const ProteinFamilyView = (function() {
       let view = this;
       // view.canvasContext.clearRect(0, 0, view.width, view.height);
       return new Promise(function (resolve, reject) {
-        view.canvasContext.drawImage(image, x, y, view.width, view.height, 0, 0, view.width, view.height);
+        view.canvasContext.drawImage(image, x, y, view.width, view.height, 0, view.y_offset, view.width, view.height);
         resolve();
       });
     },
@@ -315,7 +329,7 @@ const ProteinFamilyView = (function() {
       let view = this;
       view.initialize_back_buffer(options.family.data, options.color)
           .then(function(image){
-            view.canvasContext.clearRect(0, 0, view.width, view.height);
+            view.canvasContext.clearRect(0, view.y_offset, view.width, view.height);
             view.render(image,options.x,options.y)
                 .then(view.render_overview.bind(view))
                 .then(function(){
@@ -329,7 +343,7 @@ const ProteinFamilyView = (function() {
       let view = this;
       view.initialize_back_buffer(view._model.getFamily().data, options.color)
           .then(function(image){
-            view.canvasContext.clearRect(0, 0, view.width, view.height);
+            view.canvasContext.clearRect(0, view.y_offset, view.width, view.height);
             view.render(image,options.x,options.y)
                 .then(view.render_overview.bind(view));
           });

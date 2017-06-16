@@ -18,7 +18,7 @@ const d3Utils = function () {
           .attr("class", options.class)
           .attr("width", options.width)
           .attr("height", options.height)
-      ;
+          .attr("transform", "translate(" + (options.x)?options.x:0 +","+ (options.y)?options.y:0 +")");
       return canvas.node();
     },
 
@@ -26,7 +26,8 @@ const d3Utils = function () {
       return domObj.append("svg")
           .attr("width", options.width)
           .attr("height", options.height)
-          .attr("class", options.class);
+          .attr("class", options.class)
+          .attr("transform", "translate(" + (options.x)?options.x:0 +","+ (options.y)?options.y:0 +")");
     },
 
     /* Simple d3 function to construct a line*/
@@ -47,6 +48,7 @@ const d3Utils = function () {
           .attr("id", "trendSVG")
           .attr("width", options.width)
           .attr("height", options.height)
+          .attr("transform", "translate(" + (options.x)?options.x:0 +","+ (options.y)?options.y:0 +")");
     },
 
     create_svg_overlay : function(domObj, width, height) {
@@ -64,49 +66,7 @@ const d3Utils = function () {
           .attr("width", options.width)
           .attr("height", options.height)
           .node();
-    },
-
-    /* Bind the data to a fake dom */
-    bind_data : function(family, colorScale, size) {
-      /* Fake DOM*/
-      let customBase = document.createElement('custom'),
-          custom = d3.select(customBase),
-          /* Fake Rows */
-          rows = custom.selectAll("custom")
-              .data(family.sequences)
-              .enter().append("custom")
-              .attr("id", (d,idx) => { return "p" + family.names[idx];})
-              .attr("class", "proteinRow"),
-
-          /* Fake columns -- bind the data */
-          elements = rows.selectAll('.cell')
-              .data( (protein) => { return protein; } );
-
-      /* Update: add new items as needed */
-      elements
-          .enter().append('custom')
-          .attr("class", "cell")
-          .merge(elements)
-          .attr("x", (d,i,j) => { return i * size; })
-          .attr("y", (d,i,j) => { return j * size; })
-          .attr('width',  size)
-          .attr('height', size)
-          .attr("row", (d, i, j) => { return j; })
-          .attr("col", (d, i, j) => { return i; })
-          .attr('fill',  (d) => { return colorScale(d).code; })
-          .attr('stroke',(d) => { return colorScale(d).code; });
-
-      /* Remove any unneeded elements */
-      elements
-          .exit()
-          .transition()
-          .attr('width', 0)
-          .attr('height', 0)
-          .remove();
-
-      /* Return the data model */
-      return custom;
-    },
+    }
 
       /* Create a customized context menu per right-click */
   //   create_context_menu: function() {

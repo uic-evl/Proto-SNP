@@ -66,7 +66,53 @@ const d3Utils = function () {
           .attr("width", options.width)
           .attr("height", options.height)
           .node();
+    },
+
+    /* Render the line above the bars */
+    render_context_lines : function(context, points) {
+    /* Add the context bar above viewers */
+      if(context.node && context.node().nodeName === "svg"){
+      return context.selectAll(".context-bar").data(points)
+          .enter().append("path")
+          .attr("d", (d) => { return d3Utils.lineFunction(d)})
+          .attr("class", "context-bar");
     }
+    else {
+        points.forEach(function(point){
+          context.beginPath();
+          context.moveTo(point[0].x, point[0].y);
+          context.lineTo(point[1].x, point[1].y);
+          context.strokeStyle = "#000000";
+          context.closePath();
+          // Make the line visible
+          context.stroke();
+      });
+    }
+  },
+
+    /* Render the pointer bar */
+    render_context_bars : function(svg, render_options) {
+    /* Add the bars to the viewer */
+    let bar = svg
+        .selectAll(".context-line")
+        .data([render_options]);
+
+    // UPDATE: add new elements if needed
+    bar
+        .enter().append('g')
+        .append('rect')
+        /* Merge the old elements (if they exist) with the new data */
+        .merge(bar)
+        .attr("class", "context-line")
+        .attr("width", render_options.width)
+        .attr("height", render_options.height)
+        .attr('y', render_options.y)
+        .attr('x', render_options.x)
+        .style("fill", "black");
+
+    /* Remove the unneeded bars */
+    bar.exit().remove();
+  }
 
       /* Create a customized context menu per right-click */
   //   create_context_menu: function() {

@@ -150,40 +150,6 @@ const ResidueFrequencyView = (function() {
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
     };
 
-    /* Render the line above the bars */
-    self.render_context_lines = function(points) {
-      /* Add the context bar above viewers */
-      let context = this._svg
-        .selectAll(".context-bar").data(points)
-        .enter().append("path")
-        .attr("d", (d) => { return d3Utils.lineFunction(d)})
-        .attr("class", "context-bar");
-    };
-
-    /* Render the pointer bar */
-    self.render_context_bars = function(render_options) {
-      /* Add the bars to the viewer */
-      let bar = self._svg
-          .selectAll(".context-line")
-          .data([render_options]);
-
-      // UPDATE: add new elements if needed
-      bar
-          .enter().append('g')
-          .append('rect')
-          /* Merge the old elements (if they exist) with the new data */
-          .merge(bar)
-          .attr("class", "context-line")
-          .attr("width", render_options.width)
-          .attr("height", render_options.height)
-          .attr('y', render_options.y)
-          .attr('x', render_options.x)
-          .style("fill", "black");
-
-      /* Remove the unneeded bars */
-      bar.exit().remove();
-    };
-
       /* Initialize the viewer */
     self.initialize(options);
   }
@@ -202,14 +168,12 @@ const ResidueFrequencyView = (function() {
             return (options.overviewImage) ? this.clientHeight : 75;
           });
 
-
       this.width   = options.width / 2.0;
       this.height  = this._parent.node().clientHeight;
       this.aspectRatio  = this.height/this.width;
       this.semantic = options.semantic;
 
       this.bar_height = this.height  * 0.3;
-      this.bar_y = this.height  * 0.4;
       this.y_offset = (this.height - this.bar_height + this._barOffset)/2.0;
       this.glyph_width = this.bar_height * 2.0;
 
@@ -230,9 +194,10 @@ const ResidueFrequencyView = (function() {
       let contextPoints = [
           [ {x: this._barOffset,   y:y_position},     { x: width_offset, y: y_position}],
           [ {x: this._barOffset+1, y: y_position},    { x: this._barOffset+1, y:y_position + this._barOffset} ],
-          [ {x: width_offset-1,    y: y_position},    { x: width_offset-1, y:y_position + this._barOffset}] ];
+          [ {x: width_offset-1,    y: y_position},    { x: width_offset-1, y:y_position + this._barOffset}]
+      ];
 
-      this.render_context_lines(contextPoints);
+      d3Utils.render_context_lines(this._svg, contextPoints);
     },
 
     render : function(render_options) {
@@ -244,12 +209,13 @@ const ResidueFrequencyView = (function() {
       /* Update the labels */
       this.update(render_options.residues);
       /* Render the context bars */
-      this.render_context_bars({
-        x: (this.semantic==="left") ? render_options.brush_pos:render_options.brush_pos-this.width,
-        y: 1,
-        height: 10,
-        width:1
-      });
+      d3Utils.render_context_bars(this._svg,
+        {
+          x: (this.semantic==="left") ? render_options.brush_pos:render_options.brush_pos-this.width,
+          y: 1,
+          height: 10,
+          width:1
+        });
       /* Set the visibility flag to true*/
       this._visible = true;
     },

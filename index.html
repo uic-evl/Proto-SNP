@@ -4,6 +4,8 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <!-- CSS LIB -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -14,7 +16,6 @@
     <link rel="stylesheet" href="//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css">
 
     <!-- CSS SRC -->
-    <link rel="stylesheet" href="src/css/main.css">
     <link rel="stylesheet" href="src/css/sequenceViewer.css">
     <link rel="stylesheet" href="src/css/splash.css">
     <link rel="stylesheet" href="src/css/trendImageViewer.css">
@@ -22,6 +23,8 @@
     <link rel="stylesheet" href="src/css/molecularViewer.css">
     <link rel="stylesheet" href="src/css/colorLegend.css">
     <link rel="stylesheet" href="src/css/menuView.css">
+    <!--<link rel="stylesheet" href="src/css/ui.css">-->
+    <link rel="stylesheet" href="src/css/main.css">
 
     <!-- JS LIB -->
     <script type='text/javascript' src='lib/js/bio-pv.js'></script>
@@ -127,12 +130,12 @@
 
         <script type="text/html" id="molecularViewers">
             <!-- Tertiary Viewer -->
-                <div class="col-md-5" data-bind="attr: {id: $data._id}">
-                    <p class="view">&nbsp;</p>
-                    <div id="pvDiv" class="molecular-viewer">
-                        <div id="splash"></div>
-                    </div>
+            <div class="col-md-5" data-bind="attr: {id: $data._id}">
+                <p class="view">&nbsp;</p>
+                <div id="pvDiv" class="molecular-viewer">
+                    <div id="splash"></div>
                 </div>
+            </div>
         </script>
 
         <!-- Sequence Viewer -->
@@ -158,31 +161,30 @@
 
     <!-- Trend Image -->
     <div class="row proteinFamilyRow">
-        <div class="col-md-12">
+        <div class="col-md-12 ">
             <!-- Trend Image View-->
-            <div class="row TrendImageView center-aligned">
-                <p class="view">Protein Family Viewer</p>
-                <div class="col-md-12 trend-column">
+            <div class="row x_panel  TrendImageView center-aligned">
+                <div class="x_title">
+                    <p class="view">Protein Family Viewer <i id="settingsOpen" class="fa fa-folder-open hidden"></i></p>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="col-md-12 trend-column x_content">
                     <div id="trendImageViewer" class="trend-viewer">
                         <!-- Select Alignment Button -->
                         <div id="trendSplash"></div>
                     </div>
                     <!-- Residue Frequency Viewer-->
                     <div class="row residueSummaryView hidden">
-                        <!--<div class="col-md-12">-->
-                            <!--<div class="row center-aligned">-->
-                                <div class="col-md-6 frequency-left">
-                                    <div id="freqLeft">
-                                        <div id="leftResidueSummaryViewer" class="center-aligned"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 frequency-right">
-                                    <div id="freqRight">
-                                        <div id="rightResidueSummaryViewer" class="center-aligned"></div>
-                                    </div>
-                                </div>
-                            <!--</div>-->
-                        <!--</div>-->
+                        <div class="col-md-6 frequency-left">
+                            <div id="freqLeft">
+                                <div id="leftResidueSummaryViewer" class="center-aligned"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 frequency-right">
+                            <div id="freqRight">
+                                <div id="rightResidueSummaryViewer" class="center-aligned"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

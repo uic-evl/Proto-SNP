@@ -70,3 +70,67 @@ ul li a.disabled {
     pointer-events:none;
     opacity:0.4;
 }
+
+
+.x_panel {
+    width: 100%;
+    margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid #E6E9ED;
+    -webkit-column-break-inside: avoid;
+    -moz-column-break-inside: avoid;
+    column-break-inside: avoid;
+    opacity: 1;
+    -moz-transition: all .2s ease;
+    -o-transition: all .2s ease;
+    -webkit-transition: all .2s ease;
+    -ms-transition: all .2s ease;
+    transition: all .2s ease;
+}
+
+.x_title {
+    border-bottom: 2px solid #E6E9ED;
+    padding-bottom: 2px;
+    width: 100%;
+    /*margin-bottom: 10px;*/
+}
+.x_title .filter {
+    width: 40%;
+    float: right;
+}
+.x_title h2 {
+    margin: 5px 0 6px;
+    float: left;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.x_title h2 small {
+    margin-left: 10px;
+}
+.x_title span {
+    color: #BDBDBD;
+}
+
+.x_content {
+    position: relative;
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-top: 5px;
+}
+
+.clearfix:after, form:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+#settingsOpen {
+    font-size:16px;
+    padding-left: 5px;
+    cursor: pointer;
+}

@@ -176,7 +176,6 @@ const FileUtilities = function(){
           // uploaded file
           let file = data.files[0],
               extension = file.name.split('.').pop().toLowerCase();
-
           // JS File reader to parse the uploaded file
           let reader = new FileReader();
           /* Callback to loading the file */
@@ -186,7 +185,6 @@ const FileUtilities = function(){
           }, false);
           // parse the file as text
           reader.readAsText(file);
-
           // abort the upload (we aren't passing it to a server)
           data.abort();
         })

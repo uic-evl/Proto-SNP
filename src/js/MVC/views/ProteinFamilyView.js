@@ -24,7 +24,8 @@ const ProteinFamilyView = (function() {
         .classed("center-aligned", true);
 
     /* The user has uploaded or downloaded an alignment file */
-    self.fileUploaded = new EventNotification(this);
+    self.fileUploaded  = new EventNotification(this);
+    self.fileChanged   = new EventNotification(this);
     self.imageRendered = new EventNotification(this);
     self.overviewRendered = new EventNotification(this);
 
@@ -226,6 +227,7 @@ const ProteinFamilyView = (function() {
       /* Resize the DOM elements to accommodate our family view*/
       document.getElementById('trendImageViewer').parentNode.style.height = self.height+self.y_offset;
       document.getElementById('trendImageViewer').style.height = self.height+self.y_offset;
+      document.getElementById('trendImageViewer').style.width = container_width;
       document.getElementById('trendImageViewer').parentNode.style.width = container_width;
       document.getElementsByClassName('TrendImageView')[0].style.width = container_width;
     };
@@ -233,14 +235,14 @@ const ProteinFamilyView = (function() {
     /* Setter for the names of the proteins from the family */
     self.set_glyph_size = function(size) {
       /* Get and save the size of each residue for the trend image based on the width of the screen */
-      self.residue_glyph_size = (size)?size:Math.round( self.width /self.x_axis_length);
+      self.residue_glyph_size = (size)?size:Math.floor( self.width /self.x_axis_length);
       self.set_offsets(self.residue_glyph_size);
     };
 
     /* Setter size of the offsets */
     self.set_offsets = function(size) {
-      self.x_offset = size * PADDLE_SIZE;
-      self.y_offset = size * 2.0;
+      self.x_offset = 0;//size * PADDLE_SIZE;
+      self.y_offset = (self.overviewImage) ? size * 2.0 : 0;
     };
 
     /* Setter for the number of proteins we can display in a single view */
@@ -273,6 +275,11 @@ const ProteinFamilyView = (function() {
           .style("width", width)
           .style("height", height);
     };
+
+    self.initialize_file_open = function(dom) {
+      dom.classed('hidden', false);
+
+    };
   }
 
   ProteinFamilyView.prototype = {
@@ -289,6 +296,8 @@ const ProteinFamilyView = (function() {
                 view.fileUploaded.notify({data: data, type: extension});
                 /* Remove the splash screen */
                 view._parentDom.select('#trendSplash').remove();
+                /* enable the upload button*/
+                this.initialize_file_open(d3.select('#settingsOpen'));
               });
         });
       }
@@ -311,7 +320,8 @@ const ProteinFamilyView = (function() {
 
       /* Add the canvas and brush svg to the trend image dom*/
       this.canvasContext = d3Utils.create_chart_canvas(this._dom,
-          {width:width, height:this.height+ 2.0*this.y_offset, id:"trendCanvas", class:"trendImage"})
+          {width:width, height:this.height+ 2.0*this.y_offset,
+            id:"trendCanvas", class:"trendImage"})
           .getContext('2d');
 
       this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height:this._backBufferHeight});

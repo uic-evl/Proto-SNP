@@ -57,10 +57,17 @@ const BrushView = (function() {
     let self = this;
 
     self._model = model;
-    self._selection = [0,0];
     self._scale = options.scale || null;
 
     let block_size = options.block_size;
+
+    /* set the initial selections */
+    if(options.orientation === App.OVERVIEW_PADDLE){
+      self._selection = options.position;
+    }
+    else {
+      self._selection = [0,0];
+    }
 
     /* Initialize the d3 brush */
     self.initialize(options);
@@ -132,6 +139,7 @@ const BrushView = (function() {
         d3.select(this).call(d3.event.target.move, d3.event.selection)
       }
       else {
+        console.log('on brush');
         d3.event.selection[0] = Math.round(d3.event.selection[0] / block_size) * block_size;
         d3.event.selection[1] = Math.round(d3.event.selection[1] / block_size) * block_size;
         // Snap the brush onto the closest protein
@@ -165,7 +173,9 @@ const BrushView = (function() {
 
     getBrush: function() { return this.brushObj.brush; },
 
-    getSelection: function() { return this._selection},
+    getSelection: function() { return this._selection },
+
+    setSelection: function(selection) { this._selection = selection; },
 
     getScale: function() { return this._scale },
 

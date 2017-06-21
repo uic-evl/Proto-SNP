@@ -102,13 +102,15 @@ const ProteinFamilyController = (function() {
     }
 
     function getOverviewSelection() {
-      let selection = self._brushViews['overview'].getSelection(),
+      let selection = self._brushViews['overview'].getSelection(),//(self._brushViews['overview']) ? self._brushViews['overview'].getSelection() : ,
           scale =  self._brushViews['overview'].getScale();
+      console.log(selection);
       /* Map the scale from the overview to the family view */
       selection = selection.map(scale.invert);
       /* Round to the nearest protein */
       selection[0] = Math.round(selection[0]);
       selection[1] = Math.round(selection[1]);
+      console.log(selection);
       return selection;
     }
 

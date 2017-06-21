@@ -15,12 +15,19 @@ input {
     transition: all 0.3s;
 }
 
-#popup-trigger-molecule,  #popup-trigger-family{
+#popup-trigger-molecule,  #popup-trigger-family {
     display: block;
     position: absolute;
     top: 50%;
     left: 0;
     z-index: 10;
+}
+
+
+#popup-trigger-open {
+    display: inline;
+    position: relative;
+    background-color: #ecf0f1;
 }
 
 .viewer-upload {

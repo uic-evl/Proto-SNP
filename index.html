@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <!-- CSS LIB -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
@@ -37,7 +37,7 @@
     <script type='text/javascript' src='lib/js/lodash.min.js'></script>
     <script type='text/javascript' src='lib/js/levenshtein.js'></script>
     <!--<script type='text/javascript' src='lib/js/knockout-min.js'></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-debug.js"></script>
+    <script type='text/javascript' src="lib/js/knockout-min.js"></script>
 
     <!-- jQuery File Upload-->
     <script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
@@ -165,7 +165,15 @@
             <!-- Trend Image View-->
             <div class="row x_panel  TrendImageView center-aligned">
                 <div class="x_title">
-                    <p class="view">Protein Family Viewer <i id="settingsOpen" class="fa fa-folder-open hidden"></i></p>
+                    <p class="view">Protein Family Viewer
+                        <!--<i id="settingsOpen" class="fa fa-folder-open hidden">-->
+                            <!--<input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa">-->
+                        <!--</i>-->
+                        <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-open">
+                            <i id="settingsOpen" class="fa fa-folder-open hidden">
+                                <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
+                        </span>
+                    </p>
                     <div class="clearfix"></div>
                 </div>
                 <div class="col-md-12 trend-column x_content">
@@ -174,18 +182,7 @@
                         <div id="trendSplash"></div>
                     </div>
                     <!-- Residue Frequency Viewer-->
-                    <div class="row residueSummaryView hidden">
-                        <div class="col-md-6 frequency-left">
-                            <div id="freqLeft">
-                                <div id="leftResidueSummaryViewer" class="center-aligned"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 frequency-right">
-                            <div id="freqRight">
-                                <div id="rightResidueSummaryViewer" class="center-aligned"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="residueSummaryView" class="row residueSummaryView hidden"></div>
                 </div>
             </div>
             <!-- End Trend Image View-->

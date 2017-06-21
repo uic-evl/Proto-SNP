@@ -75,8 +75,7 @@ ul li a.disabled {
 .x_panel {
     width: 100%;
     margin-bottom: 10px;
-    background: #fff;
-    border: 1px solid #E6E9ED;
+    background: #ecf0f1;
     -webkit-column-break-inside: avoid;
     -moz-column-break-inside: avoid;
     column-break-inside: avoid;
@@ -89,7 +88,6 @@ ul li a.disabled {
 }
 
 .x_title {
-    border-bottom: 2px solid #E6E9ED;
     padding-bottom: 2px;
     width: 100%;
     /*margin-bottom: 10px;*/
@@ -118,7 +116,6 @@ ul li a.disabled {
     width: 100%;
     float: left;
     clear: both;
-    margin-top: 5px;
 }
 
 .clearfix:after, form:after {
@@ -132,5 +129,5 @@ ul li a.disabled {
 #settingsOpen {
     font-size:16px;
     padding-left: 5px;
-    cursor: pointer;
+    /*cursor: pointer;*/
 }

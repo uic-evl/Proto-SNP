@@ -44,7 +44,7 @@ const ProteinFamilyModel = (function() {
     self.proteinColoringChanged      = new EventNotification(this);
 
     /* Setter for the different types of similarity scores */
-     self.set_scores = function(metric, scores) {
+    self.set_scores = function(metric, scores) {
       scores.forEach( (o) => {
         let member = _.find(self._rawData, (m) => { return o.name === m.name} );
         member.scores[metric] = o.score;
@@ -127,6 +127,22 @@ const ProteinFamilyModel = (function() {
 
         this.proteinFamilyAdded.notify({family: this._parsedData});
       }.bind(this));
+    },
+
+    clear: function() {
+      self._parsedData = null;
+      self._rawData = null;
+      self._selectedProtein = null;
+      self._selectedResidues = {left: [], right: []};
+      self._previousSelectedResidues = {left: [], right: []};
+
+      self._sequenceSortingAlgorithms = null;
+
+      self._proteinSorting = "";
+      self._proteinColoring = "";
+
+      self._proteinNames = null;
+      self._parsedData = null;
     },
 
     getSequenceFrequenciesFromRange: function(range) {

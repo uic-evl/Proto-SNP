@@ -75,26 +75,28 @@ const ProteinFamilyController = (function() {
     }
 
     function createResidueViewers(residueViewers) {
-      /* Get information about the trend image */
-      let numberOfRows    = self._view.getYDimensionSize(),
+      $('#residueSummaryView').load("./src/html/frequencyViewerTemplate.html", function () {
+        /* Get information about the trend image */
+        let numberOfRows  = self._view.getYDimensionSize(),
           currentProtein  = self._model.getSelectedProtein();
-      /* Create the frequency viewers for the family*/
-      residueViewers.forEach(function(freqSpec){
-        /* Create the frequency viewers */
-        let freqView = new ResidueFrequencyView(self._model, _.assign(freqSpec, {'rows': numberOfRows}));
-        /* Attach the listeners */
-        self._frequencyViews[freqSpec.semantic] = freqView;
-        /* Render the viewers depending on the brush's position */
-        let brushPos = self._brushViews[freqSpec.semantic].getInitialPosition(),
+        /* Create the frequency viewers for the family*/
+        residueViewers.forEach(function(freqSpec){
+          /* Create the frequency viewers */
+          let freqView = new ResidueFrequencyView(self._model, _.assign(freqSpec, {'rows': numberOfRows}));
+          /* Attach the listeners */
+          self._frequencyViews[freqSpec.semantic] = freqView;
+          /* Render the viewers depending on the brush's position */
+          let brushPos = self._brushViews[freqSpec.semantic].getInitialPosition(),
             selection = _.map(brushPos, (o)=>{ return parseInt(o/freqSpec.block_size); }),
             frequencies  = self._model.getSequenceFrequenciesFromRange(selection);
-        /* Set the initial selections in the model */
-        self._model.setSelectedResidues(freqSpec.semantic, selection);
-        /*Render the view */
-        freqView.render({
-          frequencies:frequencies,
-          residues:currentProtein.sequence.slice(selection[0], selection[1]),
-          brush_pos: brushPos[0] + (brushPos[1]-brushPos[0])/2.0
+          /* Set the initial selections in the model */
+          self._model.setSelectedResidues(freqSpec.semantic, selection);
+          /*Render the view */
+          freqView.render({
+            frequencies:frequencies,
+            residues:currentProtein.sequence.slice(selection[0], selection[1]),
+            brush_pos: brushPos[0] + (brushPos[1]-brushPos[0])/2.0
+          });
         });
       });
     }
@@ -132,6 +134,23 @@ const ProteinFamilyController = (function() {
 
     /* On Alignment File Load */
     self._view.fileUploaded.attach(function(sender, args) {
+      sender._model.setFamily(args.data, args.type);
+    });
+
+    /* On Alignment File Change */
+    self._view.fileChanged.attach(function(sender, args) {
+      /* Reset the model and view */
+      self._model.clear();
+      self._view.clear();
+
+      /* Clear the brushes and frequency view */
+      d3.select("#residueSummaryView").selectAll("*").remove();
+      delete self._brushViews;
+      delete self._frequencyViews;
+      self._frequencyViews = {};
+      self._brushViews = {};
+
+      /* Set the family to being initialization */
       sender._model.setFamily(args.data, args.type);
     });
 

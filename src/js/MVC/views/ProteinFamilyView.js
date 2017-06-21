@@ -19,9 +19,6 @@ const ProteinFamilyView = (function() {
     self.y_offset = 0;
 
     self._parentDom = d3.select("#"+self._id);
-    self._dom = self._parentDom.append("div")
-        .classed("trendDiv", true)
-        .classed("center-aligned", true);
 
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded  = new EventNotification(this);
@@ -106,43 +103,6 @@ const ProteinFamilyView = (function() {
         overview.src = self._backBufferImage;
       });
     };
-
-    /* Bind the protein family listener */
-    self._model.proteinFamilyAdded.attach(function(sender, msg){
-      let family = msg.family,
-          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring()),
-      /* Initialize the trend image view*/
-      width = self.initialize(family);
-      /* Initialize the back buffer with the family data */
-      self.initialize_back_buffer(family.data, colorMapping)
-          /* Render the family view */
-          .then(self.render.bind(self,self._familyImage,0,0))
-          .then(function(){
-            /* Notify the controller that the image has been rendered */
-            self.imageRendered.notify(build_brushes_and_viewers());
-            /* Render the overview if one is needed */
-            if (self.overviewImage) {
-              self.render_overview()
-                  .then(function(){
-                    /* Notify the listens that the overview has been rendered and render the brush  */
-                    self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
-                    /* Render the context line to show to what the brush relates */
-                    let contextPoints = [
-                      [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
-                      [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
-                      [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
-                      ];
-                    d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
-                    d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
-                        {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
-                  });
-            }
-            /* Enable the coloring menu */
-            $("#coloring_list").find("li").removeClass("disabled");
-            /* Create the legend */
-            App.residueMappingUtility.createColorLegend();
-          }).catch(console.log.bind(console));
-    });
 
     self.initialize_back_buffer = function(family, colorMapping) {
       /* Find the width of the div */
@@ -241,7 +201,7 @@ const ProteinFamilyView = (function() {
 
     /* Setter size of the offsets */
     self.set_offsets = function(size) {
-      self.x_offset = 0;//size * PADDLE_SIZE;
+      self.x_offset = size * PADDLE_SIZE;
       self.y_offset = (self.overviewImage) ? size * 2.0 : 0;
     };
 
@@ -277,9 +237,55 @@ const ProteinFamilyView = (function() {
     };
 
     self.initialize_file_open = function(dom) {
+
+      /* Display the upload icon by the viewer name */
       dom.classed('hidden', false);
 
+      /* Setup the upload callback for files */
+      App.fileUtilities.familyUploadSetup(dom.select("#fileupload-open").node(),
+        function (data, extension) {
+          self.fileChanged.notify({data: data, type: extension});
+        });
+
     };
+
+    /* Bind the protein family listener */
+    self._model.proteinFamilyAdded.attach(function(sender, msg){
+      let family = msg.family,
+        colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring()),
+        /* Initialize the trend image view*/
+        width = self.initialize(family);
+      /* Initialize the back buffer with the family data */
+      self.initialize_back_buffer(family.data, colorMapping)
+      /* Render the family view */
+        .then(self.render.bind(self,self._familyImage,0,0))
+        .then(function(){
+          /* Notify the controller that the image has been rendered */
+          self.imageRendered.notify(build_brushes_and_viewers());
+          /* Render the overview if one is needed */
+          if (self.overviewImage) {
+            self.render_overview()
+              .then(function(){
+                /* Notify the listens that the overview has been rendered and render the brush  */
+                self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
+                /* Render the context line to show to what the brush relates */
+                let contextPoints = [
+                  [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
+                  [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
+                  [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
+                ];
+                d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
+                d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
+                  {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
+              });
+          }
+          /* Enable the coloring menu */
+          $("#coloring_list").find("li").removeClass("disabled");
+          /* Create the legend */
+          App.residueMappingUtility.createColorLegend();
+        }).catch(console.log.bind(console));
+    });
+
   }
 
   ProteinFamilyView.prototype = {
@@ -297,13 +303,34 @@ const ProteinFamilyView = (function() {
                 /* Remove the splash screen */
                 view._parentDom.select('#trendSplash').remove();
                 /* enable the upload button*/
-                this.initialize_file_open(d3.select('#settingsOpen'));
+                view.initialize_file_open(d3.select('#settingsOpen'));
               });
         });
       }
     },
 
+    /* Clear the view */
+    clear: function() {
+      /* Remove all elements related to the trend image */
+      this._parentDom.selectAll("*").remove();
+      /*Reset the parent dom width/heights */
+      this._parentDom.classed("trend-viewer", true)
+        .classed("proteinFamilyViewer", false);
+
+      /* Remove the previous stylings */
+      this._parentDom.node().removeAttribute("style");
+      this._parentDom.node().parentNode.removeAttribute("style");
+
+      /* Reset the overview flag */
+      this.overviewImage = false;
+      },
+
     initialize: function (family) {
+
+      this._dom = this._parentDom.append("div")
+        .classed("trendDiv", true)
+        .classed("center-aligned", true);
+
       /* Initialize the chart and data dimensions */
       this.set_data_dimensions_sizes(family.data);
       this.set_chart_dimensions();

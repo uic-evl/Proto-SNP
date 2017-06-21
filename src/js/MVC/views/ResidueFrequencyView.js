@@ -157,6 +157,7 @@ const ResidueFrequencyView = (function() {
   ResidueFrequencyView.prototype = {
 
     initialize : function (options) {
+
       /* Show the viewer */
       this._parent.classed("hidden", false);
 

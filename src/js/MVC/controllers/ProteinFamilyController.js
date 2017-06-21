@@ -102,15 +102,13 @@ const ProteinFamilyController = (function() {
     }
 
     function getOverviewSelection() {
-      let selection = self._brushViews['overview'].getSelection(),//(self._brushViews['overview']) ? self._brushViews['overview'].getSelection() : ,
+      let selection = self._brushViews['overview'].getSelection(),
           scale =  self._brushViews['overview'].getScale();
-      console.log(selection);
       /* Map the scale from the overview to the family view */
       selection = selection.map(scale.invert);
       /* Round to the nearest protein */
       selection[0] = Math.round(selection[0]);
       selection[1] = Math.round(selection[1]);
-      console.log(selection);
       return selection;
     }
 
@@ -120,7 +118,10 @@ const ProteinFamilyController = (function() {
       let colorMap = msg.scheme,
           colorScale = App.residueMappingUtility.getColor(colorMap),
       /* Recolor the family viewer  */
-      selection = getOverviewSelection();
+      selection = [0,0];
+      if(self._brushViews['overview']){
+        selection = getOverviewSelection();
+      }
       /* Recolor the trend image */
       self._view.recolor({color:colorScale, x:0, y:selection[0]*self._view.getGlyphSize()});
     });
@@ -130,7 +131,11 @@ const ProteinFamilyController = (function() {
       let sorted_data = msg.data,
           colorMap = msg.colorScheme,
           colorScale = App.residueMappingUtility.getColor(colorMap),
-          selection = getOverviewSelection();
+          selection =[0,0];
+      if(self._brushViews['overview']){
+        selection = getOverviewSelection();
+      }
+
       self._view.reorder({family:sorted_data, color:colorScale, x:0, y: selection[0]*self._view.getGlyphSize()});
     });
 

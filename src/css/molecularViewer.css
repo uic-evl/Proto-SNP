@@ -23,6 +23,11 @@
     position: absolute;
 }
 
+.axisViewer {
+    bottom: 0;
+    right: 0;
+}
+
 .molecular-viewer {
     background-color: black;
     width: 100%;

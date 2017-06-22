@@ -285,7 +285,6 @@ const ProteinFamilyView = (function() {
           App.residueMappingUtility.createColorLegend();
         }).catch(console.log.bind(console));
     });
-
   }
 
   ProteinFamilyView.prototype = {

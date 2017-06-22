@@ -4,56 +4,8 @@ var App = App || {};
 
 const BrushView = (function() {
 
-  /* Function to reset the brushes to be the before-sorted selection */
-  function reset_brushes() {
-    /* Get the protein that was last selected */
-    let currentProtein = trendImageViewer.controller.getSelectedProtein();
-    /* Get the protein that was last selected */
-    let currentRanges = trendImageViewer.controller.getSelectedRanges();
-
-    /* Render the brush with the current protein selected */
-    render_brushes(currentProtein, currentRanges);
-
-    /* Move the brush to the current overlay */
-    let brush_pos = trendImageViewer.yScale(currentProtein);
-    trendImageViewer.horizonalPaddle.moveBrush( [brush_pos, brush_pos+trendImageViewer.residue_glyph_size] );
-  }
-
-  /* Get the new selection */
-  function snap_brush(selection) {
-    /* determine the halfway point */
-    let halfway = Math.ceil(options.width/2.0) ;
-
-    /* Keep track of the current selection */
-    if(options.semantic === "right"){
-      /* Check if paddle is past the half way mark of the trend image*/
-      if(selection[0] < halfway){
-        selection[0] = halfway;
-        selection[1] = self.rightVerticalSelection[1];
-      }
-      /* Clamp the brush size */
-      selection = clamp_brush_sizes(selection, self.rightVerticalSelection);
-
-      /* Reset the event selection */
-      d3.event.selection = selection.map(options.trendImage.getXAxisScale());
-    }
-    else {
-      /* Check if paddle is past the half way mark of the trend image*/
-      if(selection[1] > halfway+1){
-        selection[1] = halfway+1;
-        selection[0] = self.leftVerticalSelection[0];
-      }
-      /* Clamp the brush size */
-      selection = clamp_brush_sizes(selection, self.leftVerticalSelection);
-
-      /* Reset the event selection */
-      d3.event.selection = selection.map(options.trendImage.getXAxisScale());
-    }
-    return selection;
-  }
-
   function BrushView(model, options) {
-
+    /* Save a reference to this */
     let self = this;
 
     self._model = model;
@@ -71,7 +23,6 @@ const BrushView = (function() {
 
     /* Initialize the d3 brush */
     self.initialize(options);
-
     /* Brush event handlers */
     self.brushMoved = new EventNotification(this);
 
@@ -80,7 +31,6 @@ const BrushView = (function() {
       // TODO Update overlays that make everything else opaque
       //self.redraw(msg.selection);
     });
-
     self._model.selectedResiduesChanged.attach(function(sender, msg){
       // TODO Update overlays that make everything else opaque
       // self.redraw(msg.selection);

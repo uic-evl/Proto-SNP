@@ -19,6 +19,10 @@
     padding-right: 0;
 }
 
+.tertiaryViewer, .axisViewer {
+    position: absolute;
+}
+
 .molecular-viewer {
     background-color: black;
     width: 100%;

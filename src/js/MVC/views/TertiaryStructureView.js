@@ -34,7 +34,7 @@ function TertiaryStructureView(model, element) {
   self._dom = null;
 
   self.pvViewer = null;
-
+  self.axis3D = null;
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
   self.residueSelected = new EventNotification(this);
@@ -45,6 +45,7 @@ function TertiaryStructureView(model, element) {
     $('#' + self._id)
       .find('#splash').remove();
 
+    /* Initialize and render the view */
     self.initialize();
     self.render(protein.structure, protein.name);
 
@@ -72,7 +73,6 @@ function TertiaryStructureView(model, element) {
 TertiaryStructureView.prototype = {
 
   show: function () {
-
     let view = this;
     view._dom = $('#' + view._id);
 
@@ -80,10 +80,9 @@ TertiaryStructureView.prototype = {
     if (!view._model.isEmpty()) {
       /* Load the splash template */
       this._dom.find('#splash').load("./src/html/tertiarySplashTemplate.html", function () {
-
+        /* Store a reference to the splash DOM*/
         let splash = $(this),
           splash_trigger = splash.find("#popup-trigger-molecule");
-
         // Launch the overlay
         splash_trigger.click(function () {
           // hide the select protein button
@@ -108,23 +107,20 @@ TertiaryStructureView.prototype = {
           function (metadata, result) {
             view.fileUploaded.notify({metaData: metadata, file: result});
           });
-
       });
     }
   },
 
-  /* Accept the data from the download form  */
+  /* Accept the data from the download form. Called by the upload form */
   downloadPDB: function(formData) {
     this.fileUploaded.notify({metaData: {protein_name:$(formData).serialize().split('=')[1]}, file: null});
     return false;
   },
 
   initialize: function () {
-
-    let dom = this._dom.find('#pvDiv')[0];
-
-    /* Remove the black background*/
-    d3.select(this._dom[0]).classed("black-background", false);
+    /* Store the pvView dom element */
+    let $dom = this._dom.find('#pvDiv'),
+        dom = $dom[0];
 
     /* create a label to display selections */
     this.staticLabel = document.createElement('div');
@@ -133,7 +129,7 @@ TertiaryStructureView.prototype = {
     /* Add the label to the model */
     dom.appendChild(this.staticLabel);
 
-    /* set the options for the PV viewer*/
+    /* Set the options for the PV viewer*/
     let options = {
       antialias: true,
       quality : 'medium',
@@ -145,9 +141,24 @@ TertiaryStructureView.prototype = {
     /* insert the molecularViewer under the DOM element */
     this.pvViewer = pv.Viewer(dom, options);
 
+    /* Set the canvas' position to absolute so we can overlay */
+    $dom.find('canvas')
+        .addClass('tertiaryViewer');
+
     /* Setup the event callbacks */
     dom.addEventListener('mousemove', this.mouseMoveEvent);
     this.pvViewer.on('click', this.mouseClickEvent);
+
+    /* Create the div for the 3D axis */
+    let axisDOM = document.createElement('div'),
+        width = options.width/4.0,
+        height = options.height/4.0;
+    axisDOM.className = 'axisViewer';
+    axisDOM.style.height = height;
+    axisDOM.style.width = width;
+    dom.append(axisDOM);
+
+    this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height})
 
     /* Register the enter key to reset the selections of the view */
     //keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);

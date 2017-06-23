@@ -51,6 +51,15 @@ function TertiaryStructureView(model, element) {
     self.splash.find('#fileUploadInput').val('');
   };
 
+  self.clear_and_reinitialize = function() {
+    /* Update the splash if the first upload*/
+    if (!self._model.isEmpty()) {
+      self.initialize_file_update(d3.select(self._dom[0]).select('i.settingsOpenPDB'));
+    }
+    /* Clear the input */
+    self.clear_splash();
+  };
+
   self.initialize_file_update = function(dom) {
     /* Display the upload icon by the viewer name */
     dom
@@ -163,9 +172,10 @@ TertiaryStructureView.prototype = {
         App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"), splash.find("#files"),
           function (metadata, result) {
             view.fileUploaded.notify({metaData: metadata, file: result});
-            view.initialize_file_update(d3.select(view._dom[0]).select('i.settingsOpenPDB'));
-            /* Clear the input */
-            view.clear_splash();
+            /* Place the name of the protein above the viewer*/
+            updateViewTitle(view._dom[0], metadata.protein_name);
+            /* Clear the splash and update */
+            view.clear_and_reinitialize();
           });
       });
     }
@@ -173,7 +183,7 @@ TertiaryStructureView.prototype = {
 
   clear: function() {
     /* Remove all the items */
-    this._dom.find('#pvView *:not(#splash *)').remove();
+    this._dom.find('#pvView *:not(#splash*)').remove();
     /* Clear the internal variables */
     this.pvViewer = null;
     this.axis3D = null;
@@ -181,15 +191,12 @@ TertiaryStructureView.prototype = {
 
   /* Accept the data from the download form. Called by the upload form */
   downloadPDB: function(formData) {
-    this.fileUploaded.notify({metaData: {protein_name:$(formData).serialize().split('=')[1]}, file: null});
-
-    /* Clear the input */
-    this.clear_splash();
-
-    /* initialize the upload button */
-    if (!this._model.isEmpty()) {
-      this.initialize_file_update(d3.select(this._dom[0]).select('i.settingsOpenPDB'));
-    }
+    let name = $(formData).serialize().split('=')[1];
+    this.fileUploaded.notify({metaData: {protein_name:name}, file: null});
+    /* Place the name of the protein above the viewer*/
+    updateViewTitle(this._dom[0], name);
+    /* Clear the splash and update */
+    this.clear_and_reinitialize();
     return false;
   },
 
@@ -241,8 +248,6 @@ TertiaryStructureView.prototype = {
   },
 
   render: function (structure, proteinName, renderingStyle) {
-    /* Place the name of the protein above the viewer*/
-    updateViewTitle(this._dom[0], proteinName);
     let geom = null;
 
     /* Display the protein in the specified rendering, coloring by the specified property */

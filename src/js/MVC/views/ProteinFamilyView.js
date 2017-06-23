@@ -22,7 +22,7 @@ const ProteinFamilyView = (function() {
 
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded  = new EventNotification(this);
-    self.fileChanged   = new EventNotification(this);
+    self.fileUpdated   = new EventNotification(this);
     self.imageRendered = new EventNotification(this);
     self.overviewRendered = new EventNotification(this);
 
@@ -248,7 +248,7 @@ const ProteinFamilyView = (function() {
       /* Setup the upload callback for files */
       App.fileUtilities.familyUploadSetup(input,
         function (data, extension) {
-          self.fileChanged.notify({data: data, type: extension});
+          self.fileUpdated.notify({data: data, type: extension});
         }).done(function(){
           input.style.width = parent.clientWidth;
           input.style.height = parent.clientHeight;

@@ -3,6 +3,10 @@ input {
     display: block;
 }
 
+#splash {
+    z-index: -1;
+}
+
 .fileUpload {
     display: block;
     font-weight: 700;

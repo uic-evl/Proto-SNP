@@ -132,13 +132,11 @@
         <script type="text/html" id="molecularViewers" >
             <!-- Tertiary Viewer -->
             <div class="col-md-5 " data-bind="attr: {id: $data._id}">
-                <div class="x_title">
-                    <p class="view"><span id="label">&nbsp;</span>
-                        <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-pdb">
-                            <i id="settingsOpenPdb" class="fa fa-folder-open hidden">
-                                <input id="pdbupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
+                <div class="x_title view">
+                    <p id="proteinName">&nbsp;</p>
+                    <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-pdb">
+                            <i class="fa fa-folder-open settingsOpenPDB hidden"></i>
                         </span>
-                    </p>
                     <div class="clearfix"></div>
                 </div>
                 <div id="pvDiv" class="molecular-viewer x_content">

@@ -145,7 +145,7 @@ const ProteinFamilyController = (function() {
     });
 
     /* On Alignment File Change */
-    self._view.fileChanged.attach(function(sender, args) {
+    self._view.fileUpdated.attach(function(sender, args) {
       /* Reset the model and view */
       self._model.clear();
       self._view.clear();

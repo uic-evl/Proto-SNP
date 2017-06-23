@@ -97,7 +97,7 @@ const FileUtilities = function(){
 
   function file_upload_setup(viewer, files, cb){
     /* Setup the file-upload callback */
-    $(viewer).fileupload({
+    return $(viewer).fileupload({
       url: "",
       dataType: 'json',
       autoUpload: false
@@ -160,7 +160,8 @@ const FileUtilities = function(){
               .append(cancelButton.clone(true).data(data));
         })
         .prop('disabled', !$.support.fileInput)
-        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+        .parent().addClass($.support.fileInput ? undefined : 'disabled')
+      .promise();
   }
 
   // initialize the family file uploader

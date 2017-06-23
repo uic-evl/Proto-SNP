@@ -16,6 +16,8 @@ const ProteinModel = (function() {
     self._proteinColoring = "";
 
     self.proteinAdded = new EventNotification(this);
+    self.proteinChanged = new EventNotification(this);
+
     self.residueSelected = new EventNotification(this);
     self.proteinSortingChanged    = new EventNotification(this);
     self.proteinColoringChanged   = new EventNotification(this);
@@ -76,6 +78,16 @@ const ProteinModel = (function() {
         this._proteinStructure = structure;
         this.proteinAdded.notify({structure:this._proteinStructure, name:metadata.protein_name});
       }.bind(this));
+    },
+
+    clear: function() {
+      self._proteinStructure = null;
+      self._geometry = null;
+      self._selectedResidue = null;
+      self._previousSelectedResidue = null;
+
+      self._proteinSorting = "";
+      self._proteinColoring = "";
     },
 
     selectResidue : function(selection) {

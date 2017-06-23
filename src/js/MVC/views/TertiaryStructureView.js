@@ -20,12 +20,9 @@ const TertiaryStructureView = (function () {
 
   /* Render the title of the viewer */
   function updateViewTitle(dom, title) {
-    let p = d3.select(dom).select('p.view');
+    let p = d3.select(dom).select('#proteinName');
     /* Update the label */
-    p.select("#label").html(_.toUpper(title));
-    /* Show the open icon */
-    p.select('#settingsOpenPdb')
-        .classed("hidden", false);
+    p.html(_.toUpper(title));
   }
 
 function TertiaryStructureView(model, element) {
@@ -38,15 +35,65 @@ function TertiaryStructureView(model, element) {
 
   self.pvViewer = null;
   self.axis3D = null;
+  self.splash = null;
+  self.staticLabel = '';
+
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
+  self.fileUpdated = new EventNotification(this);
   self.residueSelected = new EventNotification(this);
+
+  /* Clears the user input on the form */
+  self.clear_splash = function() {
+    /* Clear the input */
+    self.splash.find('#files').empty();
+    self.splash.find('#protein-name').val('');
+    self.splash.find('#fileUploadInput').val('');
+  };
+
+  self.initialize_file_update = function(dom) {
+    /* Display the upload icon by the viewer name */
+    dom
+      .classed('hidden', false)
+      .select("#proteinName").classed("hidden", false);
+
+    /* Setup the splash screen activation */
+    $(dom.node()).click(function(){
+      /* Hide the current 3D view */
+      self._dom.find('#pvDiv')
+        .find(".tertiaryViewer, .axisViewer, .static-label").hide();
+      self._dom
+        .find("#splashOverlay").addClass('open');
+      /* Show the splash screen */
+      self.splash.show();
+    });
+
+    /* Click outside of the splash screen */
+    self._dom.find('#overlayBackground, #overlayClose').click(function () {
+      /* Clear the input */
+      self.clear_splash();
+
+      /* Hide the overlay */
+      self.splash.hide();
+
+      /* Show the 3D viewers */
+      self._dom.find(".tertiaryViewer, .axisViewer, .static-label").show();
+    });
+
+    /* Setup the upload callback for files */
+    self.splash.find("#fileUploadInput").fileupload('destroy');
+    App.fileUtilities.uploadSetup(self.splash.find("#fileUploadInput"), self.splash.find("#files"),
+      function (metadata, result) {
+        view.fileUpdated.notify({metaData: metadata, file: result});
+        view.clear_splash();
+      });
+  };
 
   /* Attach the listeners */
   self._model.proteinAdded.attach(function (sender, protein) {
-    /* Close the splash screen */
-    $('#' + self._id)
-      .find('#splash').remove();
+    /* Close the splash screen and remove the overlaid button */
+    $('#' + self._id).find("#popup-trigger-molecule").remove();
+    self.splash.hide();
 
     /* Initialize and render the view */
     self.initialize();
@@ -79,7 +126,7 @@ TertiaryStructureView.prototype = {
     let view = this;
     view._dom = $('#' + view._id);
 
-    /* load the splash screen if there is no model data*/
+    // /* load the splash screen if there is no model data*/
     if (!view._model.isEmpty()) {
       /* Load the splash template */
       this._dom.find('#splash').load("./src/html/tertiarySplashTemplate.html", function () {
@@ -99,8 +146,13 @@ TertiaryStructureView.prototype = {
         splash.find('#overlayBackground, #overlayClose').click(function () {
           // reshow the button
           splash.find('#splashOverlay').removeClass('open');
-          splash_trigger.show();
+          if(splash_trigger[0]){
+            splash_trigger.show();
+          }
         });
+
+        /* Save the reference to the splash screen for later use */
+        view.splash = splash;
 
         /* Apply the bindings */
         ko.applyBindings(view, splash.find("#splashTemplate")[0]);
@@ -109,14 +161,33 @@ TertiaryStructureView.prototype = {
         App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"), splash.find("#files"),
           function (metadata, result) {
             view.fileUploaded.notify({metaData: metadata, file: result});
+            view.initialize_file_update(d3.select(view._dom[0]).select('i.settingsOpenPDB'));
+            /* Clear the input */
+            view.clear_splash();
           });
       });
     }
   },
 
+  clear: function() {
+    /* Remove all the items */
+    this._dom.find('*').remove();
+    /* Clear the internal variables */
+    this.pvViewer = null;
+    this.axis3D = null;
+  },
+
   /* Accept the data from the download form. Called by the upload form */
   downloadPDB: function(formData) {
     this.fileUploaded.notify({metaData: {protein_name:$(formData).serialize().split('=')[1]}, file: null});
+
+    /* Clear the input */
+    this.clear_splash();
+
+    /* initialize the upload button */
+    if (!this._model.isEmpty()) {
+      this.initialize_file_update(d3.select(this._dom[0]).select('i.settingsOpenPDB'));
+    }
     return false;
   },
 

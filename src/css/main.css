@@ -37,15 +37,6 @@ body {
     display: none;
 }
 
-/* View titles */
-p.view {
-    color: dimgray;
-    font-weight: bolder;
-    font-size: 14px;
-    margin: 5px 0 5px 0;
-    text-align: center;
-}
-
 .active-selection {
     color: #555;
     text-decoration: none;
@@ -71,7 +62,6 @@ ul li a.disabled {
     opacity:0.4;
 }
 
-
 .x_panel {
     width: 100%;
     margin-bottom: 10px;
@@ -92,10 +82,12 @@ ul li a.disabled {
     width: 100%;
     /*margin-bottom: 10px;*/
 }
+
 .x_title .filter {
     width: 40%;
     float: right;
 }
+
 .x_title h2 {
     margin: 5px 0 6px;
     float: left;
@@ -104,9 +96,11 @@ ul li a.disabled {
     overflow: hidden;
     white-space: nowrap;
 }
+
 .x_title h2 small {
     margin-left: 10px;
 }
+
 .x_title span {
     color: #BDBDBD;
 }
@@ -116,18 +110,4 @@ ul li a.disabled {
     width: 100%;
     float: left;
     clear: both;
-}
-
-.clearfix:after, form:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
-
-#settingsOpen {
-    font-size:16px;
-    padding-left: 5px;
-    /*cursor: pointer;*/
 }

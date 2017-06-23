@@ -129,12 +129,19 @@
     <!-- 3D Molecule Viewers -->
     <div class="row molecularViewersRow">
         <div id="molecularViewerTemplate" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
-
-        <script type="text/html" id="molecularViewers">
+        <script type="text/html" id="molecularViewers" >
             <!-- Tertiary Viewer -->
-            <div class="col-md-5" data-bind="attr: {id: $data._id}">
-                <p class="view">&nbsp;</p>
-                <div id="pvDiv" class="molecular-viewer">
+            <div class="col-md-5 " data-bind="attr: {id: $data._id}">
+                <div class="x_title">
+                    <p class="view"><span id="label">&nbsp;</span>
+                        <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-pdb">
+                            <i id="settingsOpenPdb" class="fa fa-folder-open hidden">
+                                <input id="pdbupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
+                        </span>
+                    </p>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="pvDiv" class="molecular-viewer x_content">
                     <div id="splash"></div>
                 </div>
             </div>
@@ -166,16 +173,12 @@
         <div class="col-md-12 ">
             <!-- Trend Image View-->
             <div class="row x_panel  TrendImageView center-aligned">
-                <div class="x_title">
-                    <p class="view">Protein Family Viewer
-                        <!--<i id="settingsOpen" class="fa fa-folder-open hidden">-->
-                            <!--<input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa">-->
-                        <!--</i>-->
-                        <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-open">
+                <div class="x_title view">
+                    <p>Protein Family Viewer</p>
+                    <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-open">
                             <i id="settingsOpen" class="fa fa-folder-open hidden">
-                                <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
+                            <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
                         </span>
-                    </p>
                     <div class="clearfix"></div>
                 </div>
                 <div class="col-md-12 trend-column x_content">

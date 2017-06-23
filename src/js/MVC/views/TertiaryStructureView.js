@@ -20,12 +20,15 @@ const TertiaryStructureView = (function () {
 
   /* Render the title of the viewer */
   function updateViewTitle(dom, title) {
-    d3.select(dom).select('p.view')
-        .html(_.toUpper(title));
+    let p = d3.select(dom).select('p.view');
+    /* Update the label */
+    p.select("#label").html(_.toUpper(title));
+    /* Show the open icon */
+    p.select('#settingsOpenPdb')
+        .classed("hidden", false);
   }
 
 function TertiaryStructureView(model, element) {
-
   let self = this;
 
   self._model = model;

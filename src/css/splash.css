@@ -23,13 +23,6 @@ input {
     z-index: 10;
 }
 
-
-#popup-trigger-open {
-    display: inline;
-    position: relative;
-    background-color: #ecf0f1;
-}
-
 .viewer-upload {
     cursor: pointer;
 }
@@ -60,30 +53,37 @@ input {
     font-size: 14px;
     text-transform: uppercase;
 }
+
 .sBtn span .fa {
     margin-left: 8px;
     font-size: 18px;
     vertical-align: middle;
 }
+
 .sBtn:not(.sBtn-outline) {
     background-color: #fff;
 }
+
 .sBtn:not(.sBtn-outline) span {
     color: #666;
 }
 .sBtn:not(.sBtn-outline):hover {
     background-color: #f7f7f7;
 }
+
 .sBtn.sBtn-outline {
     background-color: transparent;
     border: 1px solid #fff;
 }
+
 .sBtn.sBtn-outline span {
     color: #fff;
 }
+
 .sBtn.sBtn-outline:hover {
     background-color: #fff;
 }
+
 .sBtn.sBtn-outline:hover span {
     color: #666;
 }
@@ -93,9 +93,7 @@ input {
     margin-left: auto;
     margin-right: auto;
     position: absolute;
-    /*top: 0;*/
     bottom: 0;
-    /*left: 0;*/
     right: 0;
     box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.05);
 }
@@ -104,10 +102,6 @@ input {
     width: 100%;
     height: 100%;
     overflow: auto;
-    /*float: left;*/
-    /*position: fixed;*/
-    /*top: 0;*/
-    /*left: 0;*/
     z-index: 5;
     opacity: 0;
 }
@@ -121,6 +115,7 @@ input {
     left: 0;
     z-index: 5;
 }
+
 .overlaySplash .overlay-content {
     width: 100%;
     color: #fff;
@@ -128,6 +123,7 @@ input {
     z-index: 10;
     padding: 0 10px 0 10px;
 }
+
 .overlaySplash .overlay-content .overlay-close {
     display: block;
     font-size: 35px;
@@ -136,29 +132,35 @@ input {
     top: 0;
     right: 10px;
 }
+
 .overlaySplash .overlay-content .overlay-close:hover {
     opacity: .8;
 }
+
 .overlaySplash .overlay-content .blurb {
     margin-top: 35px;
     line-height: 100%;
     font-weight: 600;
     font-size: 18px;
 }
+
 .overlaySplash .overlay-content .blurb-tagline {
     display: block;
     margin-top: 10px;
     line-height: 100%;
     font-size: 14px;
 }
+
 .overlaySplash .overlay-content .signup-form {
     margin-top: 35px;
 }
+
 .overlaySplash .overlay-content .signup-form label {
     line-height: 100%;
     margin-bottom: 5px;
     font-size: 14px;
 }
+
 .overlaySplash .overlay-content .signup-form input {
     background-color: transparent;
     width: 100%;
@@ -168,12 +170,15 @@ input {
     border: 1px solid rgba(254, 254, 254, 0.3);
     border-radius: 5px;
 }
+
 .overlaySplash .overlay-content .signup-form input:hover, .overlaySplash .overlay-content .signup-form input:focus {
     border-color: #fff;
 }
+
 .overlaySplash .overlay-content .signup-form .submit-btn {
     width: 150px;
 }
+
 .overlay.open {
     overflow: hidden;
     z-index: 15;
@@ -185,6 +190,7 @@ input {
     transition: opacity 0.5s, transform 0.5s, z-index 0s;
     transition: opacity 0.5s, transform 0.5s, z-index 0s, -webkit-transform 0.5s;
 }
+
 .overlay.short .overlay-content {
     margin: 30px auto;
 }

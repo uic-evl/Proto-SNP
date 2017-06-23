@@ -11,8 +11,8 @@ const AxisView3D = (function() {
     /* Set a reference to the DOM element*/
     self.container = options.div;
 
-    var camera, scene, renderer;
-    var mesh;
+    let camera, scene, renderer;
+    let mesh;
     
     init();
     animate();
@@ -21,17 +21,16 @@ const AxisView3D = (function() {
       camera = new THREE.PerspectiveCamera( 70, options.width / options.height, 1, 1000 );
       camera.position.z = 400;
       scene = new THREE.Scene();
-      var texture = new THREE.TextureLoader().load( 'images/anterior.png' );
-      var geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
-      var material = new THREE.MeshBasicMaterial( { map: texture } );
+      let texture = new THREE.TextureLoader().load( 'images/anterior.png' );
+      let geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
+      let material = new THREE.MeshBasicMaterial( { map: texture } );
       mesh = new THREE.Mesh( geometry, material );
       scene.add( mesh );
       renderer = new THREE.WebGLRenderer();
       renderer.setPixelRatio( window.devicePixelRatio );
       renderer.setSize( options.width, options.height );
       /* Attach the renderer to the DOM */
-      $(self.container).append(renderer.domElement);      //
-
+      $(self.container).append(renderer.domElement);
     }
 
     function onWindowResize() {

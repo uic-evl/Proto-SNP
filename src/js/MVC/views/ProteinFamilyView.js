@@ -241,11 +241,19 @@ const ProteinFamilyView = (function() {
       /* Display the upload icon by the viewer name */
       dom.classed('hidden', false);
 
+      /* Set the file upload size */
+      let input = document.getElementById("fileupload-open"),
+          parent = input.parentNode;
+
       /* Setup the upload callback for files */
-      App.fileUtilities.familyUploadSetup(dom.select("#fileupload-open").node(),
+      App.fileUtilities.familyUploadSetup(input,
         function (data, extension) {
           self.fileChanged.notify({data: data, type: extension});
-        });
+        }).done(function(){
+          input.style.width = parent.clientWidth;
+          input.style.height = parent.clientHeight;
+          input.style['z-index'] = -1;
+      });
 
     };
 

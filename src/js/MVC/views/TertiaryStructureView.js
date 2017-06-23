@@ -82,10 +82,12 @@ function TertiaryStructureView(model, element) {
 
     /* Setup the upload callback for files */
     self.splash.find("#fileUploadInput").fileupload('destroy');
+    self.splash.find("#fileUploadInput").unbind( "fileuploadadd" );
+
     App.fileUtilities.uploadSetup(self.splash.find("#fileUploadInput"), self.splash.find("#files"),
       function (metadata, result) {
-        view.fileUpdated.notify({metaData: metadata, file: result});
-        view.clear_splash();
+        self.fileUpdated.notify({metaData: metadata, file: result});
+        self.clear_splash();
       });
   };
 
@@ -171,7 +173,7 @@ TertiaryStructureView.prototype = {
 
   clear: function() {
     /* Remove all the items */
-    this._dom.find('*').remove();
+    this._dom.find('#pvView *:not(#splash *)').remove();
     /* Clear the internal variables */
     this.pvViewer = null;
     this.axis3D = null;

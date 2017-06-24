@@ -10,13 +10,22 @@
     color: white;
 }
 
-.molecularViewerA {
+#molecularViewerA {
     padding-right: 0;
 }
 
-.molecularViewerB {
+#molecularViewerB {
     padding-left: 0;
     padding-right: 0;
+}
+
+.tertiaryViewer, .axisViewer {
+    position: absolute;
+}
+
+.axisViewer {
+    bottom: 0;
+    right: 0;
 }
 
 .molecular-viewer {

@@ -2,3 +2,43 @@
     min-height: 5%;
     margin-bottom: 0;
 }
+
+#popup-trigger-open, #popup-trigger-pdb {
+    display: inline;
+    position: relative;
+    background-color: #ecf0f1;
+    cursor: pointer;
+}
+
+/* View titles */
+div.view {
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
+
+.view p {
+    color: dimgray;
+    font-weight: bolder;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    clear: left;
+    margin: 0;
+}
+
+#settingsOpen, .settingsOpenPdb {
+    font-size: 16px;
+    padding-left: 5px;
+    cursor: pointer;
+    z-index: -1;
+}
+
+.clearfix:after, form:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+

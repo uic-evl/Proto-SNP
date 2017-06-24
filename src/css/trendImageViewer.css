@@ -1,10 +1,10 @@
-.trendImage, #trendSVG {
+#trendCanvas, #trendSVG {
     position: absolute;
 }
 
-.trendImageBrush {
+.trendImage {
     background-color: #ecf0f1;
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 g.brush.horizontal > .handle {
@@ -21,19 +21,13 @@ g.brush.horizontal > .handle {
     height: 40%;
 }
 
+.proteinFamilyViewer {
+    height: 30%;
+}
+
 text.mono {
     font-size: 8px;
     font-family: monospace;
     fill: #000;
     font-weight: bold;
-}
-
-.proteinRow {
-    fill-opacity: 0.4;
-    stroke-opacity: 0.0;
-}
-
-.active_protein_selection, .active_res_selection {
-    fill-opacity: 1.0;
-    stroke-opacity: 1.0;
 }

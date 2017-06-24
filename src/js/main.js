@@ -8,51 +8,53 @@ var App = App || {};
   /* Starting point of the program. Initializes the application */
   function init() {
 
-    let freqOffset  = 25;
+    /* File utility setup */
+    App.fileUtilities = new FileUtilities();
+    App.dataUtilities = new DatabaseMappingUtils();
+    App.residueMappingUtility = new ResidueMappingUtility();
 
-    App.labelHeight = document.getElementsByClassName('view')[0].clientHeight;
+    let leftProteinModel = new ProteinModel(), rightProteinModel = new ProteinModel(),
+        leftTertiaryStructureView = new TertiaryStructureView(leftProteinModel, {id: "molecularViewerA", position:"left"}),
+        rightTertiaryStructureView = new TertiaryStructureView(rightProteinModel, {id: "molecularViewerB", position:"right"}),
+        tertiaryStructuresController = new TertiaryStructureController(
+            [leftProteinModel, rightProteinModel], [leftTertiaryStructureView, rightTertiaryStructureView]);
 
-    /* Create the Data Mapping Utility Library */
-    App.dataUtils = new DatabaseMappingUtils();
+    let leftPrimaryStructureView  = new PrimaryStructureView(null, {id: "leftMolecularViewer-Sequence", position:"left"}),
+        rightPrimaryStructureView = new PrimaryStructureView(null, {id: "rightMolecularViewer-Sequence", position:"right"}),
+        primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
 
-    /* Setup the Menu */
-    App.coloringMenu = new MenuController();
-    App.coloringMenu.initColoringMenu(".coloringOption");
-    App.coloringMenu.initSortingMenu(".sortingOption");
+    let proteinFamilyModel = new ProteinFamilyModel(),
+        proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
+        proteinFamilyController = new ProteinFamilyController(proteinFamilyModel, proteinFamilyView);
 
-    /* create the left and right viewers */
-    App.leftMolecularViewer  = new MolecularViewer();
-    App.rightMolecularViewer = new MolecularViewer();
+    let colorModel = new FilteringMenuModel({
+      items:['Side Chain Class', 'Side Chain Polarity', 'Frequency (Family Viewer)']
+    }),
+        colorView = new FilteringMenuView(colorModel, { 'list' : $('#coloring_list') }),
+        colorController = new FilteringMenuController({
+          menu : "coloring",
+          models: { list: colorModel, family: proteinFamilyModel, tertiary : [leftProteinModel, rightProteinModel]},
+          view: colorView
+        });
 
-    /* Setup the sequence viewer */
-    App.sequenceViewer = new SequenceViewer();
+    let sortingModel = new FilteringMenuModel({
+        items: ['Initial Ordering','Residue Frequency', 'Weighted Edit Distance',
+          'Residue Commonality with', 'Normalized Residue Commonality with']
+    }),
+        sortingView = new FilteringMenuView(sortingModel, { 'list' : $('#sorting_list') }),
+        sortingController = new FilteringMenuController({
+          menu : "sorting",
+          models: { list: sortingModel, family: proteinFamilyModel, tertiary : [leftProteinModel, rightProteinModel]},
+          view: sortingView
+        });
 
-    /* Setup the trend image viewer */
-    App.trendImageViewer = new TrendImageViewer({freqOffset: freqOffset});
+    /* Render the views */
+    sortingView.show();
+    colorView.show();
 
-    /* Setup the frequency histogram viewers*/
-    App.leftFrequencyViewer = new FrequencyViewer({trend_div: "trendImageViewer", offset: freqOffset});
-    App.rightFrequencyViewer = new FrequencyViewer({trend_div: "trendImageViewer", offset: freqOffset});
-
-    /* Set the initial rendering style and color mapping */
-    App.colorMapping      = "side chain";
-    App.sorting           = "initial";
-    App.renderingStyle    = "cartoon";
-
-    /* Set the residue property model */
-    App.residueModel = new ResidueModel();
-
-    /* Bind the model to the view*/
-    App.applicationModel = new ApplicationModel();
-    ko.applyBindings(App.applicationModel);
-
-    /* Setup the protein selection overlays */
-    App.setupOverlays();
-
-    /* Setup the protein file upload */
-    App.setupUpload("left");
-    App.setupUpload("right");
-    App.setupFamilyUploader("family");
+    leftTertiaryStructureView.show();
+    rightTertiaryStructureView.show();
+    proteinFamilyView.show();
   }
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);

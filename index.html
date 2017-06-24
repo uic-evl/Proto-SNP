@@ -88,7 +88,7 @@
 </head>
 
 <body>
-
+<!-- Navigation menu -->
 <nav id="menu" class="navbar navbar-default">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -123,20 +123,19 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-
+<!-- Main container of the application -->
 <div class="container-fluid">
-
     <!-- 3D Molecule Viewers -->
     <div class="row molecularViewersRow">
         <div id="molecularViewerTemplate" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
+        <!-- Tertiary Viewer -->
         <script type="text/html" id="molecularViewers" >
-            <!-- Tertiary Viewer -->
             <div class="col-md-5 " data-bind="attr: {id: $data._id}">
                 <div class="x_title view">
                     <p id="proteinName">&nbsp;</p>
                     <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-pdb">
-                            <i class="fa fa-folder-open settingsOpenPDB hidden"></i>
-                        </span>
+                        <i class="fa fa-folder-open settingsOpenPDB hidden"></i>
+                    </span>
                     <div class="clearfix"></div>
                 </div>
                 <div id="pvDiv" class="molecular-viewer x_content">
@@ -147,7 +146,9 @@
 
         <!-- Sequence Viewer -->
         <div class="col-md-2 sequenceViewers">
-            <p class="view">&nbsp;</p>
+            <div class="x_title view">
+                <p>&nbsp;</p>
+            </div>
             <div id="sequenceViewer" class="row">
                 <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
                 <script type="text/html" id="sequenceViewers">

@@ -33,8 +33,13 @@ var App = App || {};
         colorView = new FilteringMenuView(colorModel, { 'list' : $('#coloring_list') }),
         colorController = new FilteringMenuController({
           menu : "coloring",
-          models: { list: colorModel, family: proteinFamilyModel, tertiary : [leftProteinModel, rightProteinModel]},
-          view: colorView
+          models: { list: colorModel, connected : [proteinFamilyModel, leftProteinModel, rightProteinModel]},
+          view: colorView,
+          cb:
+              function(model, element) {
+                model.setProteinColoring(element);
+                App.residueMappingUtility.createColorLegend();
+          }
         });
 
     let sortingModel = new FilteringMenuModel({
@@ -44,8 +49,12 @@ var App = App || {};
         sortingView = new FilteringMenuView(sortingModel, { 'list' : $('#sorting_list') }),
         sortingController = new FilteringMenuController({
           menu : "sorting",
-          models: { list: sortingModel, family: proteinFamilyModel, tertiary : [leftProteinModel, rightProteinModel]},
-          view: sortingView
+          models: { list: sortingModel, connected: proteinFamilyModel},
+          view: sortingView,
+          cb:
+              function(model, element) {
+                model.setProteinSorting(element)
+              }
         });
 
     /* Render the views */

@@ -64,7 +64,6 @@ const ProteinModel = (function() {
     getSequence: function(structure, chain) {
       // Array to store the sequence
       let seq = [];
-
       /* Iterate over the residues of the chain and add them to the array*/
       structure.chains()[chain || 0].eachResidue(function(res){
         seq.push(res.name());
@@ -80,6 +79,7 @@ const ProteinModel = (function() {
       }.bind(this));
     },
 
+    /* Clear the model instance variables and data */
     clear: function() {
       self._proteinStructure = null;
       self._geometry = null;

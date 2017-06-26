@@ -4,11 +4,9 @@ var App = App || {};
 
 const FilteringMenuController = (function() {
 
-  function mapSortingLabel(label) {
+  function mapLabel(label) {
     switch(label){
       case 'Initial Ordering':
-      default:
-        return "default";
         break;
       case 'Residue Frequency':
         return "edit_distance";
@@ -22,50 +20,40 @@ const FilteringMenuController = (function() {
       case 'Normalized Residue Commonality with':
         return "normalized_commonality_scores";
         break;
+      default:
+        return label;
     }
   }
 
   function FilteringMenuController(options) {
     let self = this;
-
     self._menuDescription = options.menu;
-
+    self._model     = options.models.list;
     /* Connected models  */
-    self._model          = options.models.list;
-    self._familyModel    = options.models.family;
-    self._tertiaryModels = options.models.tertiary;
-
+    self._connected_models = options.models.connected;
+    /* List View */
     self._view = options.view;
+    /* Callback to launch on selection*/
+    self._cb = options.cb;
 
-    this._view.selectionModified.attach(function (sender, args) {
+    /* Selection Events */
+    self._view.selectionModified.attach(function (sender, args) {
       self.updateSelected(args.element);
     });
-
     /*  Bind the view with knockoutJS */
     ko.applyBindings(self._view, self._view._elements.list[0]);
   }
 
   FilteringMenuController.prototype = {
-
     updateSelected: function (element) {
+      let self = this;
       /* Update the list models */
       this._model.setSelectedElement(element);
-
       /* Update the connected models */
-      if(this._menuDescription === "coloring"){
-        this._familyModel.setProteinColoring(element);
-        this._tertiaryModels.forEach(function(model){
-          model.setProteinColoring(element);
-        });
-        /* Create the legend */
-        App.residueMappingUtility.createColorLegend();
-      }
-      else if (this._menuDescription === "sorting"){
-        this._familyModel.setProteinSorting(mapSortingLabel(element));
-      }
-
+      this._connected_models.forEach(function(model) {
+        self._cb(model, mapLabel(element));
+      });
     }
   };
-
   return FilteringMenuController;
 })();

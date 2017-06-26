@@ -108,7 +108,12 @@ function TertiaryStructureView(model, element) {
 
     /* Initialize and render the view */
     self.initialize();
-    self.render(protein.structure, protein.name);
+    self.render(protein.structure, protein.name, "cartoon");
+
+    /* center the structure in the view */
+    self.pvViewer.centerOn(protein.structure);
+    // auto zoom to fit
+    self.pvViewer.autoZoom();
 
     /* Enable the coloring menu */
     $("#coloring_list").find("li").removeClass("disabled");
@@ -126,7 +131,6 @@ function TertiaryStructureView(model, element) {
   self._model.proteinColoringChanged.attach(function(sender, msg){
     self.recolor(msg.scheme);
   });
-
   /* Mixin the utilities */
   _.mixin(self, new pvUtils(self));
 }
@@ -134,9 +138,10 @@ function TertiaryStructureView(model, element) {
 TertiaryStructureView.prototype = {
 
   show: function () {
+    /* Save the context's this */
     let view = this;
+    /* Set the DOM selector */
     view._dom = $('#' + view._id);
-
     // /* load the splash screen if there is no model data*/
     if (!view._model.isEmpty()) {
       /* Load the splash template */
@@ -152,7 +157,6 @@ TertiaryStructureView.prototype = {
             .find('.signup-form input:first').select();
           splash_trigger.hide();
         });
-
         // If the user clicks on the overlay or the 'X', close the overlay
         splash.find('#overlayBackground, #overlayClose').click(function () {
           // reshow the button
@@ -161,13 +165,10 @@ TertiaryStructureView.prototype = {
             splash_trigger.show();
           }
         });
-
         /* Save the reference to the splash screen for later use */
         view.splash = splash;
-
         /* Apply the bindings */
         ko.applyBindings(view, splash.find("#splashTemplate")[0]);
-
         /* Setup the upload callback for files */
         App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"), splash.find("#files"),
           function (metadata, result) {
@@ -248,28 +249,15 @@ TertiaryStructureView.prototype = {
   },
 
   render: function (structure, proteinName, renderingStyle) {
-    let geom = null;
-
     /* Display the protein in the specified rendering, coloring by the specified property */
-    switch(renderingStyle){
-      case "cartoon":
-      default:
-        geom = this.pvViewer.cartoon(proteinName, structure,
-            {color: colorProteinBy.call(this, this._model.getProteinColoring())});
-        break;
-    }
+    let geometry = this.pvViewer.renderAs(proteinName, structure, renderingStyle,
+        {color: colorProteinBy.call(this, this._model.getProteinColoring())});
     /* Save the geometry to the model */
-    this._model.setGeometry(geom);
-
-    /* center the structure in the view */
-    this.pvViewer.centerOn(structure);
-    // auto zoom to fit
-    this.pvViewer.autoZoom();
+    this._model.setGeometry(geometry);
   },
 
   /* Recolor the protein according to the current coloring scheme */
   recolor : function(colorMap){
-
     let geometry = this._model.getGeometry(),
         viewer   = this.pvViewer;
     /* Check to make sure the view is active*/

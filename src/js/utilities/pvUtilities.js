@@ -26,7 +26,6 @@ const pvUtils = function (context) {
     },
 
     mouseMoveEvent: function (event) {
-
       let rect = self.pvViewer.boundingClientRect();
       self.picked = self.pvViewer.pick({
         x: event.clientX - rect.left,

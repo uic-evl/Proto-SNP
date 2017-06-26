@@ -8,6 +8,7 @@ const ProteinModel = (function() {
     let self = this;
 
     self._proteinStructure = null;
+    self._proteinName = "";
     self._geometry = null;
     self._selectedResidue = null;
     self._previousSelectedResidue = null;
@@ -72,9 +73,12 @@ const ProteinModel = (function() {
       return seq;
     },
 
+    getName: function() { return this._proteinName},
+
     addProtein : function(metadata, file) {
       this.load_protein(metadata, file).then(function(structure){
         this._proteinStructure = structure;
+        this._proteinName = metadata.protein_name;
         this.proteinAdded.notify({structure:this._proteinStructure, name:metadata.protein_name});
       }.bind(this));
     },
@@ -86,6 +90,7 @@ const ProteinModel = (function() {
       self._selectedResidue = null;
       self._previousSelectedResidue = null;
 
+      self._proteinName = "";
       self._proteinSorting = "";
       self._proteinColoring = "";
     },

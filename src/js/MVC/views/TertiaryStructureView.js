@@ -51,6 +51,7 @@ function TertiaryStructureView(model, element) {
     self.splash.find('#fileUploadInput').val('');
   };
 
+  /* Clears the splash input form and re-initializes the sphash*/
   self.clear_and_reinitialize = function() {
     /* Update the splash if the first upload*/
     if (!self._model.isEmpty()) {
@@ -60,6 +61,7 @@ function TertiaryStructureView(model, element) {
     self.clear_splash();
   };
 
+  /* Reset the splash page to launch on 'folder icon' click */
   self.initialize_file_update = function(dom) {
     /* Display the upload icon by the viewer name */
     dom
@@ -100,6 +102,35 @@ function TertiaryStructureView(model, element) {
       });
   };
 
+  /*Creates the geometry selection menu */
+  self.initialize_geometry_menu = function() {
+    /* Load the html template */
+    $.get("./src/html/proteinGeometryListTemplate.html", function (data) {
+      /* Add the elements to the list */
+      $("#geometry_list").find("a").after(data);
+      let geometryListModel = new FilteringMenuModel({
+            items: ['cartoon', 'tube', 'trace', 'sline', 'lines', 'lineTrace', 'spheres', 'points']
+          }),
+          geometryListView = new FilteringMenuView(geometryListModel, { 'list' : $('#geometry_ul') }),
+          geometryListController = new FilteringMenuController({
+            menu : "geometry",
+            models: { list: geometryListModel, connected: [self._model]},
+            view: geometryListView,
+            cb:
+                function(model, element) {
+                  // self.pvViewer.rm("");
+                  self.pvViewer.clear();
+                  self.render(model.getStructure(), model.getName(), element);
+                  self.pvViewer.requestRedraw();
+            }
+          });
+      /* Show the view to bind the model */
+      geometryListView.show();
+    });
+    /* Show the menu */
+    d3.select("#molecularViewerMenu").classed("hidden", false).classed("geometry_dropdown", true);
+  };
+
   /* Attach the listeners */
   self._model.proteinAdded.attach(function (sender, protein) {
     /* Close the splash screen and remove the overlaid button */
@@ -108,7 +139,7 @@ function TertiaryStructureView(model, element) {
 
     /* Initialize and render the view */
     self.initialize();
-    self.render(protein.structure, protein.name, "cartoon");
+    self.render(protein.structure, protein.name, "tube");
 
     /* center the structure in the view */
     self.pvViewer.centerOn(protein.structure);
@@ -237,19 +268,25 @@ TertiaryStructureView.prototype = {
     let axisDOM = document.createElement('div'),
         width = options.width/4.0,
         height = options.height/4.0;
+    /* Set the axis' attributes */
     axisDOM.className = 'axisViewer';
     axisDOM.style.height = height;
     axisDOM.style.width = width;
+    /* Append it to the dom */
     dom.append(axisDOM);
 
-    this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height})
+    /* Create the axis box */
+    this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
 
+    /* Load the geometry list */
+    this.initialize_geometry_menu();
     /* Register the enter key to reset the selections of the view */
     //keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);
   },
 
   render: function (structure, proteinName, renderingStyle) {
     /* Display the protein in the specified rendering, coloring by the specified property */
+
     let geometry = this.pvViewer.renderAs(proteinName, structure, renderingStyle,
         {color: colorProteinBy.call(this, this._model.getProteinColoring())});
     /* Save the geometry to the model */

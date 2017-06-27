@@ -118,8 +118,7 @@ function TertiaryStructureView(model, element) {
             view: geometryListView,
             cb:
                 function(model, element) {
-                  // self.pvViewer.rm("");
-                  self.pvViewer.clear();
+                  self.pvViewer.rm(model.getName());
                   self.render(model.getStructure(), model.getName(), element);
                   self.pvViewer.requestRedraw();
             }

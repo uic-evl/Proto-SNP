@@ -107,11 +107,11 @@ function TertiaryStructureView(model, element) {
     /* Load the html template */
     $.get("./src/html/proteinGeometryListTemplate.html", function (data) {
       /* Add the elements to the list */
-      $("#geometry_list").find("a").after(data);
+      self._dom.find("#geometry_list a").after(data);
       let geometryListModel = new FilteringMenuModel({
             items: ['cartoon', 'tube', 'trace', 'sline', 'lines', 'lineTrace', 'spheres', 'points']
           }),
-          geometryListView = new FilteringMenuView(geometryListModel, { 'list' : $('#geometry_ul') }),
+          geometryListView = new FilteringMenuView(geometryListModel, { 'list' : self._dom.find('#geometry_ul') }),
           geometryListController = new FilteringMenuController({
             menu : "geometry",
             models: { list: geometryListModel, connected: [self._model]},
@@ -127,7 +127,8 @@ function TertiaryStructureView(model, element) {
       geometryListView.show();
     });
     /* Show the menu */
-    d3.select("#molecularViewerMenu").classed("hidden", false).classed("geometry_dropdown", true);
+    d3.select(self._dom[0]).select("#molecularViewerMenu")
+        .classed("hidden", false).classed("geometry_dropdown", true);
   };
 
   /* Attach the listeners */

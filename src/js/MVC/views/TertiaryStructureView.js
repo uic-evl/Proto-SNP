@@ -256,6 +256,16 @@ TertiaryStructureView.prototype = {
     /* insert the molecularViewer under the DOM element */
     this.pvViewer = pv.Viewer(dom, options);
 
+    /* Inject a function to determine when the view has been moved */
+    let redraw = this.pvViewer.__proto__.requestRedraw;
+    this.pvViewer.__proto__.requestRedraw = function(){
+
+      if(this._redrawRequested === true){
+        console.log(this);
+      }
+      return redraw.apply(this, arguments);
+
+    };
     /* Set the canvas' position to absolute so we can overlay */
     $dom.find('canvas')
         .addClass('tertiaryViewer');

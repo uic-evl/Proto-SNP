@@ -27,6 +27,7 @@ const AxisView3D = (function() {
       mesh = new THREE.Mesh( geometry, material );
       scene.add( mesh );
       renderer = new THREE.WebGLRenderer();
+      // renderer.setClearColor( 0xcccccc, 1);
       renderer.setPixelRatio( window.devicePixelRatio );
       renderer.setSize( options.width, options.height );
       /* Attach the renderer to the DOM */
@@ -41,8 +42,8 @@ const AxisView3D = (function() {
 
     function animate() {
       requestAnimationFrame( animate );
-      mesh.rotation.x += 0.005;
-      mesh.rotation.y += 0.01;
+      // mesh.rotation.x += 0.005;
+      // mesh.rotation.y += 0.01;
       renderer.render( scene, camera );
     }
 

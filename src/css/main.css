@@ -97,12 +97,16 @@ ul li a.disabled {
     white-space: nowrap;
 }
 
+.x_title.view {
+    background-color: black;
+}
+
 .x_title h2 small {
     margin-left: 10px;
 }
 
 .x_title span {
-    color: #BDBDBD;
+    color: black;
 }
 
 .x_content {

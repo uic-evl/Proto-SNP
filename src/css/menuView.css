@@ -10,9 +10,9 @@
     cursor: pointer;
 }
 
-#molecularViewerMenu {
-    padding-left: 5px;
-}
+/*#molecularViewerMenu {*/
+    /*padding-left: 5px;*/
+/*}*/
 
 .geometry_dropdown {
     padding: 0 !important;
@@ -20,6 +20,15 @@
     display: inline-block !important;
     position: relative !important;
     float: none !important
+}
+
+#geometry_list, #proteinName {
+    background-color: #e7e7e7;
+    color: #555;
+}
+
+#geometry_list a {
+    color: #555;
 }
 
 /* View titles */
@@ -44,6 +53,7 @@ div.view {
     padding-left: 5px;
     cursor: pointer;
     z-index: -1;
+    background-color: #e7e7e7;
 }
 
 .clearfix:after, form:after {

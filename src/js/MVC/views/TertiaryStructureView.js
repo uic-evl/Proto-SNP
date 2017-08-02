@@ -20,9 +20,11 @@ const TertiaryStructureView = (function () {
 
   /* Render the title of the viewer */
   function updateViewTitle(dom, title) {
-    let p = d3.select(dom).select('#proteinName');
+    let p = d3.select(dom).select('#proteinName p');
+    // let text = p.text();
+    // text.replace("(current)", _.toUpper(title));
     /* Update the label */
-    p.html(_.toUpper(title));
+    p.text(_.toUpper(title));
   }
 
 function TertiaryStructureView(model, element) {
@@ -55,7 +57,7 @@ function TertiaryStructureView(model, element) {
   self.clear_and_reinitialize = function() {
     /* Update the splash if the first upload*/
     if (!self._model.isEmpty()) {
-      self.initialize_file_update(d3.select(self._dom[0]).select('i.settingsOpenPDB'));
+      self.initialize_file_update(d3.select(self._dom[0]).select('#proteinName'));
     }
     /* Clear the input */
     self.clear_splash();
@@ -66,7 +68,7 @@ function TertiaryStructureView(model, element) {
     /* Display the upload icon by the viewer name */
     dom
       .classed('hidden', false)
-      .select("#proteinName").classed("hidden", false);
+      .select(".settingsOpenPDB").classed("hidden", false);
 
     /* Setup the splash screen activation */
     $(dom.node()).click(function(){
@@ -128,7 +130,9 @@ function TertiaryStructureView(model, element) {
     });
     /* Show the menu */
     d3.select(self._dom[0]).select("#molecularViewerMenu")
-        .classed("hidden", false).classed("geometry_dropdown", true);
+        .classed("hidden", false)
+        // .classed("geometry_dropdown", false)
+    ;
   };
 
   /* Attach the listeners */
@@ -225,10 +229,10 @@ TertiaryStructureView.prototype = {
   downloadPDB: function(formData) {
     let name = $(formData).serialize().split('=')[1];
     this.fileUploaded.notify({metaData: {protein_name:name}, file: null});
-    /* Place the name of the protein above the viewer*/
-    updateViewTitle(this._dom[0], name);
     /* Clear the splash and update */
     this.clear_and_reinitialize();
+    /* Place the name of the protein above the viewer*/
+    updateViewTitle(this._dom[0], name);
     return false;
   },
 
@@ -246,9 +250,10 @@ TertiaryStructureView.prototype = {
 
     /* Set the options for the PV viewer*/
     let options = {
-      antialias: true,
-      quality : 'medium',
-      background: 'black',
+      antialias: true, outline: false,
+      quality : 'low',
+      near: 0.1,
+      background: "black",
       width : parseInt(d3.select(dom).style('width')),
       height : parseInt(d3.select(dom).style('height'))
     };

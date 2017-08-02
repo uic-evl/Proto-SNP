@@ -131,15 +131,19 @@
         <script type="text/html" id="molecularViewers" >
             <div class="col-md-5 " data-bind="attr: {id: $data._id}">
                 <div class="x_title view">
-                    <p id="proteinName">&nbsp;</p>
-                    <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-pdb">
-                        <i class="fa fa-folder-open settingsOpenPDB hidden"></i>
-                    </span>
                     <div id="molecularViewerMenu" class="hidden">
-                        <ul class="nav navbar-nav">
-                            <li id="geometry_list" class="dropdown geometry_dropdown">
-                                <a href="#" class="dropdown-toggle geometry_dropdown" data-toggle="dropdown" role="button"
-                                   aria-haspopup="true" aria-expanded="false">Geometry <span class="caret"></span>
+                        <ul class="nav navbar-nav tertiary-nav">
+                            <li id="proteinName"> <a href="#">
+                                <p></p>
+                                <span class="popup-trigger sBtn fileinput-button"
+                                      id="popup-trigger-pdb">
+                                     <i class="fa fa-folder-open settingsOpenPDB hidden"></i>
+                                </span>
+                                </a>
+                            </li>
+                            <li id="geometry_list" class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                   aria-expanded="false">Geometry <span style="padding-top: 3px;" class="caret"></span>
                                 </a>
                             </li>
                         </ul>
@@ -155,7 +159,7 @@
         <!-- Sequence Viewer -->
         <div class="col-md-2 sequenceViewers">
             <div class="x_title view">
-                <p>&nbsp;</p>
+                <!--<p>&nbsp;</p>-->
             </div>
             <div id="sequenceViewer" class="row black-background">
                 <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>

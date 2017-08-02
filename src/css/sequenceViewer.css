@@ -7,7 +7,6 @@
 .sequenceViewers {
     overflow-y: hidden;
     overflow-x: hidden;
-    background: black;
 }
 
 /* Disable the scroll bar from rendering */

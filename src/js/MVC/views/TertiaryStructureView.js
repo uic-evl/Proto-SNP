@@ -239,7 +239,8 @@ TertiaryStructureView.prototype = {
   initialize: function () {
     /* Store the pvView dom element */
     let $dom = this._dom.find('#pvDiv'),
-        dom = $dom[0];
+        dom = $dom[0],
+        view = this;
 
     /* create a label to display selections */
     this.staticLabel = document.createElement('div');
@@ -257,19 +258,30 @@ TertiaryStructureView.prototype = {
       width : parseInt(d3.select(dom).style('width')),
       height : parseInt(d3.select(dom).style('height'))
     };
-
     /* insert the molecularViewer under the DOM element */
     this.pvViewer = pv.Viewer(dom, options);
 
     /* Inject a function to determine when the view has been moved */
     let redraw = this.pvViewer.__proto__.requestRedraw;
+
     this.pvViewer.__proto__.requestRedraw = function(){
 
       if(this._redrawRequested === true){
-        console.log(this);
+
+        let cam_rotation = this._cam._rotation;
+
+        /* Calculate the x,y,z radians of the rotation*/
+        let x = Math.atan2(cam_rotation[9], cam_rotation[10]),
+            y = Math.atan2(-cam_rotation[8], Math.sqrt(cam_rotation[9]*cam_rotation[9]
+              + cam_rotation[10]*cam_rotation[10])),
+            z = Math.atan2(cam_rotation[4], cam_rotation[0]);
+
+        /* Rotate the cube */
+        view.axis3D.setRotation(x,y,z);
+
+
       }
       return redraw.apply(this, arguments);
-
     };
     /* Set the canvas' position to absolute so we can overlay */
     $dom.find('canvas')

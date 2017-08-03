@@ -12,8 +12,7 @@ const AxisView3D = (function() {
     self.container = options.div;
 
     let camera, scene, renderer;
-    let mesh;
-    
+
     init();
     animate();
     
@@ -24,8 +23,9 @@ const AxisView3D = (function() {
       let texture = new THREE.TextureLoader().load( 'images/anterior.png' );
       let geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
       let material = new THREE.MeshBasicMaterial( { map: texture } );
-      mesh = new THREE.Mesh( geometry, material );
-      scene.add( mesh );
+      self.mesh = new THREE.Mesh( geometry, material );
+
+      scene.add( self.mesh );
       renderer = new THREE.WebGLRenderer();
       // renderer.setClearColor( 0xcccccc, 1);
       renderer.setPixelRatio( window.devicePixelRatio );
@@ -42,15 +42,18 @@ const AxisView3D = (function() {
 
     function animate() {
       requestAnimationFrame( animate );
-      // mesh.rotation.x += 0.005;
-      // mesh.rotation.y += 0.01;
       renderer.render( scene, camera );
     }
 
   }
 
   AxisView3D.prototype = {
-
+    /* Rotate the cube based on the camera's rotation */
+    setRotation : function(x,y,z){
+      this.mesh.rotation.x = -x;
+      this.mesh.rotation.y = -y;
+      this.mesh.rotation.z = -z;
+    }
 
   };
 

@@ -44,6 +44,8 @@ function TertiaryStructureView(model, element) {
   self.fileUploaded = new EventNotification(this);
   self.fileUpdated = new EventNotification(this);
   self.residueSelected = new EventNotification(this);
+  self.modelRotated = new EventNotification(this);
+
 
   /* Clears the user input on the form */
   self.clear_splash = function() {
@@ -166,6 +168,14 @@ function TertiaryStructureView(model, element) {
   self._model.proteinColoringChanged.attach(function(sender, msg){
     self.recolor(msg.scheme);
   });
+
+  /* Update the rotation */
+  self._model.rotateModel.attach(function(sender, msg){
+
+    console.log(msg);
+
+  });
+
   /* Mixin the utilities */
   _.mixin(self, new pvUtils(self));
 }
@@ -279,7 +289,8 @@ TertiaryStructureView.prototype = {
         /* Rotate the cube */
         view.axis3D.setRotation(x,y,z);
 
-
+        /* Notify the listeners of the change */
+        view.modelRotated.notify({x:x,y:y,z:z});
       }
       return redraw.apply(this, arguments);
     };

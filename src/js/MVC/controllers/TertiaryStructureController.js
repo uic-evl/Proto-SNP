@@ -28,6 +28,14 @@ const TertiaryStructureController = (function() {
         sender._model.selectResidue(args.selection);
       });
 
+      view.modelRotated.attach(function(sender, args){
+        // update the sender's model
+        sender._model.setRotation(args.x, args.y, args.z, false);
+
+        // update the other model if it is set
+        let m = _.without(models, sender._model);
+      })
+
     });
 
     /*  Bind the view with knockoutJS */

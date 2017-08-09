@@ -15,6 +15,7 @@ const ProteinModel = (function() {
 
     self._proteinSorting = "";
     self._proteinColoring = "";
+    self._rotation = {};
 
     self.proteinAdded = new EventNotification(this);
     self.proteinChanged = new EventNotification(this);
@@ -22,6 +23,8 @@ const ProteinModel = (function() {
     self.residueSelected = new EventNotification(this);
     self.proteinSortingChanged    = new EventNotification(this);
     self.proteinColoringChanged   = new EventNotification(this);
+
+    self.rotateModel   = new EventNotification(this);
 
     /* Determines which method to load the protein */
     self.load_protein = function (metadata, file){
@@ -85,14 +88,14 @@ const ProteinModel = (function() {
 
     /* Clear the model instance variables and data */
     clear: function() {
-      self._proteinStructure = null;
-      self._geometry = null;
-      self._selectedResidue = null;
-      self._previousSelectedResidue = null;
+      this._proteinStructure = null;
+      this._geometry = null;
+      this._selectedResidue = null;
+      this._previousSelectedResidue = null;
 
-      self._proteinName = "";
-      self._proteinSorting = "";
-      self._proteinColoring = "";
+      this._proteinName = "";
+      this._proteinSorting = "";
+      this._proteinColoring = "";
     },
 
     selectResidue : function(selection) {
@@ -109,6 +112,18 @@ const ProteinModel = (function() {
       this.proteinSortingChanged.notify({scheme: sorting});
       return this;
     },
+
+    setRotation: function(x,y,z, propagate){
+      this._rotation.x = x;
+      this._rotation.y = y;
+      this._rotation.z = z;
+      /* If this was not a native rotation */
+      if(propagate){
+        this.rotateModel.notify(x,y,z);
+      }
+    },
+
+    getRotation : function() { return this._rotation; },
 
     getProteinSorting: function() { return this._proteinSorting; },
 

@@ -171,9 +171,7 @@ function TertiaryStructureView(model, element) {
 
   /* Update the rotation */
   self._model.rotateModel.attach(function(sender, msg){
-
-    console.log(msg);
-
+    //self.pvViewer.setRotation(msg.rotation);
   });
 
   /* Mixin the utilities */
@@ -290,7 +288,7 @@ TertiaryStructureView.prototype = {
         view.axis3D.setRotation(x,y,z);
 
         /* Notify the listeners of the change */
-        view.modelRotated.notify({x:x,y:y,z:z});
+        view.modelRotated.notify({rotation:this._cam._rotation});
       }
       return redraw.apply(this, arguments);
     };

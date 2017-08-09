@@ -30,11 +30,14 @@ const TertiaryStructureController = (function() {
 
       view.modelRotated.attach(function(sender, args){
         // update the sender's model
-        sender._model.setRotation(args.x, args.y, args.z, false);
+        sender._model.setRotation(args.rotation, false);
 
         // update the other model if it is set
-        let m = _.without(models, sender._model);
-      })
+        let m = _.without(models, sender._model)[0];
+        if(m.isEmpty()){
+          m.setRotation(args.rotation, true);
+        }
+      });
 
     });
 

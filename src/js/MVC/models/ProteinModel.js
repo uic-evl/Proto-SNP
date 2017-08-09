@@ -113,13 +113,11 @@ const ProteinModel = (function() {
       return this;
     },
 
-    setRotation: function(x,y,z, propagate){
-      this._rotation.x = x;
-      this._rotation.y = y;
-      this._rotation.z = z;
+    setRotation: function(rotation,  propagate){
+      this._rotation = rotation;
       /* If this was not a native rotation */
       if(propagate){
-        this.rotateModel.notify(x,y,z);
+        this.rotateModel.notify({rotation: this._rotation});
       }
     },
 

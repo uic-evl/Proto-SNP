@@ -39,6 +39,7 @@ function TertiaryStructureView(model, element) {
   self.axis3D = null;
   self.splash = null;
   self.staticLabel = '';
+  self.propagation = false;
 
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
@@ -171,7 +172,9 @@ function TertiaryStructureView(model, element) {
 
   /* Update the rotation */
   self._model.rotateModel.attach(function(sender, msg){
-    //self.pvViewer.setRotation(msg.rotation);
+
+    self.pvViewer.setCamera(msg.rotation, self.pvViewer._cam.center(), self.pvViewer._cam.zoom());
+
   });
 
   /* Mixin the utilities */
@@ -274,7 +277,7 @@ TertiaryStructureView.prototype = {
 
     this.pvViewer.__proto__.requestRedraw = function(){
 
-      if(this._redrawRequested === true){
+      if(this._redrawRequested === true && !view.propagation){
 
         let cam_rotation = this._cam._rotation;
 
@@ -288,10 +291,12 @@ TertiaryStructureView.prototype = {
         view.axis3D.setRotation(x,y,z);
 
         /* Notify the listeners of the change */
-        view.modelRotated.notify({rotation:this._cam._rotation});
+        view.modelRotated.notify({rotation: this._cam._rotation});
+
       }
       return redraw.apply(this, arguments);
     };
+
     /* Set the canvas' position to absolute so we can overlay */
     $dom.find('canvas')
         .addClass('tertiaryViewer');

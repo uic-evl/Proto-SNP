@@ -173,7 +173,6 @@ function TertiaryStructureView(model, element) {
   // /* Update the rotation */
   self._model.rotateModel.attach(function(sender, msg){
     self.pvViewer._redrawRequested = false;
-    if(self.pvViewer._cam._rotation === msg.rotation) return;
     self.pvViewer.setRotation(msg.rotation);
   });
 

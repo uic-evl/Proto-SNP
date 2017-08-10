@@ -18,12 +18,14 @@ const AxisView3D = (function() {
     
     function init() {
       camera = new THREE.PerspectiveCamera( 70, options.width / options.height, 1, 1000 );
-      camera.position.z = 400;
+      camera.position.z = 100;
       scene = new THREE.Scene();
-      let texture = new THREE.TextureLoader().load( 'images/anterior.png' );
-      let geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
-      let material = new THREE.MeshBasicMaterial( { map: texture } );
-      self.mesh = new THREE.Mesh( geometry, material );
+      // let texture = new THREE.TextureLoader().load( 'images/anterior.png' );
+      // let geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
+      // let material = new THREE.MeshBasicMaterial( { map: texture } );
+      // self.mesh = new THREE.Mesh( geometry, material );
+
+      self.mesh = new THREE.AxisHelper( 50 );
 
       scene.add( self.mesh );
       renderer = new THREE.WebGLRenderer();

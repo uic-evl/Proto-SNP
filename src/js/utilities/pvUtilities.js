@@ -3,7 +3,7 @@
 // Global Application variable
 var App = App || {};
 
-const pvUtils = function (context) {
+var pvUtils = function (context) {
 
   let previousHovered = null;
   let self = context;

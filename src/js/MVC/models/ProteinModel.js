@@ -16,6 +16,8 @@ const ProteinModel = (function() {
     self._proteinSorting = "";
     self._proteinColoring = "";
     self._rotation = {};
+    self._zoom = null;
+    self._center = null;
 
     self.proteinAdded = new EventNotification(this);
     self.proteinChanged = new EventNotification(this);
@@ -25,6 +27,8 @@ const ProteinModel = (function() {
     self.proteinColoringChanged   = new EventNotification(this);
 
     self.rotateModel   = new EventNotification(this);
+    self.zoomModel   = new EventNotification(this);
+    self.cameraChanged   = new EventNotification(this);
 
     /* Determines which method to load the protein */
     self.load_protein = function (metadata, file){
@@ -118,6 +122,24 @@ const ProteinModel = (function() {
       /* If this was not a native rotation */
       if(propagate){
         this.rotateModel.notify({rotation: this._rotation});
+      }
+    },
+
+    setZoom: function(zoom,  propagate){
+      this._zoom = zoom;
+      /* If this was not a native rotation */
+      if(propagate){
+        this.zoomModel.notify({zoom: this._zoom});
+      }
+    },
+
+    setCamera: function(camera, propagate){
+      this._rotation = camera.rotation;
+      this._zoom = camera.zoom;
+      this._center = camera.center;
+      /* If this was not a native rotation */
+      if(propagate){
+        this.cameraChanged.notify(camera);
       }
     },
 

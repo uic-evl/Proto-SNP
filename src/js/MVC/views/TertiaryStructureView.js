@@ -39,14 +39,14 @@ function TertiaryStructureView(model, element) {
   self.axis3D = null;
   self.splash = null;
   self.staticLabel = '';
-  self.propagation = false;
 
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
   self.fileUpdated = new EventNotification(this);
   self.residueSelected = new EventNotification(this);
   self.modelRotated = new EventNotification(this);
-
+  self.modelZoomed = new EventNotification(this);
+  self.cameraChanged = new EventNotification(this);
 
   /* Clears the user input on the form */
   self.clear_splash = function() {
@@ -170,11 +170,24 @@ function TertiaryStructureView(model, element) {
     self.recolor(msg.scheme);
   });
 
-  /* Update the rotation */
+  // /* Update the rotation */
   self._model.rotateModel.attach(function(sender, msg){
+    self.pvViewer._redrawRequested = false;
+    if(self.pvViewer._cam._rotation === msg.rotation) return;
+    self.pvViewer.setRotation(msg.rotation);
+  });
 
-    self.pvViewer.setCamera(msg.rotation, self.pvViewer._cam.center(), self.pvViewer._cam.zoom());
+  /* Update the zoom */
+  self._model.zoomModel.attach(function(sender, msg){
+    if(self.pvViewer._cam._zoom === msg.zoom) return;
+    self.pvViewer.setZoom(msg.zoom);
+    self.pvViewer._draw();
+  });
 
+  self._model.cameraChanged.attach(function(sender, msg) {
+    self.pvViewer._redrawRequested = false;
+      // self.pvViewer.setRotation(msg.rotation);
+    self.pvViewer.setCamera(msg.rotation, msg.center, msg.zoom);
   });
 
   /* Mixin the utilities */
@@ -250,8 +263,7 @@ TertiaryStructureView.prototype = {
   initialize: function () {
     /* Store the pvView dom element */
     let $dom = this._dom.find('#pvDiv'),
-        dom = $dom[0],
-        view = this;
+        dom = $dom[0];
 
     /* create a label to display selections */
     this.staticLabel = document.createElement('div');
@@ -272,30 +284,7 @@ TertiaryStructureView.prototype = {
     /* insert the molecularViewer under the DOM element */
     this.pvViewer = pv.Viewer(dom, options);
 
-    /* Inject a function to determine when the view has been moved */
-    let redraw = this.pvViewer.__proto__.requestRedraw;
-
-    this.pvViewer.__proto__.requestRedraw = function(){
-
-      if(this._redrawRequested === true && !view.propagation){
-
-        let cam_rotation = this._cam._rotation;
-
-        /* Calculate the x,y,z radians of the rotation*/
-        let x = Math.atan2(cam_rotation[9], cam_rotation[10]),
-            y = Math.atan2(-cam_rotation[8], Math.sqrt(cam_rotation[9]*cam_rotation[9]
-              + cam_rotation[10]*cam_rotation[10])),
-            z = Math.atan2(cam_rotation[4], cam_rotation[0]);
-
-        /* Rotate the cube */
-        view.axis3D.setRotation(x,y,z);
-
-        /* Notify the listeners of the change */
-        view.modelRotated.notify({rotation: this._cam._rotation});
-
-      }
-      return redraw.apply(this, arguments);
-    };
+    this.linkInteractions();
 
     /* Set the canvas' position to absolute so we can overlay */
     $dom.find('canvas')

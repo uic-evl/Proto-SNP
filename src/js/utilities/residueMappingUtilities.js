@@ -131,7 +131,7 @@ function ResidueMappingUtility() {
   function initialize_legend() {
     self.legend        = document.getElementById('colorLegend');
     self.legend_width  = self.legend.clientWidth;
-    self.legend_height = 2.0 * document.getElementsByClassName('view')[0].clientHeight / 2.0;
+    self.legend_height = 2.0 * Math.max.apply(null, $('.view').map(function() { return $(this).height(); }).get()) / 2.0;
 
     /* Color map legend */
     self.legend_svg =

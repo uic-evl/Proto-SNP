@@ -25,11 +25,11 @@ const FileUtilities = function(){
       if(!line.length) return;
       /* Create a regex pattern to check for the header lines */
       //Name:\s*(\w+)\|?(\w?)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/
-      let regex_dict = /Name:\s*(\w+)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/,
-        regex_data = /(\w+)\/(\d*)-(\d*)\s*([~.\w\s]*)/,
+      let regex_dict = /Name:\s*(\w+\|?\w*?)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/,
+        regex_data = /(\w+\|?\w*?)\/(\d*)-(\d*)\s*([~.\w\s]*)/,
 
         /* Perform the regex matching on the line */
-        parsedLine =line.match(regex_dict);
+        parsedLine = line.match(regex_dict);
 
       /* If parsed, create the dictionary for the entry  */
       if(parsedLine){
@@ -52,6 +52,7 @@ const FileUtilities = function(){
         /* Append the sequence to the dictionary entry*/
         family[parsedLine[1]].sequence += _.toUpper(parsedLine[4].split(' ').join(''));
       }
+
     });
     return split_sequence(family);
   }

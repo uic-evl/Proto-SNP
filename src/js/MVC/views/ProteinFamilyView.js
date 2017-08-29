@@ -237,7 +237,6 @@ const ProteinFamilyView = (function() {
     };
 
     self.initialize_file_open = function(dom) {
-
       /* Display the upload icon by the viewer name */
       dom.classed('hidden', false);
 
@@ -254,7 +253,6 @@ const ProteinFamilyView = (function() {
           input.style.height = parent.clientHeight;
           input.style['z-index'] = -1;
       });
-
     };
 
     /* Bind the protein family listener */

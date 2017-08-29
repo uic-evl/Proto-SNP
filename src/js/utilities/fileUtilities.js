@@ -17,7 +17,9 @@ const FileUtilities = function(){
   function parse_MSF(file_data) {
     /* Parse the lines of the file */
     let lines = file_data.split('\n'),
-        family = {};
+        family = {},
+        max_length = 0,
+        length_changed = false;
 
     /* Iterate over each line*/
     lines.forEach(function(line, idx){
@@ -26,8 +28,7 @@ const FileUtilities = function(){
       /* Create a regex pattern to check for the header lines */
       //Name:\s*(\w+)\|?(\w?)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/
       let regex_dict = /Name:\s*(\w+\|?\w*?)\/(\d+)-(\d+)\s*Len:\s*(\d+)\s*Check:\s*(\d+)\s*Weight:\s*(\d*\.?\d*)/,
-        regex_data = /(\w+\|?\w*?)\/(\d*)-(\d*)\s*([~.\w\s]*)/,
-
+          regex_data = /(\w+\|?\w*?)\/(\d*)-(\d*)\s*([~.\w\s]*)/,
         /* Perform the regex matching on the line */
         parsedLine = line.match(regex_dict);
 
@@ -44,6 +45,12 @@ const FileUtilities = function(){
           sequence               : "",
           scores                 : {initial: lines.length - idx}
         };
+        /* Check the max length against the previous max*/
+        if(max_length === 0) max_length = family[parsedLine[1]].length;
+        else if(family[parsedLine[1]].length > max_length) {
+          length_changed = true;
+          max_length = family[parsedLine[1]].length;
+        }
       }
       /* If not in the dictionary pattern, check the for the data pattern */
       else if(regex_data.test(line)){
@@ -52,8 +59,14 @@ const FileUtilities = function(){
         /* Append the sequence to the dictionary entry*/
         family[parsedLine[1]].sequence += _.toUpper(parsedLine[4].split(' ').join(''));
       }
-
     });
+    /* The max length changed. Pad the protein sequences to the longest length*/
+    if(length_changed) {
+        Object.keys(family).forEach(function(key){
+          family[key].sequence = _.padEnd(family[key].sequence, max_length, '.');
+          family[key].length = max_length;
+        })
+    }
     return split_sequence(family);
   }
 
@@ -226,7 +239,6 @@ const FileUtilities = function(){
    uploadSetup          : file_upload_setup,
    familyUploadSetup    : family_upload_setup
   }
-
 };
 
 App.fileUtilities = new FileUtilities();

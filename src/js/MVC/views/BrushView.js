@@ -89,7 +89,6 @@ const BrushView = (function() {
         d3.select(this).call(d3.event.target.move, d3.event.selection)
       }
       else {
-        console.log('on brush');
         d3.event.selection[0] = Math.round(d3.event.selection[0] / block_size) * block_size;
         d3.event.selection[1] = Math.round(d3.event.selection[1] / block_size) * block_size;
         // Snap the brush onto the closest protein

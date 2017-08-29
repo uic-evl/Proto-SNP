@@ -253,7 +253,8 @@ const ProteinFamilyView = (function() {
         }).done(function(){
           input.style.width = parent.clientWidth;
           input.style.height = parent.clientHeight;
-          input.style['z-index'] = -1;
+          // input.style.cursor = "pointer";
+          input.style['z-index'] = 11;
       });
     };
 

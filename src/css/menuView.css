@@ -7,6 +7,9 @@
     display: inline;
     position: relative;
     background-color: #ecf0f1;
+}
+
+#fileupload-open {
     cursor: pointer;
 }
 

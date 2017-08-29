@@ -56,7 +56,7 @@ function TertiaryStructureView(model, element) {
     self.splash.find('#fileUploadInput').val('');
   };
 
-  /* Clears the splash input form and re-initializes the sphash*/
+  /* Clears the splash input form and re-initializes the splash*/
   self.clear_and_reinitialize = function() {
     /* Update the splash if the first upload*/
     if (!self._model.isEmpty()) {
@@ -80,6 +80,8 @@ function TertiaryStructureView(model, element) {
         .find(".tertiaryViewer, .axisViewer, .static-label").hide();
       self._dom
         .find("#splashOverlay").addClass('open');
+      /* Hide the menu */
+      self._dom.find('.x_title').hide();
       /* Show the splash screen */
       self.splash.show();
     });
@@ -91,6 +93,9 @@ function TertiaryStructureView(model, element) {
 
       /* Hide the overlay */
       self.splash.hide();
+
+      /* Show the menu */
+      self._dom.find('.x_title').show();
 
       /* Show the 3D viewers */
       self._dom.find(".tertiaryViewer, .axisViewer, .static-label").show();
@@ -147,6 +152,9 @@ function TertiaryStructureView(model, element) {
     /* Initialize and render the view */
     self.initialize();
     self.render(protein.structure, protein.name, "tube");
+
+    /* Show the menu */
+    self._dom.find('.x_title').show();
 
     /* center the structure in the view */
     self.pvViewer.centerOn(protein.structure);

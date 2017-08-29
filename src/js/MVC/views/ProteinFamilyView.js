@@ -66,21 +66,23 @@ const ProteinFamilyView = (function() {
     /* Builds the brush that lies on top of the overview */
     function build_overview_brush(width, height) {
       let count = self._model.getProteinCount(),
+          overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1),
           block_size = height / count,
           scale = d3.scaleLinear()
               .domain([0, count])
               .range([self.y_offset, height+self.y_offset]);
       self.brushPaddleSize = Math.round(self.ppv * block_size);
-      /* Return the specs for the new */
+
+          /* Return the specs for the new */
       return {
         orientation: App.OVERVIEW_PADDLE,
-        width:  width,
+        width:  overview_width,
         height: height,
         paddleSize : self.brushPaddleSize,
         scale      : scale,
         class      : "brush horizontal",
         block_size: block_size,
-        extent: [[self.width+self.x_offset, self.y_offset], [self.width+width, height+self.y_offset]],
+        extent: [[self.width+self.x_offset, self.y_offset], [self.width+self.x_offset+overview_width, height+self.y_offset]],
         position: [self.y_offset, self.brushPaddleSize],
         proteinsPerView: self.ppv,
         parent: d3.select(self.brushSVG.node().parentNode)
@@ -91,7 +93,7 @@ const ProteinFamilyView = (function() {
     self.render_overview = function() {
       return new Promise(function(resolve, reject){
         /* Create the overview if the image runs off the page*/
-        let overview_width = self._dom.node().parentNode.clientWidth * 0.1,
+        let overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1),
             /* The overview will be 1/10th of the view */
             overview = new Image();
         /* Add the image to the canvas once it is loaded */
@@ -347,12 +349,12 @@ const ProteinFamilyView = (function() {
 
       /* Set the DOM's width/height so it centers in it's parent */
       this._dom
-          .style("width", width+this.x_offset)
+          .style("width", width + this.x_offset)
           .style("height", this.height + 2.0*this.y_offset);
 
       /* Add the canvas and brush svg to the trend image dom*/
       this.canvasContext = d3Utils.create_chart_canvas(this._dom,
-          {width:width, height:this.height+ 2.0*this.y_offset,
+          {width:width + this.x_offset, height:this.height+ 2.0*this.y_offset,
             id:"trendCanvas", class:"trendImage"})
           .getContext('2d');
 
@@ -361,7 +363,7 @@ const ProteinFamilyView = (function() {
 
       this.set_chart_scales();
       d3Utils.clear_chart_dom(this._dom);
-      this.brushSVG = this.set_brush_SVG(this._dom, width, this.height+2.0*this.y_offset);
+      this.brushSVG = this.set_brush_SVG(this._dom, width+ this.x_offset, this.height+2.0*this.y_offset);
       /* let the caller know the width */
       return width;
     },

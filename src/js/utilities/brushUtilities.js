@@ -131,10 +131,8 @@ App.OVERVIEW_PADDLE   = 3;
 
   /* Factory Class for the Trend Image Brushes */
   App.BrushFactory =  {
-
     /* Create the trend image paddles*/
     createBrush: function(orientation) {
-
       /* Check the orientation */
       switch(orientation){
         case App.HORIZONTAL_PADDLE:
@@ -145,7 +143,6 @@ App.OVERVIEW_PADDLE   = 3;
           return _.assign( {}, new VerticalPaddle, new Brush );
       }
     }
-
   };
 
 })();

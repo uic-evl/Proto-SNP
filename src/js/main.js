@@ -50,7 +50,7 @@ var App = App || {};
         sortingView = new FilteringMenuView(sortingModel, { 'list' : $('#sorting_list') }),
         sortingController = new FilteringMenuController({
           menu : "sorting",
-          models: { list: sortingModel, connected: proteinFamilyModel},
+          models: { list: sortingModel, connected: [proteinFamilyModel]},
           view: sortingView,
           cb:
               function(model, element) {

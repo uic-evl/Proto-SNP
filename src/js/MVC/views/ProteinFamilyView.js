@@ -19,7 +19,7 @@ const ProteinFamilyView = (function() {
     self.y_offset = 0;
 
     self._parentDom = d3.select("#"+self._id);
-
+    self.spinnerDiv = null;
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded  = new EventNotification(this);
     self.fileUpdated   = new EventNotification(this);
@@ -307,14 +307,20 @@ const ProteinFamilyView = (function() {
           /* Setup the upload callback for files */
           App.fileUtilities.familyUploadSetup(splash.find("#fileupload-family"),
               function (data, extension) {
-                view.fileUploaded.notify({data: data, type: extension});
                 /* Remove the splash screen */
                 view._parentDom.select('#trendSplash').remove();
+                /* Add the loading spinner */
+                view.spinnerDiv.removeClass('hidden');
+                /* Update the model */
+                view.fileUploaded.notify({data: data, type: extension});
                 /* enable the upload button*/
                 view.initialize_file_open(d3.select('#settingsOpen'));
               });
         });
       }
+
+      /* Initialize the spinner */
+      view.spinnerDiv = $(view._parentDom.node()).append(App.spinner).find('.spinner');
     },
 
     /* Clear the view */

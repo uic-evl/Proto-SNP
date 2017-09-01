@@ -12,6 +12,7 @@ var App = App || {};
     App.fileUtilities = new FileUtilities();
     App.dataUtilities = new DatabaseMappingUtils();
     App.residueMappingUtility = new ResidueMappingUtility();
+    App.spinner = d3.select('.spinner').node();
 
     let leftProteinModel = new ProteinModel(), rightProteinModel = new ProteinModel(),
         leftTertiaryStructureView = new TertiaryStructureView(leftProteinModel, {id: "molecularViewerA", position:"left"}),

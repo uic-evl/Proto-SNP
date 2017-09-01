@@ -204,6 +204,7 @@ const ResidueFrequencyView = (function() {
     render : function(render_options) {
       /* Set the scales based on the new selection */
       this.set_scales(render_options.frequencies, this._familyMemberCount, render_options.residues);
+
       /* Render the bars */
       this.render_bars(render_options.frequencies, this._familyMemberCount);
       this.render_labels(render_options.frequencies);

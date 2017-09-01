@@ -116,11 +116,9 @@ const ProteinFamilyModel = (function() {
             myWorker.onmessage = function(response) {
               model.set_scores(response.data.algorithm, response.data.score);
               finished++;
-
               if(workers === finished){
                 $("#sorting_list").find("li").removeClass("disabled");
               }
-
             };
           });
         }
@@ -150,7 +148,7 @@ const ProteinFamilyModel = (function() {
           curFragments = [];
       fragments.forEach(function(fragment) {
         /* Get the highest occurring residue and it's frequency */
-        curFragments.push(_.max(_.toPairs(fragment), function(o){ return o[1] }));
+        curFragments.push(_.maxBy(_.toPairs(fragment), function(o){ return o[1] }));
       });
       return curFragments;
     },

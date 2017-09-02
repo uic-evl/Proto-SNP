@@ -121,6 +121,9 @@ const ResidueFrequencyView = (function() {
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
           .style("font-weight", "bold")
+          .style('cursor', 'default')
+        .append("svg:title")
+          .text(function(d, i) { return 'Most frequent: ' +  d[0] + ' \nOccurrences: ' + d[1] })
       ;
       /* Remove the unneeded frequency labels */
       frequencyText.exit().remove();
@@ -143,9 +146,15 @@ const ResidueFrequencyView = (function() {
           .text(function(d,i){ return '(' + (range[0] + i+1) + ') ' + d[0] })
           .style("text-anchor", "middle")
           .style("font-weight", "bold")
+          .style('cursor', 'default')
+        .append("svg:title")
+          .text(function(d, i) { return d[0] + ' at position ' + (range[0]+ i+1) })
+
+
       ;
       /* Remove the unneeded selection labels */
       selectionText.exit().remove();
+
       /* Update the color for matching residues*/
       self._svg.selectAll(".frequencies")
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })

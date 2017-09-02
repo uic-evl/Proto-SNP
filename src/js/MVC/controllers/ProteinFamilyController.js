@@ -95,7 +95,8 @@ const ProteinFamilyController = (function() {
           freqView.render({
             frequencies:frequencies,
             residues:currentProtein.sequence.slice(selection[0], selection[1]),
-            brush_pos: brushPos[0] + (brushPos[1]-brushPos[0])/2.0
+            brush_pos: brushPos[0] + (brushPos[1]-brushPos[0])/2.0,
+            range: [selection[0], selection[1]]
           });
         });
       });

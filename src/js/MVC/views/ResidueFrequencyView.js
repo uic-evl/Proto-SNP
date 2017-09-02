@@ -27,7 +27,7 @@ const ResidueFrequencyView = (function() {
       let selection = self._model.getSelectedResidues(options.semantic).selection,
           protein = msg.selection;
       /*Render the view */
-      self.update(protein.sequence.slice(selection[0], selection[1]));
+      self.update(protein.sequence.slice(selection[0], selection[1]), [selection[0], selection[1]]);
     });
 
     /* Update on vertical paddle move */
@@ -42,7 +42,8 @@ const ResidueFrequencyView = (function() {
       self.render({
         frequencies:frequencies,
         residues:protein.sequence.slice(selection[0], selection[1]),
-        brush_pos: selection[0]*options.block_size + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0
+        brush_pos: selection[0]*options.block_size + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0,
+        range: [selection[0], selection[1]]
       });
     });
 
@@ -125,7 +126,7 @@ const ResidueFrequencyView = (function() {
       frequencyText.exit().remove();
     };
 
-    self.update = function(selected_residues) {
+    self.update = function(selected_residues, range) {
       /* Add the residue text to the bars */
       let selectionText = self._svg.selectAll(".selectionText")
           .data(selected_residues);
@@ -139,7 +140,7 @@ const ResidueFrequencyView = (function() {
           .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2.0 })
           .attr("y", () => {return self.y_offset - self._barOffset;})
           .attr("dy", ".3em")
-          .text(function(d){ return d[0] })
+          .text(function(d,i){ return '(' + (range[0] + i+1) + ') ' + d[0] })
           .style("text-anchor", "middle")
           .style("font-weight", "bold")
       ;
@@ -209,7 +210,7 @@ const ResidueFrequencyView = (function() {
       this.render_bars(render_options.frequencies, this._familyMemberCount);
       this.render_labels(render_options.frequencies);
       /* Update the labels */
-      this.update(render_options.residues);
+      this.update(render_options.residues, render_options.range);
       /* Render the context bars */
       d3Utils.render_context_bars(this._svg,
         {

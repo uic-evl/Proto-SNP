@@ -112,28 +112,29 @@ const d3Utils = function () {
 
     /* Remove the unneeded bars */
     bar.exit().remove();
-  }
+  },
 
-      /* Create a customized context menu per right-click */
-  //   create_context_menu: function() {
-  //
-  //     /* Get the horizontal brush extent */
-  //     let brush_selection = d3.brushSelection(this);
-  //
-  //     /* Get the name of the protein currently selected*/
-  //     let selected_protein = brush_selection.map(trendImageViewer.yScale.invert)[0];
-  //
-  //     /* Return the customized context menu */
-  //     return [
-  //       {
-  //         title: function() {return "Load Protein: " + selected_protein; },
-  //         action: function() {
-  //           App.applicationModel.processProteinRequest({position: "left", protein_name: selected_protein});
-  //         },
-  //         disabled: false // optional, defaults to false
-  //       }
-  //     ];
-  // }
+    /* Create a customized context menu per right-click */
+  create_context_menu: function(model) {
+
+    let protein_name = model.getSelectedProtein().name,
+        mapping = model.getProteinMappings(protein_name);
+
+    /* Return the customized context menu */
+    return [
+      {
+        title: function() {
+          /* if there exists a mneumonic */
+          console.log(mapping);
+          return "Load Protein: " + protein_name;
+          },
+        action: function() {
+
+        },
+        disabled: false // optional, defaults to false
+      }
+    ];
+  }
 
   }
 

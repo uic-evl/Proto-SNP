@@ -34,6 +34,7 @@ const ProteinFamilyModel = (function() {
 
     self._proteinNames = null;
     self._parsedData = null;
+    self._mappings = null;
 
     /* Update Events */
     self.proteinFamilyAdded          = new EventNotification(this);
@@ -130,6 +131,7 @@ const ProteinFamilyModel = (function() {
     clear: function() {
       self._parsedData = null;
       self._rawData = null;
+      self._mappings = null;
       self._selectedProtein = null;
       self._selectedResidues = {left: [], right: []};
       self._previousSelectedResidues = {left: [], right: []};
@@ -165,11 +167,31 @@ const ProteinFamilyModel = (function() {
       return this._parsedData;
     },
 
+    getProteinMappings: function(name) {
+      return _.find(this._mappings, function(o) { return o.mnemonic === name});
+    },
+
     setProteinNames : function () {
+      let self = this;
       this._proteinNames = d3.set(this._rawData.map(function( residue )
       { return residue.name; } )).values();
       /* Set the initial selected protein to the first name */
       this.setSelectedProtein(this._proteinNames[0]);
+
+      /* Get the mnemonics of each protein */
+      let queryString = "";
+      this._proteinNames.forEach(function(name,i,all){
+        queryString += "mnemonic:" + name;
+        if(i < all.length-1){
+          queryString += "+OR+"
+        }
+      });
+      /* Query for the mnemonics */
+      App.dataUtilities.mneumonicToPDB(queryString)
+        .then(function(mapping){
+          self._mappings = mapping;
+        })
+        .catch(console.log.bind(console));
     },
 
     getProteinNames : function() { return this._proteinNames; },

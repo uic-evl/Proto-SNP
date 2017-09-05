@@ -10,11 +10,13 @@ const BrushView = (function() {
 
     self._model = model;
     self._scale = options.scale || null;
+    self._orientation = options.orientation;
+    self._tooltip = null;
 
     let block_size = options.block_size;
 
     /* set the initial selections */
-    if(options.orientation === App.OVERVIEW_PADDLE){
+    if(self._orientation === App.OVERVIEW_PADDLE){
       self._selection = options.position;
     }
     else {
@@ -107,6 +109,7 @@ const BrushView = (function() {
 
     initialize: function(options) {
       let view = this;
+
       /* Construct the brush based on the orientation */
       view.brushObj =
           App.BrushFactory.createBrush(options.orientation)
@@ -116,6 +119,15 @@ const BrushView = (function() {
               .setPaddleExtent(options.extent)
               .setInitialPosition(options.position)
               .onBrush(function(){ view.onBrush.call(this)} );
+
+      /* Add a tooltip if specified */
+      if(options.tooltip){
+        view._tooltip = d3.tip()
+          .attr('class', 'd3-tip')
+          .offset([-10, 0])
+          .html(options.tooltip);
+      }
+
     },
 
     getInitialPosition : function() { return this.brushObj.getInitialPosition(); },
@@ -140,21 +152,21 @@ const BrushView = (function() {
       /* Let d3 decide the best rendering for the brushes */
       brushObj.selectAll('.selection')
           .style("shape-rendering", "auto");
-      /* Set the context menu of the vertical brush */
-      // this.brush.select("g.brush.horizontal")
-      //     .on("contextmenu", d3.contextMenu(create_context_menu));
-  },
 
-    redraw: function(selection) {
-      /* Reset the opacity of unselected rows */
-      // d3.selectAll('rect.active_protein_selection')
-      //     .classed("active_protein_selection", false);
-      //
-      // /* Set the opacity of the highlighted row */
-      // d3.selectAll('#p' + selection + " > rect")
-      //     .classed("active_protein_selection", true);
-    }
-
+      /* add the context menu for the horizontal bar*/
+      if(this._orientation === App.HORIZONTAL_PADDLE) {
+        /* Set the context menu of the horizontal brush */
+        brushObj.select("rect.selection")
+          .on("contextmenu", d3.contextMenu(d3Utils.create_context_menu.bind(null,this._model)));
+      }
+      /* Add the tooltip if one was created */
+      if(this._tooltip){
+        brushObj.call(this._tooltip);
+        brushObj.select('rect.selection')
+          .on('mouseover', this._tooltip.show)
+          .on('mouseout', this._tooltip.hide);
+      }
+   },
   };
 
   return BrushView;

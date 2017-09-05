@@ -56,9 +56,9 @@ const ResidueFrequencyView = (function() {
 
       /* Extract and sort the pairs*/
       let ticks = y.ticks(),
-          tickSpacing = ticks[1] - ticks[0],
+          tickSpacing = Math.ceil((ticks[1] - ticks[0]) / 2.0),
         pairs = _.toPairs(raw[0]);
-        pairs = _.filter(pairs, function(o){ return o[1] > tickSpacing; });
+        pairs = _.filter(pairs, function(o){ return o[1] >= tickSpacing; });
         pairs.sort(function(a,b){ return b[1] - a[1];});
 
       raw[0] = _.fromPairs(pairs.slice(0,5));

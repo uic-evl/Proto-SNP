@@ -64,7 +64,7 @@ const ResidueFrequencyView = (function() {
         pairs = _.filter(pairs, function(o){ return o[1] > tickSpacing; });
         pairs.sort(function(a,b){ return b[1] - a[1];});
 
-      raw[0] = _.fromPairs(pairs);
+      raw[0] = _.fromPairs(pairs.slice(0,5));
 
       /* Get the keys*/
       let keys = _.keys(raw[0]);

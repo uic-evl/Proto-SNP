@@ -88,12 +88,13 @@ const ProteinFamilyController = (function() {
           /* Render the viewers depending on the brush's position */
           let brushPos = self._brushViews[freqSpec.semantic].getInitialPosition(),
             selection = _.map(brushPos, (o)=>{ return parseInt(o/freqSpec.block_size); }),
+            maxFrequencies  = self._model.getMaxSequenceFrequenciesFromRange(selection),
             frequencies  = self._model.getSequenceFrequenciesFromRange(selection);
           /* Set the initial selections in the model */
           self._model.setSelectedResidues(freqSpec.semantic, selection);
           /*Render the view */
           freqView.render({
-            frequencies:frequencies,
+            maxFrequencies:maxFrequencies,
             residues:currentProtein.sequence.slice(selection[0], selection[1]),
             brush_pos: brushPos[0] + (brushPos[1]-brushPos[0])/2.0,
             range: [selection[0], selection[1]]

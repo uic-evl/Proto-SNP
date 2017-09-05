@@ -26,3 +26,15 @@
     stroke: black;
     fill: none;
 }
+
+.axisPop text{
+    fill: white;
+}
+
+.axisPop line{
+    stroke: white;
+}
+
+.axisPop path{
+    stroke: white;
+}

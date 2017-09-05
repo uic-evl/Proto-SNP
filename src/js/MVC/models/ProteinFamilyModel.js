@@ -143,7 +143,7 @@ const ProteinFamilyModel = (function() {
       self._parsedData = null;
     },
 
-    getSequenceFrequenciesFromRange: function(range) {
+    getMaxSequenceFrequenciesFromRange: function(range) {
       let fragments = this._sequenceSortingAlgorithms.getFragmentCountsFromRange(range[0], range[1]),
           curFragments = [];
       fragments.forEach(function(fragment) {
@@ -151,6 +151,10 @@ const ProteinFamilyModel = (function() {
         curFragments.push(_.maxBy(_.toPairs(fragment), function(o){ return o[1] }));
       });
       return curFragments;
+    },
+
+    getSequenceFrequenciesFromRange: function(range) {
+      return this._sequenceSortingAlgorithms.getFragmentCountsFromRange(range[0], range[1]);
     },
 
     getSequenceFrequencyAt: function(position) {

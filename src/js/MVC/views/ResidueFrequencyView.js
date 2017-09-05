@@ -17,6 +17,71 @@ const ResidueFrequencyView = (function() {
     self._familyMemberCount = options.rows;
     self._svg = null;
     self._visible = false;
+    self.rangeFrequencies = null;
+
+    function createStackedBarChart(d,i) {
+      /* Show the tooltip*/
+      self.tip.show();
+
+      /* Render stacked bar of the frequencies */
+      let width = 75, height = 200,
+          margin = {top: 5, right: 20, bottom: 30, left: 20};
+
+      let x = d3.scaleBand()
+          .rangeRound([0, width])
+          .paddingInner(0.05)
+          .align(0.1),
+
+        y = d3.scaleLinear()
+          .rangeRound([height, 0]),
+
+      z = d3.scaleOrdinal()
+          .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
+      let tipSVG = d3.select("#tipDiv svg")
+          .append('g')
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
+
+       freq = self._model.getSequenceFrequenciesFromRange([i,i+1]),
+       keys = _.keys(freq[0]),
+       domains = [{column: i, data: freq[0]}];
+
+      /* Set the domains */
+      x.domain(domains.map(function(d) { return d.column; }));
+      y.domain([0, _.sum(_.values(freq[0]))]).nice();
+      z.domain(keys);
+
+      tipSVG.append("g")
+          .selectAll("g")
+          .data(d3.stack().keys(keys)(freq))
+          .enter().append("g")
+          .attr("fill", function(d) { return z(d.key); })
+          .selectAll("rect")
+          .data(function(d) { return d; })
+            .enter().append("rect")
+            .attr("x", function(d) { return 10 + x(domains[0].column); })
+            .attr("y", function(d) { return y(d[1]); })
+            .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+            .attr("width", 40);
+
+      tipSVG.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+
+      tipSVG.append("g")
+          .attr("class", "axisPop")
+          .call(d3.axisLeft(y).ticks(null, "s"))
+          .append("text")
+          .attr("x", 2)
+          .attr("y", y(y.ticks().pop()) + 0.5)
+          .attr("dy", "0.32em")
+          .attr("color", "#FFF")
+          .attr("font-weight", "bold")
+          .attr("text-anchor", "start")
+          // .text("Population")
+      ;
+    }
 
     /* Set the model listeners */
     /* Update on horizontal paddle move */
@@ -36,11 +101,11 @@ const ResidueFrequencyView = (function() {
       if(!self._visible || (msg.semantic !== options.semantic) ) return;
       /* Update the labels to the new selection */
       let selection = msg.selection,
-          frequencies = self._model.getSequenceFrequenciesFromRange(selection),
+          maxFrequencies = self._model.getMaxSequenceFrequenciesFromRange(selection),
           protein = self._model.getSelectedProtein();
       /*Render the view */
       self.render({
-        frequencies:frequencies,
+        maxFrequencies:maxFrequencies,
         residues:protein.sequence.slice(selection[0], selection[1]),
         brush_pos: selection[0]*options.block_size + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0,
         range: [selection[0], selection[1]]
@@ -59,12 +124,10 @@ const ResidueFrequencyView = (function() {
 
     /* Render the bars for each residue */
     self.render_bars = function(residue_frequencies, selected_residues) {
-
       /* Add the bars to the viewer */
       let bar = self._svg
           .selectAll(".freq_bars")
           .data(residue_frequencies);
-
       // UPDATE: add new elements if needed
       bar
           .enter().append('g')
@@ -76,6 +139,8 @@ const ResidueFrequencyView = (function() {
           .attr("height", self.bar_height)
           .attr('y', function(d) { return self.y_offset; })
           .attr('x', function(d, i) { return self.xScale(i) })
+          .on('mouseover', createStackedBarChart.bind(self))
+          .on('mouseout', this.tip.hide)
           .style("fill", "white");
 
       /* Remove the unneeded bars */
@@ -96,15 +161,15 @@ const ResidueFrequencyView = (function() {
           .attr('y', function(d) { return self.yScale(d[1]) + self.y_offset; })
           .attr("width", self.glyph_width)
           .attr("height", function(d) { return ( self.bar_height - self.yScale(d[1]) )  })
+          .on('mouseover', createStackedBarChart)
+          .on('mouseout', this.tip.hide)
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
       ;
-
       /* Remove the unneeded frequency bars */
       frequency.exit().remove();
     };
 
     self.render_labels = function(residue_frequencies){
-
       /* Add the residue text to the bars */
       let frequencyText = self._svg.selectAll(".residueText")
           .data(residue_frequencies);
@@ -149,8 +214,6 @@ const ResidueFrequencyView = (function() {
           .style('cursor', 'default')
         .append("svg:title")
           .text(function(d, i) { return d[0] + ' at position ' + (range[0]+ i+1) })
-
-
       ;
       /* Remove the unneeded selection labels */
       selectionText.exit().remove();
@@ -159,7 +222,6 @@ const ResidueFrequencyView = (function() {
       self._svg.selectAll(".frequencies")
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
     };
-
       /* Initialize the viewer */
     self.initialize(options);
   }
@@ -167,10 +229,8 @@ const ResidueFrequencyView = (function() {
   ResidueFrequencyView.prototype = {
 
     initialize : function (options) {
-
       /* Show the viewer */
       this._parent.classed("hidden", false);
-
       /* Set the DOM's width/height so it centers in it's parent */
       this._parent
           .style("width", options.width)
@@ -195,6 +255,16 @@ const ResidueFrequencyView = (function() {
       /* Clear the dom element */
       d3Utils.clear_chart_dom(this._dom);
       this._svg = d3Utils.create_chart_svg(this._dom, {width:this.width, height:this.height});
+
+      /* Initialize tooltip */
+      this.tip = d3.tip()
+          .attr('class', 'd3-tip')
+          .offset([-10, 0])
+          .html("<div id='tipDiv'><svg style='height: 200px; width:75px;'></svg></div>");
+
+      /* Invoke the tooltip */
+      this._svg.call(this.tip);
+
       this.range = [options.offset*2, this.width];
       let scale = d3.scaleLinear().domain([0, options.max_items]).range(this.range),
         y_position = this._barOffset/2.0,
@@ -213,17 +283,16 @@ const ResidueFrequencyView = (function() {
 
     render : function(render_options) {
       /* Set the scales based on the new selection */
-      this.set_scales(render_options.frequencies, this._familyMemberCount, render_options.residues);
-
+      this.set_scales(render_options.maxFrequencies, this._familyMemberCount, render_options.residues);
       /* Render the bars */
-      this.render_bars(render_options.frequencies, this._familyMemberCount);
-      this.render_labels(render_options.frequencies);
+      this.render_bars(render_options.maxFrequencies, this._familyMemberCount);
+      this.render_labels(render_options.maxFrequencies);
       /* Update the labels */
       this.update(render_options.residues, render_options.range);
       /* Render the context bars */
       d3Utils.render_context_bars(this._svg,
         {
-          x: (this.semantic==="left") ? render_options.brush_pos:render_options.brush_pos-this.width,
+          x: (this.semantic==="left") ? render_options.brush_pos : render_options.brush_pos-this.width,
           y: 1,
           height: 10,
           width:1
@@ -232,7 +301,5 @@ const ResidueFrequencyView = (function() {
       this._visible = true;
     },
   };
-
   return ResidueFrequencyView;
-
 })();

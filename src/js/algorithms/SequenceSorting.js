@@ -13,6 +13,7 @@ const SequenceSorting = function(family){
 
   /* Return the list of algorithms */
   function get_algorithms() { return algorithms; }
+
   /* Get the fragment frequency */
   function get_fragment_counts_at(column_index) {
     /* return the fragment that occurs the most often in the column */
@@ -29,7 +30,6 @@ const SequenceSorting = function(family){
     /* Reset localMax to an object*/
     return _.fromPairs(dupes);
   }
-
 
   /* Get the residue frequency from range */
   function get_fragment_counts_from_range(column_index_start, column_index_end) {

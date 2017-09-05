@@ -28,7 +28,10 @@ const ResidueFrequencyView = (function() {
 
       /* Render stacked bar of the frequencies */
       let height = self._calloutHeight, width = self._calloutWidth,
-          margin = {top: 10, right: 20, bottom: 30, left: 20};
+          margin = {top: 10, right: 20, bottom: 30, left: 25};
+
+      /* Select the colormap*/
+      let colorMap = App.residueMappingUtility.getColor("Side Chain Class");
 
       let x = d3.scaleBand()
           .rangeRound([0, width])
@@ -48,26 +51,30 @@ const ResidueFrequencyView = (function() {
       /* Get the raw column data*/
       range = self.frequencyRange[0] + i,
       raw = self._model.getSequenceFrequenciesFromRange([range,range+1]),
-      /* Extract and sort the pairs*/
-      pairs = _.toPairs(raw[0]);
-      pairs.sort(function(a,b){ return b[1] - a[1];});
-      /* reassign the sorted data*/
-      raw[0] = _.fromPairs(pairs);
-      /* Get the keys*/
-      let keys = _.keys(raw[0]),
       domains = [{column: i, data: raw[0]}];
 
       /* Set the domains */
       x.domain(domains.map(function(d) { return d.column; }));
       y.domain([0, _.sum(_.values(raw[0]))]).nice();
-      z.domain(keys);
+
+      /* Extract and sort the pairs*/
+      let ticks = y.ticks(),
+          tickSpacing = ticks[1] - ticks[0],
+        pairs = _.toPairs(raw[0]);
+        pairs = _.filter(pairs, function(o){ return o[1] > tickSpacing; });
+        pairs.sort(function(a,b){ return b[1] - a[1];});
+
+      raw[0] = _.fromPairs(pairs);
+
+      /* Get the keys*/
+      let keys = _.keys(raw[0]);
 
       /* Render the bars */
       let g = tipSVG.append("g")
           .selectAll("g")
           .data(d3.stack().keys(keys)(raw))
           .enter().append("g")
-          .attr("fill", function(d) { return z(d.key); });
+          .attr("fill", function(d) { return colorMap(d.key).code; });
 
       g.selectAll("rect")
           .data(function(d) { return d; })

@@ -10,10 +10,13 @@ const BrushView = (function() {
 
     self._model = model;
     self._scale = options.scale || null;
+    self._orientation = options.orientation;
+
+    self.overlays = [];
 
     let block_size = options.block_size;
 
-    /* set the initial selections */
+    /* Set the initial selections */
     if(options.orientation === App.OVERVIEW_PADDLE){
       self._selection = options.position;
     }
@@ -23,17 +26,16 @@ const BrushView = (function() {
 
     /* Initialize the d3 brush */
     self.initialize(options);
+
     /* Brush event handlers */
     self.brushMoved = new EventNotification(this);
 
     /* Bind the event listens */
     self._model.selectedProteinChanged.attach(function(sender, msg) {
-      // TODO Update overlays that make everything else opaque
-      //self.redraw(msg.selection);
+      self.redraw(App.HORIZONTAL_PADDLE, msg);
     });
     self._model.selectedResiduesChanged.attach(function(sender, msg){
-      // TODO Update overlays that make everything else opaque
-      // self.redraw(msg.selection);
+      self.redraw(App.VERTICAL_PADDLE, msg);
     });
 
     /* Utility to clamp the brush sizes */
@@ -143,11 +145,66 @@ const BrushView = (function() {
       /* Set the context menu of the vertical brush */
       // this.brush.select("g.brush.horizontal")
       //     .on("contextmenu", d3.contextMenu(create_context_menu));
+
+      /* Add the overlay masks */
+      /* 6 Masks: left/right of both vertical paddles, above/below the horizontal paddle */
+      let parent = brushObj.node().parentNode,
+          y = parseInt(brushObj.selectAll('rect.selection').attr('y')),
+          bar_height     = parseInt(brushObj.selectAll('rect.selection').attr('height')),
+          overlay_height = parseInt(brushObj.selectAll('rect.overlay').attr('height')),
+          overlay_width = parseInt(brushObj.selectAll('rect.overlay').attr('width')),
+          coordinates = [], class_name = "";
+      /* Orientation specific settings */
+      if(this._orientation === App.HORIZONTAL_PADDLE){
+        /* The coordinates of opaque covers */
+        coordinates = [
+            {x:0, y:y, width:overlay_width, height:y},
+            {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(y+bar_height)}
+        ];
+        class_name = 'horizontal_covers';
+      }
+      else if(this._orientation === App.VERTICAL_PADDLE) {
+        /* The coordinates of opaque covers */
+        coordinates = [
+          {x:0, y:y, width:overlay_width, height:y},
+          {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(y+bar_height)}
+        ];
+        class_name = 'vertical_covers';
+      }
+      /* Append the two covers to the brush svg */
+      d3.select(parent)
+          .selectAll(class_name)
+          .data(coordinates, function(d){return d;})
+          .enter().append('rect')
+          .attr("class", class_name)
+          .attr("transform", function(d){return "translate(" + d.x +","+ d.y +")"})
+          .attr('width',  function(d){ return d.width; })
+          .attr('height', function(d){ return d.height; })
+      ;
   },
 
-    redraw: function(selection) {
+    redraw: function(data) {
+      if(this._orientation === App.HORIZONTAL_PADDLE) {
+
+      }
+      else if(this._orientation === App.VERTICAL_PADDLE) {
+        let brush = null, x, y;
+        /* Get the brush that moved */
+        if(data.semantic === "left"){
+          brush = d3.select('g.vertical-left rect.selection');
+        }
+        else if(data.semantic === "right"){
+          brush = d3.select('g.vertical-right rect.selection');
+        }
+        /* Get the new positions */
+        x = brush.attr('x');
+        y = brush.attr('y');
+
+
+      }
+
       /* Reset the opacity of unselected rows */
-      // d3.selectAll('rect.active_protein_selection')
+      // d3.selectAll('rect.horizontal_covers')
       //     .classed("active_protein_selection", false);
       //
       // /* Set the opacity of the highlighted row */

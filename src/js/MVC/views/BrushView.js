@@ -117,39 +117,29 @@ const BrushView = (function() {
       if(self._orientation === App.HORIZONTAL_PADDLE){
         /* The coordinates of opaque covers */
         coordinates = [
-          {x:0, y:y, width:overlay_width, height:y},
-          {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(y+bar_height)}
+          /* Overlays above and below the horizontal paddle */
+          {x:0, y:y, width:overlay_width, height:y, class_name:'horizontal_covers trend_covers'},
+          {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(y+bar_height), class_name:'horizontal_covers trend_covers'},
+          /* Overlays to the left of the left paddle */
+          {x:0, y:y, width:0, height:y,class_name:'left_vertical_covers vertical_covers trend_covers'},
+          {x:0, y:y+bar_height, width:0, height:overlay_height-(y+bar_height),class_name:'left_vertical_covers vertical_covers trend_covers' },
+          /* Overlays to the left of the right paddle */
+          {x:overlay_width, y:y, width:0, height:y,class_name:'right_vertical_covers vertical_covers trend_covers'},
+          {x:overlay_width, y:y+bar_height, width:0, height:overlay_height-(y+bar_height),class_name:'right_vertical_covers vertical_covers trend_covers' }
         ];
-        class_name = 'horizontal_covers';
-
-        d3.select(parent)
-            .selectAll(class_name)
-            .data(coordinates, function(d){return d;})
-            .enter().append('rect')
-            .attr("class", class_name)
-            .attr("x", function(d){return d.x})
-            .attr("y", function(d){return d.y})
-            .attr('width',  function(d){ return d.width; })
-            .attr('height', function(d){ return d.height; });
-
       }
-      // else if(self._orientation === App.VERTICAL_PADDLE) {
-      //   /* The coordinates of opaque covers */
-      //   coordinates = [
-      //     {x:0, y:y, width:overlay_width, height:y},
-      //     {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(y+bar_height)}
-      //   ];
-      //   class_name = 'vertical_covers';
-      // }
+
       /* Append the two covers to the brush svg */
-      // d3.select(parent)
-      //     .selectAll(class_name)
-      //     .data(coordinates, function(d){return d;})
-      //     .enter().append('rect')
-      //     .attr("class", class_name)
-      //     .attr("transform", function(d){return "translate(" + d.x +","+ d.y +")"})
-      //     .attr('width',  function(d){ return d.width; })
-      //     .attr('height', function(d){ return d.height; });
+      d3.select(parent)
+          .selectAll("paddle_overlays")
+          .data(coordinates, function(d){return d;})
+          .enter().append('rect')
+          .attr("class", function(d){return d.class_name})
+          .attr("x", function(d){return d.x})
+          .attr("y", function(d){return d.y})
+          .attr('width',  function(d){ return d.width; })
+          .attr('height', function(d){ return d.height; })
+          .attr('fill', '#ecf0f1')
     };
   }
 
@@ -225,12 +215,19 @@ const BrushView = (function() {
         brush = d3.select('g.horizontal rect.selection');
         y = parseInt(brush.attr('y'));
         height = parseInt(brush.attr('height'));
+
+        /* Resize the horizontal covers */
         d3.selectAll("rect.horizontal_covers")
            .attr("y", function(d,i){ return ((i)?(y+height):d.y)})
-           .attr("height", function(d,i) { return (i)?overview_height-(y+height):y })
+           .attr("height", function(d,i) { return (i)?overview_height-(y+height):y });
+        /* Resize the vertical covers */
+        d3.selectAll("rect.vertical_covers")
+          .attr("y", function(d,i){ return ( !((i+1)%2) ?(y+height):d.y)})
+          .attr("height", function(d,i) { return !((i+1)%2) ? overview_height-(y+height):y });
       }
 
       else if(paddle === App.VERTICAL_PADDLE) {
+        let overview_width = parseInt(d3.select('g.horizontal rect.overlay').attr('width'));
 
         /* Get the brush that moved */
         if(data.semantic === "left"){
@@ -241,25 +238,34 @@ const BrushView = (function() {
           x = parseInt(brush.attr('x'));
           width = parseInt(brush.attr('width'));
 
-          /* reposition the starting point of the horizontal covers */
+          /* reposition the x of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
               .attr("x", (x+width))
               .attr('width', parseInt(brush_right.attr("x")) - (x+width));
+
+          /* Reposition the x of the left vertical overlays */
+          d3.selectAll('rect.left_vertical_covers')
+            .attr('width', x);
         }
         else if(data.semantic === "right"){
-          let brush_left = d3.select('g.vertical-left rect.selection');
+          let brush_left = d3.select('g.vertical-left rect.selection'),
+            width_left = parseInt(brush_left.attr('width'));
+
           brush = d3.select('g.vertical-right rect.selection');
 
           /* Get the new positions */
           x = parseInt(brush.attr('x'));
-          width = parseInt(brush_left.attr('width'));
+          width = parseInt(brush.attr('width'));
 
           /* reposition the width of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
-              .attr('width', x - (parseInt(brush_left.attr("x"))+width) );
+              .attr('width', x - (parseInt(brush_left.attr("x"))+width_left) );
+
+          /* Reposition the x of the right vertical overlays */
+          d3.selectAll('rect.right_vertical_covers')
+            .attr('x', x + width)
+            .attr('width', overview_width - (x + width));
         }
-
-
 
       }
    }

@@ -219,41 +219,47 @@ const BrushView = (function() {
 
     redraw: function(paddle, data) {
       let brush = null, x, y, width, height;
+
       if(paddle === App.HORIZONTAL_PADDLE) {
+        let overview_height = parseInt(d3.select('g.horizontal rect.overlay').attr('height'));
         brush = d3.select('g.horizontal rect.selection');
         y = parseInt(brush.attr('y'));
         height = parseInt(brush.attr('height'));
-        let overview_height = parseInt(d3.select('g.horizontal rect.overlay').attr('height'));
         d3.selectAll("rect.horizontal_covers")
            .attr("y", function(d,i){ return ((i)?(y+height):d.y)})
            .attr("height", function(d,i) { return (i)?overview_height-(y+height):y })
       }
+
       else if(paddle === App.VERTICAL_PADDLE) {
-        let overview_width = parseInt(d3.select('g.horizontal rect.overlay').attr('width'));
+
         /* Get the brush that moved */
         if(data.semantic === "left"){
+          let brush_right = d3.select('g.vertical-right rect.selection');
           brush = d3.select('g.vertical-left rect.selection');
-          /* Get the new positions */
 
+          /* Get the new positions */
           x = parseInt(brush.attr('x'));
           width = parseInt(brush.attr('width'));
 
           /* reposition the starting point of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
               .attr("x", (x+width))
-              .attr('width', function(d){ console.log(x, width); return x - width })
+              .attr('width', parseInt(brush_right.attr("x")) - (x+width));
         }
         else if(data.semantic === "right"){
+          let brush_left = d3.select('g.vertical-left rect.selection');
           brush = d3.select('g.vertical-right rect.selection');
+
           /* Get the new positions */
           x = parseInt(brush.attr('x'));
-          width = parseInt(brush.attr('width'));
+          width = parseInt(brush_left.attr('width'));
 
           /* reposition the width of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
-              .attr('width', function(d){ console.log(x, width); return x - width });
-
+              .attr('width', x - (parseInt(brush_left.attr("x"))+width) );
         }
+
+
 
       }
    }

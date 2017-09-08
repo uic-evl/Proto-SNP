@@ -39,7 +39,8 @@ const ProteinFamilyView = (function() {
           {
             orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
             extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]], block_size: self.residue_glyph_size,
-            position: [self.y_offset, self.residue_glyph_size+self.y_offset]
+            position: [self.y_offset, self.residue_glyph_size+self.y_offset],
+            tooltip: function(d) { return self._model.getSelectedProtein().name; }
           }, {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
             class:"brush vertical-left", extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]],
@@ -310,7 +311,7 @@ const ProteinFamilyView = (function() {
                 /* Remove the splash screen */
                 view._parentDom.select('#trendSplash').remove();
                 /* Add the loading spinner */
-                view.spinnerDiv.removeClass('hidden');
+                // view.spinnerDiv.removeClass('hidden');
                 /* Update the model */
                 view.fileUploaded.notify({data: data, type: extension});
                 /* enable the upload button*/
@@ -318,7 +319,6 @@ const ProteinFamilyView = (function() {
               });
         });
       }
-
       /* Initialize the spinner */
       view.spinnerDiv = $(view._parentDom.node()).append(App.spinner).find('.spinner');
     },

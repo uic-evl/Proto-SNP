@@ -39,12 +39,9 @@ const ResidueFrequencyView = (function() {
           .align(0.1),
 
         y = d3.scaleLinear()
-          .rangeRound([height, 0]),
+          .rangeRound([height, 0]);
 
-      z = d3.scaleOrdinal()
-          .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-      let tipSVG = d3.select("#tipDiv svg")
+      let tipSVG = d3.select("#"+self.semantic+"tipDiv svg")
           .append('g')
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")"),
 
@@ -59,9 +56,9 @@ const ResidueFrequencyView = (function() {
 
       /* Extract and sort the pairs*/
       let ticks = y.ticks(),
-          tickSpacing = ticks[1] - ticks[0],
+          tickSpacing = Math.ceil((ticks[1] - ticks[0]) / 2.0),
         pairs = _.toPairs(raw[0]);
-        pairs = _.filter(pairs, function(o){ return o[1] > tickSpacing; });
+        pairs = _.filter(pairs, function(o){ return o[1] >= tickSpacing; });
         pairs.sort(function(a,b){ return b[1] - a[1];});
 
       raw[0] = _.fromPairs(pairs.slice(0,5));
@@ -294,7 +291,7 @@ const ResidueFrequencyView = (function() {
       this.tip = d3.tip()
           .attr('class', 'd3-tip')
           .offset([-10, 0])
-          .html("<div id='tipDiv'><svg style='height:" + (self._calloutHeight+15) + "px; width:" + self._calloutWidth + "px;'></svg></div>");
+          .html("<div id='"+this.semantic+"tipDiv'><svg style='height:" + (self._calloutHeight+15) + "px; width:" + self._calloutWidth + "px;'></svg></div>");
 
       /* Invoke the tooltip */
       this._svg.call(this.tip);

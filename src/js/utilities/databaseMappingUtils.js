@@ -16,25 +16,30 @@ const DatabaseMappingUtils = function(){
   function map_mneumonic_to_PDB(mneumonic){
     return new Promise(function(resolve, reject) {
       /* Use d3 to query UniProt for the tab-separated name conversion*/
-      d3.tsv("http://www.uniprot.org/uniprot/?query=mneumonic:" + mneumonic +
-          "+AND+database:pdb&format=tab&compress=no&columns=id,database(PDB)", function(data) {
+      d3.tsv("http://www.uniprot.org/uniprot/?query=" + mneumonic +
+          "&format=tab&compress=no&columns=entry name,database(PDB)", function(data) {
 
         /* No model exists */
         if(!data[0]){
           /* reject and exit  */
-          reject("");
+          reject(null);
           return;
         }
 
+        let parsedData = [];
+
         /* Add the retrieved names to the dictionary */
-        let mappedName = {
-          "PDB" : data[0]["Cross-reference (PDB)"].split(";")[0],
-          "Uniprot" : data[0]["Entry"]
-        };
-        mappingUtils.mappedProteins[mneumonic] = mappedName;
+        data.forEach(function(d){
+          parsedData.push( {
+            "PDB" : _.dropRight(d["Cross-reference (PDB)"].split(";")),
+            "mnemonic" : d["Entry name"]
+          });
+        });
+
+        // mappingUtils.mappedProteins[mneumonic] = mappedName;
 
         /* Resolve the promise with the converted name*/
-        resolve(mappedName.PDB)
+        resolve(parsedData)
       });
     });
   }

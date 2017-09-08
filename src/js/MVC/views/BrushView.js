@@ -118,19 +118,18 @@ const BrushView = (function() {
         /* The coordinates of opaque covers */
         coordinates = [
           /* Overlays above and below the horizontal paddle */
-          {x:0, y:y, width:overlay_width, height:y, class_name:'horizontal_covers trend_covers'},
-          {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(y+bar_height), class_name:'horizontal_covers trend_covers'},
+          {x:0, y:y, width:overlay_width, height:0, class_name:'horizontal_covers trend_covers'},
+          {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height), class_name:'horizontal_covers trend_covers'},
           /* Overlays to the left of the left paddle */
           {x:0, y:y, width:0, height:y,class_name:'left_vertical_covers vertical_covers trend_covers'},
-          {x:0, y:y+bar_height, width:0, height:overlay_height-(y+bar_height),class_name:'left_vertical_covers vertical_covers trend_covers' },
+          {x:0, y:y+bar_height, width:0, height:overlay_height-(bar_height),class_name:'left_vertical_covers vertical_covers trend_covers' },
           /* Overlays to the left of the right paddle */
           {x:overlay_width, y:y, width:0, height:y,class_name:'right_vertical_covers vertical_covers trend_covers'},
-          {x:overlay_width, y:y+bar_height, width:0, height:overlay_height-(y+bar_height),class_name:'right_vertical_covers vertical_covers trend_covers' }
+          {x:overlay_width, y:y+bar_height, width:0, height:overlay_height-(bar_height),class_name:'right_vertical_covers vertical_covers trend_covers' }
         ];
-      }
 
-      /* Append the two covers to the brush svg */
-      d3.select(parent)
+        /* Append the two covers to the brush svg */
+        d3.select(parent)
           .selectAll("paddle_overlays")
           .data(coordinates, function(d){return d;})
           .enter().append('rect')
@@ -139,7 +138,8 @@ const BrushView = (function() {
           .attr("y", function(d){return d.y})
           .attr('width',  function(d){ return d.width; })
           .attr('height', function(d){ return d.height; })
-          .attr('fill', '#ecf0f1')
+          .attr('fill', '#ecf0f1');
+      }
     };
   }
 
@@ -218,12 +218,15 @@ const BrushView = (function() {
 
         /* Resize the horizontal covers */
         d3.selectAll("rect.horizontal_covers")
-           .attr("y", function(d,i){ return ((i)?(y+height):d.y)})
-           .attr("height", function(d,i) { return (i)?overview_height-(y+height):y });
+           .attr("y", function(d,i){
+             return ((i)?(y+height):d.y)})
+           .attr("height", function(d,i) {
+             return (i) ? overview_height-(y+height-d.y) : y-d.y;
+           });
         /* Resize the vertical covers */
         d3.selectAll("rect.vertical_covers")
           .attr("y", function(d,i){ return ( !((i+1)%2) ?(y+height):d.y)})
-          .attr("height", function(d,i) { return !((i+1)%2) ? overview_height-(y+height):y });
+          .attr("height", function(d,i) { return !((i+1)%2) ? overview_height-(y+height-d.y) : y-d.y });
       }
 
       else if(paddle === App.VERTICAL_PADDLE) {

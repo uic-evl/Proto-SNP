@@ -179,19 +179,19 @@ const ProteinFamilyModel = (function() {
       this.setSelectedProtein(this._proteinNames[0]);
 
       /* Get the mnemonics of each protein */
-      let queryString = "";
-      this._proteinNames.forEach(function(name,i,all){
-        queryString += "mnemonic:" + name;
-        if(i < all.length-1){
-          queryString += "+OR+"
-        }
-      });
-      /* Query for the mnemonics */
-      App.dataUtilities.mneumonicToPDB(queryString)
-        .then(function(mapping){
-          self._mappings = mapping;
-        })
-        .catch(console.log.bind(console));
+      // let queryString = "";
+      // this._proteinNames.forEach(function(name,i,all){
+      //   queryString += "mnemonic:" + name;
+      //   if(i < all.length-1){
+      //     queryString += "+OR+"
+      //   }
+      // });
+      // /* Query for the mnemonics */
+      // App.dataUtilities.mneumonicToPDB(queryString)
+      //   .then(function(mapping){
+      //     self._mappings = mapping;
+      //   })
+      //   .catch(console.log.bind(console));
     },
 
     getProteinNames : function() { return this._proteinNames; },

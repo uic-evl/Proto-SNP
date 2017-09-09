@@ -43,7 +43,7 @@ const ProteinModel = (function() {
 
         /* If the name is greater than 4 characters, it is not PDB format*/
         if(metadata.protein_name.length > 4) {
-          protein_name = App.dataUtilities.mneumonicToPDB(metadata.protein_name);
+          protein_name = App.dataUtilities.mnemonicToPDB(metadata.protein_name);
         }
 
         /* Fetch/Load the model from RCMP PDB */

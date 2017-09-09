@@ -52,7 +52,7 @@ const ProteinFamilyView = (function() {
             block_size: self.residue_glyph_size, semantic: "right",
             position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
         ],
-            frequencyViewers : [
+      frequencyViewers : [
         {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
           block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
           overview: self.overviewImage},
@@ -66,15 +66,16 @@ const ProteinFamilyView = (function() {
 
     /* Builds the brush that lies on top of the overview */
     function build_overview_brush(width, height) {
-      let count = self._model.getProteinCount(),
-          overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1),
+      /* Get the calculated margin of the family viewer to align the frequency viewer */
+      let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
+          count = self._model.getProteinCount(),
+          overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1) - margin,
           block_size = height / count,
           scale = d3.scaleLinear()
               .domain([0, count])
               .range([self.y_offset, height+self.y_offset]);
-      self.brushPaddleSize = Math.round(self.ppv * block_size);
-
-          /* Return the specs for the new */
+      self.brushPaddleSize = Math.floor(self.ppv * block_size);
+      /* Return the specs for the new */
       return {
         orientation: App.OVERVIEW_PADDLE,
         width:  overview_width,
@@ -94,7 +95,8 @@ const ProteinFamilyView = (function() {
     self.render_overview = function() {
       return new Promise(function(resolve, reject){
         /* Create the overview if the image runs off the page*/
-        let overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1),
+        let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
+            overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1) - margin,
             /* The overview will be 1/10th of the view */
             overview = new Image();
         /* Add the image to the canvas once it is loaded */
@@ -109,7 +111,7 @@ const ProteinFamilyView = (function() {
 
     self.initialize_back_buffer = function(family, colorMapping) {
       /* Find the width of the div */
-      let width = (self.overviewImage) ? parseInt(self.width*1.1) : self.width;
+      let width = (self.overviewImage) ? Math.round(self.width*1.1) : self.width;
       /* First, clear the canvas*/
       self.backBufferContext.clearRect(0, 0, width, self._backBufferHeight);
       return new Promise(function(resolve, reject) {
@@ -179,7 +181,7 @@ const ProteinFamilyView = (function() {
         else {
           self.width = viewer_width;
         }
-        proteins_per_view = Math.floor(new_height/residue_width);
+        proteins_per_view = Math.round(new_height/residue_width);
         self.height = proteins_per_view * residue_width;
       }
       this.set_glyph_size(residue_width);
@@ -430,7 +432,6 @@ const ProteinFamilyView = (function() {
     getXDimensionSize: function() { return this.x_axis_length; },
 
     getYDimensionSize: function() { return this.y_axis_length; }
-
 };
   return ProteinFamilyView;
 })();

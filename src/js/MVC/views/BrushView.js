@@ -140,6 +140,13 @@ const BrushView = (function() {
           .attr('height', function(d){ return d.height; })
           .attr('fill', '#ecf0f1');
       }
+      else if(self._orientation === App.OVERVIEW_PADDLE){
+        coordinates = [
+          /* Overlays above and below the overview paddle */
+          {x:0, y:y, width:overlay_width, height:0, class_name:'horizontal_covers trend_covers'},
+          {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height), class_name:'horizontal_covers trend_covers'}
+          ];
+      }
     };
   }
 

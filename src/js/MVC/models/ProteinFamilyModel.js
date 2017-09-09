@@ -179,15 +179,34 @@ const ProteinFamilyModel = (function() {
       this.setSelectedProtein(this._proteinNames[0]);
 
       /* Get the mnemonics of each protein */
-      // let queryString = "";
-      // this._proteinNames.forEach(function(name,i,all){
-      //   queryString += "mnemonic:" + name;
-      //   if(i < all.length-1){
-      //     queryString += "+OR+"
-      //   }
-      // });
+      let queryString = [];
+      this._proteinNames.forEach(function(name,i,all){
+        if(name.length === 4){
+          queryString.push(name);
+        }
+        // queryString += "mnemonic:" + name;
+        // if(i < all.length-1){
+        //   queryString += "+OR+"
+        // }
+      });
+      App.dataUtilities.checkPDBs(queryString.join(','))
+          .then(function(data){
+
+            // Convert the XML document to an array of objects.
+            // Note that querySelectorAll returns a NodeList, not a proper Array,
+            // so we must use map.call to invoke array methods.
+            let parsedData = [].map.call(data.querySelectorAll("record"), function(record) {
+              let record_selector = d3.select(record);
+              return{
+                pdb: record_selector.attr("structureId"),
+                status: record_selector.attr("status")
+              };
+            });
+            /* Set the mappings from the result */
+            self._mappings = mapping;
+          });
       // /* Query for the mnemonics */
-      // App.dataUtilities.mneumonicToPDB(queryString)
+      // App.dataUtilities.mnemonicToPDB(queryString)
       //   .then(function(mapping){
       //     self._mappings = mapping;
       //   })

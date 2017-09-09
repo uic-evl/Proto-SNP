@@ -119,6 +119,7 @@ const d3Utils = function () {
 
     let protein_name = model.getSelectedProtein().name,
         mapping = model.getProteinMappings(protein_name);
+    console.log(mapping);
 
     /* Return the customized context menu */
     return [

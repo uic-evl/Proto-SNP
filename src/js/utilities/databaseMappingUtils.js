@@ -49,12 +49,31 @@ const DatabaseMappingUtils = function(){
         resolve(data);
       });
     });
+  }
 
+  function uniprot_retrieve_identifiers(query) {
+    return new Promise(function(resolve, reject){
+      $.post("http://www.uniprot.org/uploadlists/",
+        { 'from': 'ACC+ID',
+          'to':'ACC',
+          'format': 'tab',
+          'columns' : 'id,entry_name,reviewed,protein_names,length,database(PDB)',
+          'query':query})
+        .done(function(data){
+          resolve([].map.call(d3.tsvParse(data), function(record) {
+            return {
+              pdb: record['Cross-reference (PDB)'],
+              id: record['Entry name']
+            }
+          }));
+        })
+    });
   }
 
   return {
     mnemonicToPDB : map_mnemonic_to_PDB,
-    checkPDBs: check_PDB_names
+    checkPDBs: check_PDB_names,
+    queryForUniprotIdentifiers: uniprot_retrieve_identifiers
   };
 
 };

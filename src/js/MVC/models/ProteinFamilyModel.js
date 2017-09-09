@@ -34,7 +34,7 @@ const ProteinFamilyModel = (function() {
 
     self._proteinNames = null;
     self._parsedData = null;
-    self._mappings = null;
+    self._mappings = {};
 
     /* Update Events */
     self.proteinFamilyAdded          = new EventNotification(this);
@@ -43,6 +43,9 @@ const ProteinFamilyModel = (function() {
     /* Menu Filtering */
     self.proteinSortingChanged       = new EventNotification(this);
     self.proteinColoringChanged      = new EventNotification(this);
+
+    /* Promises */
+    self.mappingPromise = null;
 
     /* Setter for the different types of similarity scores */
     self.set_scores = function(metric, scores) {
@@ -87,8 +90,10 @@ const ProteinFamilyModel = (function() {
     setFamily : function(data, type) {
       this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
       map_trend_image_data(this._rawData).then(function(parsed_data) {
+
         this._parsedData = parsed_data;
         this.setProteinNames();
+        this.mappingPromise = App.promiseUtilities.makeQueryablePromise(this.setProteinMappings());
 
         /* Setup the sequence sorting algorithms and calculate the initial scores */
         this._sequenceSortingAlgorithms = new SequenceSorting(this._rawData);
@@ -129,20 +134,21 @@ const ProteinFamilyModel = (function() {
     },
 
     clear: function() {
-      self._parsedData = null;
-      self._rawData = null;
-      self._mappings = null;
-      self._selectedProtein = null;
-      self._selectedResidues = {left: [], right: []};
-      self._previousSelectedResidues = {left: [], right: []};
+      this._parsedData = null;
+      this._rawData = null;
+      this._mappings = {};
+      this._selectedProtein = null;
+      this._selectedResidues = {left: [], right: []};
+      this._previousSelectedResidues = {left: [], right: []};
+      this.mappingPromise = null;
 
-      self._sequenceSortingAlgorithms = null;
+      this._sequenceSortingAlgorithms = null;
 
-      self._proteinSorting = "";
-      self._proteinColoring = "";
+      this._proteinSorting = "";
+      this._proteinColoring = "";
 
-      self._proteinNames = null;
-      self._parsedData = null;
+      this._proteinNames = null;
+      this._parsedData = null;
     },
 
     getMaxSequenceFrequenciesFromRange: function(range) {
@@ -168,49 +174,59 @@ const ProteinFamilyModel = (function() {
     },
 
     getProteinMappings: function(name) {
-      return _.find(this._mappings, function(o) { return o.mnemonic === name});
+      if(this.mappingPromise.isFulfilled())
+        return this._mappings[name];
     },
 
-    setProteinNames : function () {
+    setProteinMappings: function() {
       let self = this;
-      this._proteinNames = d3.set(this._rawData.map(function( residue )
-      { return residue.name; } )).values();
-      /* Set the initial selected protein to the first name */
-      this.setSelectedProtein(this._proteinNames[0]);
-
-      /* Get the mnemonics of each protein */
-      let queryString = [];
-      this._proteinNames.forEach(function(name,i,all){
-        if(name.length === 4){
-          queryString.push(name);
-        }
-        // queryString += "mnemonic:" + name;
-        // if(i < all.length-1){
-        //   queryString += "+OR+"
-        // }
-      });
-      App.dataUtilities.checkPDBs(queryString.join(','))
-          .then(function(data){
-
-            // Convert the XML document to an array of objects.
-            // Note that querySelectorAll returns a NodeList, not a proper Array,
-            // so we must use map.call to invoke array methods.
-            let parsedData = [].map.call(data.querySelectorAll("record"), function(record) {
+      return new Promise(function(resolve, reject){
+        /* Get the mnemonics of each protein */
+        let pdbQueryString = [];
+        let allQueryString = [];
+        self._proteinNames.forEach(function(name,i,all){
+          if(name.length === 4){
+            pdbQueryString.push(name);
+          }
+          allQueryString.push(name);
+          self._mappings[name] = [];
+        });
+        /* Query PDB and uniprot */
+        Promise.all([App.dataUtilities.checkPDBs(pdbQueryString.join(',')),
+          App.dataUtilities.queryForUniprotIdentifiers(allQueryString.join(','))])
+          .then(function(results){
+            /* Parse the PDB data*/
+            [].map.call(results[0].querySelectorAll("record"), function(record) {
               let record_selector = d3.select(record);
               return{
                 pdb: record_selector.attr("structureId"),
                 status: record_selector.attr("status")
-              };
+              }
+            })
+              .forEach(function(protein){
+                if(protein.status !== "UNKNOWN" && self._mappings[protein.pdb].indexOf(protein.pdb) < 0){
+                  self._mappings[protein.pdb].push(protein.pdb);
+                }
+              });
+            /* Parse the uniprot data*/
+            results[1].forEach(function(protein){
+              let proteins = protein.pdb.split(';');
+              proteins.forEach(function(p){
+                if(p.length > 0 && self._mappings[protein.id].indexOf(p) < 0){
+                  self._mappings[protein.id].push(p)
+                }
+              });
             });
-            /* Set the mappings from the result */
-            self._mappings = mapping;
+          resolve(self._mappings);
           });
-      // /* Query for the mnemonics */
-      // App.dataUtilities.mnemonicToPDB(queryString)
-      //   .then(function(mapping){
-      //     self._mappings = mapping;
-      //   })
-      //   .catch(console.log.bind(console));
+      });
+    },
+
+    setProteinNames : function () {
+      this._proteinNames = d3.set(this._rawData.map(function( residue )
+      { return residue.name; } )).values();
+      /* Set the initial selected protein to the first name */
+      this.setSelectedProtein(this._proteinNames[0]);
     },
 
     getProteinNames : function() { return this._proteinNames; },

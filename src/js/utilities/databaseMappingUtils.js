@@ -46,7 +46,13 @@ const DatabaseMappingUtils = function(){
   function check_PDB_names(pdb_query){
     return new Promise(function(resolve, reject) {
       d3.xml("https://www.rcsb.org/pdb/rest/idStatus?structureId="+pdb_query, function(data){
-        resolve(data);
+        resolve([].map.call(data.querySelectorAll("record"), function(record) {
+          let record_selector = d3.select(record);
+          return{
+            pdb: record_selector.attr("structureId"),
+            status: record_selector.attr("status")
+          }
+        }));
       });
     });
   }

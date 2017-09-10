@@ -93,7 +93,8 @@ const ProteinFamilyModel = (function() {
 
         this._parsedData = parsed_data;
         this.setProteinNames();
-        this.mappingPromise = App.promiseUtilities.makeQueryablePromise(this.setProteinMappings());
+        this.mappingPromise = this.setProteinMappings();
+            //App.promiseUtilities.makeQueryablePromise(this.setProteinMappings());
 
         /* Setup the sequence sorting algorithms and calculate the initial scores */
         this._sequenceSortingAlgorithms = new SequenceSorting(this._rawData);
@@ -173,9 +174,16 @@ const ProteinFamilyModel = (function() {
       return this._parsedData;
     },
 
-    getProteinMappings: function(name) {
-      if(this.mappingPromise.isFulfilled())
-        return this._mappings[name];
+    getProteinMappings: function() {
+      return this.mappingPromise;
+    },
+
+    addProteinMapping: function(name,protein) {
+      if(this._mappings[name].indexOf(protein.pdb) < 0){
+        this._mappings[name].push(protein.pdb);
+        return true;
+      }
+      return false;
     },
 
     setProteinMappings: function() {
@@ -196,13 +204,7 @@ const ProteinFamilyModel = (function() {
           App.dataUtilities.queryForUniprotIdentifiers(allQueryString.join(','))])
           .then(function(results){
             /* Parse the PDB data*/
-            [].map.call(results[0].querySelectorAll("record"), function(record) {
-              let record_selector = d3.select(record);
-              return{
-                pdb: record_selector.attr("structureId"),
-                status: record_selector.attr("status")
-              }
-            })
+            results[0]
               .forEach(function(protein){
                 if(protein.status !== "UNKNOWN" && self._mappings[protein.pdb].indexOf(protein.pdb) < 0){
                   self._mappings[protein.pdb].push(protein.pdb);
@@ -217,7 +219,7 @@ const ProteinFamilyModel = (function() {
                 }
               });
             });
-          resolve(self._mappings);
+            resolve(self._mappings);
           });
       });
     },

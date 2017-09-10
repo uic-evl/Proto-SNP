@@ -13,6 +13,7 @@ const BrushView = (function() {
     self._orientation = options.orientation;
     self._tooltip = null;
     self._orientation = options.orientation;
+    self._class = "";
 
     self.overlays = [];
 
@@ -148,12 +149,84 @@ const BrushView = (function() {
           ];
       }
     };
+
+    self.addContextMenu = function() {
+      let view = self;
+      $.contextMenu({
+        selector: 'g.horizontal rect.selection',
+        build: function($trigger, e) {
+          return {
+            callback: function (key, options) {
+              let m = "clicked: " + key;
+              window.console && console.log(m) || alert(m);
+            },
+            items: {
+              "fold1a": {
+                "name": "Load Structure",
+                "items": {
+                  "status": {
+                    name: "Associated PDBs",
+                    icon: "delete",
+                    items: function () {
+                      let dfd = jQuery.Deferred();
+                      view._model.getProteinMappings()
+                        .then(function (PDBs) {
+                          /* Get the current protein name*/
+                          let protein = view._model.getSelectedProtein().name,
+                              menu = {};
+                          /* load the pdb names into the menu */
+                          PDBs[protein].forEach(function(p,i){
+                            menu["sub"+i] = {name:p}
+                          });
+                          /* If no pdbs are found, tell the user*/
+                          if(_.keys(menu).length === 0) {
+                            menu['sub1'] = {name: "No assoc. proteins", disabled: true}
+                          }
+                          dfd.resolve(menu);
+                        });
+                      return dfd.promise();
+                    }(),
+                  },
+                  sep1: "---------",
+                  name: {
+                    name: "Associate a PDB:",
+                    type: 'text',
+                    value: "",
+                    events: {
+                      keyup: function (e) {
+                        console.log($trigger);
+                        /* Check for the enter key and if the string is of length 4*/
+                        if(e.keyCode === 13 && this.value.length === 4){
+                          App.dataUtilities.checkPDBs(this.value).then(function(protein){
+                            let current_protein = view._model.getSelectedProtein().name;
+                            /* If the protein exists, add it to the model */
+                            if(protein[0].status !== "UNKNOWN"){
+                              /* update the menu if the item was added */
+                              if(view._model.addProteinMapping(current_protein,protein[0])){
+                                $('g.horizontal rect.selection').contextMenu('update');
+                              }
+                            }
+                          });
+                          /* Reset the value */
+                          this.value = "";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    };
   }
 
   BrushView.prototype = {
 
     initialize: function(options) {
       let view = this;
+      view.class = options.class;
       /* Construct the brush based on the orientation */
       view.brushObj =
           App.BrushFactory.createBrush(options.orientation)
@@ -202,8 +275,9 @@ const BrushView = (function() {
       /* add the context menu for the horizontal bar*/
       if(this._orientation === App.HORIZONTAL_PADDLE) {
         /* Set the context menu of the horizontal brush */
-        brushObj.select("rect.selection")
-            .on("contextmenu", d3.contextMenu(d3Utils.create_context_menu.bind(null,this._model)));
+        // brushObj.select("rect.selection")
+        //     .on("contextmenu", d3.contextMenu(d3Utils.create_context_menu.bind(null,this._model)));
+        this.addContextMenu();
       }
       /* Add the tooltip if one was created */
       if(this._tooltip){

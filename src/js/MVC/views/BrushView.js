@@ -154,6 +154,8 @@ const BrushView = (function() {
       let view = self;
       $.contextMenu({
         selector: 'g.horizontal rect.selection',
+        reposition: false,
+        className: 'protein_context',
         build: function($trigger, e) {
           return {
             callback: function (key, options) {
@@ -186,6 +188,7 @@ const BrushView = (function() {
                         });
                       return dfd.promise();
                     }(),
+                    className: 'pdb_names',
                   },
                   sep1: "---------",
                   name: {
@@ -194,7 +197,6 @@ const BrushView = (function() {
                     value: "",
                     events: {
                       keyup: function (e) {
-                        console.log($trigger);
                         /* Check for the enter key and if the string is of length 4*/
                         if(e.keyCode === 13 && this.value.length === 4){
                           App.dataUtilities.checkPDBs(this.value).then(function(protein){
@@ -203,7 +205,9 @@ const BrushView = (function() {
                             if(protein[0].status !== "UNKNOWN"){
                               /* update the menu if the item was added */
                               if(view._model.addProteinMapping(current_protein,protein[0])){
-                                $('g.horizontal rect.selection').contextMenu('update');
+                                /* Add the new protein to the list */
+                                $('ul.pdb_names')
+                                    .append('<li class="context-menu-item"><span>'+protein[0].pdb+'</span> </li>');
                               }
                             }
                           });

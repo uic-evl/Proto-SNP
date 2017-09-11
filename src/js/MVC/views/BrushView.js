@@ -14,6 +14,7 @@ const BrushView = (function() {
     self._tooltip = null;
     self._orientation = options.orientation;
     self._class = "";
+    self._menuSelection = "";
 
     self.overlays = [];
 
@@ -157,91 +158,26 @@ const BrushView = (function() {
 
     self.addContextMenu = function() {
       let view = self;
-      $.contextMenu({
-        selector: 'g.horizontal rect.selection',
-        reposition: false,
-        className: 'protein_context',
-        build: function($trigger, e) {
-          return {
-            items: {
-              "fold1a": {
-                "name": "Load Structure",
-                "items": {
-                  "status": {
-                    name: "Associated PDBs",
-                    icon: "delete",
-                    items: function () {
-                      let dfd = jQuery.Deferred();
-                      view._model.getProteinMappings()
-                        .then(function (PDBs) {
-                          /* Get the current protein name*/
-                          let protein = view._model.getSelectedProtein().name,
-                              menu = {};
-                          /* load the pdb names into the menu */
-                          PDBs[protein].forEach(function(p,i){
-                            menu[p] = {name:p, className: "protein_entry",
-                              callback: function(item) {
-                                $('.btn-left_viewer').on('click', function(e) {
-                                  /* Hide the context menu */
-                                  $('.context-menu-list').trigger('contextmenu:hide');
-                                  view.proteinSelected.notify({semantic:'left', protein: item});
-                                });
 
-                                $('.btn-right_viewer').on('click', function(e) {
-                                  /* Hide the context menu */
-                                  $('.context-menu-list').trigger('contextmenu:hide');
-                                  view.proteinSelected.notify({semantic:'right', protein: item});
-                                });
-                                /* Launch the modal */
-                                $("#viewerModal").modal("show");
-                              return false;
-                            }}
-                          });
-                          /* If no pdbs are found, tell the user*/
-                          if(_.keys(menu).length === 0) {
-                            menu['sub1'] = {name: "No assoc. proteins", disabled: true}
-                          }
-                          dfd.resolve(menu);
-                        });
-                      return dfd.promise();
-                    }(),
-                    className: 'pdb_names',
-                  },
-                  sep1: "---------",
-                  name: {
-                    name: "Associate a PDB:",
-                    type: 'text',
-                    value: "",
-                    events: {
-                      keyup: function (e) {
-                        /* Check for the enter key and if the string is of length 4*/
-                        if(e.keyCode === 13 && this.value.length === 4){
-                          App.dataUtilities.checkPDBs(this.value).then(function(protein){
-                            let current_protein = view._model.getSelectedProtein().name;
-                            /* If the protein exists, add it to the model */
-                            if(protein[0].status !== "UNKNOWN"){
-                              /* update the menu if the item was added */
-                              if(view._model.addProteinMapping(current_protein,protein[0])){
-                                /* Add the new protein to the list */
-                                $('ul.pdb_names')
-                                    .append('<li class="context-menu-item"><span>'+protein[0].pdb+'</span> </li>');
-                              }
-                            }
-                          });
-                          /* Reset the value */
-                          this.value = "";
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              // label: {type: "label", customName: "Label"},
-            }
-          }
-        }
+      /* Create the context menu */
+      self.createContextMenu('g.horizontal rect.selection');
+
+      /* Add the callbacks to the modal windwo */
+      $('.btn-left_viewer').on('click', function(e) {
+        /* Hide the context menu */
+        $('.context-menu-list').trigger('contextmenu:hide');
+        view.proteinSelected.notify({semantic:'left', protein: view._menuSelection});
+      });
+
+      $('.btn-right_viewer').on('click', function(e) {
+        /* Hide the context menu */
+        $('.context-menu-list').trigger('contextmenu:hide');
+        view.proteinSelected.notify({semantic:'right', protein: view._menuSelection});
       });
     };
+
+    /* Mixin the utilities */
+    _.mixin(self, new jQueryContextUtils(self));
   }
 
   BrushView.prototype = {

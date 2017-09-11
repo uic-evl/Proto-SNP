@@ -40,7 +40,6 @@ const ProteinModel = (function() {
       else {
         /* create a variable to use to test a promise */
         let protein_name = metadata.protein_name;
-        console.log(metadata);
         /* If the name is greater than 4 characters, it is not PDB format*/
         if(metadata.protein_name.length > 4) {
           protein_name = App.dataUtilities.mnemonicToPDB(metadata.protein_name);

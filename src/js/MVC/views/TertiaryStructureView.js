@@ -153,8 +153,6 @@ function TertiaryStructureView(model, element) {
     self.initialize();
     self.render(protein.structure, protein.name, "tube");
 
-    console.log(protein.structure);
-
     /* Show the menu */
     self._dom.find('.x_title').show();
 

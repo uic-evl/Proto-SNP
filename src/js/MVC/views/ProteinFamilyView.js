@@ -43,7 +43,7 @@ const ProteinFamilyView = (function() {
           {
             orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
             extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]], block_size: self.residue_glyph_size,
-            position: [self.y_offset, self.residue_glyph_size+self.y_offset],
+            position: [self.y_offset, self.residue_glyph_size+self.y_offset], semantic: "horizontal",
             tooltip: function(d) { return self._model.getSelectedProtein().name; }
           }, {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
@@ -88,6 +88,7 @@ const ProteinFamilyView = (function() {
         scale      : scale,
         class      : "brush horizontal",
         block_size: block_size,
+        semantic: "family",
         extent: [[self.width+self.x_offset, self.y_offset], [self.width+self.x_offset+overview_width, height+self.y_offset]],
         position: [self.y_offset, self.brushPaddleSize],
         proteinsPerView: self.ppv,
@@ -178,7 +179,6 @@ const ProteinFamilyView = (function() {
         /* Set the new height/width */
         /* Create a new width that is 90% of the previous, giving us room for the viewer */
         if( (viewer_width + (viewer_width * self._overview_percentage)) > container_width ){
-          console.log(container_width / viewer_width);
           let temp_width = (container_width - (viewer_width * self._overview_percentage));
           residue_width = Math.floor(temp_width / self.x_axis_length);
           self.width = residue_width * self.x_axis_length;
@@ -345,6 +345,10 @@ const ProteinFamilyView = (function() {
 
       /* Reset the overview flag */
       this.overviewImage = false;
+
+      /* Destroy the context menu */
+      $.contextMenu( 'destroy' );
+
       },
 
     initialize: function (family) {

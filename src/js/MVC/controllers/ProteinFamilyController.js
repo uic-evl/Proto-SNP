@@ -168,6 +168,9 @@ const ProteinFamilyController = (function() {
       d3.select("#residueSummaryView").selectAll("*").remove();
       d3.selectAll('.d3-tip').remove();
 
+      /* Remove the context menu from the trend image */
+      self._brushViews['horizontal'].removeContextMenu();
+
       delete self._brushViews;
       delete self._frequencyViews;
 

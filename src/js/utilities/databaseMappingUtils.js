@@ -16,7 +16,7 @@ const DatabaseMappingUtils = function(){
   function map_mnemonic_to_PDB(mnemonic){
     return new Promise(function(resolve, reject) {
       /* Use d3 to query UniProt for the tab-separated name conversion*/
-      d3.tsv("http://www.uniprot.org/uniprot/?query=" + mnemonic +
+      d3.tsv("https://www.uniprot.org/uniprot/?query=" + mnemonic +
           "&format=tab&compress=no&columns=entry name,database(PDB)", function(data) {
 
         /* No model exists */
@@ -34,8 +34,6 @@ const DatabaseMappingUtils = function(){
             "mnemonic" : d["Entry name"]
           });
         });
-
-        // mappingUtils.mappedProteins[mnemonic] = mappedName;
 
         /* Resolve the promise with the converted name*/
         resolve(parsedData)
@@ -59,7 +57,7 @@ const DatabaseMappingUtils = function(){
 
   function uniprot_retrieve_identifiers(query) {
     return new Promise(function(resolve, reject){
-      $.post("http://www.uniprot.org/uploadlists/",
+      $.post("https://www.uniprot.org/uploadlists/",
         { 'from': 'ACC+ID',
           'to':'ACC',
           'format': 'tab',

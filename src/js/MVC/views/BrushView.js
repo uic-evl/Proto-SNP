@@ -19,6 +19,9 @@ const BrushView = (function() {
 
     let block_size = options.block_size;
 
+    self.brushMoved = null;
+    self.proteinSelected = null;
+
     /* set the initial selections */
     if(self._orientation === App.OVERVIEW_PADDLE){
       self._selection = options.position;
@@ -31,11 +34,13 @@ const BrushView = (function() {
     self.initialize(options);
     /* Brush event handlers */
     self.brushMoved = new EventNotification(this);
+    self.proteinSelected = new EventNotification(this);
 
     /* Bind the event listens */
     self._model.selectedProteinChanged.attach(function(sender, msg) {
       self.redraw(App.HORIZONTAL_PADDLE, msg);
     });
+
     self._model.selectedResiduesChanged.attach(function(sender, msg){
       self.redraw(App.VERTICAL_PADDLE, msg);
     });
@@ -158,10 +163,6 @@ const BrushView = (function() {
         className: 'protein_context',
         build: function($trigger, e) {
           return {
-            callback: function (key, options) {
-              let m = "clicked: " + key;
-              window.console && console.log(m) || alert(m);
-            },
             items: {
               "fold1a": {
                 "name": "Load Structure",
@@ -178,7 +179,23 @@ const BrushView = (function() {
                               menu = {};
                           /* load the pdb names into the menu */
                           PDBs[protein].forEach(function(p,i){
-                            menu["sub"+i] = {name:p}
+                            menu[p] = {name:p, className: "protein_entry",
+                              callback: function(item) {
+                                $('.btn-left_viewer').on('click', function(e) {
+                                  /* Hide the context menu */
+                                  $('.context-menu-list').trigger('contextmenu:hide');
+                                  view.proteinSelected.notify({semantic:'left', protein: item});
+                                });
+
+                                $('.btn-right_viewer').on('click', function(e) {
+                                  /* Hide the context menu */
+                                  $('.context-menu-list').trigger('contextmenu:hide');
+                                  view.proteinSelected.notify({semantic:'right', protein: item});
+                                });
+                                /* Launch the modal */
+                                $("#viewerModal").modal("show");
+                              return false;
+                            }}
                           });
                           /* If no pdbs are found, tell the user*/
                           if(_.keys(menu).length === 0) {
@@ -218,7 +235,8 @@ const BrushView = (function() {
                     }
                   }
                 }
-              }
+              },
+              // label: {type: "label", customName: "Label"},
             }
           }
         }

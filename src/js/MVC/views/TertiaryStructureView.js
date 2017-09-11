@@ -258,7 +258,7 @@ TertiaryStructureView.prototype = {
 
   /* Accept the data from the download form. Called by the upload form */
   downloadPDB: function(formData) {
-    let name = $(formData).serialize().split('=')[1];
+    let name = (typeof formData === "object")? $(formData).serialize().split('=')[1] : formData;
     this.fileUploaded.notify({metaData: {protein_name:name}, file: null});
     /* Clear the splash and update */
     this.clear_and_reinitialize();

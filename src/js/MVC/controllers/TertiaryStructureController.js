@@ -4,10 +4,14 @@ var App = App || {};
 
 const TertiaryStructureController = (function() {
 
-  function TertiaryStructureController(models, views) {
+  /* Set the view semantics for easy lookup */
+  let semantics = { left: 0, right : 1};
+
+  function TertiaryStructureController(models, views, controllers) {
     let self = this;
     self._models = models;
     self._views = views;
+    self._controllers = controllers;
 
     /* Setup the callback listeners for each view*/
     self._views.forEach(function(view, idx){
@@ -58,6 +62,11 @@ const TertiaryStructureController = (function() {
           m.setCamera(args, true);
         }
       });
+    });
+
+    /* Receive the protein name/viewer side that was selected from the family viewer*/
+    controllers.proteinSelected.attach(function(sender, msg) {
+      self._views[semantics[msg.semantic]].downloadPDB(msg.protein);
     });
 
     /*  Bind the view with knockoutJS */

@@ -115,3 +115,7 @@ ul li a.disabled {
     float: left;
     clear: both;
 }
+
+.modal {
+    top: 25%;
+}

@@ -4,7 +4,7 @@ var App = App || {};
 
 const ProteinFamilyController = (function() {
 
-  function ProteinFamilyController(model, view) {
+  function ProteinFamilyController(model, view, controllers) {
     let self = this;
 
     self._model = model;
@@ -12,6 +12,8 @@ const ProteinFamilyController = (function() {
 
     self._brushViews = {};
     self._frequencyViews = {};
+
+    self.proteinSelected = new EventNotification(this);
 
     function createOverviewPaddle(overviewSpec){
       /* construct the y-scale */
@@ -42,6 +44,15 @@ const ProteinFamilyController = (function() {
       brushes.forEach(function(brushSpec){
         /* Create the brush and link the listeners */
         let brushView = new BrushView(self._model, brushSpec);
+
+        /* Attach the callback for selecting a protein */
+        if(brushSpec.orientation === App.HORIZONTAL_PADDLE){
+          /* Notify the Tertiary Controller that a new protein is loaded */
+          brushView.proteinSelected.attach(function(sender,msg){
+            self.proteinSelected.notify(msg);
+          });
+        }
+
         /* Setup the onMove observer */
         brushView.brushMoved.attach(function(sender, msg){
           let options = msg.options;
@@ -69,6 +80,7 @@ const ProteinFamilyController = (function() {
             }
           }
         });
+
         /* Add the brush to the list of views */
         self._brushViews[brushSpec.semantic] = brushView;
       });

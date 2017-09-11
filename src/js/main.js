@@ -14,19 +14,19 @@ var App = App || {};
     App.residueMappingUtility = new ResidueMappingUtility();
     App.spinner = d3.select('.spinner').node();
 
+    let proteinFamilyModel = new ProteinFamilyModel(),
+        proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
+        proteinFamilyController = new ProteinFamilyController(proteinFamilyModel, proteinFamilyView);
+
     let leftProteinModel = new ProteinModel(), rightProteinModel = new ProteinModel(),
         leftTertiaryStructureView = new TertiaryStructureView(leftProteinModel, {id: "molecularViewerA", position:"left"}),
         rightTertiaryStructureView = new TertiaryStructureView(rightProteinModel, {id: "molecularViewerB", position:"right"}),
         tertiaryStructuresController = new TertiaryStructureController(
-            [leftProteinModel, rightProteinModel], [leftTertiaryStructureView, rightTertiaryStructureView]);
+            [leftProteinModel, rightProteinModel], [leftTertiaryStructureView, rightTertiaryStructureView], proteinFamilyController);
 
     let leftPrimaryStructureView  = new PrimaryStructureView(null, {id: "leftMolecularViewer-Sequence", position:"left"}),
         rightPrimaryStructureView = new PrimaryStructureView(null, {id: "rightMolecularViewer-Sequence", position:"right"}),
         primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
-
-    let proteinFamilyModel = new ProteinFamilyModel(),
-        proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
-        proteinFamilyController = new ProteinFamilyController(proteinFamilyModel, proteinFamilyView);
 
     let colorModel = new FilteringMenuModel({
       items:['Side Chain Class', 'Side Chain Polarity', 'Frequency (Family Viewer)']

@@ -150,6 +150,10 @@ const ProteinFamilyModel = (function() {
 
       this._proteinNames = null;
       this._parsedData = null;
+
+      /* Update Events */
+      this.selectedProteinChanged.clear();
+      this.selectedResiduesChanged.clear();
     },
 
     getMaxSequenceFrequenciesFromRange: function(range) {

@@ -17,6 +17,9 @@ const EventNotification = (function(){
       for (let index = 0; index < this._listeners.length; index += 1) {
         this._listeners[index](this._sender, args);
       }
+    },
+    clear : function () {
+      this._listeners = [];
     }
   };
 

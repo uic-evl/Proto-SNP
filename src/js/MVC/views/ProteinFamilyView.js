@@ -19,6 +19,8 @@ const ProteinFamilyView = (function() {
     self.y_offset = 0;
 
     self._parentDom = d3.select("#"+self._id);
+    self._container_width = d3.select('div.TrendImageView').node().clientWidth;
+
     self.spinnerDiv = null;
     /* The user has uploaded or downloaded an alignment file */
     self.fileUploaded  = new EventNotification(this);
@@ -151,7 +153,7 @@ const ProteinFamilyView = (function() {
 
     /* Setter for the chart dimensions */
     self.set_chart_dimensions = function() {
-      let container_width = self._parentDom.node().parentNode.clientWidth,
+      let container_width = self._container_width,
           residue_width = Math.floor(container_width / self.x_axis_length),
           viewer_width = residue_width * self.x_axis_length;
 
@@ -336,6 +338,7 @@ const ProteinFamilyView = (function() {
       /* Remove the previous stylings */
       this._parentDom.node().removeAttribute("style");
       this._parentDom.node().parentNode.removeAttribute("style");
+      document.getElementsByClassName('TrendImageView')[0].removeAttribute("style");
 
       /* Reset the overview flag */
       this.overviewImage = false;

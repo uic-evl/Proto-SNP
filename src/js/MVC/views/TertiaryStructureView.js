@@ -109,6 +109,7 @@ function TertiaryStructureView(model, element) {
       function (metadata, result) {
         self.fileUpdated.notify({metaData: metadata, file: result});
         self.clear_splash();
+        updateViewTitle(self._dom[0], metadata.protein_name);
       });
   };
 
@@ -165,6 +166,7 @@ function TertiaryStructureView(model, element) {
     $("#coloring_list").find("li").removeClass("disabled");
     /* Create the legend */
     App.residueMappingUtility.createColorLegend();
+
   });
 
   /* Update the model once the selection has been added to the model */

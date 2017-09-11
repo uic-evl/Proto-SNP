@@ -25,7 +25,7 @@ var jQueryContextUtils = function (self) {
                 "items": {
                   "status": {
                     name: "Associated PDBs",
-                    icon: "delete",
+                    icon: "add",
                     items: function () {
                       let dfd = jQuery.Deferred();
                       self._model.getProteinMappings()

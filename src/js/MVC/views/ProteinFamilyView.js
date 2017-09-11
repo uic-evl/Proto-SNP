@@ -14,6 +14,8 @@ const ProteinFamilyView = (function() {
     self._id = element.id;
     self.overviewImage = false;
 
+    self._overview_percentage = 0.1;
+
     /* Set according to the glyph size */
     self.x_offset = 0;
     self.y_offset = 0;
@@ -71,7 +73,7 @@ const ProteinFamilyView = (function() {
       /* Get the calculated margin of the family viewer to align the frequency viewer */
       let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
           count = self._model.getProteinCount(),
-          overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1) - margin,
+          overview_width = Math.round(self._dom.node().parentNode.clientWidth * self._overview_percentage) - margin,
           block_size = height / count,
           scale = d3.scaleLinear()
               .domain([0, count])
@@ -98,7 +100,7 @@ const ProteinFamilyView = (function() {
       return new Promise(function(resolve, reject){
         /* Create the overview if the image runs off the page*/
         let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
-            overview_width = Math.round(self._dom.node().parentNode.clientWidth * 0.1) - margin,
+            overview_width = Math.round(self._dom.node().parentNode.clientWidth * self._overview_percentage) - margin,
             /* The overview will be 1/10th of the view */
             overview = new Image();
         /* Add the image to the canvas once it is loaded */
@@ -175,8 +177,9 @@ const ProteinFamilyView = (function() {
         self.overviewImage = true;
         /* Set the new height/width */
         /* Create a new width that is 90% of the previous, giving us room for the viewer */
-        if( (viewer_width + (viewer_width * 0.1)) > container_width ){
-          let temp_width = (container_width - (viewer_width * 0.1));
+        if( (viewer_width + (viewer_width * self._overview_percentage)) > container_width ){
+          console.log(container_width / viewer_width);
+          let temp_width = (container_width - (viewer_width * self._overview_percentage));
           residue_width = Math.floor(temp_width / self.x_axis_length);
           self.width = residue_width * self.x_axis_length;
         }

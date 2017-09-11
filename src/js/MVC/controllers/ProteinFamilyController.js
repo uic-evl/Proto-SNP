@@ -166,8 +166,11 @@ const ProteinFamilyController = (function() {
 
       /* Clear the brushes and frequency view */
       d3.select("#residueSummaryView").selectAll("*").remove();
+      d3.selectAll('.d3-tip').remove();
+
       delete self._brushViews;
       delete self._frequencyViews;
+
       self._frequencyViews = {};
       self._brushViews = {};
 

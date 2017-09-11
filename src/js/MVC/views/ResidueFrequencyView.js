@@ -171,6 +171,9 @@ const ResidueFrequencyView = (function() {
           .attr('x', function(d, i) { return self.xScale(i) })
           .on('mouseover', createStackedBarChart)
           .on('mouseout', this.tip.hide)
+          .on('click', function(d,i,a) {
+            console.log(d);
+          })
           .style("fill", "white");
 
       /* Remove the unneeded bars */
@@ -193,6 +196,11 @@ const ResidueFrequencyView = (function() {
           .attr("height", function(d) { return ( self.bar_height - self.yScale(d[1]) )  })
           .on('mouseover', createStackedBarChart)
           .on('mouseout', this.tip.hide)
+          .on('click', function(d,i,a) {
+            let protein = self._model.getSelectedProtein();
+            let occ = App.textUtilities.occurrences(protein.sequence.join(), d[0]);
+            console.log(occ);
+          })
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
       ;
       /* Remove the unneeded frequency bars */
@@ -295,8 +303,8 @@ const ResidueFrequencyView = (function() {
 
       /* Invoke the tooltip */
       this._svg.call(this.tip);
+      this.range = [options.offset_x, this.width];
 
-      this.range = [options.offset*2, this.width];
       let scale = d3.scaleLinear().domain([0, options.max_items]).range(this.range),
         y_position = this._barOffset/2.0,
         /* Set the width of the context line */
@@ -315,6 +323,11 @@ const ResidueFrequencyView = (function() {
     render : function(render_options) {
       /* Set the scales based on the new selection */
       this.set_scales(render_options.maxFrequencies, this._familyMemberCount, render_options.residues);
+      /* Re-set the range to center glyphs */
+      this.range[0] = (this.width - this.xScale(render_options.residues.length-1))/2.0;
+      this.xScale.range(this.range);
+
+      // console.log(this.width-this.xScale(render_options.residues.length-1));
       /* Render the bars */
       this.frequencyRange = render_options.range;
       this.render_bars(render_options.maxFrequencies, this._familyMemberCount);

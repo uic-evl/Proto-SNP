@@ -4,7 +4,7 @@ var App = App || {};
 
 const ProteinFamilyController = (function() {
 
-  function ProteinFamilyController(model, view, controllers) {
+  function ProteinFamilyController(model, view) {
     let self = this;
 
     self._model = model;

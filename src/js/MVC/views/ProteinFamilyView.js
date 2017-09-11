@@ -55,10 +55,10 @@ const ProteinFamilyView = (function() {
       frequencyViewers : [
         {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
           block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
-          overview: self.overviewImage},
+          overview: self.overviewImage, offset_x:10},
         {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
           block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: margin, width: self.width,
-          overview: self.overviewImage
+          overview: self.overviewImage, offset_x:10
         }
       ]
       };

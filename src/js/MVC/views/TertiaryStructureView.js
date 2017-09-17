@@ -28,7 +28,13 @@ const TertiaryStructureView = (function () {
   }
 
   function selectionChanged(sender, args){
-    this.picked.node().setSelection(args.selection);
+    if(args.selection){
+      this.picked.node().setSelection(args.selection);
+    }
+    else {
+      let sel = this.selectResidue(this._model.getGeometry().selection(), args.residue);
+      this._model.getGeometry().setSelection(sel);
+    }
     this.pvViewer.requestRedraw();
   }
 
@@ -178,11 +184,6 @@ function TertiaryStructureView(model, element) {
   /* Update the model once the selection has been added/removed to/from the model */
   self._model.residueSelected.attach(selectionChanged.bind(self));
   self._model.residueDeselected.attach(selectionChanged.bind(self));
-
-  self._model.residueSelected.attach(function(sender, args) {
-    self.picked.node().setSelection(args.selection);
-    self.pvViewer.requestRedraw();
-  });
 
   /* Update the coloring of the view */
   self._model.proteinColoringChanged.attach(function(sender, msg){

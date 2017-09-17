@@ -4,6 +4,27 @@ var App = App || {};
 
 const PrimaryStructureView = (function() {
 
+  function spanSelected(residue, index) {
+
+    let chains = this._model.getStructure().residueSelect(function(res){ return res.index() === index }),
+        currentChain = this._model.getChain(),
+        residues = [];
+    chains.eachResidue(function(res){ residues.push(res._residue); });
+
+    let selection = d3.select(this._dom).selectAll("span")
+        .filter(function(d,i){
+          return d === residue && i === index + 1;
+        }).classed("selected_sequence");
+
+    /* set the selected Residue on the model */
+    if(!selection){
+      this.residueSelected.notify({residue:residues[currentChain]});
+    }
+    else {
+      this.residueDeselected.notify({residue:residues[currentChain]});
+    }
+  }
+
   function PrimaryStructureView(model, element) {
     let self = this;
 
@@ -102,14 +123,7 @@ const PrimaryStructureView = (function() {
           .merge(viewer)
           .text(function(d, i) { return "(" + parseInt(i+1) + ") " + d; })
           .style("width", view.width)
-          .on("click", function(residue, index) {
-            let chains = view._model.getStructure().residueSelect(function(res){ return res.index() === index }),
-                currentChain = view._model.getChain(),
-                residues = [];
-            chains.eachResidue(function(res){ residues.push(res._residue); });
-            /* set the selected Residue on the model */
-            view.residueSelected.notify({residue:residues[currentChain]});
-          } )
+          .on("click", spanSelected.bind(view))
           // EXIT: Remove unneeded DOM elements
           .exit().remove();
     }

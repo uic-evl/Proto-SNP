@@ -65,6 +65,22 @@ var pvUtils = function (context) {
       go.colorBy(pv.color.uniform(color), view);
     },
 
+    selectResidue: function(sel, residue){
+      self.rem = false;
+      /* remove all of the atoms to the residue */
+      residue._atoms.forEach(function(atom){
+        self.rem = sel.removeAtom(atom, true);
+      });
+      if (!self.rem) {
+        // sel.addResidues([residue], true);
+        residue._atoms.forEach(function(atom){
+          sel.addAtom(atom);
+        });
+      }
+
+      return sel;
+    },
+
     mouseMoveEvent: function (event) {
       if(event){
         let rect = self.pvViewer.boundingClientRect();
@@ -114,7 +130,7 @@ var pvUtils = function (context) {
       // when the shift key is pressed, extend the selection, otherwise
       // only select the clicked atom.
       let extendSelection = ev.shiftKey;
-      let sel, rem, residue;
+      let sel, residue;
       if (extendSelection) {
         sel = self.picked.node().selection();
       } else {
@@ -125,28 +141,16 @@ var pvUtils = function (context) {
       // it wasn't selected before. Otherwise removeAtom took care of it
       // and we don't have to do anything.
       residue = self.picked.target()._residue;
-      rem = sel.removeAtom(self.picked.target(), true);
-      if (!rem) {
-        // sel.addResidues([residue], true);
-        residue._atoms.forEach(function(atom){
-          sel.addAtom(atom);
-        });
-        /* Notify the controller that a residue has been clicked */
+      /* select the residues on the model */
+      sel = self.selectResidue(sel,residue);
+
+      /* Notify the controller that a residue has been clicked */
+      if(!self.rem){
         self.residueSelected.notify({selection : sel, residue: residue, replace:!extendSelection});
       }
       else {
-        /* remove all of the atoms to the residue */
-        residue._atoms.forEach(function(atom){
-          sel.removeAtom(atom, true);
-        });
-
-        console.log("deselect");
-
-        /* notify the model of the change */
         self.residueDeselected.notify({selection : sel, residue: residue});
-
       }
-    },
-
+    }
   }
 };

@@ -4,8 +4,9 @@ var App = App || {};
 
 const PrimaryStructureView = (function() {
 
-  /* initialize the sequence viewer global variable */
-  let list = {};
+  function selectResidue(event) {
+    console.log(event);
+  }
 
   function PrimaryStructureView(model, element) {
     let self = this;
@@ -15,12 +16,16 @@ const PrimaryStructureView = (function() {
     self._position = element.position;
     self._dom = null;
 
+    /* The user has selected a new protein */
+    self.residueSelected = new EventNotification(this);
+
+    /* Event Listeners */
     self._model.proteinAdded.attach(function (sender, protein) {
-      /* Get the sequence of the new protein */
-     let sequence = sender.getSequence(protein.structure);
-
+      /* Initialize the viewer */
+      self.initialize();
+      /* Render the sequence with of the loaded protein */
+      self.render(sender.getSequence(protein.structure));
     });
-
   }
 
   PrimaryStructureView.prototype = {
@@ -28,52 +33,51 @@ const PrimaryStructureView = (function() {
       /* Save the context's this */
       let view = this;
       /* Set the DOM selector */
-      view._dom = $('#' + view._id);
+      view._$dom = $('#' + view._id);
+      view._dom = view._$dom[0];
     },
 
     /* Initialize the sequence view */
-    initialize:  function(id, options){
-
-      let $dom = this._dom,
-          dom = $dom[0];
-
+    initialize:  function(){
+      let view = this;
       /* Store the width and height*/
-      self.width = this._dom.clientWidth;
-      self.height = this._dom.clientHeight;
+      view.width = this._dom.clientWidth;
+      view.height = this._dom.clientHeight;
 
       // clear the dom of the previous list
-      d3.select(id).selectAll().remove();
+      d3.select(view._dom).selectAll().remove();
 
       // append a new span for the list
-      d3.select(id)
-        .attr("height", height)
+      d3.select(view._dom)
+        .attr("height", self.height)
         .append("span") // span element
         .attr("class", "sequence") // set the styling to the sequence class
       ;
 
       /* Remove the black background from the viewers*/
-      d3.select(dom)
+      d3.select(view._dom)
         .classed("black-background", false)
         .selectAll(".col-md-6")
         .classed("black-background", false);
-
   },
 
     /* Render the sequence list */
-    render: function(id, sequence) {
+    render: function(sequence) {
+      let view = this;
       /* Add a span to the list view and populate it with the residues */
-      let view = d3.select(id).select("span")
+      let viewer = d3.select(view._dom).select("span")
           .selectAll("span")
           // JOIN: Add the data to the Dom
           .data(sequence);
       // UPDATE: add new elements if needed
-      view
+      viewer
           .enter().append("span")
           .attr("class", "residue")
           /* Merge the old elements (if they exist) with the new data */
-          .merge(view)
+          .merge(viewer)
           .text(function(d, i) { return "(" + parseInt(i+1) + ") " + d; })
-          .style("width", view.width / 2)
+          .style("width", view.width)
+          .on("click", selectResidue)
           // EXIT: Remove unneeded DOM elements
           .exit().remove();
     }

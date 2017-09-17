@@ -43,7 +43,9 @@ function TertiaryStructureView(model, element) {
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
   self.fileUpdated = new EventNotification(this);
+  /* The user has selected a new protein */
   self.residueSelected = new EventNotification(this);
+  /* The user has interacted with the viewer */
   self.modelRotated = new EventNotification(this);
   self.modelZoomed = new EventNotification(this);
   self.cameraChanged = new EventNotification(this);
@@ -153,8 +155,6 @@ function TertiaryStructureView(model, element) {
     self.initialize();
     self.render(protein.structure, protein.name, "tube");
 
-    console.log(protein.structure);
-
     /* Show the menu */
     self._dom.find('.x_title').show();
 
@@ -192,7 +192,7 @@ function TertiaryStructureView(model, element) {
     self.pvViewer.setZoom(msg.zoom);
     self.pvViewer._draw();
   });
-
+  /* Update the panning */
   self._model.cameraChanged.attach(function(sender, msg) {
     self.pvViewer._redrawRequested = false;
       // self.pvViewer.setRotation(msg.rotation);

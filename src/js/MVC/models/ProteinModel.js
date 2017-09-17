@@ -106,7 +106,12 @@ const ProteinModel = (function() {
     },
 
     selectResidue : function(options) {
-      this._selectedResidue.push(options.residue);
+      if(options.replace){
+        this._selectedResidue = [options.residue];
+      }
+      else{
+        this._selectedResidue.push(options.residue);
+      }
       /* Notify the listeners that the selection has been changed */
       this.residueSelected.notify(options);
     },

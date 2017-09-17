@@ -28,6 +28,13 @@ const PrimaryStructureView = (function() {
 
     /* Residue selected and added to the model */
     self._model.residueSelected.attach(function (sender, args){
+      /* new selection, deselect all previous selections*/
+      if(args.replace){
+        d3.select(self._dom).selectAll("span")
+            .classed("selected_sequence", false);
+      }
+
+      /* Highlight the selection */
       d3.select(self._dom).selectAll("span")
           .filter(function(d,i){
             return d === args.residue._name && i === args.residue._index + 1;
@@ -37,7 +44,6 @@ const PrimaryStructureView = (function() {
 
     /* Residue deselected and removed to the model */
     self._model.residueDeselected.attach(function (sender, args){
-      console.log(args);
       d3.select(self._dom).selectAll("span")
           .filter(function(d,i){
             return d === args.residue._name && i === args.residue._index + 1;

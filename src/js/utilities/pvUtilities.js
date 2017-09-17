@@ -114,7 +114,7 @@ var pvUtils = function (context) {
       // when the shift key is pressed, extend the selection, otherwise
       // only select the clicked atom.
       let extendSelection = ev.shiftKey;
-      let sel;
+      let sel, rem, residue;
       if (extendSelection) {
         sel = self.picked.node().selection();
       } else {
@@ -124,12 +124,19 @@ var pvUtils = function (context) {
       // in case atom was not part of the view, we have to add it, because
       // it wasn't selected before. Otherwise removeAtom took care of it
       // and we don't have to do anything.
-      if (!sel.removeAtom(self.picked.target(), true)) {
-        sel.addAtom(self.picked.target());
+      residue = self.picked.target()._residue;
+      rem = sel.removeAtom(self.picked.target(), true);
+      if (!rem) {
+        // sel.addResidues([res], true);
+        residue._atoms.forEach(function(atom){
+          sel.addAtom(atom);
+        });
+        /* Notify the controller that a residue has been clicked */
+        self.residueSelected.notify({selection : sel, residue: residue});
       }
-
-      /* Notify the controller that a residue has been clicked */
-      self.residueSelected.notify({selection : sel});
+      else {
+        self.residueDeselected.notify({selection : sel, residue: residue});
+      }
     }
   }
 };

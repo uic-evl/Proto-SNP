@@ -10,8 +10,8 @@ const ProteinModel = (function() {
     self._proteinStructure = null;
     self._proteinName = "";
     self._geometry = null;
-    self._selectedResidue = null;
-    self._previousSelectedResidue = null;
+    self._selectedResidue = [];
+    self._selectedChain = "";
 
     self._proteinSorting = "";
     self._proteinColoring = "";
@@ -23,6 +23,7 @@ const ProteinModel = (function() {
     self.proteinChanged = new EventNotification(this);
 
     self.residueSelected = new EventNotification(this);
+    self.residueDeselected = new EventNotification(this);
     self.proteinSortingChanged    = new EventNotification(this);
     self.proteinColoringChanged   = new EventNotification(this);
 
@@ -69,15 +70,19 @@ const ProteinModel = (function() {
     getGeometry: function() { return this._geometry; },
 
     getSequence: function(structure, chain) {
+      /* Set the chain */
+      this._selectedChain = chain || 0;
       // Array to store the sequence
       let seq = [];
       /* Iterate over the residues of the chain and add them to the array*/
-      structure.chains()[chain || 0].eachResidue(function(res){
+      structure.chains()[this._selectedChain].eachResidue(function(res){
         seq.push(res.name());
       });
       // return the sequence
       return seq;
     },
+
+    getChain: function() { return this._selectedChain; },
 
     getName: function() { return this._proteinName},
 
@@ -93,19 +98,24 @@ const ProteinModel = (function() {
     clear: function() {
       this._proteinStructure = null;
       this._geometry = null;
-      this._selectedResidue = null;
-      this._previousSelectedResidue = null;
+      this._selectedResidue = [];
 
       this._proteinName = "";
       this._proteinSorting = "";
       this._proteinColoring = "";
     },
 
-    selectResidue : function(selection) {
-      this._previousSelectedResidue = this._selectedResidue;
-      this._selectedResidue = selection;
+    selectResidue : function(options) {
+      this._selectedResidue.push(options.residue);
       /* Notify the listeners that the selection has been changed */
-      this.residueSelected.notify(this._selectedResidue);
+      this.residueSelected.notify(options);
+    },
+
+    deselectResidue : function(options) {
+      let index = this._selectedResidue.indexOf(options.residue);
+      this._selectedResidue.splice(index, 1);
+      /* Notify the listeners that the selection has been changed */
+      this.residueDeselected.notify(options);
     },
 
     getResidueSelection : function() { return this._selectedResidue },

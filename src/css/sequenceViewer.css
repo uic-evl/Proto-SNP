@@ -27,6 +27,10 @@
     padding: 0;
 }
 
+.selected_sequence {
+    background-color: #ff3100 !important;
+}
+
 .residue {
     display: block;
     vertical-align: middle;

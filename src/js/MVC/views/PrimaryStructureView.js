@@ -4,10 +4,6 @@ var App = App || {};
 
 const PrimaryStructureView = (function() {
 
-  function selectResidue(event) {
-    console.log(event);
-  }
-
   function PrimaryStructureView(model, element) {
     let self = this;
 
@@ -18,14 +14,37 @@ const PrimaryStructureView = (function() {
 
     /* The user has selected a new protein */
     self.residueSelected = new EventNotification(this);
+    self.residueDeselected = new EventNotification(this);
 
     /* Event Listeners */
+
+    /* New protein loaded into the view */
     self._model.proteinAdded.attach(function (sender, protein) {
       /* Initialize the viewer */
       self.initialize();
       /* Render the sequence with of the loaded protein */
       self.render(sender.getSequence(protein.structure));
     });
+
+    /* Residue selected and added to the model */
+    self._model.residueSelected.attach(function (sender, args){
+      d3.select(self._dom).selectAll("span")
+          .filter(function(d,i){
+            return d === args.residue._name && i === args.residue._index + 1;
+          })
+        .classed("selected_sequence", true);
+    });
+
+    /* Residue deselected and removed to the model */
+    self._model.residueDeselected.attach(function (sender, args){
+      console.log(args);
+      d3.select(self._dom).selectAll("span")
+          .filter(function(d,i){
+            return d === args.residue._name && i === args.residue._index + 1;
+          })
+          .classed("selected_sequence", false);
+    });
+
   }
 
   PrimaryStructureView.prototype = {
@@ -77,7 +96,14 @@ const PrimaryStructureView = (function() {
           .merge(viewer)
           .text(function(d, i) { return "(" + parseInt(i+1) + ") " + d; })
           .style("width", view.width)
-          .on("click", selectResidue)
+          .on("click", function(residue, index) {
+            let chains = view._model.getStructure().residueSelect(function(res){ return res.index() === index }),
+                currentChain = view._model.getChain(),
+                residues = [];
+            chains.eachResidue(function(res){ residues.push(res._residue); });
+            /* set the selected Residue on the model */
+            view.residueSelected.notify({residue:residues[currentChain]});
+          } )
           // EXIT: Remove unneeded DOM elements
           .exit().remove();
     }

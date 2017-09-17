@@ -45,6 +45,7 @@ function TertiaryStructureView(model, element) {
   self.fileUpdated = new EventNotification(this);
   /* The user has selected a new protein */
   self.residueSelected = new EventNotification(this);
+  self.residueDeselected = new EventNotification(this);
   /* The user has interacted with the viewer */
   self.modelRotated = new EventNotification(this);
   self.modelZoomed = new EventNotification(this);
@@ -170,8 +171,8 @@ function TertiaryStructureView(model, element) {
   });
 
   /* Update the model once the selection has been added to the model */
-  self._model.residueSelected.attach(function(sender, selection){
-    self.picked.node().setSelection(selection);
+  self._model.residueSelected.attach(function(sender, args){
+    self.picked.node().setSelection(args.selection);
     self.pvViewer.requestRedraw();
   });
 

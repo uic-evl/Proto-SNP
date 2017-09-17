@@ -10,6 +10,19 @@ const PrimaryStructureController = (function() {
 
     let _this = this;
 
+    /* Attach the listeners to the view */
+    this._views.forEach(function(view){
+      /* Residue selected event */
+      view.residueSelected.attach(function(sender, args){
+        sender._model.selectResidue(args);
+      });
+      /* Residue deselected event*/
+      view.residueDeselected.attach(function(sender, args){
+        sender._model.deselectResidue(args);
+      });
+
+    });
+
     /*  Bind the view with knockoutJS */
     ko.applyBindings({views: this._views}, $("#sequenceViewerTemplate")[0]);
 

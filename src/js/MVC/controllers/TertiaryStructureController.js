@@ -29,7 +29,11 @@ const TertiaryStructureController = (function() {
 
       /* Add residue selection */
       view.residueSelected.attach(function(sender, args) {
-        sender._model.selectResidue(args.selection);
+        sender._model.selectResidue(args);
+      });
+      /* Add residue deselection */
+      view.residueDeselected.attach(function(sender, args) {
+        sender._model.deselectResidue(args);
       });
 
       view.modelRotated.attach(function(sender, args){

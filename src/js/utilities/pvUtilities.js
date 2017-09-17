@@ -127,6 +127,7 @@ var pvUtils = function (context) {
       residue = self.picked.target()._residue;
       rem = sel.removeAtom(self.picked.target(), true);
       if (!rem) {
+        // sel.addResidues([residue], true);
         residue._atoms.forEach(function(atom){
           sel.addAtom(atom);
         });
@@ -134,8 +135,18 @@ var pvUtils = function (context) {
         self.residueSelected.notify({selection : sel, residue: residue, replace:!extendSelection});
       }
       else {
+        /* remove all of the atoms to the residue */
+        residue._atoms.forEach(function(atom){
+          sel.removeAtom(atom, true);
+        });
+
+        console.log("deselect");
+
+        /* notify the model of the change */
         self.residueDeselected.notify({selection : sel, residue: residue});
+
       }
-    }
+    },
+
   }
 };

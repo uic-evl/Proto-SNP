@@ -27,6 +27,11 @@ const TertiaryStructureView = (function () {
     p.text(_.toUpper(title));
   }
 
+  function selectionChanged(sender, args){
+    this.picked.node().setSelection(args.selection);
+    this.pvViewer.requestRedraw();
+  }
+
 function TertiaryStructureView(model, element) {
   let self = this;
 
@@ -170,8 +175,11 @@ function TertiaryStructureView(model, element) {
     App.residueMappingUtility.createColorLegend();
   });
 
-  /* Update the model once the selection has been added to the model */
-  self._model.residueSelected.attach(function(sender, args){
+  /* Update the model once the selection has been added/removed to/from the model */
+  self._model.residueSelected.attach(selectionChanged.bind(self));
+  self._model.residueDeselected.attach(selectionChanged.bind(self));
+
+  self._model.residueSelected.attach(function(sender, args) {
     self.picked.node().setSelection(args.selection);
     self.pvViewer.requestRedraw();
   });

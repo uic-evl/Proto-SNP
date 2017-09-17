@@ -24,8 +24,8 @@ var App = App || {};
         tertiaryStructuresController = new TertiaryStructureController(
             [leftProteinModel, rightProteinModel], [leftTertiaryStructureView, rightTertiaryStructureView], proteinFamilyController);
 
-    let leftPrimaryStructureView  = new PrimaryStructureView(null, {id: "leftMolecularViewer-Sequence", position:"left"}),
-        rightPrimaryStructureView = new PrimaryStructureView(null, {id: "rightMolecularViewer-Sequence", position:"right"}),
+    let leftPrimaryStructureView  = new PrimaryStructureView(leftProteinModel, {id: "leftMolecularViewer-Sequence", position:"left"}),
+        rightPrimaryStructureView = new PrimaryStructureView(rightProteinModel, {id: "rightMolecularViewer-Sequence", position:"right"}),
         primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
 
     let colorModel = new FilteringMenuModel({
@@ -65,6 +65,10 @@ var App = App || {};
     leftTertiaryStructureView.show();
     rightTertiaryStructureView.show();
     proteinFamilyView.show();
+
+    leftPrimaryStructureView.show();
+    rightPrimaryStructureView.show();
+
   }
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);

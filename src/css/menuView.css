@@ -17,7 +17,7 @@
     /*padding-left: 5px;*/
 /*}*/
 
-.geometry_dropdown {
+.geometry_dropdown, .coloring_dropdown {
     padding: 0 !important;
     margin: 0 !important;
     display: inline-block !important;
@@ -25,12 +25,12 @@
     float: none !important
 }
 
-#geometry_list, #proteinName {
+#protein_coloring_list, #geometry_list, #proteinName {
     background-color: #e7e7e7;
     color: #555;
 }
 
-#geometry_list a {
+#protein_coloring_list a, #geometry_list a {
     color: #555;
 }
 

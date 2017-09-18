@@ -127,8 +127,8 @@ function TertiaryStructureView(model, element) {
   };
 
   /*Creates the geometry selection menu */
-  self.initialize_geometry_menu = function() {
-    /* Load the html template */
+  self.initialize_menus = function() {
+    /* Load the html menu templates */
     $.get("./src/html/proteinGeometryListTemplate.html", function (data) {
       /* Add the elements to the list */
       self._dom.find("#geometry_list a").after(data);
@@ -147,14 +147,35 @@ function TertiaryStructureView(model, element) {
                   self.pvViewer.requestRedraw();
             }
           });
+
       /* Show the view to bind the model */
       geometryListView.show();
     });
+
+    /* Load the html menu templates */
+    $.get("./src/html/proteinColoringListTemplate.html", function (data) {
+      /* Add the elements to the list */
+      self._dom.find("#protein_coloring_list a").after(data);
+      let coloringListModel = new FilteringMenuModel({
+            items: ["Side Chain Class", "Side Chain Polarity", "Selections Only"]
+          }),
+          coloringListView = new FilteringMenuView(coloringListModel, { 'list' : self._dom.find('#protein_coloring_ul') }),
+          coloringListController = new FilteringMenuController({
+            menu : "coloring",
+            models: { list: coloringListModel, connected: [self._model]},
+            view: coloringListView,
+            cb:
+                function(model, element) {
+                  self.recolor(element);
+                }
+          });
+      /* Show the view to bind the model */
+      coloringListView.show();
+    });
+
     /* Show the menu */
     d3.select(self._dom[0]).select("#molecularViewerMenu")
-        .classed("hidden", false)
-        // .classed("geometry_dropdown", false)
-    ;
+        .classed("hidden", false);
   };
 
   /* Attach the listeners */
@@ -184,11 +205,6 @@ function TertiaryStructureView(model, element) {
   /* Update the model once the selection has been added/removed to/from the model */
   self._model.residueSelected.attach(selectionChanged.bind(self));
   self._model.residueDeselected.attach(selectionChanged.bind(self));
-
-  /* Update the coloring of the view */
-  self._model.proteinColoringChanged.attach(function(sender, msg){
-    self.recolor(msg.scheme);
-  });
 
   // /* Update the rotation */
   self._model.rotateModel.attach(function(sender, msg){
@@ -298,7 +314,8 @@ TertiaryStructureView.prototype = {
       near: 0.1,
       background: "black",
       width : parseInt(d3.select(dom).style('width')),
-      height : parseInt(d3.select(dom).style('height'))
+      height : parseInt(d3.select(dom).style('height')),
+      selectionColor: "#984ea3"
     };
     /* insert the molecularViewer under the DOM element */
     this.pvViewer = pv.Viewer(dom, options);
@@ -328,7 +345,7 @@ TertiaryStructureView.prototype = {
     this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
 
     /* Load the geometry list */
-    this.initialize_geometry_menu();
+    this.initialize_menus();
     /* Register the enter key to reset the selections of the view */
     //keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);
   },

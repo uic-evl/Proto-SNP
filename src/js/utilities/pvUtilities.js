@@ -108,7 +108,7 @@ var pvUtils = function (context) {
           self.picked.node().getColorForAtom(atom, color);
           previousHovered = {atom: atom, color: color, node: self.picked.node()};
 
-          self.setColorForAtom(self.picked.node(), atom, 'red');
+          self.setColorForAtom(self.picked.node(), atom, '#984ea3');
         }
         else {
           self.staticLabel.innerHTML = '&nbsp;';

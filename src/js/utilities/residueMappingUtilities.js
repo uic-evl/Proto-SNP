@@ -44,6 +44,10 @@ function ResidueMappingUtility() {
     gap       : colorCodes.gray
   };
 
+  let colorCodesSelection = {
+    all     : colorCodes.white
+  };
+
   let residuePropertiesByLetter = [
     {abbr: "A", sideClass: "aliphatic", polarity: "nonpolar", name:"ALA"},
     {abbr: "R", sideClass: "basic",     polarity: "basic",    name:"ARG"},
@@ -107,6 +111,9 @@ function ResidueMappingUtility() {
     }
   }
 
+  function colorBySelection(residue) {
+    return colorCodesSelection["all"];
+  }
 
   function get_color_mapping(mapping){
     switch(mapping.trim()){
@@ -118,6 +125,10 @@ function ResidueMappingUtility() {
       case "Side Chain Polarity":
         currentColorMap = colorCodesByPolarity;
         return colorByPolarity;
+        break;
+      case "Selections Only":
+        currentColorMap = colorCodesSelection;
+        return colorBySelection;
         break;
       case "Frequency (Family Viewer)":
         currentColorMap = colorCodesByResidueFrequency;

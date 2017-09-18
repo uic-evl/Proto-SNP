@@ -176,6 +176,11 @@ const BrushView = (function() {
       });
     };
 
+    self.removeContextMenu = function() {
+      $('.btn-left_viewer').off('click');
+      $('.btn-right_viewer').off('click');
+    };
+
     /* Mixin the utilities */
     _.mixin(self, new jQueryContextUtils(self));
   }

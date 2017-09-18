@@ -22,9 +22,7 @@ var pvUtils = function (context) {
     linkInteractions: function() {
       let view = this;
       /* Inject a function to determine when the view has been moved */
-      let redraw = this.pvViewer.__proto__.requestRedraw,
-          mouse_down = this.pvViewer._mouseHandler.__proto__._mouseDown,
-          mouse_up   = this.pvViewer._mouseHandler.__proto__._mouseUp;
+      let redraw = this.pvViewer.__proto__.requestRedraw;
       let zoom = view.pvViewer._cam.__proto__.zoom;
 
       this.pvViewer.__proto__.requestRedraw = function(){
@@ -47,16 +45,6 @@ var pvUtils = function (context) {
         view.modelZoomed.notify({zoom: this._zoom});
         return zoom.apply(this, arguments);
       }
-
-      // this.pvViewer._mouseHandler.__proto__._mouseDown = function() {
-      //   console.log("down");
-      //   return mouse_down.apply(this, arguments);
-      // };
-      //
-      // this.pvViewer._mouseHandler.__proto__._mouseUp = function() {
-      //   return mouse_up.apply(this, arguments);
-      // };
-
     },
 
     setColorForAtom: function (go, atom, color) {
@@ -101,7 +89,8 @@ var pvUtils = function (context) {
 
         if (self.picked !== null) {
           let atom = self.picked.target();
-          self.staticLabel.innerHTML = atom.qualifiedName();
+          self.staticLabel.innerHTML = atom._residue._chain._name + "."
+              + atom._residue._name + "." + (atom._residue._index+1);
           // get RGBA color and store in the color array, so we know what it was
           // before changing it to the highlight color.
           let color = [0, 0, 0, 0];

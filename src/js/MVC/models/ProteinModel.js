@@ -66,6 +66,8 @@ const ProteinModel = (function() {
     /* Accessor to get the underlying geometry in the molecularViewer */
     setGeometry: function(geometry) { this._geometry = geometry; },
 
+    setStructure: function(structure) { this._proteinStructure = structure },
+
     /* Accessor to get the underlying geometry in the molecularViewer */
     getGeometry: function() { return this._geometry; },
 

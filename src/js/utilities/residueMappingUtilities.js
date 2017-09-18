@@ -149,7 +149,6 @@ function ResidueMappingUtility() {
         d3.select(self.legend)
             .append("svg")
             .attr("width", self.legend_width);
-
   }
 
   /* Create the legend for the current coloring scheme */

@@ -13,10 +13,6 @@
     cursor: pointer;
 }
 
-/*#molecularViewerMenu {*/
-    /*padding-left: 5px;*/
-/*}*/
-
 .geometry_dropdown, .coloring_dropdown {
     padding: 0 !important;
     margin: 0 !important;

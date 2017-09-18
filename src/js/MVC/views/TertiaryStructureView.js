@@ -352,7 +352,6 @@ TertiaryStructureView.prototype = {
 
   render: function (structure, proteinName, renderingStyle) {
     /* Display the protein in the specified rendering, coloring by the specified property */
-
     let geometry = this.pvViewer.renderAs(proteinName, structure, renderingStyle,
         {color: colorProteinBy.call(this, this._model.getProteinColoring())});
     /* Save the geometry to the model */

@@ -15,11 +15,10 @@ const TertiaryStructureController = (function() {
 
     /* Setup the callback listeners for each view*/
     self._views.forEach(function(view, idx){
-      /* Add Protein Upload Callbacks */
+      /* Add Protein Upload/Update Callbacks */
       view.fileUploaded.attach(function(sender, args) {
         sender._model.addProtein(args.metaData, args.file);
       });
-
       view.fileUpdated.attach(function(sender, args) {
         /* Clear the view and model */
         view._model.clear();
@@ -27,11 +26,10 @@ const TertiaryStructureController = (function() {
         sender._model.addProtein(args.metaData, args.file);
       });
 
-      /* Add residue selection */
+      /* Add residue selection/deselection */
       view.residueSelected.attach(function(sender, args) {
         sender._model.selectResidue(args);
       });
-      /* Add residue deselection */
       view.residueDeselected.attach(function(sender, args) {
         sender._model.deselectResidue(args);
       });

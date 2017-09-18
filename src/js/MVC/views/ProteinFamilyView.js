@@ -41,7 +41,7 @@ const ProteinFamilyView = (function() {
       return {
         brushes : [
           {
-            orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal",
+            orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal main",
             extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]], block_size: self.residue_glyph_size,
             position: [self.y_offset, self.residue_glyph_size+self.y_offset], semantic: "horizontal",
             tooltip: function(d) { return self._model.getSelectedProtein().name; }
@@ -348,7 +348,6 @@ const ProteinFamilyView = (function() {
 
       /* Destroy the context menu */
       $.contextMenu( 'destroy' );
-
       },
 
     initialize: function (family) {

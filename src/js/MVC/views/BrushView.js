@@ -12,7 +12,7 @@ const BrushView = (function() {
     self._scale = options.scale || null;
     self._orientation = options.orientation;
     self._tooltip = null;
-    self._orientation = options.orientation;
+    self._semantic = options.semantic;
     self._class = "";
     self._menuSelection = "";
 
@@ -160,7 +160,7 @@ const BrushView = (function() {
       let view = self;
 
       /* Create the context menu */
-      self.createContextMenu('g.horizontal rect.selection');
+      self.createContextMenu('g.horizontal.main rect.selection');
 
       /* Add the callbacks to the modal windwo */
       $('.btn-left_viewer').on('click', function(e) {
@@ -238,8 +238,6 @@ const BrushView = (function() {
       /* add the context menu for the horizontal bar*/
       if(this._orientation === App.HORIZONTAL_PADDLE) {
         /* Set the context menu of the horizontal brush */
-        // brushObj.select("rect.selection")
-        //     .on("contextmenu", d3.contextMenu(d3Utils.create_context_menu.bind(null,this._model)));
         this.addContextMenu();
       }
       /* Add the tooltip if one was created */

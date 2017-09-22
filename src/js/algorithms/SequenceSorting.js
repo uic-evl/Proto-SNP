@@ -27,7 +27,6 @@ const SequenceSorting = function(family){
         /* The the residue (s) that occur the most frequently */
         localMax = _.maxBy( column_residue_counts, (o)=> { return o[1]; }),
         dupes = _.filter(column_residue_counts, (pair) => { return pair[1] === localMax[1]} );
-    /* Reset localMax to an object*/
     return _.fromPairs(dupes);
   }
 
@@ -58,7 +57,8 @@ const SequenceSorting = function(family){
         /* Get the residues of the ith column */
         let column_residues = _.map(family, function(member) { return _.nth(member.sequence, i); });
         /* Get the residue counts for each column*/
-        self.frequencies[i] = _.countBy(column_residues);
+        self.frequencies[i] = _.pickBy(_.countBy(column_residues), function(i,o){ return "~-.".indexOf(o) < 0;});
+
       }
       /* resolve the promise with the column frequencies*/
       resolve(self.frequencies)

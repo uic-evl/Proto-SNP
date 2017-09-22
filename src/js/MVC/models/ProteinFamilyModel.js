@@ -86,6 +86,38 @@ const ProteinFamilyModel = (function() {
       return !!this._parsedData;
     },
 
+    calculate_scores : function() {
+      /* If the browser does not support web workers, execute the code sequentially */
+      if (!window.Worker) {
+        this.calculate_all_sorting_scores_main(this._rawData[0]);
+      }
+      else {
+        let algorithms = this._sequenceSortingAlgorithms.getAlgorithms(),
+            workers = algorithms.length,
+            finished = 0,
+            model = this;
+
+        /* Iterate over each algorithm and launch a worker*/
+        algorithms.forEach(function(algorithm){
+          let myWorker = new Worker("src/js/utilities/sequenceSortingProcessing.js");
+          myWorker.postMessage({
+            family: model._rawData,
+            algorithm: algorithm,
+            protein: model._rawData[0]
+          });
+
+          /* Add the scores to the model once it returns */
+          myWorker.onmessage = function(response) {
+            model.set_scores(response.data.algorithm, response.data.score);
+            finished++;
+            if(workers === finished){
+              $("#sorting_list").find("li").removeClass("disabled");
+            }
+          };
+        });
+      }
+    },
+
     /* Setter for the names of the proteins from the family */
     setFamily : function(data, type) {
       this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
@@ -94,41 +126,13 @@ const ProteinFamilyModel = (function() {
         this._parsedData = parsed_data;
         this.setProteinNames();
         this.mappingPromise = this.setProteinMappings();
-            //App.promiseUtilities.makeQueryablePromise(this.setProteinMappings());
 
         /* Setup the sequence sorting algorithms and calculate the initial scores */
         this._sequenceSortingAlgorithms = new SequenceSorting(this._rawData);
 
-        /* If the browser does not support web workers, execute the code sequentially */
-        if (!window.Worker) {
-          this.calculate_all_sorting_scores_main(this._rawData[0]);
-        }
-        else {
-
-          let algorithms = this._sequenceSortingAlgorithms.getAlgorithms(),
-              workers = algorithms.length,
-              finished = 0,
-              model = this;
-
-          /* Iterate over each algorithm and launch a worker*/
-          algorithms.forEach(function(algorithm){
-            let myWorker = new Worker("src/js/utilities/sequenceSortingProcessing.js");
-            myWorker.postMessage({
-              family: model._rawData,
-              algorithm: algorithm,
-              protein: model._rawData[0]
-            });
-
-            /* Add the scores to the model once it returns */
-            myWorker.onmessage = function(response) {
-              model.set_scores(response.data.algorithm, response.data.score);
-              finished++;
-              if(workers === finished){
-                $("#sorting_list").find("li").removeClass("disabled");
-              }
-            };
-          });
-        }
+        /* Calculate the similarity scores between proteins */
+        // $('#sortingProtein').modal('toggle');
+        this.calculate_scores();
 
         this.proteinFamilyAdded.notify({family: this._parsedData});
       }.bind(this));

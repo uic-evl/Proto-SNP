@@ -69,6 +69,7 @@ function ResidueMappingUtility() {
     {abbr: "W", sideClass: "aromatic",  polarity: "nonpolar", name:"TRP"},
     {abbr: "Y", sideClass: "aromatic",  polarity: "polar",    name:"TYR"},
     {abbr: "V", sideClass: "aliphatic", polarity: "nonpolar", name:"VAL"},
+    {abbr: "X", sideClass: "gap",       polarity: "gap",      name:"gap"},
     {abbr: ".", sideClass: "gap",       polarity: "gap",      name:"gap"},
     {abbr: "~", sideClass: "gap",       polarity: "gap",      name:"gap"},
     {abbr: "-", sideClass: "gap",       polarity: "gap",      name:"gap"}
@@ -99,8 +100,9 @@ function ResidueMappingUtility() {
    are same, they will be colored in same color
  */
   function colorByFrequency(residue, highest_frequency) {
-    let residues = _.keys(highest_frequency);
-    if(residue === "gap"){
+    let residues = _.keys(highest_frequency),
+    res = _.find(residuePropertiesByLetter, function(o) { return o.abbr === residue; });
+    if(res.name === "gap"){
       return  colorCodesByResidueFrequency["gap"];
     }
     else if(_.indexOf(residues, residue) > -1){

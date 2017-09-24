@@ -1,15 +1,43 @@
 <html>
 
 <head>
+    <script type='text/javascript' src='lib/js/lodash.min.js'></script>
 
     <script type="application/javascript" src="src/js/utilities/webGL_utilities.js"></script>
+    <script type="application/javascript" src="src/js/utilities/residueMappingUtilities.js"></script>
+    <script src="https://twgljs.org/dist/twgl.min.js"></script>
     <script type="application/javascript" src="testGL.js"></script>
 
 </head>
 
 <body>
 
-<canvas id="c"></canvas>
+<script id="vs" type="notjs">
+attribute vec4 position;
+
+varying vec2 v_texcoord;
+
+void main() {
+  gl_Position = position;
+
+  // Since we know we'll be passing in -1 to +1 for position
+  v_texcoord = position.xy * 0.5 + 0.5;
+}
+</script>
+
+<script id="fs" type="notjs">
+precision highp float;
+
+uniform sampler2D u_texture;
+
+varying vec2 v_texcoord;
+
+void main() {
+  gl_FragColor = texture2D(u_texture, v_texcoord);
+}
+  </script>
+
+<canvas id="canvas" width="373px" height="640px"></canvas>
 
 </body>
 

@@ -17,30 +17,48 @@
 <script id="vs" type="notjs">
 attribute vec4 position;
 
-varying vec2 v_texcoord;
+varying vec2 v_texCoord;
 
 void main() {
   gl_Position = position;
 
   // Since we know we'll be passing in -1 to +1 for position
-  v_texcoord = position.xy * 0.5 + 0.5;
+  v_texCoord = position.xy * 0.5 + 0.5;
 }
 </script>
 
 <script id="fs" type="notjs">
 precision highp float;
 
+// texture
 uniform sampler2D u_texture;
 
-varying vec2 v_texcoord;
+// texture dimensions
+uniform vec2 u_textureSize;
+
+// texture position
+varying vec2 v_texCoord;
+
+// residue size
+uniform float u_residue_size;
 
 void main() {
-  gl_FragColor = texture2D(u_texture, v_texcoord);
+
+   // compute 1 pixel in texture coordinates.
+   vec2 currPixel = vec2(1.0, 1.0) / u_textureSize;
+   currPixel = currPixel / u_residue_size;
+
+   currPixel.x = floor(currPixel.x);
+   currPixel.y = floor(currPixel.y);
+
+   gl_FragColor =
+    texture2D(u_texture, v_texCoord);
+
 }
   </script>
 
 <canvas style="display:none" id="canvas" width="373px" height="640px"></canvas>
-<canvas id="family" width="1119px" height="348px"></canvas>
+<canvas class="pixelated" id="family" width="1119px" height="348px"></canvas>
 
 </body>
 

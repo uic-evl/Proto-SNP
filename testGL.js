@@ -4,8 +4,6 @@
 
   function render(error, result){
 
-    console.log(result);
-
     sequence = result.data;
 
     let mapper =  new ResidueMappingUtility(),
@@ -13,6 +11,12 @@
     let canvas = document.getElementById('canvas'),
         familyCanvas = document.getElementById('family'),
         familyContext = familyCanvas.getContext("2d");
+
+    familyContext.imageSmoothingQuality = "high";
+    familyContext.webkitImageSmoothingEnabled = false;
+    familyContext.mozImageSmoothingEnabled = false;
+    familyContext.imageSmoothingEnabled = false;
+
 
     let familyImage = new Image();
     let gl = canvas.getContext("webgl");
@@ -60,13 +64,15 @@
         -1, 1, 0,
         1, -1, 0,
         1, 1, 0,
-      ],
+      ]
     };
     // calls gl.createBuffer, gl.bindBuffer, gl.bufferData for each array
     let bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 
     let uniforms = {
       u_texture: texture,
+      u_textureSize: [373,640],
+      u_residue_size: 3
     };
 
     gl.useProgram(programInfo.program);
@@ -78,7 +84,8 @@
     twgl.drawBufferInfo(gl, gl.TRIANGLES, bufferInfo);
 
     familyImage.onload = function(){
-      familyContext.drawImage(familyImage, 0,0, 373,116, 0, 0, 1119, 348);
+      // familyContext.scale(3,3)
+      familyContext.drawImage(familyImage, 0,0, 373,116, 0, 0, 1119,348);
     };
 
     // save canvas image as data url (png format by default)

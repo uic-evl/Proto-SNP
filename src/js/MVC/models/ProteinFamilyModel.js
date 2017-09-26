@@ -243,6 +243,8 @@ const ProteinFamilyModel = (function() {
 
     getProteinCount : function() { return this._proteinNames.length; },
 
+    getSequenceCount : function() { return this._rawData[0].length; },
+
     getSelectedProtein: function () {
       return this._selectedProtein;
     },

@@ -12,9 +12,14 @@ const ProteinFamilyView = (function() {
 
     self._model = model;
     self._id = element.id;
-    self.overviewImage = false;
 
+    self.overviewImage = false;
     self._overview_percentage = 0.1;
+
+    /* WebGL Variables */
+    self.glProgramInfo = null;
+    self.gl = null;
+    self.glBufferInfo = null;
 
     /* Set according to the glyph size */
     self.x_offset = 0;
@@ -56,15 +61,15 @@ const ProteinFamilyView = (function() {
             block_size: self.residue_glyph_size, semantic: "right",
             position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
         ],
-      frequencyViewers : [
-        {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
-          overview: self.overviewImage, offset_x:10},
-        {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
-          block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: margin, width: self.width,
-          overview: self.overviewImage, offset_x:10
-        }
-      ]
+        frequencyViewers : [
+          {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
+            block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
+            overview: self.overviewImage, offset_x:10},
+          {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
+            block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: margin, width: self.width,
+            overview: self.overviewImage, offset_x:10
+          }
+        ]
       };
     }
 
@@ -115,20 +120,52 @@ const ProteinFamilyView = (function() {
     };
 
     self.initialize_back_buffer = function(family, colorMapping) {
-      /* Find the width of the div */
-      let width = (self.overviewImage) ? Math.round(self.width*1.1) : self.width;
-      /* First, clear the canvas*/
-      self.backBufferContext.clearRect(0, 0, width, self._backBufferHeight);
       return new Promise(function(resolve, reject) {
+        let residue_data = [];
         /* Get the trend image rows from the data model */
         family.forEach(function(sequence,row){
           sequence.forEach(function(residue, col){
-            let mostFreq = self._model.getSequenceFrequencyAt(col);
-            self.backBufferContext.fillStyle = colorMapping(residue, mostFreq).code;
-            self.backBufferContext.fillRect(col*self.residue_glyph_size, row*self.residue_glyph_size,
-                self.residue_glyph_size, self.residue_glyph_size);
+            let mostFreq = self._model.getSequenceFrequencyAt(col),
+                color = colorMapping(residue, mostFreq).rgba;
+            residue_data.push(color[0], color[1], color[2], color[3])
           });
         });
+
+        /* Format the pixels into an unsigned array and create the texture */
+        let pixels = new Uint8Array(residue_data),
+            texture = self.gl.createTexture();
+        /* Bind the texture and flip the pixels */
+        self.gl.bindTexture(self.gl.TEXTURE_2D, texture);
+        // Flip the image's Y axis to match the WebGL texture coordinate space.
+        self.gl.pixelStorei(self.gl.UNPACK_FLIP_Y_WEBGL, true);
+        /* Set the texture parameters */
+        self.gl.texParameteri(self.gl.TEXTURE_2D, self.gl.TEXTURE_WRAP_S, self.gl.CLAMP_TO_EDGE);
+        self.gl.texParameteri(self.gl.TEXTURE_2D, self.gl.TEXTURE_WRAP_T, self.gl.CLAMP_TO_EDGE);
+        self.gl.texParameteri(self.gl.TEXTURE_2D, self.gl.TEXTURE_MIN_FILTER, self.gl.NEAREST);
+
+        /* Create the data texture */
+        self.gl.texImage2D(
+            self.gl.TEXTURE_2D, // target
+            0, // mip level
+            self.gl.RGBA, // internal format
+            self._model.getSequenceCount(), self._model.getProteinCount(), // width and height
+            0, // border
+            self.gl.RGBA, //format
+            self.gl.UNSIGNED_BYTE, // type
+            pixels // texture data
+        );
+
+        /* Set the uniforms */
+        let uniforms = { u_texture: texture };
+        /* Initialize the program */
+        self.gl.useProgram(self.glProgramInfo.program);
+        // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
+        twgl.setBuffersAndAttributes(self.gl, self.glProgramInfo, self.glBufferInfo);
+        // calls gl.activeTexture, gl.bindTexture, gl.uniformXXX
+        twgl.setUniforms(self.glProgramInfo, uniforms);
+        // calls gl.drawArrays or gl.drawElements
+        twgl.drawBufferInfo(self.gl, self.gl.TRIANGLES, self.glBufferInfo);
+
         /* Get the back buffer data */
         self._backBufferImage = self.backBufferCanvas.toDataURL();
         /* Create the family image */
@@ -162,7 +199,7 @@ const ProteinFamilyView = (function() {
 
       /*Reset the parent dom width/heights */
       self._parentDom.classed("trend-viewer", false)
-               .classed("proteinFamilyViewer", true);
+          .classed("proteinFamilyViewer", true);
       /* Make sure the height of the data does not exceed the height of the container */
       let protein_height = self.y_axis_length * residue_width,
           new_height = self._parentDom.node().clientHeight,
@@ -256,51 +293,52 @@ const ProteinFamilyView = (function() {
 
       /* Setup the upload callback for files */
       App.fileUtilities.familyUploadSetup(input,
-        function (data, extension) {
-          self.fileUpdated.notify({data: data, type: extension});
-        }).done(function(){
-          input.style.width = parent.clientWidth;
-          input.style.height = parent.clientHeight;
-          // input.style.cursor = "pointer";
-          input.style['z-index'] = 11;
+          function (data, extension) {
+            self.fileUpdated.notify({data: data, type: extension});
+          }).done(function(){
+        input.style.width = parent.clientWidth;
+        input.style.height = parent.clientHeight;
+        // input.style.cursor = "pointer";
+        input.style['z-index'] = 11;
       });
     };
 
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
-        colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring()),
-        /* Initialize the trend image view*/
-        width = self.initialize(family);
+          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
+      /* Initialize the trend image view*/
+      let width = self.initialize(family);
+
       /* Initialize the back buffer with the family data */
       self.initialize_back_buffer(family.data, colorMapping)
       /* Render the family view */
-        .then(self.render.bind(self,self._familyImage,0,0))
-        .then(function(){
-          /* Notify the controller that the image has been rendered */
-          self.imageRendered.notify(build_brushes_and_viewers());
-          /* Render the overview if one is needed */
-          if (self.overviewImage) {
-            self.render_overview()
-              .then(function(){
-                /* Notify the listens that the overview has been rendered and render the brush  */
-                self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
-                /* Render the context line to show to what the brush relates */
-                let contextPoints = [
-                  [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
-                  [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
-                  [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
-                ];
-                d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
-                d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
-                  {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
-              });
-          }
-          /* Enable the coloring menu */
-          $("#coloring_list").find("li").removeClass("disabled");
-          /* Create the legend */
-          App.residueMappingUtility.createColorLegend();
-        }).catch(console.log.bind(console));
+          .then(self.render.bind(self,self._familyImage,0,0))
+          .then(function(){
+            /* Notify the controller that the image has been rendered */
+            self.imageRendered.notify(build_brushes_and_viewers());
+            /* Render the overview if one is needed */
+            if (self.overviewImage) {
+              self.render_overview()
+                  .then(function(){
+                    /* Notify the listens that the overview has been rendered and render the brush  */
+                    self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
+                    /* Render the context line to show to what the brush relates */
+                    let contextPoints = [
+                      [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
+                      [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
+                      [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
+                    ];
+                    d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
+                    d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
+                        {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
+                  });
+            }
+            /* Enable the coloring menu */
+            $("#coloring_list").find("li").removeClass("disabled");
+            /* Create the legend */
+            App.residueMappingUtility.createColorLegend();
+          }).catch(console.log.bind(console));
     });
   }
 
@@ -327,7 +365,7 @@ const ProteinFamilyView = (function() {
         });
       }
       /* Initialize the spinner */
-      view.spinnerDiv = $(view._parentDom.node()).append(App.spinner).find('.spinner');
+      // view.spinnerDiv = $(view._parentDom.node()).append(App.spinner).find('.spinner');
     },
 
     /* Clear the view */
@@ -336,7 +374,7 @@ const ProteinFamilyView = (function() {
       this._parentDom.selectAll("*").remove();
       /*Reset the parent dom width/heights */
       this._parentDom.classed("trend-viewer", true)
-        .classed("proteinFamilyViewer", false);
+          .classed("proteinFamilyViewer", false);
 
       /* Remove the previous stylings */
       this._parentDom.node().removeAttribute("style");
@@ -345,16 +383,15 @@ const ProteinFamilyView = (function() {
 
       /* Reset the overview flag */
       this.overviewImage = false;
-
       /* Destroy the context menu */
       $.contextMenu( 'destroy' );
-      },
+    },
 
     initialize: function (family) {
-
+      let view = this;
       this._dom = this._parentDom.append("div")
-        .classed("trendDiv", true)
-        .classed("center-aligned", true);
+          .classed("trendDiv", true)
+          .classed("center-aligned", true);
 
       /* Initialize the chart and data dimensions */
       this.set_data_dimensions_sizes(family.data);
@@ -376,20 +413,56 @@ const ProteinFamilyView = (function() {
             id:"trendCanvas", class:"trendImage"})
           .getContext('2d');
 
-      this.backBufferCanvas = d3Utils.create_chart_back_buffer({width:this.width, height:this._backBufferHeight});
-      this.backBufferContext = this.backBufferCanvas.getContext('2d');
+      /* Set context properties to disable image "smoothing" */
+      this.canvasContext.imageSmoothingQuality = "high";
+      this.canvasContext.webkitImageSmoothingEnabled = false;
+      this.canvasContext.mozImageSmoothingEnabled = false;
+      this.canvasContext.imageSmoothingEnabled = false;
+
+      /* Create the back buffer to render the image */
+      this.backBufferCanvas = d3Utils.create_chart_back_buffer({
+        width:this._model.getSequenceCount(),
+        height:this._model.getProteinCount()});
+
+      this.gl = this.backBufferCanvas.getContext('webgl');
 
       this.set_chart_scales();
       d3Utils.clear_chart_dom(this._dom);
       this.brushSVG = this.set_brush_SVG(this._dom, width+ this.x_offset, this.height+2.0*this.y_offset);
       /* let the caller know the width */
+      // compiles and links the shaders and looks up uniform and attribute locations
+      this.glProgramInfo = twgl.createProgramInfo(this.gl, ['vs', 'fs']);
+      let arrays =
+          {
+            position: [
+              -1, -1, 0, 1, -1, 0, -1, 1, 0,
+              -1, 1, 0, 1, -1, 0, 1, 1, 0,
+            ]
+          };
+      // calls gl.createBuffer, gl.bindBuffer, gl.bufferData for each array
+      this.glBufferInfo = twgl.createBufferInfoFromArrays(this.gl, arrays);
       return width;
+      // return new Promise(function(resolve, reject){
+      //   /* Read in the shaders */
+      //   queue()
+      //       .defer(d3.text, 'src/shaders/proteinFamily_vert.glsl')
+      //       .defer(d3.text, 'src/shaders/proteinFamily_frag.glsl')
+      //       .await(function(error, vert, frag){
+      //
+      //         /* resolve the promise */
+      //         resolve(width);
+      //       });
+      // });
     },
 
     render: function (image, x,y) {
       let view = this;
+      console.log(view._model.getSequenceCount(), view.ppv, view.residue_glyph_size);
       return new Promise(function (resolve, reject) {
-        view.canvasContext.drawImage(image, x, y, view.width, view.height, 0, view.y_offset, view.width, view.height);
+        view.canvasContext.drawImage(image, x, y,
+            view._model.getSequenceCount(), view.ppv,
+            0, view.y_offset,
+            view.width, view.height);
         resolve();
       });
     },
@@ -424,9 +497,9 @@ const ProteinFamilyView = (function() {
       brushViews.forEach(function(brushView){
         let brush = brushView.getBrush(),
             brushObj = view.brushSVG.append("g")
-              .attr("class", brushView.brushObj.getBrushClass)
-              .call(brush)
-              .call(brush.move, brushView.getInitialPosition());
+                .attr("class", brushView.brushObj.getBrushClass)
+                .call(brush)
+                .call(brush.move, brushView.getInitialPosition());
         /*render the brush */
         brushView.render(brushObj);
       });
@@ -441,6 +514,6 @@ const ProteinFamilyView = (function() {
     getXDimensionSize: function() { return this.x_axis_length; },
 
     getYDimensionSize: function() { return this.y_axis_length; }
-};
+  };
   return ProteinFamilyView;
 })();

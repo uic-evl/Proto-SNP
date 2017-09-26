@@ -157,10 +157,6 @@ const ProteinFamilyView = (function() {
 
         /* Set the uniforms */
         let uniforms = { u_texture: texture };
-        /* Initialize the program */
-        self.gl.useProgram(self.glProgramInfo.program);
-        // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-        twgl.setBuffersAndAttributes(self.gl, self.glProgramInfo, self.glBufferInfo);
         // calls gl.activeTexture, gl.bindTexture, gl.uniformXXX
         twgl.setUniforms(self.glProgramInfo, uniforms);
         // calls gl.drawArrays or gl.drawElements
@@ -355,8 +351,6 @@ const ProteinFamilyView = (function() {
               function (data, extension) {
                 /* Remove the splash screen */
                 view._parentDom.select('#trendSplash').remove();
-                /* Add the loading spinner */
-                // view.spinnerDiv.removeClass('hidden');
                 /* Update the model */
                 view.fileUploaded.notify({data: data, type: extension});
                 /* enable the upload button*/
@@ -364,8 +358,6 @@ const ProteinFamilyView = (function() {
               });
         });
       }
-      /* Initialize the spinner */
-      // view.spinnerDiv = $(view._parentDom.node()).append(App.spinner).find('.spinner');
     },
 
     /* Clear the view */
@@ -388,7 +380,6 @@ const ProteinFamilyView = (function() {
     },
 
     initialize: function (family) {
-      let view = this;
       this._dom = this._parentDom.append("div")
           .classed("trendDiv", true)
           .classed("center-aligned", true);
@@ -418,40 +409,39 @@ const ProteinFamilyView = (function() {
       this.canvasContext.mozImageSmoothingEnabled = false;
       this.canvasContext.imageSmoothingEnabled = false;
 
+      /* Set the back buffer dimension */
       /* Create the back buffer to render the image */
       this.backBufferCanvas = d3Utils.create_chart_back_buffer({
-        width:this._model.getSequenceCount(),
+        width: this._model.getSequenceCount(),
         height:this._model.getProteinCount()});
 
+      /* create the webgl object */
       this.gl = this.backBufferCanvas.getContext('webgl');
-
-      this.set_chart_scales();
-      d3Utils.clear_chart_dom(this._dom);
-      this.brushSVG = this.set_brush_SVG(this._dom, width+ this.x_offset, this.height+2.0*this.y_offset);
-      /* let the caller know the width */
       // compiles and links the shaders and looks up uniform and attribute locations
       this.glProgramInfo = twgl.createProgramInfo(this.gl, ['vs', 'fs']);
       let arrays =
-          {
-            position: [
-              -1, -1, 0, 1, -1, 0, -1, 1, 0,
-              -1, 1, 0, 1, -1, 0, 1, 1, 0,
-            ]
-          };
+        {
+          position: [
+            -1, -1, 0, 1, -1, 0, -1, 1, 0,
+            -1, 1, 0, 1, -1, 0, 1, 1, 0,
+          ]
+        };
       // calls gl.createBuffer, gl.bindBuffer, gl.bufferData for each array
       this.glBufferInfo = twgl.createBufferInfoFromArrays(this.gl, arrays);
+      /* Initialize the program */
+      this.gl.useProgram(this.glProgramInfo.program);
+      // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
+      twgl.setBuffersAndAttributes(this.gl, this.glProgramInfo, this.glBufferInfo);
+
+      /* set the rendering scales */
+      this.set_chart_scales();
+      /* Clear the canvas*/
+      d3Utils.clear_chart_dom(this._dom);
+      /* create the brush svg */
+      this.brushSVG = this.set_brush_SVG(this._dom, width+ this.x_offset, this.height+2.0*this.y_offset);
+
+      /* return the width of the family */
       return width;
-      // return new Promise(function(resolve, reject){
-      //   /* Read in the shaders */
-      //   queue()
-      //       .defer(d3.text, 'src/shaders/proteinFamily_vert.glsl')
-      //       .defer(d3.text, 'src/shaders/proteinFamily_frag.glsl')
-      //       .await(function(error, vert, frag){
-      //
-      //         /* resolve the promise */
-      //         resolve(width);
-      //       });
-      // });
     },
 
     render: function (image, x,y) {

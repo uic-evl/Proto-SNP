@@ -114,29 +114,6 @@ const d3Utils = function () {
     bar.exit().remove();
   },
 
-    /* Create a customized context menu per right-click */
-  create_context_menu: function(model) {
-
-    let protein_name = model.getSelectedProtein().name,
-        mapping = model.getProteinMappings(protein_name);
-    console.log(mapping);
-
-    /* Return the customized context menu */
-    return [
-      {
-        title: function() {
-          /* if there exists a mneumonic */
-          console.log(mapping);
-          return "Load Protein: " + protein_name;
-          },
-        action: function() {
-
-        },
-        disabled: false // optional, defaults to false
-      }
-    ];
-  }
-
   }
 
 }();

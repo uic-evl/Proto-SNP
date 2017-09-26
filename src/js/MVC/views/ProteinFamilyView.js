@@ -397,7 +397,6 @@ const ProteinFamilyView = (function() {
       this.set_data_dimensions_sizes(family.data);
       this.set_chart_dimensions();
       this.set_proteins_per_view();
-      this._backBufferHeight = this._model.getProteinCount() * this.residue_glyph_size;
 
       /* Find the width of the div */
       let width = ((this.overviewImage) ? parseInt(this.width*1.1): this.width);
@@ -457,9 +456,8 @@ const ProteinFamilyView = (function() {
 
     render: function (image, x,y) {
       let view = this;
-      console.log(view._model.getSequenceCount(), view.ppv, view.residue_glyph_size);
       return new Promise(function (resolve, reject) {
-        view.canvasContext.drawImage(image, x, y,
+        view.canvasContext.drawImage(image, x, y/view.residue_glyph_size,
             view._model.getSequenceCount(), view.ppv,
             0, view.y_offset,
             view.width, view.height);

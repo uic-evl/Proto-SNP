@@ -93,12 +93,13 @@ const ProteinFamilyView = (function() {
         width:  overview_width,
         height: height,
         paddleSize : self.brushPaddleSize,
+        maxPaddleSize : self.brushPaddleSize,
         scale      : scale,
         class      : "brush horizontal",
         block_size: block_size,
         semantic: "family",
         extent: [[self.width+self.x_offset, self.y_offset], [self.width+self.x_offset+overview_width, height+self.y_offset]],
-        position: [self.y_offset, self.brushPaddleSize],
+        position: [self.y_offset, self.brushPaddleSize+self.y_offset],
         proteinsPerView: self.ppv,
         parent: d3.select(self.brushSVG.node().parentNode)
       }

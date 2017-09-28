@@ -48,6 +48,11 @@ const BrushView = (function() {
 
     /* Utility to clamp the brush sizes */
     function clamp_brush_sizes(selection, previousSelection) {
+
+      if(self._orientation === App.OVERVIEW_PADDLE){
+        return selection;
+      }
+
       let brush_size = Math.abs(selection[1] - selection[0]),
           maxPaddleSize = options.maxPaddleSize * block_size,
           minPaddleSize = options.paddleSize * block_size;

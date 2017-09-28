@@ -134,7 +134,11 @@ const ProteinFamilyModel = (function() {
         // $('#sortingProtein').modal('toggle');
         this.calculate_scores();
 
-        this.proteinFamilyAdded.notify({family: this._parsedData});
+        this.proteinFamilyAdded.notify({
+          family: this._parsedData,
+          proteinCount: this._proteinNames.length,
+          sequenceLength: this._rawData[0].length
+        });
       }.bind(this));
     },
 

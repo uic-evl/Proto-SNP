@@ -16,6 +16,9 @@ const ProteinFamilyView = (function() {
     self.overviewImage = false;
     self._overview_percentage = 0.1;
 
+    self._proteinCount = 0;
+    self._sequenceLength = 0;
+
     /* WebGL Variables */
     self.glProgramInfo = null;
     self.gl = null;
@@ -148,7 +151,7 @@ const ProteinFamilyView = (function() {
             self.gl.TEXTURE_2D, // target
             0, // mip level
             self.gl.RGBA, // internal format
-            self._model.getSequenceCount(), self._model.getProteinCount(), // width and height
+            self._sequenceLength, self._proteinCount, // width and height
             0, // border
             self.gl.RGBA, //format
             self.gl.UNSIGNED_BYTE, // type
@@ -304,7 +307,7 @@ const ProteinFamilyView = (function() {
       let family = msg.family,
           colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
       /* Initialize the trend image view*/
-      let width = self.initialize(family);
+      let width = self.initialize(msg);
 
       /* Initialize the back buffer with the family data */
       self.initialize_back_buffer(family.data, colorMapping)
@@ -379,7 +382,12 @@ const ProteinFamilyView = (function() {
       $.contextMenu( 'destroy' );
     },
 
-    initialize: function (family) {
+    initialize: function (data) {
+
+      let family = data.family;
+      this._proteinCount = data.proteinCount,
+      this._sequenceLength = data.sequenceLength;
+
       this._dom = this._parentDom.append("div")
           .classed("trendDiv", true)
           .classed("center-aligned", true);
@@ -412,8 +420,8 @@ const ProteinFamilyView = (function() {
       /* Set the back buffer dimension */
       /* Create the back buffer to render the image */
       this.backBufferCanvas = d3Utils.create_chart_back_buffer({
-        width: this._model.getSequenceCount(),
-        height:this._model.getProteinCount()});
+        width:this._sequenceLength,
+        height:this._proteinCount});
 
       /* create the webgl object */
       this.gl = this.backBufferCanvas.getContext('webgl');

@@ -47,9 +47,9 @@ const FileUtilities = function(){
         };
         /* Check the max length against the previous max*/
         if(max_length === 0) max_length = family[parsedLine[1]].length;
-        else if(family[parsedLine[1]].length > max_length) {
+        else if(family[parsedLine[1]].length > max_length || family[parsedLine[1]].length < max_length) {
           length_changed = true;
-          max_length = family[parsedLine[1]].length;
+          max_length = Math.max(max_length, family[parsedLine[1]].length);
         }
       }
       /* If not in the dictionary pattern, check the for the data pattern */
@@ -74,7 +74,9 @@ const FileUtilities = function(){
   function parse_FASTA(file_data) {
     /* Parse the lines of the file */
     let lines = file_data.split('>'),
-      family = {};
+      family = {},
+        max_length = 0,
+        length_changed = false;
     /* Iterate over each line*/
     lines.forEach(function(line, idx){
       // If an empty line, continue
@@ -95,6 +97,22 @@ const FileUtilities = function(){
           scores                 : {initial: lines.length - idx}
         };
       }
+
+      /* Check the max length against the previous max*/
+      if(max_length === 0) max_length = family[parsedLine[1]].length;
+      else if(family[parsedLine[1]].length > max_length || family[parsedLine[1]].length < max_length) {
+        length_changed = true;
+        max_length = Math.max(max_length, family[parsedLine[1]].length);
+      }
+
+      /* The max length changed. Pad the protein sequences to the longest length*/
+      if(length_changed) {
+        Object.keys(family).forEach(function(key){
+          family[key].sequence = _.padEnd(family[key].sequence, max_length, '.');
+          family[key].length = max_length;
+        })
+      }
+
     });
     return split_sequence(family);
   }

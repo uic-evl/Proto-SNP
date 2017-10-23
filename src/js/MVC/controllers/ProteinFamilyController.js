@@ -34,6 +34,8 @@ const ProteinFamilyController = (function() {
             });
         /* Render the new view*/
         self._view.render(self._view._familyImage, 0, selection[0]*self._view.getGlyphSize());
+        /* Update the selection */
+        self._model.setOverviewOffset(selection[0]);
       });
 
       self._brushViews['overview'] = overviewBrush;

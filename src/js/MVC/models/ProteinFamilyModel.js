@@ -25,6 +25,7 @@ const ProteinFamilyModel = (function() {
     
     self._selectedProtein = null;
     self._selectedProteinIndex = 0;
+    self._selectedProteinOffset = 0;
     self._selectedResidues = {left: [], right: []};
     self._previousSelectedResidues = {left: [], right: []};
 
@@ -317,9 +318,16 @@ const ProteinFamilyModel = (function() {
           });
     },
 
+    setOverviewOffset: function(offset){
+      this._selectedProteinOffset = offset;
+      /* Set the selected protein to reflect the change */
+      let selection = this._proteinNames[this._selectedProteinIndex + this._selectedProteinOffset];
+      this._selectedProtein = _.filter(this._rawData, ['name', selection])[0];
+    },
+
     setSelectedProtein: function (proteinName) {
       this._selectedProtein = _.filter(this._rawData, ['name', proteinName])[0];
-      this._selectedProteinIndex = this._proteinNames.indexOf(proteinName);
+      this._selectedProteinIndex = this._selectedProteinOffset + this._proteinNames.indexOf(proteinName);
 
       /* Notify all listeners */
       this.selectedProteinChanged.notify({selection: this._selectedProtein});
@@ -367,7 +375,7 @@ const ProteinFamilyModel = (function() {
           model._parsedData = parsed_data;
           model.setProteinNames();
           /* Set the selected protein to reflect the change */
-          let selection = model._proteinNames[model._selectedProteinIndex];
+          let selection = model._proteinNames[model._selectedProteinIndex + model._selectedProteinOffset];
           model.setSelectedProtein(selection);
           /* notify the listeners */
           model.proteinSortingChanged.notify({

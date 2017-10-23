@@ -25,6 +25,12 @@ g.brush.horizontal > .handle {
     height: 30%;
 }
 
+.proteinFamilyRow > .col-md-12 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+
 text.mono {
     font-size: 8px;
     font-family: monospace;

@@ -95,7 +95,7 @@ const ProteinFamilyView = (function() {
         paddleSize : self.brushPaddleSize,
         maxPaddleSize : self.brushPaddleSize,
         scale      : scale,
-        class      : "brush horizontal",
+        class      : "brush horizontal overview",
         block_size: block_size,
         semantic: "family",
         extent: [[self.width+self.x_offset, self.y_offset], [self.width+self.x_offset+overview_width, height+self.y_offset]],
@@ -234,8 +234,8 @@ const ProteinFamilyView = (function() {
       /* Resize the DOM elements to accommodate our family view*/
       document.getElementById('trendImageViewer').parentNode.style.height = self.height+self.y_offset;
       document.getElementById('trendImageViewer').style.height = self.height+self.y_offset;
-      document.getElementById('trendImageViewer').style.width = container_width;
-      document.getElementById('trendImageViewer').parentNode.style.width = container_width;
+      document.getElementById('trendImageViewer').style.width = Math.ceil(container_width);
+      document.getElementById('trendImageViewer').parentNode.style.width = Math.ceil(container_width);
       document.getElementsByClassName('TrendImageView')[0].style.width = container_width;
     };
 
@@ -403,12 +403,12 @@ const ProteinFamilyView = (function() {
 
       /* Set the DOM's width/height so it centers in it's parent */
       this._dom
-          .style("width", width + this.x_offset)
+          .style("width", Math.ceil(width + this.x_offset)+1)
           .style("height", this.height + 2.0*this.y_offset);
 
       /* Add the canvas and brush svg to the trend image dom*/
       this.canvasContext = d3Utils.create_chart_canvas(this._dom,
-          {width:width + this.x_offset, height:this.height+ 2.0*this.y_offset,
+          {width: Math.ceil(width + this.x_offset)+1, height:this.height+ 2.0*this.y_offset,
             id:"trendCanvas", class:"trendImage"})
           .getContext('2d');
 
@@ -447,7 +447,7 @@ const ProteinFamilyView = (function() {
       /* Clear the canvas*/
       d3Utils.clear_chart_dom(this._dom);
       /* create the brush svg */
-      this.brushSVG = this.set_brush_SVG(this._dom, width+ this.x_offset, this.height+2.0*this.y_offset);
+      this.brushSVG = this.set_brush_SVG(this._dom, Math.ceil(width+ this.x_offset)+1, this.height+2.0*this.y_offset);
 
       /* return the width of the family */
       return width;

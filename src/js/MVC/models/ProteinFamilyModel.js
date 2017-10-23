@@ -43,6 +43,7 @@ const ProteinFamilyModel = (function() {
     /* Update Events */
     self.proteinFamilyAdded          = new EventNotification(this);
     self.selectedProteinChanged      = new EventNotification(this);
+    self.proteinOverviewChanged      = new EventNotification(this);
     self.selectedResiduesChanged     = new EventNotification(this);
     /* Menu Filtering */
     self.proteinSortingChanged       = new EventNotification(this);
@@ -323,6 +324,7 @@ const ProteinFamilyModel = (function() {
       /* Set the selected protein to reflect the change */
       let selection = this._proteinNames[this._selectedProteinIndex + this._selectedProteinOffset];
       this._selectedProtein = _.filter(this._rawData, ['name', selection])[0];
+      this.proteinOverviewChanged.notify({selection: this._selectedProtein});
     },
 
     setSelectedProtein: function (proteinName) {

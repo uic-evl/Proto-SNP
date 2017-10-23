@@ -109,7 +109,6 @@ const SequenceSorting = function(family){
     return self.frequency_scores_computed;
   }
 
-
   /* Calculates each protein's score based on the edit distance with the protein in question */
   function calculate_edit_distance_scores(protein_a, weights) {
     /* Store the promise for later use*/

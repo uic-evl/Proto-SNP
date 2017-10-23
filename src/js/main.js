@@ -44,7 +44,7 @@ var App = App || {};
         });
 
     let sortingModel = new FilteringMenuModel({
-        items: ['Initial Ordering','Residue Frequency', 'Weighted Edit Distance',
+        items: ['Set Protein ...', 'Initial Ordering','Residue Frequency', 'Weighted Edit Distance',
           'Residue Commonality with', 'Normalized Residue Commonality with']
     }),
         sortingView = new FilteringMenuView(sortingModel, { 'list' : $('#sorting_list') }),

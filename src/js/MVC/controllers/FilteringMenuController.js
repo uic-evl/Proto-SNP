@@ -7,6 +7,7 @@ const FilteringMenuController = (function() {
   function mapLabel(label) {
     switch(label){
       case 'Initial Ordering':
+        return "initial";
         break;
       case 'Residue Frequency':
         return "edit_distance";

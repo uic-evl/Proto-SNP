@@ -125,7 +125,10 @@ const ProteinFamilyModel = (function() {
           };
         });
       }
-    },
+      /* Save the initial scores */
+      let initial = this._sequenceSortingAlgorithms.calculateInitialScores();
+      this.set_scores("initial_scores", initial);
+      },
 
     /* Setter for the names of the proteins from the family */
     setFamily : function(data, type) {

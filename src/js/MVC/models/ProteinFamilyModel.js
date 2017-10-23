@@ -29,7 +29,7 @@ const ProteinFamilyModel = (function() {
 
     self._sequenceSortingAlgorithms = null;
 
-    self._proteinSorting = "";
+    self._proteinSorting = "initial";
     self._proteinColoring = "";
 
     self._proteinNames = null;
@@ -95,10 +95,10 @@ const ProteinFamilyModel = (function() {
       return !!this._parsedData;
     },
 
-    calculate_scores : function() {
+    calculate_scores : function(protein, cb) {
       /* If the browser does not support web workers, execute the code sequentially */
       if (!window.Worker) {
-        this.calculate_all_sorting_scores_main(this._rawData[0]);
+        this.calculate_all_sorting_scores_main(protein);
       }
       else {
         let algorithms = this._sequenceSortingAlgorithms.getAlgorithms(),
@@ -112,7 +112,7 @@ const ProteinFamilyModel = (function() {
           myWorker.postMessage({
             family: model._rawData,
             algorithm: algorithm,
-            protein: model._rawData[0]
+            protein: protein
           });
 
           /* Add the scores to the model once it returns */
@@ -121,6 +121,7 @@ const ProteinFamilyModel = (function() {
             finished++;
             if(workers === finished){
               $("#sorting_list").find("li").removeClass("disabled");
+              if(cb) cb();
             }
           };
         });
@@ -141,7 +142,7 @@ const ProteinFamilyModel = (function() {
         this.mappingPromise = this.setProteinMappings();
 
         /* Calculate the similarity scores between proteins */
-        this.calculate_scores();
+        this.calculate_scores(this._rawData[0]);
 
         this.proteinFamilyAdded.notify({
           family: this._parsedData,
@@ -163,7 +164,7 @@ const ProteinFamilyModel = (function() {
 
       this._sequenceSortingAlgorithms = null;
 
-      this._proteinSorting = "";
+      this._proteinSorting = "initial";
       this._proteinColoring = "";
 
       this._proteinNames = null;
@@ -269,6 +270,40 @@ const ProteinFamilyModel = (function() {
 
     getSelectedProtein: function () {
       return this._selectedProtein;
+    },
+
+    setSortingProtein: function() {
+      let self = this,
+          elements = self.getProteinNames();
+      /* Open the selection modal and setup auto-complete */
+      $('#proteinSelection').modal('show')
+          .on('shown.bs.modal', function () {
+            // Constructing the suggestion engine for the proteins
+            let proteins = new Bloodhound({
+              datumTokenizer: Bloodhound.tokenizers.whitespace,
+              queryTokenizer: Bloodhound.tokenizers.whitespace,
+              local: elements
+            });
+            // Initializing the typeahead
+            $('#proteinSortSelection').typeahead({
+                  hint: true,
+                  highlight: true,
+                  minLength: 1
+                },
+                {
+                  name: 'proteins',
+                  source: proteins
+                });
+          })
+          .on("hide.bs.modal", function(){
+            /* Get the protein based on the input of the user */
+            let proteinName = $(arguments[0].target).find('#proteinSortSelection').val(),
+                protein = _.filter(self._rawData, ['name', proteinName])[0];
+            /* If it was a valid protein, set the sorting */
+            if(protein){
+              self.calculate_scores(protein, self.setProteinSorting.bind(self,self._proteinSorting));
+            }
+          });
     },
 
     setSelectedProtein: function (proteinName) {

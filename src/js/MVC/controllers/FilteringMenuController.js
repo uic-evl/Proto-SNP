@@ -4,9 +4,11 @@ var App = App || {};
 
 const FilteringMenuController = (function() {
 
+  /* TODO: This is a little sloppy. This should probably be with the family model */
   function mapLabel(label) {
     switch(label){
       case 'Set Protein ...':
+        return 'set_protein';
         break;
       case 'Initial Ordering':
         return "initial";
@@ -54,7 +56,7 @@ const FilteringMenuController = (function() {
       this._model.setSelectedElement(element);
       /* Update the connected models */
       this._connected_models.forEach(function(model) {
-        self._cb(model, mapLabel.call(self, element));
+        self._cb(model,mapLabel.call(self, element));
       });
     }
   };

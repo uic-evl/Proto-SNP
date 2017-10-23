@@ -54,8 +54,13 @@ var App = App || {};
           view: sortingView,
           cb:
               function(model, element) {
-                model.setProteinSorting(element)
-              }
+                if(element === "set_protein"){
+                  model.setSortingProtein();
+                }
+                else {
+                  model.setProteinSorting(element);
+                }
+              },
         });
 
     /* Render the views */

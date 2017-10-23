@@ -12,10 +12,10 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
 
     <link rel="stylesheet" href="lib/css/jQuery-file-upload/jquery.fileupload.css">
+    <link rel="stylesheet" href="lib/css/typehead.css">
     <link rel="stylesheet" href="lib/css/d3-context-menu.css">
     <link rel="stylesheet" href="//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css">
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
-
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/sequenceViewer.css">
     <link rel="stylesheet" href="src/css/splash.css">
@@ -59,6 +59,7 @@
 
     <!-- Bootstrap -->
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
+    <script  type="text/javascript" src="lib/js/typehead.bundle.js"></script>
 
     <!-- JS SRC -->
 
@@ -231,6 +232,26 @@
                         <button type="button" class="btn btn-default btn-right_viewer" data-dismiss="modal">Right Viewer</button>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trend image set sorting protein -->
+        <!-- Trend Image Protein Selection Modal -->
+        <div class="modal fade" id="proteinSelection" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select a protein to sort by</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input id="proteinSortSelection" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="setProtein" class="btn btn-primary" data-dismiss="modal">Set Protein</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>

@@ -167,7 +167,7 @@ const BrushView = (function() {
       /* Create the context menu */
       self.createContextMenu('g.horizontal.main rect.selection');
 
-      /* Add the callbacks to the modal windwo */
+      /* Add the callbacks to the modal window */
       $('.btn-left_viewer').on('click', function(e) {
         /* Hide the context menu */
         $('.context-menu-list').trigger('contextmenu:hide');

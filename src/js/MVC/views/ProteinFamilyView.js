@@ -386,7 +386,7 @@ const ProteinFamilyView = (function() {
     initialize: function (data) {
 
       let family = data.family;
-      this._proteinCount = data.proteinCount,
+      this._proteinCount = data.proteinCount;
       this._sequenceLength = data.sequenceLength;
 
       this._dom = this._parentDom.append("div")

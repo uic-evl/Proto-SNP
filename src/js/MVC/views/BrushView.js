@@ -273,7 +273,8 @@ const BrushView = (function() {
           .attr("y", function(d,i){
             return ((i)?(y+height):d.y)})
           .attr("height", function(d,i) {
-            return (i) ? overview_height-(y+height-d.y) : y-d.y;
+            let h = (i) ? overview_height-(y+height-d.y) : y-d.y;
+            return (h > -1) ? h : 0;
           });
       }
       else if(paddle === App.HORIZONTAL_PADDLE) {

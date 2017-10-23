@@ -26,6 +26,7 @@ const FilteringMenuController = (function() {
         return "normalized_commonality_scores";
         break;
       default:
+        return label;
         break;
     }
   }

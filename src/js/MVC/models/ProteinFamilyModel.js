@@ -24,6 +24,7 @@ const ProteinFamilyModel = (function() {
     let self = this;
     
     self._selectedProtein = null;
+    self._selectedProteinIndex = 0;
     self._selectedResidues = {left: [], right: []};
     self._previousSelectedResidues = {left: [], right: []};
 
@@ -138,6 +139,10 @@ const ProteinFamilyModel = (function() {
 
         this._parsedData = parsed_data;
         this.setProteinNames();
+
+        /* Set the initial selected protein to the first name */
+        this.setSelectedProtein(this._proteinNames[0]);
+
         this.setColumnFrequencies();
         this.mappingPromise = this.setProteinMappings();
 
@@ -152,11 +157,13 @@ const ProteinFamilyModel = (function() {
       }.bind(this));
     },
 
+    /* Clear the model to load a new family */
     clear: function() {
       this._parsedData = null;
       this._rawData = null;
       this._mappings = {};
       this._selectedProtein = null;
+      self._selectedProteinIndex = 0;
       this._selectedResidues = {left: [], right: []};
       this._previousSelectedResidues = {left: [], right: []};
       this.mappingPromise = null;
@@ -247,11 +254,9 @@ const ProteinFamilyModel = (function() {
       });
     },
 
-    setProteinNames : function () {
+    setProteinNames : function (data) {
       this._proteinNames = d3.set(this._rawData.map(function( residue )
       { return residue.name; } )).values();
-      /* Set the initial selected protein to the first name */
-      this.setSelectedProtein(this._proteinNames[0]);
     },
 
     setColumnFrequencies : function () {
@@ -277,29 +282,35 @@ const ProteinFamilyModel = (function() {
           elements = self.getProteinNames();
       /* Open the selection modal and setup auto-complete */
       $('#proteinSelection').modal('show')
-          .on('shown.bs.modal', function () {
-            // Constructing the suggestion engine for the proteins
+          .on('shown.bs.modal', function (event) {
+            /* Setup the input prediction list*/
             let proteins = new Bloodhound({
               datumTokenizer: Bloodhound.tokenizers.whitespace,
               queryTokenizer: Bloodhound.tokenizers.whitespace,
               local: elements
             });
-            // Initializing the typeahead
-            $('#proteinSortSelection').typeahead({
-                  hint: true,
-                  highlight: true,
-                  minLength: 1
-                },
-                {
-                  name: 'proteins',
-                  source: proteins
-                });
+            /* Initialize the input prediction */
+            $('#proteinSortSelection').typeahead(
+              {
+                hint: true,
+                highlight: true,
+                minLength: 1
+              },
+              {
+                name: 'proteins',
+                source: proteins
+              });
+            /* Give the input focus */
+            $(event.target).find('#proteinSortSelection').focus();
           })
-          .on("hide.bs.modal", function(){
+          .on("hide.bs.modal", function(event){
             /* Get the protein based on the input of the user */
-            let proteinName = $(arguments[0].target).find('#proteinSortSelection').val(),
+            let inputField = $(event.target).find('#proteinSortSelection'),
+                proteinName = inputField.val(),
                 protein = _.filter(self._rawData, ['name', proteinName])[0];
-            /* If it was a valid protein, set the sorting */
+            /* Clear the protein */
+            inputField.val('');
+            /* If it was a valid protein, set the sorting to be based on the selection*/
             if(protein){
               self.calculate_scores(protein, self.setProteinSorting.bind(self,self._proteinSorting));
             }
@@ -308,6 +319,8 @@ const ProteinFamilyModel = (function() {
 
     setSelectedProtein: function (proteinName) {
       this._selectedProtein = _.filter(this._rawData, ['name', proteinName])[0];
+      this._selectedProteinIndex = this._proteinNames.indexOf(proteinName);
+
       /* Notify all listeners */
       this.selectedProteinChanged.notify({selection: this._selectedProtein});
       return this;
@@ -340,18 +353,22 @@ const ProteinFamilyModel = (function() {
     setProteinSorting: function (sorting) {
       if(sorting){
         this._proteinSorting = sorting;
-        /* Reorder the raw data */
-        let ordering_scores = _.chain(this._rawData)
+        let
+          /* Save a reference to the model */
+          model = this;
+          /* Reorder the raw data */
+          this._rawData = _.chain(this._rawData)
                 .sortBy((protein) => {
                   return protein.scores[sorting];
-                }).reverse().slice(0, this.ppv).value(),
-            /* Save a reference to the model */
-            model = this;
+                }).reverse().slice(0, this.ppv).value();
         /* Remap the data then notify the controller */
-        map_trend_image_data(ordering_scores).then(function(parsed_data){
+        map_trend_image_data(this._rawData).then(function(parsed_data){
           /* Save the new parsed data and names */
           model._parsedData = parsed_data;
           model.setProteinNames();
+          /* Set the selected protein to reflect the change */
+          let selection = model._proteinNames[model._selectedProteinIndex];
+          model.setSelectedProtein(selection);
           /* notify the listeners */
           model.proteinSortingChanged.notify({
             scheme: model._proteinSorting,

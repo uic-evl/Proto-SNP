@@ -19,7 +19,7 @@ const FilteringMenuModel = (function() {
       return [].concat(this._items);
     },
 
-    getSelectedIndex : function () {
+    getSelectedElement : function () {
       return this._selectedElement;
     },
 

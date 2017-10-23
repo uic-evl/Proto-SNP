@@ -6,6 +6,8 @@ const FilteringMenuController = (function() {
 
   function mapLabel(label) {
     switch(label){
+      case 'Set Protein ...':
+        break;
       case 'Initial Ordering':
         return "initial";
         break;
@@ -22,7 +24,7 @@ const FilteringMenuController = (function() {
         return "normalized_commonality_scores";
         break;
       default:
-        return label;
+        break;
     }
   }
 
@@ -52,7 +54,7 @@ const FilteringMenuController = (function() {
       this._model.setSelectedElement(element);
       /* Update the connected models */
       this._connected_models.forEach(function(model) {
-        self._cb(model, mapLabel(element));
+        self._cb(model, mapLabel.call(self, element));
       });
     }
   };

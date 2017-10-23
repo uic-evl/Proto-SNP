@@ -125,9 +125,6 @@ const ProteinFamilyModel = (function() {
           };
         });
       }
-      /* Save the initial scores */
-      let initial = this._sequenceSortingAlgorithms.calculateInitialScores();
-      this.set_scores("initial_scores", initial);
       },
 
     /* Setter for the names of the proteins from the family */
@@ -306,26 +303,28 @@ const ProteinFamilyModel = (function() {
     getProteinColoring: function () { return this._proteinColoring; },
 
     setProteinSorting: function (sorting) {
-      this._proteinSorting = sorting;
-      /* Reorder the raw data */
-      let ordering_scores = _.chain(this._rawData)
-          .sortBy((protein) => {
-            return protein.scores[sorting];
-          }).reverse().slice(0, this.ppv).value(),
-      /* Save a reference to the model */
-          model = this;
-      /* Remap the data then notify the controller */
-      map_trend_image_data(ordering_scores).then(function(parsed_data){
-        /* Save the new parsed data and names */
-        model._parsedData = parsed_data;
-        model.setProteinNames();
-        /* notify the listeners */
-        model.proteinSortingChanged.notify({
-          scheme: model._proteinSorting,
-          data : parsed_data,
-          colorScheme: model._proteinColoring});
-        return Promise.resolve();
-      });
+      if(sorting){
+        this._proteinSorting = sorting;
+        /* Reorder the raw data */
+        let ordering_scores = _.chain(this._rawData)
+                .sortBy((protein) => {
+                  return protein.scores[sorting];
+                }).reverse().slice(0, this.ppv).value(),
+            /* Save a reference to the model */
+            model = this;
+        /* Remap the data then notify the controller */
+        map_trend_image_data(ordering_scores).then(function(parsed_data){
+          /* Save the new parsed data and names */
+          model._parsedData = parsed_data;
+          model.setProteinNames();
+          /* notify the listeners */
+          model.proteinSortingChanged.notify({
+            scheme: model._proteinSorting,
+            data : parsed_data,
+            colorScheme: model._proteinColoring});
+          return Promise.resolve();
+        });
+      }
       return this;
     },
 

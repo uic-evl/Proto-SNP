@@ -279,8 +279,10 @@ const ProteinFamilyView = (function() {
       return d3Utils.create_brush_svg(dom, {width:width, height:height, y: self.y_offset})
           .append("g")
           .attr("class", "brushes")
-          .style("width", width)
-          .style("height", height);
+          .attr("width", width)
+          .attr("height", height)
+          .attr("x", 0)
+          .attr("y", 0);
     };
 
     self.initialize_file_open = function(dom) {

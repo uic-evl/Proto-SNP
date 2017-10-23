@@ -148,8 +148,8 @@ const BrushView = (function() {
       else if(self._orientation === App.OVERVIEW_PADDLE){
         coordinates = [
           /* Overlays above and below the overview paddle */
-          {x:options.extent[0][0], y:y, width:overlay_width, height:0, class_name:'overview_covers trend_covers'},
-          {x:options.extent[0][0], y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height),
+          {x:parseInt(options.extent[0][0]), y:y, width:overlay_width, height:0, class_name:'overview_covers trend_covers'},
+          {x:parseInt(options.extent[0][0]), y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height),
             class_name:'overview_covers trend_covers'}
           ];
       }

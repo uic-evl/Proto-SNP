@@ -36,6 +36,8 @@ const ProteinFamilyModel = (function() {
     self._parsedData = null;
     self._mappings = {};
 
+    self._max_frequencies = [];
+
     /* Update Events */
     self.proteinFamilyAdded          = new EventNotification(this);
     self.selectedProteinChanged      = new EventNotification(this);
@@ -58,25 +60,32 @@ const ProteinFamilyModel = (function() {
     /* Calculate all of the sorting metrics for family */
     self.calculate_all_sorting_scores_main = function(protein) {
       /* Calculate the edit distance scores with the first protein and enable the menu option */
-      let edit_dist = self._sequenceSortingAlgorithms.calculateEditDistanceScores(protein),
-      /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
-      weighted_edit_dist = self._sequenceSortingAlgorithms.calculateEditDistanceScores(protein,
-          {insertion: 3, deletion: 3, substitution: 5}),
-      /* Calculate the residue commonality scores with the first protein and enable the menu option */
-      commonality = self._sequenceSortingAlgorithms.calculateCommonalityScores(protein),
-      /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
-      weighted_commonality = self._sequenceSortingAlgorithms.calculateCommonalityScores(protein, 1)
-      ;
-      /* Resolve when all promises return */
-      Promise.all([edit_dist, weighted_edit_dist, commonality, weighted_commonality]).then(values => {
-        /* Enable sorting menu */
-        $("#sorting_list").find("li").removeClass("disabled");
-        /* Set the family scores */
-        self.set_scores("edit_distance", values[0]);
-        self.set_scores("weighted_edit_distance", values[1]);
-        self.set_scores("commonality_scores", values[2]);
-        self.set_scores("normalized_commonality_scores", values[3]);
-      });
+      self._sequenceSortingAlgorithms.calculateEditDistanceScores(protein)
+          .then(function(edit_scores){
+            /* Set the family scores */
+            self.set_scores("edit_distance", edit_scores);
+            /* Calculate the weighted edit distance scores with the first protein and enable the menu option */
+            return self._sequenceSortingAlgorithms.calculateEditDistanceScores(protein,
+                {insertion: 3, deletion: 3, substitution: 5});
+          })
+          .then(function(weighted_edit_scores){
+            /* Set the family scores */
+            self.set_scores("weighted_edit_distance", weighted_edit_scores);
+            /* Calculate the residue commonality scores with the first protein and enable the menu option */
+            return self._sequenceSortingAlgorithms.calculateCommonalityScores(protein);
+          })
+          .then(function(commonality_scores){
+            /* Set the family scores */
+            self.set_scores("commonality_scores", commonality_scores);
+            /* Calculate the weighted residue commonality scores with the first protein and enable the menu option */
+            self._sequenceSortingAlgorithms.calculateCommonalityScores(protein, 1);
+          })
+          .then(function(normalized_commonality_scores){
+            /* Set the family scores */
+            self.set_scores("normalized_commonality_scores", normalized_commonality_scores);
+            /* Enable sorting menu */
+            $("#sorting_list").find("li").removeClass("disabled");
+          });
     };
   }
 
@@ -123,15 +132,15 @@ const ProteinFamilyModel = (function() {
       this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
       map_trend_image_data(this._rawData).then(function(parsed_data) {
 
-        this._parsedData = parsed_data;
-        this.setProteinNames();
-        this.mappingPromise = this.setProteinMappings();
-
         /* Setup the sequence sorting algorithms and calculate the initial scores */
         this._sequenceSortingAlgorithms = new SequenceSorting(this._rawData);
 
+        this._parsedData = parsed_data;
+        this.setProteinNames();
+        this.setColumnFrequencies();
+        this.mappingPromise = this.setProteinMappings();
+
         /* Calculate the similarity scores between proteins */
-        // $('#sortingProtein').modal('toggle');
         this.calculate_scores();
 
         this.proteinFamilyAdded.notify({
@@ -150,6 +159,7 @@ const ProteinFamilyModel = (function() {
       this._selectedResidues = {left: [], right: []};
       this._previousSelectedResidues = {left: [], right: []};
       this.mappingPromise = null;
+      this._max_frequencies = [];
 
       this._sequenceSortingAlgorithms = null;
 
@@ -179,7 +189,7 @@ const ProteinFamilyModel = (function() {
     },
 
     getSequenceFrequencyAt: function(position) {
-      return this._sequenceSortingAlgorithms.getMostFrequentAt(position)
+      return this._max_frequencies[position];
     },
 
     getFamily: function() {
@@ -241,6 +251,14 @@ const ProteinFamilyModel = (function() {
       { return residue.name; } )).values();
       /* Set the initial selected protein to the first name */
       this.setSelectedProtein(this._proteinNames[0]);
+    },
+
+    setColumnFrequencies : function () {
+      /* iterate over the columns*/
+      let i = 0;
+      for(let residue of this._parsedData.data[0]){
+        this._max_frequencies.push(this._sequenceSortingAlgorithms.getMostFrequentAt(i++));
+      }
     },
 
     getProteinNames : function() { return this._proteinNames; },

@@ -146,40 +146,59 @@
 
             <div class="modal-body">
                 <div class="container">
-                    <div class="row">
-                        <div class="col-lg-9">
-                            <h4 style="font-weight: bold">Load a PDB or MSA, or specify a protein my PDB ID:</h4>
-                            <div class="row loadProtein">
-                                <div class="col-lg-6">
-                                    <div class="row">
+
+                    <!--<div class="row">-->
+                        <!--<div class="col-md-12">-->
+                            <!--<h4 style="font-weight: bold">Load a PDB or MSA, or specify a protein my PDB ID:</h4>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <div class="row mainRow">
+
+                        <div class="col-md-5">
+                            <h4 style="margin-top:0">About:</h4>
+                            <p style="margin-left:10px">FixingTIM is an open-source application for to help identify protein mutations across family structural models,
+                                and to help discover the effect of these mutations on protein function. </p>
+                        </div>
+
+                        <div class="col-md-4 dataPanel">
+                            <!--<div class="row loadProtein">-->
+                                <!--<div class="col-md-6 fileLoadingOptions">-->
+
+                                    <div class="row pdbQuery">
                                         <div class="col-md-12">
                                             <label for="protein-name">PDB Code (ex: 2YPI):</label>
                                             <input id="protein-name" type="text" name="name" autocomplete="off"/>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <span class="fileUpload side_by_side">Choose a file: </span>
-                                    <span id="upload" style="margin-left: 10px;"
-                                          class="btn btn-success fileinput-button viewer-upload side_by_side">
-                                             <i class="fa fa-plus-square-o"></i><span> Select file...</span>
-                                            <input id="fileUploadInput" type="file" name="files[]" accept=".pdb,.msf,.fa">
-                                            </span>
-                                    <br><br>
-                                    <div id="files" class="files"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                    </div><!-- End row-->
+                                <!--</div>-->
 
+                                <!--<div class="col-md-6">-->
+                                <div class="row initialUploadOptions">
+                                    <div class="col-md-12">
+                                        <span class="fileUpload side_by_side">Choose a file: </span>
+                                        <span id="upload" style="margin-left: 10px;"
+                                              class="btn btn-success fileinput-button viewer-upload side_by_side">
+                                                 <i class="fa fa-plus-square-o"></i><span> Select file...</span>
+                                                <input id="fileUploadInput" type="file" name="files[]" accept=".pdb,.msf,.fa">
+                                                </span>
+                                        <br><br>
+                                        <div id="files" class="files"></div>
+                                    </div>
+                                </div> <!-- End initial upload options -->
+
+                            </div><!-- End Data Panel -->
+                        </div> <!-- End Main Row-->
+
+                    </div> <!-- End Container-->
+                </div> <!-- End Modal Body-->
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Load</button>
+                <button id="load" type="button" class="btn btn-primary" >Load</button>
             </div>
+            </div> <!-- End Modal Content-->
+
         </div>
     </div>
-</div>
 
 <!-- Main container of the application -->
 <div class="container-fluid">

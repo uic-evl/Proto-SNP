@@ -127,6 +127,79 @@ const FileUtilities = function(){
     }
   }
 
+  function initial_file_upload_setup(viewer, cb){
+    let files = viewer.find("#files");
+
+    /* Setup the file-upload callback */
+    return $(viewer).find("#fileUploadInput").fileupload({
+      url: "",
+      dataType: 'json',
+      autoUpload: false
+    })
+    /* Handle the upload callbacks */
+      .on('fileuploadadd', function (e, data) {
+        // The select button
+        let select = $(this).prop('disabled', true);
+        // uploaded file
+        let file = data.files[0];
+        /* Create a div and attach it beneath the Choose File button */
+        data.context = $('<div/>').appendTo(files);
+        let node = $('<p/>')
+          .append($('<span/>').text(file.name));
+
+        /*Upload Button - loads the file into the viewer*/
+        // let uploadButton = $('<button/>')
+        //   .addClass('btn btn-primary uploadPDB')
+        //   .text('Upload')
+        viewer.find("#load")
+          .on('click', function () {
+
+            // JS File reader to parse the uploaded file
+            let reader = new FileReader(),
+              /* Save the file name in the closure scope */
+              fileName = file.name.split('.')[0],
+              extension = file.name.split('.').pop().toLowerCase();
+
+            /* Event to fire once the file loads*/
+            reader.addEventListener("load", function () {
+              /* Pass the file to be processed by the model */
+              cb({protein_name: fileName, extension: extension}, this.result);
+            }, false);
+
+            // parse the file as text
+            reader.readAsText(file);
+
+            // Remove the div and buttons
+            // $(this).parent().remove();
+            // abort the upload (we aren't passing it to a server)
+            data.abort();
+
+            // re-enable the select protein button
+            select.prop('disabled', false);
+          });
+
+        /* Cancel button -- removes the chosen file and removes the div items*/
+        let cancelButton = $('<button/>')
+          .addClass('btn btn-primary uploadPDB')
+          .text('Cancel')
+          .on('click', function () {
+            let $this = $(this),
+              data = $this.data();
+            $this.parent().remove();
+            data.abort();
+            select.prop('disabled', false);
+          });
+
+        /* Append the Upload and Cancel Buttons */
+        node.appendTo(data.context)
+          //.append(uploadButton.clone(true).data(data))
+          .append(cancelButton.clone(true).data(data));
+      })
+      .prop('disabled', !$.support.fileInput)
+      .parent().addClass($.support.fileInput ? undefined : 'disabled')
+      .promise();
+  }
+
   function file_upload_setup(viewer, files, cb){
     /* Setup the file-upload callback */
     return $(viewer).fileupload({
@@ -154,12 +227,13 @@ const FileUtilities = function(){
                 // JS File reader to parse the uploaded file
                 let reader = new FileReader(),
                     /* Save the file name in the closure scope */
-                    fileName = file.name.split('.')[0];
+                    fileName = file.name.split('.')[0],
+                    extension = file.name.split('.').pop().toLowerCase();
 
                 /* Event to fire once the file loads*/
                 reader.addEventListener("load", function () {
                   /* Pass the file to be processed by the model */
-                  cb({protein_name: fileName}, this.result);
+                  cb({protein_name: fileName, extension: extension}, this.result);
                 }, false);
 
                 // parse the file as text
@@ -255,7 +329,8 @@ const FileUtilities = function(){
    uploadPDB            : load_from_uploaded_PDB,
    downloadFromRCMB     : load_PDB_From_RCMB,
    uploadSetup          : file_upload_setup,
-   familyUploadSetup    : family_upload_setup
+   familyUploadSetup    : family_upload_setup,
+   initialUploadSetup   : initial_file_upload_setup
   }
 };
 

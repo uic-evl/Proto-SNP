@@ -65,13 +65,20 @@ var App = App || {};
     /* Launch the initial data modal */
     $("#initialModal").modal().on('shown.bs.modal', function (e) {
       let modal = $(this);
-      App.fileUtilities.uploadSetup(modal.find("#fileUploadInput"), modal.find("#files"),
+      App.fileUtilities.initialUploadSetup(modal,
           function (metadata, result) {
-            // view.fileUploaded.notify({metaData: metadata, file: result});
-            // /* Place the name of the protein above the viewer*/
-            // updateViewTitle(view._dom[0], metadata.protein_name);
-            // /* Clear the splash and update */
-            // view.clear_and_reinitialize();
+            /* Initialize the viewer based on the input data */
+            switch(metadata.extension){
+              case "pdb":
+                console.log(metadata);
+                break;
+              case "msf":
+              case "fa":
+                break;
+            }
+
+            $("#initialModal").modal('hide');
+
           });
     });
 

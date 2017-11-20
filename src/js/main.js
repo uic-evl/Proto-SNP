@@ -8,11 +8,12 @@ var App = App || {};
   /* Starting point of the program. Initializes the application */
   function init() {
 
+    $("#initialModal").modal();
+
     /* File utility setup */
     App.fileUtilities = new FileUtilities();
     App.dataUtilities = new DatabaseMappingUtils();
     App.residueMappingUtility = new ResidueMappingUtility();
-    App.spinner = d3.select('.spinner').node();
 
     let proteinFamilyModel = new ProteinFamilyModel(),
         proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
@@ -67,14 +68,17 @@ var App = App || {};
     sortingView.show();
     colorView.show();
 
+    /* Show the tertiary viewers */
     leftTertiaryStructureView.show();
     rightTertiaryStructureView.show();
     proteinFamilyView.show();
 
+    /* Show the sequence viewers */
     leftPrimaryStructureView.show();
     rightPrimaryStructureView.show();
-
   }
+
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);
+
 })();

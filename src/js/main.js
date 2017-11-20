@@ -8,8 +8,6 @@ var App = App || {};
   /* Starting point of the program. Initializes the application */
   function init() {
 
-    $("#initialModal").modal();
-
     /* File utility setup */
     App.fileUtilities = new FileUtilities();
     App.dataUtilities = new DatabaseMappingUtils();
@@ -63,6 +61,19 @@ var App = App || {};
                 }
               },
         });
+
+    /* Launch the initial data modal */
+    $("#initialModal").modal().on('shown.bs.modal', function (e) {
+      let modal = $(this);
+      App.fileUtilities.uploadSetup(modal.find("#fileUploadInput"), modal.find("#files"),
+          function (metadata, result) {
+            // view.fileUploaded.notify({metaData: metadata, file: result});
+            // /* Place the name of the protein above the viewer*/
+            // updateViewTitle(view._dom[0], metadata.protein_name);
+            // /* Clear the splash and update */
+            // view.clear_and_reinitialize();
+          });
+    });
 
     /* Render the views */
     sortingView.show();

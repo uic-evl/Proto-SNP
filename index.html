@@ -141,16 +141,41 @@
 
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="exampleModalLabel">Welcome</h2>
+                <h2 class="modal-title" id="exampleModalLabel">Load Data</h2>
             </div>
 
             <div class="modal-body">
-
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <h4 style="font-weight: bold">Load a PDB or MSA, or specify a protein my PDB ID:</h4>
+                            <div class="row loadProtein">
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="protein-name">PDB Code (ex: 2YPI):</label>
+                                            <input id="protein-name" type="text" name="name" autocomplete="off"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <span class="fileUpload side_by_side">Choose a file: </span>
+                                    <span id="upload" style="margin-left: 10px;"
+                                          class="btn btn-success fileinput-button viewer-upload side_by_side">
+                                             <i class="fa fa-plus-square-o"></i><span> Select file...</span>
+                                            <input id="fileUploadInput" type="file" name="files[]" accept=".pdb,.msf,.fa">
+                                            </span>
+                                    <br><br>
+                                    <div id="files" class="files"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-primary">Load</button>
             </div>
         </div>
     </div>

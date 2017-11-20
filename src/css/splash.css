@@ -1,7 +1,15 @@
-label,
-input {
-    display: block;
+.modal_divider {
+    border: 1px solid rgba(86,61,124,.2);
 }
+
+.loadProtein {
+    margin-top: 25px;
+}
+
+/*label,*/
+/*input {*/
+    /*display: block;*/
+/*}*/
 
 #splash {
     z-index: -1;

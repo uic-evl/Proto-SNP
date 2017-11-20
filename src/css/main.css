@@ -119,3 +119,7 @@ ul li a.disabled {
 .modal {
     top: 25%;
 }
+
+.side_by_side {
+    display: inline-block;
+}

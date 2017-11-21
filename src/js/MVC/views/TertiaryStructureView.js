@@ -233,6 +233,14 @@ function TertiaryStructureView(model, element) {
 
 TertiaryStructureView.prototype = {
 
+  file_loaded: function(metadata, result){
+    this.fileUploaded.notify({metaData: metadata, file: result});
+    /* Place the name of the protein above the viewer*/
+    updateViewTitle(this._dom[0], metadata.protein_name);
+    /* Clear the splash and update */
+    this.clear_and_reinitialize();
+  },
+
   show: function () {
     /* Save the context's this */
     let view = this;
@@ -266,14 +274,7 @@ TertiaryStructureView.prototype = {
         /* Apply the bindings */
         ko.applyBindings(view, splash.find("#splashTemplate")[0]);
         /* Setup the upload callback for files */
-        App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"), splash.find("#files"),
-          function (metadata, result) {
-            view.fileUploaded.notify({metaData: metadata, file: result});
-            /* Place the name of the protein above the viewer*/
-            updateViewTitle(view._dom[0], metadata.protein_name);
-            /* Clear the splash and update */
-            view.clear_and_reinitialize();
-          });
+        App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"), splash.find("#files"), view.file_loaded.bind(view));
       });
     }
   },

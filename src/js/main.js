@@ -70,13 +70,15 @@ var App = App || {};
             /* Initialize the viewer based on the input data */
             switch(metadata.extension){
               case "pdb":
-                console.log(metadata);
+                leftTertiaryStructureView.file_loaded(metadata, result);
                 break;
               case "msf":
               case "fa":
                 proteinFamilyView.file_loaded(result, metadata.extension);
                 break;
             }
+            /* destroy the file upload */
+            modal.find("#fileUploadInput").fileupload('destroy');
             /* Close the modal */
             $("#initialModal").modal('hide');
           });

@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <!-- CSS LIB -->
+    <link rel="stylesheet" href="lib/css/hopscotch.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -59,7 +60,7 @@
 
     <!-- Bootstrap -->
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
-    <script  type="text/javascript" src="lib/js/typehead.bundle.js"></script>
+    <script  type="text/javascript" src="lib/js/hopscotch.js"></script>
 
     <!-- JS SRC -->
 
@@ -96,6 +97,7 @@
     <script type='text/javascript' src='src/js/utilities/textUtilities.js'></script>
     <script type='text/javascript' src='src/js/utilities/promiseUtilities.js'></script>
     <script type='text/javascript' src='src/js/utilities/jQueryContextUtility.js'></script>
+    <script type='text/javascript' src='src/js/utilities/feature_tour.js'></script>
 
     <script type='text/javascript' src='src/js/main.js'></script>
 </head>
@@ -148,50 +150,52 @@
                 <div class="container">
 
                     <!--<div class="row">-->
-                        <!--<div class="col-md-12">-->
-                            <!--<h4 style="font-weight: bold">Load a PDB or MSA, or specify a protein my PDB ID:</h4>-->
-                        <!--</div>-->
+                    <!--<div class="col-md-12">-->
+                    <!--<h4 style="font-weight: bold">Load a PDB or MSA, or specify a protein my PDB ID:</h4>-->
+                    <!--</div>-->
                     <!--</div>-->
 
                     <div class="row mainRow">
 
                         <div class="col-md-5">
-                            <h4 style="margin-top:0">About:</h4>
-                            <p style="margin-left:10px">FixingTIM is an open-source application for to help identify protein mutations across family structural models,
-                                and to help discover the effect of these mutations on protein function. </p>
+                            <!--<h4 style="margin-top:0">Specify a protein by PDB ID:</h4>-->
+                            <p>Select a protein by entering its PDB Code or by uploading your own:</p>
+
+                            <p>Upload a multiple sequence alignment file (.msa, .fa):</p>
+
                         </div>
 
                         <div class="col-md-4 dataPanel">
                             <!--<div class="row loadProtein">-->
-                                <!--<div class="col-md-6 fileLoadingOptions">-->
+                            <!--<div class="col-md-6 fileLoadingOptions">-->
 
-                                    <div class="row pdbQuery">
-                                        <div class="col-md-12">
-                                            <label for="protein-name">PDB Code (ex: 2YPI):</label>
-                                            <input id="protein-name" type="text" name="name" autocomplete="off"/>
-                                        </div>
-                                    </div><!-- End row-->
-                                <!--</div>-->
+                            <div class="row pdbQuery">
+                                <div class="col-md-12">
+                                    <!--<label for="protein-name">PDB Code (ex: 2YPI):</label>-->
+                                    <input id="protein-name" placeholder="PDB Code (ex: 2YPI)" type="text" name="name" autocomplete="off"/>
+                                </div>
+                            </div><!-- End row-->
+                            <!--</div>-->
 
-                                <!--<div class="col-md-6">-->
-                                <div class="row initialUploadOptions">
-                                    <div class="col-md-12">
-                                        <span class="fileUpload side_by_side">Choose a file: </span>
-                                        <span id="upload" style="margin-left: 10px;"
-                                              class="btn btn-success fileinput-button viewer-upload side_by_side">
+                            <!--<div class="col-md-6">-->
+                            <div class="row initialUploadOptions">
+                                <div class="col-md-12">
+                                    <span class="fileUpload side_by_side">Choose a file: </span>
+                                    <span id="upload" style="margin-left: 10px;"
+                                          class="btn btn-success fileinput-button viewer-upload side_by_side">
                                                  <i class="fa fa-plus-square-o"></i><span> Select file...</span>
                                                 <input id="fileUploadInput" type="file" name="files[]" accept=".pdb,.msf,.fa">
                                                 </span>
-                                        <br><br>
-                                        <div id="files" class="files"></div>
-                                    </div>
-                                </div> <!-- End initial upload options -->
+                                    <br><br>
+                                    <div id="files" class="files"></div>
+                                </div>
+                            </div> <!-- End initial upload options -->
 
-                            </div><!-- End Data Panel -->
-                        </div> <!-- End Main Row-->
+                        </div><!-- End Data Panel -->
+                    </div> <!-- End Main Row-->
 
-                    </div> <!-- End Container-->
-                </div> <!-- End Modal Body-->
+                </div> <!-- End Container-->
+            </div> <!-- End Modal Body-->
             <div class="modal-footer">
                 <button id="load" type="button" class="btn btn-primary" >Next</button>
             </div>
@@ -210,7 +214,7 @@
             <div class="col-md-5 " data-bind="attr: {id: $data._id}">
                 <div class="x_title view absolute" >
                     <div id="molecularViewerMenu" class="hidden">
-                        <ul class="nav navbar-nav tertiary-nav">
+                        <ul data-bind="attr: {id: String($data._id)+'_nav'}" class="nav navbar-nav tertiary-nav">
                             <li id="proteinName"> <a href="#">
                                 <p></p>
                                 <span class="popup-trigger sBtn fileinput-button"

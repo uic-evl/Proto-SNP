@@ -53,6 +53,7 @@ div.view {
     cursor: pointer;
     z-index: -1;
     background-color: #e7e7e7;
+    color: dimgray;
 }
 
 .clearfix:after, form:after {

@@ -122,4 +122,5 @@ ul li a.disabled {
 
 .side_by_side {
     display: inline-block;
+    /*margin-left: 10px;*/
 }

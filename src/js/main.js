@@ -71,16 +71,26 @@ var App = App || {};
             switch(metadata.extension){
               case "pdb":
                 leftTertiaryStructureView.file_loaded(metadata, result);
+                // Start the tour!
                 break;
               case "msf":
               case "fa":
                 proteinFamilyView.file_loaded(result, metadata.extension);
                 break;
             }
+
             /* destroy the file upload */
             modal.find("#fileUploadInput").fileupload('destroy');
+
             /* Close the modal */
             $("#initialModal").modal('hide');
+
+            let state = hopscotch.getState();
+
+            //if (state && state.indexOf('introduction_tour:') === 0){
+              hopscotch.startTour(App.tour_3D, 0);
+            //}
+
           });
     });
 

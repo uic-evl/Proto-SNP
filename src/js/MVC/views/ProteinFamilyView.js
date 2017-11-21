@@ -10,6 +10,8 @@ const ProteinFamilyView = (function() {
   function ProteinFamilyView(model, element) {
     let self = this;
 
+    self.initialized_promise = $.Deferred();
+
     self._model = model;
     self._id = element.id;
 
@@ -312,11 +314,19 @@ const ProteinFamilyView = (function() {
       /* Initialize the trend image view*/
       let width = self.initialize(msg);
 
+      /* Load the tour if this is the first time a trend image is generated */
+      let state = hopscotch.getState();
+      //if (state && state.indexOf('introduction_tour:') === 0){
+      hopscotch.startTour(App.tour_family, 0);
+      //}
+
       /* Initialize the back buffer with the family data */
       self.initialize_back_buffer(family.data, colorMapping)
       /* Render the family view */
           .then(self.render.bind(self,self._familyImage,0,0))
           .then(function(){
+            /* Done initializing */
+            self.initialized_promise.resolve();
             /* Notify the controller that the image has been rendered */
             self.imageRendered.notify(build_brushes_and_viewers());
             /* Render the overview if one is needed */
@@ -352,7 +362,7 @@ const ProteinFamilyView = (function() {
         /* Update the model */
         this.fileUploaded.notify({data: data, type: extension});
         /* enable the upload button*/
-        this.initialize_file_open(d3.select('#settingsOpen'));
+        return this.initialize_file_open(d3.select('#settingsOpen'));
       },
 
     show: function () {
@@ -504,6 +514,8 @@ const ProteinFamilyView = (function() {
         brushView.render(brushObj);
       });
     },
+
+    getPromise: function() { return this.initialized_promise.promise(); },
 
     getGlyphSize: function() { return this.residue_glyph_size; },
 

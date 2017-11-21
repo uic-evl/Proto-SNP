@@ -81,16 +81,8 @@ var App = App || {};
 
             /* destroy the file upload */
             modal.find("#fileUploadInput").fileupload('destroy');
-
             /* Close the modal */
             $("#initialModal").modal('hide');
-
-            let state = hopscotch.getState();
-
-            //if (state && state.indexOf('introduction_tour:') === 0){
-              hopscotch.startTour(App.tour_3D, 0);
-            //}
-
           });
     });
 

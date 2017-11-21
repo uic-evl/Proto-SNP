@@ -164,7 +164,7 @@ const ResidueFrequencyView = (function() {
           .append('rect')
           /* Merge the old elements (if they exist) with the new data */
           .merge(bar)
-          .attr("class", "freq_bars")
+          .attr("class", function(d,i){return "freq_bars r" + i})
           .attr("width", self.glyph_width)
           .attr("height", self.bar_height)
           .attr('y', function(d) { return self.y_offset; })

@@ -5,7 +5,7 @@ var App = App || {};
 const TertiaryStructureView = (function () {
 
   function colorProteinBy(colorMap) {
-    let colorMapping = App.residueMappingUtility.getColor(colorMap);
+    let colorMapping = App.residueMappingUtility.getColor(colorMap, "3D");
     return new pv.color.ColorOp(function (atom, out, index) {
       /* Select the color corresponding to the residue and mapping*/
       let color = colorMapping(atom._residue._name).rgba;
@@ -58,6 +58,7 @@ function TertiaryStructureView(model, element) {
   self.residueSelected = new EventNotification(this);
   self.residueDeselected = new EventNotification(this);
   /* The user has interacted with the viewer */
+  self.colorChanged = new EventNotification(this);
   self.modelRotated = new EventNotification(this);
   self.modelZoomed = new EventNotification(this);
   self.cameraChanged = new EventNotification(this);
@@ -168,6 +169,8 @@ function TertiaryStructureView(model, element) {
             cb:
                 function(model, element) {
                   self.recolor(element);
+                  self.colorChanged.notify({color:element});
+                  App.residueMappingUtility.createColorLegend("3D");
                 }
           });
       /* Show the view to bind the model */
@@ -200,8 +203,13 @@ function TertiaryStructureView(model, element) {
     /* Enable the coloring menu */
     $("#coloring_list").find("li").removeClass("disabled");
     /* Create the legend */
-    App.residueMappingUtility.createColorLegend();
+    App.residueMappingUtility.createColorLegend("3D");
 
+  });
+
+  self._model.proteinColoringChanged.attach(function(sender, args){
+    self.recolor(args.scheme);
+    self.pvViewer.requestRedraw();
   });
 
   /* Update the model once the selection has been added/removed to/from the model */

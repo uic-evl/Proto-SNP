@@ -31,7 +31,7 @@ const ResidueFrequencyView = (function() {
           margin = {top: 10, right: 20, bottom: 30, left: 25};
 
       /* Select the colormap*/
-      let colorMap = App.residueMappingUtility.getColor("Side Chain Class");
+      let colorMap = App.residueMappingUtility.getColor("Side Chain Class", "family");
 
       let x = d3.scaleBand()
           .rangeRound([0, width])

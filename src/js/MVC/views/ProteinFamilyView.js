@@ -308,7 +308,7 @@ const ProteinFamilyView = (function() {
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
-          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring());
+          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring(), "family");
       /* Initialize the trend image view*/
       let width = self.initialize(msg);
 
@@ -339,7 +339,7 @@ const ProteinFamilyView = (function() {
             /* Enable the coloring menu */
             $("#coloring_list").find("li").removeClass("disabled");
             /* Create the legend */
-            App.residueMappingUtility.createColorLegend();
+            App.residueMappingUtility.createColorLegend("family");
           }).catch(console.log.bind(console));
     });
   }

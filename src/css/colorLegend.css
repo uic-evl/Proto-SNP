@@ -9,6 +9,6 @@ text.legendText {
     font-family: monospace;
 }
 
-#colorLegend {
+.legendSVG {
     height: 5%;
 }

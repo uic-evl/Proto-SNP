@@ -5,7 +5,7 @@ var App = App || {};
 
 function ResidueMappingUtility() {
 
-  let self = {};
+  let self = { legend_svg: {}};
 
   let colorCodes = {
     white : {code: "#fbfff4", rgba: [251.0, 255.0, 244.0, 255.0] },
@@ -75,9 +75,8 @@ function ResidueMappingUtility() {
     {abbr: "-", sideClass: "gap",       polarity: "gap",      name:"gap"}
     ];
 
-
   /* The current color map*/
-  let currentColorMap = null;
+  let currentColorMap = {};
 
   function colorBySideChainClass(residue) {
     let residueProperties = _.find(residuePropertiesByLetter, function(r) {
@@ -86,14 +85,12 @@ function ResidueMappingUtility() {
     return colorCodesBySideChain[(residueProperties) ? residueProperties.sideClass : "gap"];
   }
 
-
   function colorByPolarity(residue) {
     let residueProperties = _.find(residuePropertiesByLetter, function(r) {
       return residue === r.abbr || residue === r.name;
     });
     return colorCodesByPolarity[(residueProperties) ? residueProperties.polarity : "gap"];
   }
-
 
   /* Coloring the sequences, the fragment in the same column with the largest frequency
    are colored with red for other fragment, if the adjacent fragment(in the column)
@@ -117,23 +114,23 @@ function ResidueMappingUtility() {
     return colorCodesSelection["all"];
   }
 
-  function get_color_mapping(mapping){
+  function get_color_mapping(mapping, id){
     switch(mapping.trim()){
       case "Side Chain Class":
       default:
-        currentColorMap = colorCodesBySideChain;
+        currentColorMap[id] = colorCodesBySideChain;
         return colorBySideChainClass;
         break;
       case "Side Chain Polarity":
-        currentColorMap = colorCodesByPolarity;
+        currentColorMap[id] = colorCodesByPolarity;
         return colorByPolarity;
         break;
       case "Selections Only":
-        currentColorMap = colorCodesSelection;
+        currentColorMap[id] = colorCodesSelection;
         return colorBySelection;
         break;
       case "Frequency (Family Viewer)":
-        currentColorMap = colorCodesByResidueFrequency;
+        currentColorMap[id] = colorCodesByResidueFrequency;
         return colorByFrequency;
         break;
     }
@@ -141,33 +138,34 @@ function ResidueMappingUtility() {
 
 
   /* Initialize the legend DOM */
-  function initialize_legend() {
-    self.legend        = document.getElementById('colorLegend');
+  function initialize_legend(id) {
+    self.legend        = document.getElementById(id);
     self.legend_width  = self.legend.clientWidth;
     self.legend_height = 2.0*Math.max.apply(null, $('.view').map(function() { return $(this).height(); }).get())/2.0;
 
     if(self.legend_height < 50 ) self.legend_height = 50;
 
     /* Color map legend */
-    self.legend_svg =
+    self.legend_svg[id] =
         d3.select(self.legend)
             .append("svg")
             .attr("width", self.legend_width);
   }
 
   /* Create the legend for the current coloring scheme */
-  function create_legend(){
+  function create_legend(type){
 
-    if(!self.legend_svg){
-      initialize_legend();
+    let id = (type === "3D") ? "tertiaryColorLegend" : "familyColorLegend";
+    if(!self.legend_svg[id]){
+      initialize_legend(id);
     }
 
-    let elements = _.toPairs(currentColorMap),
+    let elements = _.toPairs(currentColorMap[type]),
         legendElementWidth  = self.legend_width / (elements.length),
         legendElementHeight = self.legend_height / 2.0;
 
     /* Add the color bands to the legend */
-    let legend_bars = self.legend_svg.selectAll(".legendElement")
+    let legend_bars = self.legend_svg[id].selectAll(".legendElement")
         .data(elements);
 
     // UPDATE: add new elements if needed
@@ -184,7 +182,7 @@ function ResidueMappingUtility() {
         .style("fill", (d) => { return d[1].code });
 
     /* Add the text to the legend*/
-    let legend_text = self.legend_svg.selectAll(".legendText")
+    let legend_text = self.legend_svg[id].selectAll(".legendText")
         .data(elements);
 
     legend_text.enter()

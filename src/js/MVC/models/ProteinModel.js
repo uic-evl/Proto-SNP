@@ -165,7 +165,9 @@ const ProteinModel = (function() {
 
     setProteinColoring: function (coloring) {
       this._proteinColoring = coloring;
-      this.proteinColoringChanged.notify({scheme: coloring});
+      if(this.isEmpty()){
+        this.proteinColoringChanged.notify({scheme: coloring});
+      }
       return this;
     },
 

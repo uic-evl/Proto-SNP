@@ -132,7 +132,7 @@ const ProteinFamilyController = (function() {
     self._model.proteinColoringChanged.attach(function(sender, msg){
       if (!self._model.isEmpty()) return;
       let colorMap = msg.scheme,
-          colorScale = App.residueMappingUtility.getColor(colorMap),
+          colorScale = App.residueMappingUtility.getColor(colorMap, "family"),
       /* Recolor the family viewer  */
       selection = [0,0];
       if(self._brushViews['overview']){
@@ -146,7 +146,7 @@ const ProteinFamilyController = (function() {
     self._model.proteinSortingChanged.attach(function(sender, msg){
       let sorted_data = msg.data,
           colorMap = msg.colorScheme,
-          colorScale = App.residueMappingUtility.getColor(colorMap),
+          colorScale = App.residueMappingUtility.getColor(colorMap, "family"),
           selection =[0,0];
       if(self._brushViews['overview']){
         selection = getOverviewSelection();

@@ -8,6 +8,10 @@
     outline: none;
 }
 
+.right_align {
+    text-align: right;
+}
+
 html {
     box-sizing: border-box;
 }

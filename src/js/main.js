@@ -64,7 +64,10 @@ var App = App || {};
 
     /* Launch the initial data modal */
     $("#initialModal").modal().on('shown.bs.modal', function (e) {
+
       let modal = $(this);
+
+      /* Setup the file upload plugin */
       App.fileUtilities.initialUploadSetup(modal,
           function (metadata, result) {
             /* Initialize the viewer based on the input data */
@@ -84,6 +87,21 @@ var App = App || {};
             /* Close the modal */
             $("#initialModal").modal('hide');
           });
+
+      /* Link the protein form to the model utilities */
+      modal.find("#initialDataForm").on("submit", function(){
+        let name = $(this).serialize().split('=')[1];
+        App.fileUtilities.ajaxFromRCMB(name, function(blob){
+          if(blob){
+            blob.name = name + ".pdb";
+            modal.find("#fileUploadInput").fileupload('add', {files: blob });
+          }
+          modal.find("#protein-name").val('');
+        });
+
+        return false;
+      });
+
     });
 
     /* Render the views */

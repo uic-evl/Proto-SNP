@@ -6,6 +6,17 @@ var App = App || {};
 // Utilities class generic operations and conversions
 const FileUtilities = function(){
 
+  function loadIfExists(url, cb) {
+    $.ajax({
+      type:"HEAD", //Not get
+      url: url
+    })
+      .done(function() {
+        cb(url)
+    })
+
+  }
+
   function split_sequence(family){
     /* Convert the family object to an array */
     family = _.values(family);
@@ -307,7 +318,28 @@ const FileUtilities = function(){
         .promise();
   }
 
-  /* Load the protein from RCMB */
+  /* Load the protein from RCMB through ajax*/
+  function load_PDB_From_RCMB_ajax(proteinName,cb) {
+
+    let get_protein = function(url) {
+      let xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function(){
+        if (xhr.readyState === 4 && xhr.status === 200){
+          cb(this.response);
+        }
+
+      };
+      xhr.responseType = 'blob';
+
+      xhr.open('GET', 'http://files.rcsb.org/download/' + proteinName + '.pdb');
+      xhr.send();
+    };
+
+    loadIfExists('http://files.rcsb.org/download/' + proteinName + '.pdb', get_protein)
+  }
+
+  /* Load the protein from RCMB through pv.io*/
   function load_PDB_From_RCMB(proteinName, pointer){
     /* perform an async download from RCMB to fetch the requested PDB File */
     return new Promise(function(resolve, reject){
@@ -334,6 +366,7 @@ const FileUtilities = function(){
   return {
    parseAlignmentFile   : parse,
    uploadPDB            : load_from_uploaded_PDB,
+   ajaxFromRCMB         : load_PDB_From_RCMB_ajax,
    downloadFromRCMB     : load_PDB_From_RCMB,
    uploadSetup          : file_upload_setup,
    familyUploadSetup    : family_upload_setup,

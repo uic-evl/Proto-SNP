@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="lib/css/jQuery-file-upload/jquery.fileupload.css">
     <link rel="stylesheet" href="lib/css/typehead.css">
     <link rel="stylesheet" href="lib/css/d3-context-menu.css">
-    <link rel="stylesheet" href="//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css">
+    <link rel="stylesheet" href="lib/css/example-styles.css">
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/sequenceViewer.css">
@@ -35,9 +35,9 @@
     <!-- Data Visualization Libs -->
 
     <script type='text/javascript' src='lib/js/d3.js'></script>
-    <script src="//d3js.org/queue.v1.min.js"></script>
+    <script src="lib/js/queue.v1.min.js"></script>
     <script type='text/javascript' src='lib/js/d3-tip.js'></script>
-    <script src="//twgljs.org/dist/twgl.min.js"></script>
+    <script src="lib/js/twgl.min.js"></script>
     <script type='text/javascript' src='lib/js/d3-context-menu.js'></script>
     <script type='text/javascript' src='lib/js/colorbrewer.min.js'></script>
 
@@ -170,10 +170,13 @@
                             <!--<div class="col-md-6 fileLoadingOptions">-->
 
                             <div class="row pdbQuery">
-                                <div class="col-md-12">
-                                    <!--<label for="protein-name">PDB Code (ex: 2YPI):</label>-->
-                                    <input id="protein-name" placeholder="PDB Code (ex: 2YPI)" type="text" name="name" autocomplete="off"/>
-                                </div>
+                                <form id="initialDataForm" class="signup-form">
+                                    <div class="col-md-12">
+                                        <!--<label for="protein-name">PDB Code (ex: 2YPI):</label>-->
+                                        <input id="protein-name" placeholder="PDB Code (ex: 2YPI)" type="text" name="name" autocomplete="off"/>
+                                    </div>
+                                </form>
+
                             </div><!-- End row-->
                             <!--</div>-->
 

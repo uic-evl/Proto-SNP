@@ -81,14 +81,16 @@
 }
 
 .sBtn:not(.sBtn-outline) {
-    background-color: #fff;
+    color: #fff;
+    background-color: #41ab5d;
+    border-color: #4cae4c;
 }
 
 .sBtn:not(.sBtn-outline) span {
-    color: #666;
+    color: #fff;
 }
 .sBtn:not(.sBtn-outline):hover {
-    background-color: #f7f7f7;
+    background-color: #41ab5d;
 }
 
 .sBtn.sBtn-outline {

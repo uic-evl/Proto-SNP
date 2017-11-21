@@ -232,7 +232,7 @@ function TertiaryStructureView(model, element) {
 }
 
 TertiaryStructureView.prototype = {
-
+  /* Callback fired when a file is loaded */
   file_loaded: function(metadata, result){
     this.fileUploaded.notify({metaData: metadata, file: result});
     /* Place the name of the protein above the viewer*/

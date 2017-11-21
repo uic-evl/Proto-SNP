@@ -346,6 +346,15 @@ const ProteinFamilyView = (function() {
 
   ProteinFamilyView.prototype = {
 
+    file_loaded: function (data, extension) {
+        /* Remove the splash screen */
+        this._parentDom.select('#trendSplash').remove();
+        /* Update the model */
+        this.fileUploaded.notify({data: data, type: extension});
+        /* enable the upload button*/
+        this.initialize_file_open(d3.select('#settingsOpen'));
+      },
+
     show: function () {
       let view = this;
       /* load the splash screen if there is no model data*/
@@ -353,15 +362,7 @@ const ProteinFamilyView = (function() {
         $('#trendSplash').load("./src/html/familySplashTemplate.html", function () {
           let splash = $(this);
           /* Setup the upload callback for files */
-          App.fileUtilities.familyUploadSetup(splash.find("#fileupload-family"),
-              function (data, extension) {
-                /* Remove the splash screen */
-                view._parentDom.select('#trendSplash').remove();
-                /* Update the model */
-                view.fileUploaded.notify({data: data, type: extension});
-                /* enable the upload button*/
-                view.initialize_file_open(d3.select('#settingsOpen'));
-              });
+          App.fileUtilities.familyUploadSetup(splash.find("#fileupload-family"), view.file_loaded.bind(view))
         });
       }
     },

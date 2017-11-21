@@ -74,11 +74,11 @@ var App = App || {};
                 break;
               case "msf":
               case "fa":
+                proteinFamilyView.file_loaded(result, metadata.extension);
                 break;
             }
-
+            /* Close the modal */
             $("#initialModal").modal('hide');
-
           });
     });
 

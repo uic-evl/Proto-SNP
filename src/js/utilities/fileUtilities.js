@@ -141,7 +141,7 @@ const FileUtilities = function(){
         // The select button
         let select = $(this).prop('disabled', true);
         // uploaded file
-        let file = data.files[0];
+        let file = data.files.pop();
         /* Create a div and attach it beneath the Choose File button */
         data.context = $('<div/>').appendTo(files);
         let node = $('<p/>')
@@ -151,7 +151,7 @@ const FileUtilities = function(){
         // let uploadButton = $('<button/>')
         //   .addClass('btn btn-primary uploadPDB')
         //   .text('Upload')
-        viewer.find("#load")
+        viewer.find("#next")
           .on('click', function () {
 
             // JS File reader to parse the uploaded file
@@ -185,6 +185,13 @@ const FileUtilities = function(){
           .on('click', function () {
             let $this = $(this),
               data = $this.data();
+
+            /* Clear the previous data and reinitialize the menu */
+            viewer.find("#fileUploadInput").fileupload('destroy');
+            viewer.find("#fileUploadInput").unbind( "fileuploadadd" );
+            viewer.find("#next").unbind( "click" );
+            initial_file_upload_setup(viewer, cb);
+
             $this.parent().remove();
             data.abort();
             select.prop('disabled', false);

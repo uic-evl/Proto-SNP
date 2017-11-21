@@ -4,8 +4,8 @@ var App = App || {};
 
 const PrimaryStructureController = (function() {
 
-  function PrimaryStructureController(model, views) {
-    this._model = model;
+  function PrimaryStructureController(models, views) {
+    this._model = models;
     this._views = views;
 
     let _this = this;

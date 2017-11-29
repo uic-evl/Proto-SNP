@@ -137,13 +137,12 @@ const BrushView = (function() {
           {x:0, y:y, width:overlay_width, height:0, class_name:'horizontal_covers trend_covers'},
           {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height), class_name:'horizontal_covers trend_covers'},
           /* Overlays to the left of the left paddle */
-          {x:0, y:y, width:0, height:y,class_name:'left_vertical_covers vertical_covers trend_covers'},
+          {x:0, y:y, width:0, height:0,class_name:'left_vertical_covers vertical_covers trend_covers'},
           {x:0, y:y+bar_height, width:0, height:overlay_height-(bar_height),class_name:'left_vertical_covers vertical_covers trend_covers' },
           /* Overlays to the left of the right paddle */
-          {x:overlay_width, y:y, width:0, height:y,class_name:'right_vertical_covers vertical_covers trend_covers'},
+          {x:overlay_width, y:y, width:0, height:0,class_name:'right_vertical_covers vertical_covers trend_covers'},
           {x:overlay_width, y:y+bar_height, width:0, height:overlay_height-(bar_height),class_name:'right_vertical_covers vertical_covers trend_covers' }
         ];
-
       }
       else if(self._orientation === App.OVERVIEW_PADDLE){
         coordinates = [
@@ -306,14 +305,15 @@ const BrushView = (function() {
           x = parseInt(brush.attr('x'));
           width = parseInt(brush.attr('width'));
 
+          /* Reposition the x of the left vertical overlays */
+          d3.selectAll('rect.left_vertical_covers')
+              .attr('width', x);
+
           /* reposition the x of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
               .attr("x", (x+width))
               .attr('width', parseInt(brush_right.attr("x")) - (x+width));
 
-          /* Reposition the x of the left vertical overlays */
-          d3.selectAll('rect.left_vertical_covers')
-            .attr('width', x);
         }
         else if(data.semantic === "right"){
           let brush_left = d3.select('g.vertical-left rect.selection'),
@@ -325,14 +325,15 @@ const BrushView = (function() {
           x = parseInt(brush.attr('x'));
           width = parseInt(brush.attr('width'));
 
-          /* reposition the width of the horizontal covers */
-          d3.selectAll("rect.horizontal_covers")
-              .attr('width', x - (parseInt(brush_left.attr("x"))+width_left) );
-
           /* Reposition the x of the right vertical overlays */
           d3.selectAll('rect.right_vertical_covers')
             .attr('x', x + width)
             .attr('width', overview_width - (x + width));
+
+          /* reposition the width of the horizontal covers */
+          d3.selectAll("rect.horizontal_covers")
+              .attr('width', x - (parseInt(brush_left.attr("x"))+width_left) );
+
         }
 
       }

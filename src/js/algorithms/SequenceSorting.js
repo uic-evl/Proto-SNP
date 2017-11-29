@@ -57,7 +57,9 @@ const SequenceSorting = function(family){
         /* Get the residues of the ith column */
         let column_residues = _.map(family, function(member) { return _.nth(member.sequence, i); });
         /* Get the residue counts for each column*/
-        self.frequencies[i] = _.pickBy(_.countBy(column_residues), function(i,o){ return "~-.".indexOf(o) < 0;});
+        self.frequencies[i] = //_.pickBy(
+            _.countBy(column_residues)
+            //, function(i,o){ return "~-.".indexOf(o) < 0;});
 
       }
       /* resolve the promise with the column frequencies*/

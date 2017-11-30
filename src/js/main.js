@@ -33,7 +33,7 @@ var App = App || {};
         colorView = new FilteringMenuView(colorModel, { 'list' : $('#coloring_list') }),
         colorController = new FilteringMenuController({
           menu : "coloring",
-          models: { list: colorModel, connected : [proteinFamilyModel, leftProteinModel, rightProteinModel]},
+          models: { list: colorModel, connected : [proteinFamilyModel]},
           view: colorView,
           cb:
               function(model, element) {

@@ -55,6 +55,23 @@ div.view {
     color: dimgray;
 }
 
+li > label {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: inherit;
+    color: inherit;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+li > label:hover {
+    color: #262626;
+    text-decoration: none;
+    background-color: #f5f5f5;
+}
+
 #settingsCog {
     padding: 0;
     color: dimgray;

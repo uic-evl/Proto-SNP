@@ -167,7 +167,7 @@
                             <!--<h4 style="margin-top:0">Specify a protein by PDB ID:</h4>-->
                             <p>Select a protein by entering its PDB Code, then pressing Enter:</p>
                             <br>
-                            <p>Upload a multiple sequence alignment file (.msa, .fa):</p>
+                            <p>Upload a multiple sequence alignment file <br>or your own PDB (.msa, .fa, .pdb):</p>
 
                         </div>
 
@@ -287,18 +287,14 @@
                     <p class="side_by_side header">Protein Family Viewer</p>
 
 
-                    <div class="side_by_side hidden" id="settingsOpen">
+                    <div id="family_upload_li" class="side_by_side hidden">
                         <ul class="nav navbar-nav">
                             <li>
                                 <a id="settingsCog" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa fa-cog"></i><b class="caret"></b></a>
                                 <ul class="dropdown-menu multi-level">
                                     <li>
-                                        <a href="#">Select alignment file
-                                            <span class="popup-trigger sBtn fileinput-button" id="popup-trigger-open">
-                                                <i class="fa fa-folder-open hidden">
-                                                <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
-                                            </span>
-                                        </a>
+                                        <label for="fileupload-open">Select</label>
+                                        <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
                                     </li>
                                     <li class="dropdown-submenu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>
@@ -316,6 +312,7 @@
                                             </li>
                                         </ul>
                                     </li>
+
                                 </ul>
                             </li>
                         </ul>

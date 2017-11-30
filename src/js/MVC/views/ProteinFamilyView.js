@@ -292,19 +292,19 @@ const ProteinFamilyView = (function() {
       dom.classed('hidden', false);
 
       /* Set the file upload size */
-      let input = document.getElementById("fileupload-open"),
+      let input = d3.select("#fileupload-open").node(),
           parent = input.parentNode;
 
       /* Setup the upload callback for files */
       App.fileUtilities.familyUploadSetup(input,
           function (data, extension) {
             self.fileUpdated.notify({data: data, type: extension});
-          }).done(function(){
-        input.style.width = parent.clientWidth;
-        input.style.height = parent.clientHeight;
-        // input.style.cursor = "pointer";
-        input.style['z-index'] = 11;
-      });
+           })
+        .done(function(){
+          input.style.width = parent.clientWidth;
+          input.style.height = parent.clientHeight;
+          input.style['z-index'] = 11;
+        });
     };
 
     /* Bind the protein family listener */
@@ -362,7 +362,7 @@ const ProteinFamilyView = (function() {
         /* Update the model */
         this.fileUploaded.notify({data: data, type: extension});
         /* enable the upload button*/
-        return this.initialize_file_open(d3.select('#settingsOpen'));
+        return this.initialize_file_open(d3.select('#family_upload_li'));
       },
 
     show: function () {

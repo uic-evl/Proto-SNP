@@ -19,16 +19,17 @@ const ResidueFrequencyView = (function() {
     self._visible = false;
     self.frequencyRange = null;
 
-    self._calloutWidth = 100;
+    self._calloutWidth = 125;
     self._calloutHeight = 200;
 
     function createStackedBarChart(d,i) {
       /* Show the tooltip*/
-      self.tip.show();
+      self.tip.show(d,i);
 
       /* Render stacked bar of the frequencies */
       let height = self._calloutHeight, width = self._calloutWidth,
-          margin = {top: 10, right: 20, bottom: 30, left: 25};
+          margin = {top: 10, right: 20, bottom: 30, left: 40},
+          xOffset = 25;
 
       /* Select the colormap*/
       let colorMap = App.residueMappingUtility.getColor("Side Chain Class", "family");
@@ -86,7 +87,7 @@ const ResidueFrequencyView = (function() {
           .data(function(d) { return d; })
           .enter().append("text")
           .text(function(d,i,j) { return keys[j] })
-          .attr("y", function(d) { return y(d[1]) +(y(d[0]) - y(d[1]))/2.0 + 2; })
+          .attr("y", function(d) { return y(d[1]) + Math.round((y(d[0]) - y(d[1]))/2.0) + 3; })
           .attr("x", function(d) { return 60 + x(domains[0].column); })
           .style('font-size', '10px')
           .attr("text-anchor", "middle")
@@ -95,22 +96,23 @@ const ResidueFrequencyView = (function() {
       /* Add the y-axis */
       tipSVG.append("g")
           .attr("class", "axis")
-          .attr("transform", "translate(0," + height + ")")
+          .attr("transform", "translate("+-width/2.0+"," + height + ")")
           .call(d3.axisBottom(x));
 
       /* Add axis text/tics */
       tipSVG.append("g")
           .attr("class", "axisPop")
-          .call(d3.axisLeft(y).ticks(null, "s"))
-          .append("text")
-          .attr("x", 2)
-          .attr("y", y(y.ticks().pop()) + 0.5)
-          .attr("dy", "0.32em")
-          .attr("color", "#FFF")
-          .attr("font-weight", "bold")
-          .attr("text-anchor", "start")
-          // .text("Population")
-      ;
+          // .attr("x", xOffset)
+          .call(d3.axisLeft(y).ticks(null, "s"));
+
+      tipSVG.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - (margin.left+xOffset/2))
+        .attr("x",0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .style("fill", '#FFF')
+        .text("Residue Count");
     }
 
     /* Set the model listeners */
@@ -299,7 +301,12 @@ const ResidueFrequencyView = (function() {
       this.tip = d3.tip()
           .attr('class', 'd3-tip')
           .offset([-10, 0])
-          .html("<div id='"+this.semantic+"tipDiv'><svg style='height:" + (self._calloutHeight+15) + "px; width:" + self._calloutWidth + "px;'></svg></div>");
+          .html(function(d) {
+            console.log(arguments);
+            return "<div id='" + self.semantic + "tipDiv'>" +
+              "<h5 style=' text-align: center; margin-top:0; font-weight: bold'>Most frequent</h5>" +
+              "<svg class='barCallout' style='height:" + (self._calloutHeight + 15) + "px; width:" + self._calloutWidth + "px;'></svg></div>"
+          });
 
       /* Invoke the tooltip */
       this._svg.call(this.tip);

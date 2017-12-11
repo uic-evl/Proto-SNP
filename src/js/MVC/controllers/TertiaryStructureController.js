@@ -13,6 +13,7 @@ const TertiaryStructureController = (function() {
     self._views = views;
     self._controllers = controllers;
 
+
     /* Setup the callback listeners for each view*/
     self._views.forEach(function(view, idx){
       /* Add Protein Upload/Update Callbacks */

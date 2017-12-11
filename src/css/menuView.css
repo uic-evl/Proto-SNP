@@ -3,6 +3,10 @@
     margin-bottom: 0;
 }
 
+.help_about {
+    transform: translate(0,50%);
+}
+
 #popup-trigger-open, #popup-trigger-pdb {
     display: inline;
     position: relative;
@@ -25,7 +29,7 @@
     width: 95% !important;
 }
 
-#protein_coloring_list, #geometry_list, #proteinName {
+#protein_coloring_list, #geometry_list, #proteinName, #molecularViewerHelp {
     background-color: #e7e7e7;
     color: #555;
 }
@@ -51,7 +55,7 @@ div.view {
     margin: 0;
 }
 
-#settingsOpen, .settingsOpenPdb {
+#settingsOpen, .settingsOpenPdb, .molecularHelp {
     font-size: 16px;
     padding: 0 0 0 5px;
     cursor: pointer;

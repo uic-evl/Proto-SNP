@@ -109,7 +109,7 @@
 <nav id="menu" class="navbar navbar-default">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-2 header_col">
+            <div class="col-md-1 header_col">
                 <div id="header_logo">
                     <a href="https://www.evl.uic.edu">
                         <img src="lib/css/logo.png" onmouseover="this.src='lib/css/logo_on.png';"
@@ -117,8 +117,13 @@
                     </a>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <h2 class="main_title">SNP-JS</h2>
+            </div>
+            <div class="col-md-1">
+                <ul class="nav navbar-nav help_about">
+                    <li><a href="#">About</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -129,7 +134,7 @@
 
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="exampleModalLabel">Select Data</h2>
+                <h2 class="modal-title" id="initialModalLabel">Select Data</h2>
             </div>
 
             <div class="modal-body">
@@ -207,6 +212,13 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                                    aria-expanded="false">Color By<span style="padding-top: 3px;" class="caret"></span>
                                 </a>
+                            </li>
+                            <li id="molecularViewerHelp"> <a href="#">
+                                <p class="side_by_side">Help</p>
+                                <span class="side_by_side">
+                                     <i class="fa fa-question molecularHelp"></i>
+                                </span>
+                            </a>
                             </li>
                         </ul>
                     </div>

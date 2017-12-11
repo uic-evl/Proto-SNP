@@ -51,6 +51,11 @@ function TertiaryStructureView(model, element) {
   self.splash = null;
   self.staticLabel = '';
 
+  function helpMenu() {
+    hopscotch.startTour(App.tour_3D, 1);
+    console.log("help");
+  }
+
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
   self.fileUpdated = new EventNotification(this);
@@ -180,6 +185,9 @@ function TertiaryStructureView(model, element) {
     /* Show the menu */
     d3.select(self._dom[0]).select("#molecularViewerMenu")
         .classed("hidden", false);
+
+    /* Setup the help menu */
+    $("#" + self._id + " #molecularViewerHelp").click(helpMenu);
   };
 
   /* Attach the listeners */
@@ -207,9 +215,9 @@ function TertiaryStructureView(model, element) {
 
     /* Load the tour if this is the first time a molecular viewer is generated */
     let state = hopscotch.getState();
-    //if (state && state.indexOf('introduction_tour:') === 0){
-    hopscotch.startTour(App.tour_3D, 1);
-    //}
+    if (state && state.indexOf('introduction_tour:') === 0){
+      hopscotch.startTour(App.tour_3D, 1);
+    }
 
   });
 

@@ -21,6 +21,10 @@
     float: none !important
 }
 
+.tertiary_viewer_width {
+    width: 95% !important;
+}
+
 #protein_coloring_list, #geometry_list, #proteinName {
     background-color: #e7e7e7;
     color: #555;
@@ -32,7 +36,7 @@
 
 /* View titles */
 div.view {
-    width: 95%;
+    width: 100%;
     height: auto;
     text-align: center;
 }

@@ -28,6 +28,11 @@ body {
     background: #404040;
 }
 
+.header_col {
+    width: 191px;
+    margin-right: 25px
+}
+
 .header_row {
     background: #9d9ea0;
     color: white;

@@ -109,13 +109,16 @@
 <nav id="menu" class="navbar navbar-default">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2 header_col">
                 <div id="header_logo">
                     <a href="https://www.evl.uic.edu">
                         <img src="lib/css/logo.png" onmouseover="this.src='lib/css/logo_on.png';"
                              onmouseout="this.src='lib/css/logo.png'" alt="evl" title="evl" height="78px" width="191px">
                     </a>
                 </div>
+            </div>
+            <div class="col-md-2">
+                <h2 class="main_title">SNP-JS</h2>
             </div>
         </div>
     </div>
@@ -184,7 +187,7 @@
         <!-- Tertiary Viewer -->
         <script type="text/html" id="molecularViewers" >
             <div class="col-md-5 " data-bind="attr: {id: $data._id}">
-                <div class="x_title view absolute" >
+                <div class="x_title view absolute tertiary_viewer_width">
                     <div id="molecularViewerMenu" class="hidden">
                         <ul data-bind="attr: {id: String($data._id)+'_nav'}" class="nav navbar-nav tertiary-nav">
                             <li id="proteinName"> <a href="#">
@@ -207,7 +210,6 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="clearfix"></div>
                 </div>
                 <div id="pvDiv" class="molecular-viewer x_content">
                     <div id="splash"></div>

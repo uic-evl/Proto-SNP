@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="lib/css/typehead.css">
     <link rel="stylesheet" href="lib/css/d3-context-menu.css">
     <link rel="stylesheet" href="lib/css/example-styles.css">
+    <link rel="stylesheet" href="lib/css/bootstro.css">
     <link href="https://swisnl.github.io/jQuery-contextMenu/dist/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
     <!-- CSS SRC -->
     <link rel="stylesheet" href="src/css/sequenceViewer.css">
@@ -62,6 +63,7 @@
     <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
     <script  type="text/javascript" src="lib/js/hopscotch.js"></script>
 
+    <script  type="text/javascript" src="lib/js/bootstro.js"></script>
     <!-- JS SRC -->
 
     <!-- Algorithms -->
@@ -105,43 +107,7 @@
 <body>
 <!-- Navigation menu -->
 <nav id="menu" class="navbar navbar-default">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <!--<div class="navbar-header">-->
-            <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu-nav" aria-expanded="false">-->
-                <!--<span class="sr-only">Toggle navigation</span>-->
-            <!--</button>-->
-            <!--<a class="navbar-brand" href="#">FixingTIM</a>-->
-        <!--</div>-->
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <!--<div class="collapse navbar-collapse" id="menu-nav">-->
-            <!--<ul class="nav navbar-nav">-->
-                <!--<li>-->
-                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa fa-cog"></i><b class="caret"></b></a>-->
-                    <!--<ul class="dropdown-menu multi-level">-->
-                        <!--<li class="dropdown-submenu">-->
-                            <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>-->
-                            <!--<ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">-->
-                                <!--<li class="sortingOption disabled">-->
-                                    <!--<a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>-->
-                                <!--</li>-->
-                            <!--</ul>-->
-                        <!--</li>-->
-                        <!--<li id="coloring-nav" class="dropdown-submenu">-->
-                            <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by</a>-->
-                            <!--<ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">-->
-                                <!--<li class="coloringOption disabled">-->
-                                    <!--<a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>-->
-                                <!--</li>-->
-                            <!--</ul>-->
-                        <!--</li>-->
-                    <!--</ul>-->
-                <!--</li>-->
-            <!--</ul>-->
-        <!--</div>&lt;!&ndash; /.navbar-collapse &ndash;&gt;-->
-
-    </div><!-- /.container-fluid -->
+    <div class="container-fluid"></div>
 </nav>
 
 <div class="modal fade" id="initialModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -164,17 +130,12 @@
                     <div class="row mainRow">
 
                         <div class="col-md-5 right_align">
-                            <!--<h4 style="margin-top:0">Specify a protein by PDB ID:</h4>-->
                             <p>Select a protein by entering its PDB Code, then pressing Enter:</p>
                             <br>
                             <p>Upload a multiple sequence alignment file <br>or your own PDB (.msa, .fa, .pdb):</p>
-
                         </div>
 
                         <div class="col-md-4 dataPanel">
-                            <!--<div class="row loadProtein">-->
-                            <!--<div class="col-md-6 fileLoadingOptions">-->
-
                             <div class="row pdbQuery">
                                 <form id="initialDataForm" class="signup-form">
                                     <div class="col-md-12">
@@ -182,14 +143,11 @@
                                         <input id="protein-name" placeholder="PDB Code (ex: 2YPI)" type="text" name="name" autocomplete="off"/>
                                     </div>
                                 </form>
-
                             </div><!-- End row-->
-                            <!--</div>-->
 
                             <!--<div class="col-md-6">-->
                             <div class="row initialUploadOptions">
                                 <div class="col-md-12">
-                                    <!--<span class="fileUpload side_by_side">Choose a file: </span>-->
                                     <span id="upload"
                                           class="btn btn-success fileinput-button viewer-upload side_by_side">
                                                  <i class="fa fa-plus-square-o"></i><span> Select file...</span>
@@ -254,9 +212,7 @@
 
         <!-- Sequence Viewer -->
         <div class="col-md-2 sequenceViewers">
-            <div class="x_title view">
-                <!--<p>&nbsp;</p>-->
-            </div>
+            <div class="x_title view"></div>
             <div id="sequenceViewer" class="row black-background">
                 <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
                 <script type="text/html" id="sequenceViewers">
@@ -286,8 +242,7 @@
                 <div class="x_title view">
                     <p class="side_by_side header">Protein Family Viewer</p>
 
-
-                    <div id="family_upload_li" class="side_by_side">
+                    <div id="family_upload_li" class="side_by_side hidden">
                         <ul class="nav navbar-nav">
                             <li>
                                 <a id="settingsCog" href="#" class="dropdown-toggle helpIcon" data-toggle="dropdown">
@@ -295,7 +250,7 @@
                                 <ul class="dropdown-menu multi-level">
                                     <li>
                                         <label for="fileupload-open">Select an alignment file</label>
-                                        <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"></i>
+                                        <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"/>
                                     </li>
                                     <li class="dropdown-submenu">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>
@@ -318,7 +273,7 @@
                             </li>
                             <li>
                                 <a href="#" class="helpIcon">
-                                    <i class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>
+                                    <i id="familyHelp" class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>
                                 </a>
                             </li>
                         </ul>

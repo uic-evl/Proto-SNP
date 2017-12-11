@@ -52,7 +52,7 @@ const ProteinFamilyView = (function() {
         brushes : [
           {
             orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal main",
-            extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]], block_size: self.residue_glyph_size,
+            extent: [[0, self.y_offset], [self.width, self.height+self.y_offset+5]], block_size: self.residue_glyph_size,
             position: [self.y_offset, self.residue_glyph_size+self.y_offset], semantic: "horizontal",
             tooltip: function(d) { return self._model.getSelectedProtein().name; }
           }, {
@@ -234,9 +234,11 @@ const ProteinFamilyView = (function() {
       /* Remove the template class so that the div fits to our new sizes */
       self._parentDom.classed("proteinFamilyViewer", false);
       /* Resize the DOM elements to accommodate our family view*/
-      document.getElementById('trendImageViewer').parentNode.style.height = self.height+self.y_offset;
-      document.getElementById('trendImageViewer').style.height = self.height+self.y_offset;
-      document.getElementById('trendImageViewer').style.width = Math.ceil(container_width);
+      document.getElementById('trendImageViewer').parentNode.style.height = self.height+self.y_offset*2.0+2;//self.height +self.y_offset;
+      document.getElementById('trendImageViewer').style.height = self.height+self.y_offset*2.0+2;//self.height+self.y_offset;
+      document.getElementsByClassName('trendDiv')[0].style.height = self.height+self.y_offset*2.0+2;//self.height+self.y_offset;
+
+      document.getElementById('trendImageViewer').style.width = Math.ceil(container_width).toString();
       document.getElementById('trendImageViewer').parentNode.style.width = Math.ceil(container_width);
       document.getElementsByClassName('TrendImageView')[0].style.width = container_width;
     };

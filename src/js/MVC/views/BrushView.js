@@ -124,7 +124,7 @@ const BrushView = (function() {
     self.addBrushOverlays = function(brushObj) {
       /* 6 Masks: left/right of both vertical paddles, above/below the horizontal paddle */
       let parent = brushObj.node().parentNode,
-          y = parseInt(brushObj.selectAll('rect.selection').attr('y')),
+          y = parseInt(brushObj.selectAll('rect.selection').attr('y'))-1,
           bar_height     = parseInt(brushObj.selectAll('rect.selection').attr('height')),
           overlay_height = parseInt(brushObj.selectAll('rect.overlay').attr('height')),
           overlay_width = parseInt(brushObj.selectAll('rect.overlay').attr('width')),
@@ -147,8 +147,8 @@ const BrushView = (function() {
       else if(self._orientation === App.OVERVIEW_PADDLE){
         coordinates = [
           /* Overlays above and below the overview paddle */
-          {x:parseInt(options.extent[0][0]), y:y, width:overlay_width, height:0, class_name:'overview_covers trend_covers'},
-          {x:parseInt(options.extent[0][0]), y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height),
+          {x:parseInt(options.extent[0][0])+1, y:y, width:overlay_width, height:0, class_name:'overview_covers trend_covers'},
+          {x:parseInt(options.extent[0][0])+1, y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height),
             class_name:'overview_covers trend_covers'}
           ];
       }
@@ -284,6 +284,7 @@ const BrushView = (function() {
         /* Resize the horizontal covers */
         d3.selectAll("rect.horizontal_covers")
            .attr("y", function(d,i){
+             console.log(d.y);
              return ((i)?(y+height):d.y)})
            .attr("height", function(d,i) {
              return (i) ? overview_height-(y+height-d.y) : y-d.y;

@@ -15,6 +15,8 @@ const ProteinFamilyController = (function() {
 
     self.proteinSelected = new EventNotification(this);
 
+    $("#familyHelp").click(helpMenu);
+
     function createOverviewPaddle(overviewSpec){
       /* construct the y-scale */
       let yScale = overviewSpec.brushSpec.scale,
@@ -40,6 +42,10 @@ const ProteinFamilyController = (function() {
 
       self._brushViews['overview'] = overviewBrush;
       return overviewBrush;
+    }
+
+    function helpMenu() {
+      hopscotch.startTour(App.tour_family, 1);
     }
 
     function createFamilyPaddles(brushes) {

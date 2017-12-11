@@ -110,6 +110,7 @@
           placement: "bottom",
           xOffset: 'center',
           arrowOffset: 'center',
+          help: false
         },
         {
           target: "proteinFamilyRow",
@@ -118,7 +119,9 @@
           "file by encoding each protein as a row in the image. Each pixel in the row corresponds to a residue in the sequence. ",
           placement: "top",
           xOffset: 'center',
-          arrowOffset: 'center'
+          arrowOffset: 'center',
+          help: true,
+          type: "class"
         },
         {
           target: "g.horizontal rect.selection",
@@ -129,7 +132,9 @@
             "Specify one yourself by entering its PDB ID.",
           placement: "top",
           xOffset: 'center',
-          arrowOffset: 'center'
+          arrowOffset: 'center',
+          help: true,
+          type: "element"
         },
         {
           target: "g.vertical-left rect.selection",
@@ -139,7 +144,9 @@
             "The paddle can expand and shrink in size by dragging the handle.",
           placement: "right",
           // yOffset: 'center',
-          arrowOffset: 'center'
+          arrowOffset: 'center',
+          help: true,
+          type: "element"
         },
         {
           target: "g.overview rect.selection",
@@ -149,6 +156,8 @@
           placement: "left",
           // yOffset: 'center',
           // arrowOffset: 'center'
+          help: true,
+          type: "element"
         },
         {
           target: "familyColorLegend",
@@ -166,7 +175,9 @@
             "frequently occurring residue at that location.",
           placement: "top",
           xOffset: 'center',
-          arrowOffset: 'center'
+          arrowOffset: 'center',
+          help: true,
+          type: "id"
         },
         {
           target: "rect.freq_bars.r0",
@@ -178,6 +189,8 @@
           placement: "top",
           // xOffset: 'center',
           // arrowOffset: 'center'
+          help: true,
+          type: "element"
         },
         {
           target: "fileupload-open",

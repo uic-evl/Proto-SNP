@@ -32,7 +32,7 @@
 
 /* View titles */
 div.view {
-    width: 100%;
+    width: 95%;
     height: auto;
     text-align: center;
 }
@@ -53,6 +53,7 @@ div.view {
     cursor: pointer;
     z-index: -1;
     color: dimgray;
+    background-color: #e7e7e7;
 }
 
 li > label {

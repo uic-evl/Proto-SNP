@@ -201,7 +201,6 @@ const ResidueFrequencyView = (function() {
           .on('click', function(d,i,a) {
             let protein = self._model.getSelectedProtein();
             let occ = App.textUtilities.occurrences(protein.sequence.join(), d[0]);
-            console.log(occ);
           })
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
       ;
@@ -302,7 +301,6 @@ const ResidueFrequencyView = (function() {
           .attr('class', 'd3-tip')
           .offset([-10, 0])
           .html(function(d) {
-            console.log(arguments);
             return "<div id='" + self.semantic + "tipDiv'>" +
               "<h5 style=' text-align: center; margin-top:0; font-weight: bold'>Most frequent</h5>" +
               "<svg class='barCallout' style='height:" + (self._calloutHeight + 15) + "px; width:" + self._calloutWidth + "px;'></svg></div>"

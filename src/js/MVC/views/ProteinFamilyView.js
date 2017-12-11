@@ -318,10 +318,9 @@ const ProteinFamilyView = (function() {
 
       /* Load the tour if this is the first time a trend image is generated */
       let state = hopscotch.getState();
-      if (state && state.indexOf('introduction_tour:') === 0){
-        hopscotch.startTour(App.tour_family, 0);
+      if (!state ||  state.indexOf('introduction_tour:') === 0){
+        hopscotch.startTour(App.tour_family);
       }
-
       /* Initialize the back buffer with the family data */
       self.initialize_back_buffer(family.data, colorMapping)
       /* Render the family view */

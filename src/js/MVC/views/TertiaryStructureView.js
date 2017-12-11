@@ -215,8 +215,8 @@ function TertiaryStructureView(model, element) {
 
     /* Load the tour if this is the first time a molecular viewer is generated */
     let state = hopscotch.getState();
-    if (state && state.indexOf('introduction_tour:') === 0){
-      hopscotch.startTour(App.tour_3D, 0);
+    if (!state ||  state.indexOf('introduction_tour:') === 0){
+      hopscotch.startTour(App.tour_family);
     }
 
   });

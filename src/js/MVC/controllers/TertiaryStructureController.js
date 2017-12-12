@@ -66,7 +66,6 @@ const TertiaryStructureController = (function() {
         // update the other model if it is set
         let m = _.without(self._models, sender._model)[0];
         if(m.isEmpty()){
-          console.log(args);
           m.setCamera(args, true);
         }
       });

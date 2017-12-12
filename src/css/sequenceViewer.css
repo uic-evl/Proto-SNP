@@ -1,6 +1,7 @@
 #sequenceViewer {
     height: 40%;
     overflow-y: hidden;
+    overflow-x: hidden;
     margin-right: 0;
 }
 
@@ -15,6 +16,7 @@
 
 .sequence-container {
     padding: 0;
+    height: 100%
 }
 
 .sequence {

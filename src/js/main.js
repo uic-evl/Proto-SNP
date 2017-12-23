@@ -38,7 +38,7 @@ var App = App || {};
           cb:
               function(model, element) {
                 model.setProteinColoring(element);
-                App.residueMappingUtility.createColorLegend();
+                App.residueMappingUtility.createColorLegend("family");
           }
         });
 

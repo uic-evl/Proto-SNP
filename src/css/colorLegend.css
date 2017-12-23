@@ -5,7 +5,8 @@ rect.legendElement {
 }
 
 text.legendText {
-    font-size: 8px;
+    font-size: 14px;
+    font-weight: bolder;
     /*font-family: monospace;*/
 }
 

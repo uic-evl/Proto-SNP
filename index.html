@@ -236,8 +236,8 @@
         <!-- Sequence Viewer -->
         <div class="col-2 sequenceViewers">
             <div class="x_title view"></div>
-            <div id="sequenceViewer" class="row black-background">
-                <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
+            <div id="sequenceViewer" style="width:100%" class="black-background">
+                <div id="sequenceViewerTemplate" class="row no-gutters" style="width:100%" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
                 <script type="text/html" id="sequenceViewers">
                     <div class="col-6 sequence-container black-background">
                         <div data-bind="attr: {id: $data._id}"></div>

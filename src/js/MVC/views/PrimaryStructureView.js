@@ -97,11 +97,12 @@ const PrimaryStructureView = (function() {
       d3.select(view._dom)
         .attr("height", self.height)
         .append("span") // span element
-        .attr("class", "sequence") // set the styling to the sequence class
+        .attr("class", "sequence")// set the styling to the sequence class
+        .style("width", "100%")
       ;
 
       /* Remove the black background from the viewers*/
-      d3.select(view._dom)
+      d3.select(view._dom.parentNode)
         .classed("black-background", false)
         .selectAll(".col-6")
         .classed("black-background", false);
@@ -122,7 +123,7 @@ const PrimaryStructureView = (function() {
           /* Merge the old elements (if they exist) with the new data */
           .merge(viewer)
           .text(function(d, i) { return "(" + parseInt(i+1) + ") " + d; })
-          .style("width", view.width)
+          .style("width", "100%")
           .on("click", spanSelected.bind(view))
           // EXIT: Remove unneeded DOM elements
           .exit().remove();

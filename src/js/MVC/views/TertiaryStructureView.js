@@ -78,9 +78,9 @@ function TertiaryStructureView(model, element) {
   /* Clears the splash input form and re-initializes the splash*/
   self.clear_and_reinitialize = function() {
     /* Update the splash if the first upload*/
-    if (!self._model.isEmpty()) {
-      self.initialize_file_update(d3.select(self._dom[0]).select('#proteinName'));
-    }
+    // if (!self._model.isEmpty()) {
+    //   self.initialize_file_update(d3.select(self._dom[0]).select('#proteinName'));
+    // }
     /* Clear the input */
     self.clear_splash();
   };
@@ -89,7 +89,6 @@ function TertiaryStructureView(model, element) {
   self.initialize_file_update = function(dom) {
     /* Display the upload icon by the viewer name */
     dom
-      .classed('hidden', false)
       .select(".settingsOpenPDB").classed("hidden", false);
 
     /* Setup the splash screen activation */
@@ -126,9 +125,9 @@ function TertiaryStructureView(model, element) {
 
     App.fileUtilities.uploadSetup(self.splash.find("#fileUploadInput"), self.splash.find("#files"),
       function (metadata, result) {
+        self.clear();
         self.fileUpdated.notify({metaData: metadata, file: result});
         self.clear_splash();
-        updateViewTitle(self._dom[0], metadata.protein_name);
       });
   };
 
@@ -181,10 +180,6 @@ function TertiaryStructureView(model, element) {
     //   coloringListView.show();
     // });
 
-    /* Show the menu */
-    d3.select(self._dom[0]).select("#molecularViewerMenu")
-        .classed("hidden", false);
-
     /* Setup the help menu */
     $("#" + self._id + " #molecularViewerHelp").click(helpMenu);
   };
@@ -196,7 +191,7 @@ function TertiaryStructureView(model, element) {
     self.splash.hide();
 
     /* Initialize and render the view */
-    self.initialize();
+    self.initialize(protein.name);
     self.render(protein.structure, protein.name, "tube");
 
     /* Show the menu */
@@ -241,6 +236,7 @@ function TertiaryStructureView(model, element) {
     self.pvViewer.setZoom(msg.zoom);
     self.pvViewer._draw();
   });
+
   /* Update the panning */
   self._model.cameraChanged.attach(function(sender, msg) {
     self.pvViewer._redrawRequested = false;
@@ -256,8 +252,6 @@ TertiaryStructureView.prototype = {
   /* Callback fired when a file is loaded */
   file_loaded: function(metadata, result){
     this.fileUploaded.notify({metaData: metadata, file: result});
-    /* Place the name of the protein above the viewer*/
-    updateViewTitle(this._dom[0], metadata.protein_name);
     /* Clear the splash and update */
     this.clear_and_reinitialize();
   },
@@ -303,6 +297,7 @@ TertiaryStructureView.prototype = {
   clear: function() {
     /* Remove all the items */
     this._dom.find('#pvView *:not(#splash*)').remove();
+    this._dom.find('.x_title *').remove();
     /* Clear the internal variables */
     this.pvViewer = null;
     this.axis3D = null;
@@ -311,18 +306,23 @@ TertiaryStructureView.prototype = {
   /* Accept the data from the download form. Called by the upload form */
   downloadPDB: function(formData) {
     let name = (typeof formData === "object")? $(formData).serialize().split('=')[1] : formData;
-    this.fileUploaded.notify({metaData: {protein_name:name}, file: null});
+
+    if(!this._model.isEmpty()){
+      this.fileUploaded.notify({metaData: {protein_name:name}, file: null});
+    }
+    else {
+      this.fileUpdated.notify({metaData: {protein_name:name}, file: null});
+    }
+
     /* Clear the splash and update */
     this.clear_and_reinitialize();
-    /* Place the name of the protein above the viewer*/
-    updateViewTitle(this._dom[0], name);
     return false;
   },
 
-  initialize: function () {
+  initialize: function (protein_name) {
     /* Store the pvView dom element */
     let $dom = this._dom.find('#pvDiv'),
-        dom = $dom[0];
+        dom = $dom[0], self = this;
 
     /* create a label to display selections */
     this.staticLabel = document.createElement('div');
@@ -369,7 +369,14 @@ TertiaryStructureView.prototype = {
     this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
 
     /* Load the geometry list */
-    this.initialize_menus();
+    $.get("./src/html/tertiaryViewerMenu.html", function (data) {
+      self._dom.find("div.x_title").append(data);
+      self.initialize_menus();
+      /* Place the name of the protein above the viewer*/
+      updateViewTitle(self._dom[0], protein_name);
+      self.initialize_file_update(d3.select(self._dom[0]).select('#proteinName'));
+
+    });
     /* Register the enter key to reset the selections of the view */
     //keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);
   },

@@ -25,12 +25,8 @@
     float: none !important
 }
 
-.tertiary_viewer_width {
-    width: 95% !important;
-}
-
 #protein_coloring_list, #geometry_list, #proteinName, #molecularViewerHelp {
-    background-color: #e7e7e7;
+    /*background-color: #e7e7e7;*/
     color: #555;
 }
 
@@ -68,7 +64,7 @@ div.view {
     cursor: pointer;
     z-index: -1;
     color: dimgray;
-    background-color: #e7e7e7;
+    /*background-color: #e7e7e7;*/
 }
 
 li > label {

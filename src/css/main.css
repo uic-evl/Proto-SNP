@@ -83,7 +83,7 @@ ul li a.disabled {
 }
 
 .absolute {
-    background-color: rgba(0,0,0,0.1);
+    background-color: white;
     position: absolute;
     z-index: 10;
 }

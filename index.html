@@ -187,170 +187,172 @@
     <!--</div>-->
 
 <!-- Main container of the application -->
-<!--<div class="container-fluid">-->
-    <!--&lt;!&ndash; 3D Molecule Viewers &ndash;&gt;-->
-    <!--<div class="row molecularViewersRow">-->
-        <!--<div id="molecularViewerTemplate" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>-->
-        <!--&lt;!&ndash; Tertiary Viewer &ndash;&gt;-->
-        <!--<script type="text/html" id="molecularViewers" >-->
-            <!--<div class="col-lg-5" data-bind="attr: {id: $data._id}">-->
-                <!--<div class="x_title view absolute tertiary_viewer_width">-->
-                    <!--<div id="molecularViewerMenu" class="hidden">-->
-                        <!--<ul data-bind="attr: {id: String($data._id)+'_nav'}" class="nav navbar-nav tertiary-nav">-->
-                            <!--<li id="proteinName"> <a href="#">-->
-                                <!--<p></p>-->
-                                <!--<span class="popup-trigger sBtn fileinput-button"-->
-                                      <!--id="popup-trigger-pdb">-->
-                                     <!--<i class="fa fa-folder-open settingsOpenPDB hidden"></i>-->
-                                <!--</span>-->
-                                <!--</a>-->
-                            <!--</li>-->
-                            <!--<li id="geometry_list" class="dropdown">-->
-                                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown"-->
-                                   <!--aria-expanded="false">Geometry <span style="padding-top: 3px;" class="caret"></span>-->
-                                <!--</a>-->
-                            <!--</li>-->
-                            <!--<li id="protein_coloring_list" class="dropdown">-->
-                                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown"-->
-                                   <!--aria-expanded="false">Color By<span style="padding-top: 3px;" class="caret"></span>-->
-                                <!--</a>-->
-                            <!--</li>-->
-                            <!--<li id="molecularViewerHelp"> <a href="#">-->
-                                <!--<p class="side_by_side">Help</p>-->
-                                <!--<span class="side_by_side">-->
-                                     <!--<i class="fa fa-question molecularHelp"></i>-->
-                                <!--</span>-->
-                            <!--</a>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div id="pvDiv" class="molecular-viewer x_content">-->
-                    <!--<div id="splash"></div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</script>-->
+<div class="container-fluid" style="width:100%">
+    <!-- 3D Molecule Viewers -->
+    <div class="molecularViewersRow row no-gutters">
+        <div class="col-10">
+            <div id="molecularViewerTemplate" class="row no-gutters" style="width:100%" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
+            <!-- Tertiary Viewer -->
+            <script type="text/html" id="molecularViewers" >
+                <div class="col-6" data-bind="attr: {id: $data._id}">
+                    <div class="x_title view absolute tertiary_viewer_width">
+                        <div id="molecularViewerMenu" class="hidden">
+                            <ul data-bind="attr: {id: String($data._id)+'_nav'}" class="navbar-nav tertiary-nav">
+                                <li class="nav-item active" id="proteinName"> <a href="#" class="nav-link">
+                                    <p></p>
+                                    <span class="popup-trigger sBtn fileinput-button"
+                                          id="popup-trigger-pdb">
+                                     <i class="fa fa-folder-open settingsOpenPDB hidden"></i>
+                                </span>
+                                </a>
+                                </li>
+                                <li id="geometry_list" class="nav-item dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                       aria-expanded="false">Geometry <span style="padding-top: 3px;" class="caret"></span>
+                                    </a>
+                                </li>
+                                <li id="protein_coloring_list" class=" nav-itemdropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                                       aria-expanded="false">Color By<span style="padding-top: 3px;" class="caret"></span>
+                                    </a>
+                                </li>
+                                <li id="molecularViewerHelp"> <a href="#" class="nav-link">
+                                    <p class="side_by_side">Help</p>
+                                    <span class="side_by_side">
+                                     <i class="fa fa-question molecularHelp"></i>
+                                </span>
+                                </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="pvDiv" class="molecular-viewer">
+                        <div id="splash"></div>
+                    </div>
+                </div>
+            </script>
+        </div>
 
-        <!--&lt;!&ndash; Sequence Viewer &ndash;&gt;-->
-        <!--<div class="col-lg-2 sequenceViewers">-->
-            <!--<div class="x_title view"></div>-->
-            <!--<div id="sequenceViewer" class="row black-background">-->
-                <!--<div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>-->
-                <!--<script type="text/html" id="sequenceViewers">-->
-                    <!--<div class="col-lg-6 sequence-container black-background">-->
-                        <!--<div data-bind="attr: {id: $data._id}"></div>-->
-                    <!--</div>-->
-                <!--</script>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-    <!--<br>-->
-    <!--&lt;!&ndash; Color Legend &ndash;&gt;-->
-    <!--<div class="row legendRow center-aligned">-->
-        <!--<div class="col-lg-4">-->
-            <!--<div class="legendSVG" id="tertiaryColorLegend"></div>-->
-        <!--</div>-->
-        <!--<div class="col-lg-4 col-lg-offset-4">-->
-            <!--<div class="legendSVG" id="familyColorLegend"></div>-->
-        <!--</div>-->
-    <!--</div>-->
+        <!-- Sequence Viewer -->
+        <div class="col-2 sequenceViewers">
+            <div class="x_title view"></div>
+            <div id="sequenceViewer" class="row black-background">
+                <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
+                <script type="text/html" id="sequenceViewers">
+                    <div class="col-6 sequence-container black-background">
+                        <div data-bind="attr: {id: $data._id}"></div>
+                    </div>
+                </script>
+            </div>
+        </div>
+    </div>
+    <br>
+     Color Legend
+    <div class="row legendRow center-aligned">
+        <div class="col-4">
+            <div class="legendSVG" id="tertiaryColorLegend"></div>
+        </div>
+        <div class="col-4 col-lg-offset-4">
+            <div class="legendSVG" id="familyColorLegend"></div>
+        </div>
+    </div>
 
-    <!--&lt;!&ndash; Trend Image &ndash;&gt;-->
-    <!--<div class="row proteinFamilyRow" id="proteinFamilyRow">-->
-        <!--<div class="col-lg-12 ">-->
-            <!--&lt;!&ndash; Trend Image View&ndash;&gt;-->
-            <!--<div class="row x_panel TrendImageView center-aligned">-->
-                <!--<div class="x_title view">-->
-                    <!--<p class="side_by_side header">Protein Family Viewer</p>-->
+    <!-- Trend Image -->
+    <div class="row proteinFamilyRow" id="proteinFamilyRow">
+        <div class="col-lg-12 ">
+            <!-- Trend Image View-->
+            <div class="row x_panel TrendImageView center-aligned">
+                <div class="x_title view">
+                    <p class="side_by_side header">Protein Family Viewer</p>
 
-                    <!--<div id="family_upload_li" class="side_by_side hidden">-->
-                        <!--<ul class="nav navbar-nav">-->
-                            <!--<li>-->
-                                <!--<a id="settingsCog" href="#" class="dropdown-toggle helpIcon" data-toggle="dropdown">-->
-                                    <!--<i class="fa fa-cog icon-positioning" aria-hidden="true"></i><b class="caret"></b></a>-->
-                                <!--<ul class="dropdown-menu multi-level">-->
-                                    <!--<li>-->
-                                        <!--<label for="fileupload-open">Select an alignment file</label>-->
-                                        <!--<input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"/>-->
-                                    <!--</li>-->
-                                    <!--<li class="dropdown-submenu">-->
-                                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>-->
-                                        <!--<ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">-->
-                                            <!--<li class="sortingOption disabled">-->
-                                                <!--<a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>-->
-                                            <!--</li>-->
-                                        <!--</ul>-->
-                                    <!--</li>-->
-                                    <!--<li id="coloring-nav" class="dropdown-submenu">-->
-                                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by</a>-->
-                                        <!--<ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">-->
-                                            <!--<li class="coloringOption disabled">-->
-                                                <!--<a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>-->
-                                            <!--</li>-->
-                                        <!--</ul>-->
-                                    <!--</li>-->
+                    <div id="family_upload_li" class="side_by_side hidden">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a id="settingsCog" href="#" class="dropdown-toggle helpIcon" data-toggle="dropdown">
+                                    <i class="fa fa-cog icon-positioning" aria-hidden="true"></i><b class="caret"></b></a>
+                                <ul class="dropdown-menu multi-level">
+                                    <li>
+                                        <label for="fileupload-open">Select an alignment file</label>
+                                        <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"/>
+                                    </li>
+                                    <li class="dropdown-submenu">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>
+                                        <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
+                                            <li class="sortingOption disabled">
+                                                <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li id="coloring-nav" class="dropdown-submenu">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by</a>
+                                        <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
+                                            <li class="coloringOption disabled">
+                                                <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
+                                            </li>
+                                        </ul>
+                                    </li>
 
-                                <!--</ul>-->
-                            <!--</li>-->
-                            <!--<li>-->
-                                <!--<a href="#" class="helpIcon">-->
-                                    <!--<i id="familyHelp" class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>-->
-                                <!--</a>-->
-                            <!--</li>-->
-                        <!--</ul>-->
-                    <!--</div>-->
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#" class="helpIcon">
+                                    <i id="familyHelp" class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <!--<div class="clearfix"></div>-->
-                <!--</div>-->
-                <!--<div class="col-lg-12 trend-column x_content">-->
-                    <!--<div id="trendImageViewer" class="trend-viewer">-->
-                        <!--&lt;!&ndash; Select Alignment Button &ndash;&gt;-->
-                        <!--<div id="trendSplash"></div>-->
-                    <!--</div>-->
-                    <!--&lt;!&ndash; Residue Frequency Viewer&ndash;&gt;-->
-                    <!--<div id="residueSummaryView" class="row residueSummaryView hidden"></div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--&lt;!&ndash; End Trend Image View&ndash;&gt;-->
-        <!--</div>-->
+                    <div class="clearfix"></div>
+                </div>
+                <div class="col-lg-12 trend-column x_content">
+                    <div id="trendImageViewer" class="trend-viewer">
+                        <!-- Select Alignment Button -->
+                        <div id="trendSplash"></div>
+                    </div>
+                    <!-- Residue Frequency Viewer-->
+                    <div id="residueSummaryView" class="row residueSummaryView hidden"></div>
+                </div>
+            </div>
+            <!-- End Trend Image View-->
+        </div>
 
-        <!--&lt;!&ndash; Trend Image Protein Selection Modal &ndash;&gt;-->
-        <!--<div class="modal fade" id="viewerModal" role="dialog">-->
-            <!--<div class="modal-dialog modal-sm">-->
-                <!--<div class="modal-content">-->
-                    <!--<div class="modal-body">-->
-                        <!--<button type="button" class="btn btn-default btn-left_viewer" data-dismiss="modal">Left Viewer</button>-->
-                        <!--<button type="button" class="btn btn-default btn-right_viewer" data-dismiss="modal">Right Viewer</button>-->
-                    <!--</div>-->
-                    <!--<div class="modal-footer">-->
-                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
+        <!-- Trend Image Protein Selection Modal -->
+        <div class="modal fade" id="viewerModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="btn btn-default btn-left_viewer" data-dismiss="modal">Left Viewer</button>
+                        <button type="button" class="btn btn-default btn-right_viewer" data-dismiss="modal">Right Viewer</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!--&lt;!&ndash; Trend image set sorting protein &ndash;&gt;-->
-        <!--&lt;!&ndash; Trend Image Protein Selection Modal &ndash;&gt;-->
-        <!--<div class="modal fade" id="proteinSelection" role="dialog">-->
-            <!--<div class="modal-dialog">-->
-                <!--<div class="modal-content">-->
-                    <!--<div class="modal-header">-->
-                        <!--<button type="button" class="close" data-dismiss="modal">&times;</button>-->
-                        <!--<h4 class="modal-title">Select a protein to sort by</h4>-->
-                    <!--</div>-->
-                    <!--<div class="modal-body">-->
-                        <!--<input id="proteinSortSelection" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">-->
-                    <!--</div>-->
-                    <!--<div class="modal-footer">-->
-                        <!--<button type="button" id="setProtein" class="btn btn-primary" data-dismiss="modal">Set Protein</button>-->
-                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
+        <!-- Trend image set sorting protein -->
+        <!-- Trend Image Protein Selection Modal -->
+        <div class="modal fade" id="proteinSelection" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select a protein to sort by</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input id="proteinSortSelection" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="setProtein" class="btn btn-primary" data-dismiss="modal">Set Protein</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!--</div>-->
-<!--</div>-->
+</div>
 
 <!-- WebGL Shaders for Trend Image -->
 <script id="vs" type="notjs">

@@ -103,7 +103,7 @@ const PrimaryStructureView = (function() {
       /* Remove the black background from the viewers*/
       d3.select(view._dom)
         .classed("black-background", false)
-        .selectAll(".col-md-6")
+        .selectAll(".col-6")
         .classed("black-background", false);
   },
 

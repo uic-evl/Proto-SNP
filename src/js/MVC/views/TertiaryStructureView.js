@@ -135,51 +135,51 @@ function TertiaryStructureView(model, element) {
   /*Creates the geometry selection menu */
   self.initialize_menus = function() {
     /* Load the html menu templates */
-    $.get("./src/html/proteinGeometryListTemplate.html", function (data) {
-      /* Add the elements to the list */
-      self._dom.find("#geometry_list a").after(data);
-      let geometryListModel = new FilteringMenuModel({
-            items: ['cartoon', 'tube', 'trace', 'sline', 'lines', 'lineTrace', 'spheres', 'points']
-          }),
-          geometryListView = new FilteringMenuView(geometryListModel, { 'list' : self._dom.find('#geometry_ul') }),
-          geometryListController = new FilteringMenuController({
-            menu : "geometry",
-            models: { list: geometryListModel, connected: [self._model]},
-            view: geometryListView,
-            cb:
-                function(model, element) {
-                  self.pvViewer.rm(model.getName());
-                  self.render(model.getStructure(), model.getName(), element);
-                  self.pvViewer.requestRedraw();
-            }
-          });
-
-      /* Show the view to bind the model */
-      geometryListView.show();
-    });
+    // $.get("./src/html/proteinGeometryListTemplate.html", function (data) {
+    //   /* Add the elements to the list */
+    //   self._dom.find("#geometry_list a").after(data);
+    //   let geometryListModel = new FilteringMenuModel({
+    //         items: ['cartoon', 'tube', 'trace', 'sline', 'lines', 'lineTrace', 'spheres', 'points']
+    //       }),
+    //       geometryListView = new FilteringMenuView(geometryListModel, { 'list' : self._dom.find('#geometry_ul') }),
+    //       geometryListController = new FilteringMenuController({
+    //         menu : "geometry",
+    //         models: { list: geometryListModel, connected: [self._model]},
+    //         view: geometryListView,
+    //         cb:
+    //             function(model, element) {
+    //               self.pvViewer.rm(model.getName());
+    //               self.render(model.getStructure(), model.getName(), element);
+    //               self.pvViewer.requestRedraw();
+    //         }
+    //       });
+    //
+    //   /* Show the view to bind the model */
+    //   geometryListView.show();
+    // });
 
     /* Load the html menu templates */
-    $.get("./src/html/proteinColoringListTemplate.html", function (data) {
-      /* Add the elements to the list */
-      self._dom.find("#protein_coloring_list a").after(data);
-      let coloringListModel = new FilteringMenuModel({
-            items: ["Side Chain Class", "Side Chain Polarity", "Selections Only"]
-          }),
-          coloringListView = new FilteringMenuView(coloringListModel, { 'list' : self._dom.find('#protein_coloring_ul') }),
-          coloringListController = new FilteringMenuController({
-            menu : "coloring",
-            models: { list: coloringListModel, connected: [self._model]},
-            view: coloringListView,
-            cb:
-                function(model, element) {
-                  self.recolor(element);
-                  self.colorChanged.notify({color:element});
-                  App.residueMappingUtility.createColorLegend("3D");
-                }
-          });
-      /* Show the view to bind the model */
-      coloringListView.show();
-    });
+    // $.get("./src/html/proteinColoringListTemplate.html", function (data) {
+    //   /* Add the elements to the list */
+    //   self._dom.find("#protein_coloring_list a").after(data);
+    //   let coloringListModel = new FilteringMenuModel({
+    //         items: ["Side Chain Class", "Side Chain Polarity", "Selections Only"]
+    //       }),
+    //       coloringListView = new FilteringMenuView(coloringListModel, { 'list' : self._dom.find('#protein_coloring_ul') }),
+    //       coloringListController = new FilteringMenuController({
+    //         menu : "coloring",
+    //         models: { list: coloringListModel, connected: [self._model]},
+    //         view: coloringListView,
+    //         cb:
+    //             function(model, element) {
+    //               self.recolor(element);
+    //               self.colorChanged.notify({color:element});
+    //               App.residueMappingUtility.createColorLegend("3D");
+    //             }
+    //       });
+    //   /* Show the view to bind the model */
+    //   coloringListView.show();
+    // });
 
     /* Show the menu */
     d3.select(self._dom[0]).select("#molecularViewerMenu")

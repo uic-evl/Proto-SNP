@@ -1,5 +1,5 @@
-<ul data-bind="foreach: filters" id="protein_coloring_ul" class="dropdown-menu pull-left">
-    <li class="coloringOption">
-        <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
-    </li>
-</ul>
+<div data-bind="foreach: filters" id="protein_coloring_ul" class="dropdown-menu pull-left">
+    <!--<li class="coloringOption">-->
+        <a class="dropdown-item coloringOption" href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
+    <!--</li>-->
+</div>

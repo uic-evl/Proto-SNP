@@ -25,7 +25,7 @@ g.brush.horizontal > .handle {
     height: 30%;
 }
 
-.proteinFamilyRow > .col-md-12 {
+.proteinFamilyRow > .col-lg-12 {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }

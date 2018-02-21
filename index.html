@@ -220,63 +220,26 @@
     </div>
     <br>
      Color Legend
-    <div class="row legendRow center-aligned">
+    <div class="legendRow row">
         <div class="col-4">
             <div class="legendSVG" id="tertiaryColorLegend"></div>
         </div>
-        <div class="col-4 col-lg-offset-4">
+        <div class="col-4">
             <div class="legendSVG" id="familyColorLegend"></div>
         </div>
     </div>
 
     <!-- Trend Image -->
     <div class="row proteinFamilyRow" id="proteinFamilyRow">
-        <div class="col-lg-12 ">
+        <div class="col-12 ">
             <!-- Trend Image View-->
             <div class="row x_panel TrendImageView center-aligned">
                 <div class="x_title view">
                     <p class="side_by_side header">Protein Family Viewer</p>
 
-                    <div id="family_upload_li" class="side_by_side hidden">
-                        <ul class="nav navbar-nav">
-                            <li>
-                                <a id="settingsCog" href="#" class="dropdown-toggle helpIcon" data-toggle="dropdown">
-                                    <i class="fa fa-cog icon-positioning" aria-hidden="true"></i><b class="caret"></b></a>
-                                <ul class="dropdown-menu multi-level">
-                                    <li>
-                                        <label for="fileupload-open">Select an alignment file</label>
-                                        <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"/>
-                                    </li>
-                                    <li class="dropdown-submenu">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>
-                                        <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
-                                            <li class="sortingOption disabled">
-                                                <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li id="coloring-nav" class="dropdown-submenu">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by</a>
-                                        <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
-                                            <li class="coloringOption disabled">
-                                                <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#" class="helpIcon">
-                                    <i id="familyHelp" class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
                     <div class="clearfix"></div>
                 </div>
-                <div class="col-lg-12 trend-column x_content">
+                <div class="col-12 trend-column x_content">
                     <div id="trendImageViewer" class="trend-viewer">
                         <!-- Select Alignment Button -->
                         <div id="trendSplash"></div>

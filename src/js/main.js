@@ -27,40 +27,40 @@ var App = App || {};
         rightPrimaryStructureView = new PrimaryStructureView(rightProteinModel, {id: "rightMolecularViewer-Sequence", position:"right"}),
         primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
 
-    let colorModel = new FilteringMenuModel({
-      items:['Side Chain Class', 'Side Chain Polarity', 'Frequency (Family Viewer)']
-    }),
-        colorView = new FilteringMenuView(colorModel, { 'list' : $('#coloring_list') }),
-        colorController = new FilteringMenuController({
-          menu : "coloring",
-          models: { list: colorModel, connected : [proteinFamilyModel]},
-          view: colorView,
-          cb:
-              function(model, element) {
-                model.setProteinColoring(element);
-                App.residueMappingUtility.createColorLegend("family");
-          }
-        });
-
-    let sortingModel = new FilteringMenuModel({
-        items: ['Set Protein ...', 'Initial Ordering','Residue Frequency', 'Weighted Edit Distance',
-          'Residue Commonality with', 'Normalized Residue Commonality with']
-    }),
-        sortingView = new FilteringMenuView(sortingModel, { 'list' : $('#sorting_list') }),
-        sortingController = new FilteringMenuController({
-          menu : "sorting",
-          models: { list: sortingModel, connected: [proteinFamilyModel]},
-          view: sortingView,
-          cb:
-              function(model, element) {
-                if(element === "set_protein"){
-                  model.setSortingProtein();
-                }
-                else {
-                  model.setProteinSorting(element);
-                }
-              },
-        });
+    // let colorModel = new FilteringMenuModel({
+    //   items:['Side Chain Class', 'Side Chain Polarity', 'Frequency (Family Viewer)']
+    // }),
+    //     colorView = new FilteringMenuView(colorModel, { 'list' : $('#coloring_list') }),
+    //     colorController = new FilteringMenuController({
+    //       menu : "coloring",
+    //       models: { list: colorModel, connected : [proteinFamilyModel]},
+    //       view: colorView,
+    //       cb:
+    //           function(model, element) {
+    //             model.setProteinColoring(element);
+    //             App.residueMappingUtility.createColorLegend("family");
+    //       }
+    //     });
+    //
+    // let sortingModel = new FilteringMenuModel({
+    //     items: ['Set Protein ...', 'Initial Ordering','Residue Frequency', 'Weighted Edit Distance',
+    //       'Residue Commonality with', 'Normalized Residue Commonality with']
+    // }),
+    //     sortingView = new FilteringMenuView(sortingModel, { 'list' : $('#sorting_list') }),
+    //     sortingController = new FilteringMenuController({
+    //       menu : "sorting",
+    //       models: { list: sortingModel, connected: [proteinFamilyModel]},
+    //       view: sortingView,
+    //       cb:
+    //           function(model, element) {
+    //             if(element === "set_protein"){
+    //               model.setSortingProtein();
+    //             }
+    //             else {
+    //               model.setProteinSorting(element);
+    //             }
+    //           },
+    //     });
 
     /* Launch the initial data modal */
     // $("#initialModal").modal().on('shown.bs.modal', function (e) {
@@ -105,13 +105,13 @@ var App = App || {};
     // });
 
     /* Render the views */
-    sortingView.show();
-    colorView.show();
+    //sortingView.show();
+    // colorView.show();
 
     /* Show the tertiary viewers */
     leftTertiaryStructureView.show();
     rightTertiaryStructureView.show();
-    // proteinFamilyView.show();
+    proteinFamilyView.show();
 
     /* Show the sequence viewers */
     leftPrimaryStructureView.show();

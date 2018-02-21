@@ -46,13 +46,13 @@ const ProteinFamilyView = (function() {
           maxPaddleSize = MAX_PADDLE_SIZE;
 
       /* Get the calculated margin of the family viewer to align the frequency viewer */
-      let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-left"]);
+      // let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-left"]);
 
       return {
         brushes : [
           {
             orientation: App.HORIZONTAL_PADDLE, paddleSize: horizontalPaddleSize, class:"brush horizontal main",
-            extent: [[0, self.y_offset], [self.width, self.height+self.y_offset+5]], block_size: self.residue_glyph_size,
+            extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]], block_size: self.residue_glyph_size,
             position: [self.y_offset, self.residue_glyph_size+self.y_offset], semantic: "horizontal",
             tooltip: function(d) { return self._model.getSelectedProtein().name; }
           }, {
@@ -66,15 +66,15 @@ const ProteinFamilyView = (function() {
             block_size: self.residue_glyph_size, semantic: "right",
             position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
         ],
-        frequencyViewers : [
-          {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
-            block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
-            overview: self.overviewImage, offset_x:10},
-          {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
-            block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: margin, width: self.width,
-            overview: self.overviewImage, offset_x:10
-          }
-        ]
+        // frequencyViewers : [
+        //   {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
+        //     block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
+        //     overview: self.overviewImage, offset_x:10},
+        //   {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
+        //     block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: margin, width: self.width,
+        //     overview: self.overviewImage, offset_x:10
+        //   }
+        // ]
       };
     }
 
@@ -212,6 +212,7 @@ const ProteinFamilyView = (function() {
           new_height = self._parentDom.node().clientHeight,
           proteins_per_view = protein_height / residue_width;
 
+      /* The test to see if we need an overview */
       if(protein_height > new_height) {
 
         $.get("./src/html/familyViewerWithOverviewTemplate.html", function(data){
@@ -235,15 +236,19 @@ const ProteinFamilyView = (function() {
           /* Set the canvases' width and height */
           self.set_chart_attributes("#trendCanvas", self.width, self.height);
           self.set_chart_attributes("#overviewCanvas", self.overview_panel_width, self.height);
+          self.set_chart_attributes("#trendSVG", self.width, self.height);
 
           /* Store the size variables for rendering */
           self.set_glyph_size(residue_width);
           self.set_proteins_per_view(proteins_per_view);
           self.set_offsets();
 
-          /* setup webGL */
+          /* Setup webGL */
           self.setup_screen_context();
           self.initialize_overview_canvas();
+
+          /* Setup the brush SVG */
+          self.brushSVG = self.set_brush_SVG("#trendSVG", self.width, self.height);
         });
       }
 
@@ -255,11 +260,17 @@ const ProteinFamilyView = (function() {
           self.height = protein_height;
 
           self.set_chart_attributes("#trendCanvas", self.width, self.height);
+          self.set_chart_attributes("#trendSVG", self.width, self.height);
+
+          /* Store the size variables for rendering */
           self.set_glyph_size(residue_width);
           self.set_proteins_per_view(proteins_per_view);
 
-          /* setup the new canvas */
+          /* Setup webGL */
           self.setup_screen_context();
+
+          /* Setup the brush SVG */
+          self.brushSVG = self.set_brush_SVG("#trendSVG", self.width, self.height);
         });
       }
 
@@ -300,7 +311,7 @@ const ProteinFamilyView = (function() {
 
     self.set_brush_SVG = function(dom, width, height) {
       /* Multiple Brushes help: http://bl.ocks.org/jssolichin/54b4995bd68275691a23*/
-      return d3Utils.create_brush_svg(dom, {width:width, height:height, y: self.y_offset})
+      return d3.select(dom)
           .append("g")
           .attr("class", "brushes")
           .attr("width", width)
@@ -402,23 +413,24 @@ const ProteinFamilyView = (function() {
             /* Done initializing */
             self.initialized_promise.resolve();
             /* Notify the controller that the image has been rendered */
-            self.imageRendered.notify();//build_brushes_and_viewers());
+            self.imageRendered.notify(build_brushes_and_viewers());
             /* Render the overview if one is needed */
             if (self.overviewImage) {
               self.render_overview(0,0)
-                  // .then(function(){
-                  //   /* Notify the listens that the overview has been rendered and render the brush  */
-                  //   self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
-                  //   /* Render the context line to show to what the brush relates */
-                  //   let contextPoints = [
-                  //     [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
-                  //     [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
-                  //     [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
-                  //   ];
-                  //   d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
-                  //   d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
-                  //       {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
-                  // });
+                  .then(function(){
+                    // /* Notify the listens that the overview has been rendered and render the brush  */
+                    // self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
+                    // /* Render the context line to show to what the brush relates */
+                    //
+                    // let contextPoints = [
+                    //   [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
+                    //   [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
+                    //   [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
+                    // ];
+                    // d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
+                    // d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
+                    //     {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
+                  });
             }
             /* Enable the coloring menu */
             $("#coloring_list").find("li").removeClass("disabled");
@@ -488,10 +500,8 @@ const ProteinFamilyView = (function() {
       /* Clear the canvas*/
       //d3Utils.clear_chart_dom(this._dom);
 
+      /* Remove the black background */
       this._parentDom.classed("trend-viewer", false);
-
-      /* create the brush svg */
-      //this.brushSVG = this.set_brush_SVG(this._dom, Math.ceil(width+ this.x_offset)+1, this.height+2.0*this.y_offset);
     },
 
     render: function (image, x,y) {

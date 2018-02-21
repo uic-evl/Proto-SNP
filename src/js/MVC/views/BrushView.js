@@ -134,14 +134,14 @@ const BrushView = (function() {
         /* The coordinates of opaque covers */
         coordinates = [
           /* Overlays above and below the horizontal paddle */
-          {x:0, y:y, width:overlay_width, height:0, class_name:'horizontal_covers trend_covers'},
-          {x:0, y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height), class_name:'horizontal_covers trend_covers'},
+          {x:0, y:0, width:overlay_width, height:0, class_name:'horizontal_covers trend_covers'},
+          {x:0, y:bar_height, width:overlay_width, height:overlay_height-(bar_height), class_name:'horizontal_covers trend_covers'},
           /* Overlays to the left of the left paddle */
-          {x:0, y:y, width:0, height:0,class_name:'left_vertical_covers vertical_covers trend_covers'},
-          {x:0, y:y+bar_height, width:0, height:overlay_height-(bar_height),class_name:'left_vertical_covers vertical_covers trend_covers' },
+          {x:0, y:0, width:0, height:0,class_name:'left_vertical_covers vertical_covers trend_covers'},
+          {x:0, y:bar_height, width:0, height:overlay_height-(bar_height),class_name:'left_vertical_covers vertical_covers trend_covers' },
           /* Overlays to the left of the right paddle */
-          {x:overlay_width, y:y, width:0, height:0,class_name:'right_vertical_covers vertical_covers trend_covers'},
-          {x:overlay_width, y:y+bar_height, width:0, height:overlay_height-(bar_height),class_name:'right_vertical_covers vertical_covers trend_covers' }
+          {x:overlay_width, y:0, width:0, height:0,class_name:'right_vertical_covers vertical_covers trend_covers'},
+          {x:overlay_width, y:bar_height, width:0, height:overlay_height-(bar_height),class_name:'right_vertical_covers vertical_covers trend_covers' }
         ];
       }
       else if(self._orientation === App.OVERVIEW_PADDLE){
@@ -164,7 +164,6 @@ const BrushView = (function() {
         .attr('width',  function(d){ return d.width; })
         .attr('height', function(d){ return d.height; })
         .attr('fill', '#ecf0f1');
-
     };
 
     self.addContextMenu = function() {

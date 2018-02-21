@@ -108,16 +108,16 @@ const ProteinFamilyView = (function() {
     }
 
     /* Renders the image overview onto the canvas */
-    self.render_overview = function() {
+    self.render_overview = function(x,y) {
       return new Promise(function(resolve, reject){
         /* Create the overview if the image runs off the page*/
-        let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
-            overview_width = Math.round(self._dom.node().parentNode.clientWidth * self._overview_percentage) - margin,
+        // let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
+        //     overview_width = Math.round(self._dom.node().parentNode.clientWidth * self._overview_percentage) - margin,
             /* The overview will be 1/10th of the view */
-            overview = new Image();
+            let overview = new Image();
         /* Add the image to the canvas once it is loaded */
         overview.onload = function(){
-          self.canvasContext.drawImage(overview, self.width+self.x_offset, self.y_offset, overview_width, self.height);
+          self.overview_context.drawImage(overview, x+self.x_offset, y+self.y_offset, self.overview_width, self.height);
           resolve();
         };
         /* Add the data to the image*/
@@ -226,18 +226,24 @@ const ProteinFamilyView = (function() {
           residue_width = Math.floor(self.width / self.x_axis_length);
           proteins_per_view = Math.floor(new_height / residue_width);
           self.height = proteins_per_view * residue_width;
-          /* Set the main canvas width and height */
-          self.set_chart_attributes("#trendCanvas", self.width, self.height);
+
 
           /* Set the overview canvas width and height */
-          let overview_width = d3.select("#overviewCanvas").node().parentNode.clientWidth;
-          self.set_chart_attributes("#overviewCanvas", overview_width, self.height);
+          self.overview_panel_width = Math.floor(d3.select("#overviewCanvas").node().parentNode.clientWidth);
+          self.overview_width = Math.floor(self.overview_panel_width/2.0);
 
+          /* Set the canvases' width and height */
+          self.set_chart_attributes("#trendCanvas", self.width, self.height);
+          self.set_chart_attributes("#overviewCanvas", self.overview_panel_width, self.height);
+
+          /* Store the size variables for rendering */
           self.set_glyph_size(residue_width);
           self.set_proteins_per_view(proteins_per_view);
+          self.set_offsets();
 
-          /* setup the new canvas */
+          /* setup webGL */
           self.setup_screen_context();
+          self.initialize_overview_canvas();
         });
       }
 
@@ -263,13 +269,11 @@ const ProteinFamilyView = (function() {
     self.set_glyph_size = function(size) {
       /* Get and save the size of each residue for the trend image based on the width of the screen */
       self.residue_glyph_size = (size)?size:Math.floor( self.width /self.x_axis_length);
-      //self.set_offsets(self.residue_glyph_size);
     };
 
     /* Setter size of the offsets */
-    self.set_offsets = function(size) {
-      self.x_offset = size * PADDLE_SIZE;
-      self.y_offset = (self.overviewImage) ? size * 2.0 : 0;
+    self.set_offsets = function() {
+      self.x_offset = Math.floor((self.overview_panel_width - self.overview_width) / 2.0);
     };
 
     /* Setter for the number of proteins we can display in a single view */
@@ -351,6 +355,17 @@ const ProteinFamilyView = (function() {
       twgl.setBuffersAndAttributes(self.gl, self.glProgramInfo, self.glBufferInfo);
     };
 
+    self.initialize_overview_canvas = function() {
+
+      self.overview_context = d3.select("#overviewCanvas").node().getContext('2d');
+
+      /* Set context properties to disable image "smoothing" */
+      self.overview_context.imageSmoothingQuality = "high";
+      self.overview_context.webkitImageSmoothingEnabled = false;
+      self.overview_context.mozImageSmoothingEnabled = false;
+      self.overview_context.imageSmoothingEnabled = false;
+    };
+
     self.setup_screen_context = function() {
       /* Add the canvas and brush svg to the trend image dom*/
       self.canvasContext = d3.select("#trendCanvas").node()
@@ -390,7 +405,7 @@ const ProteinFamilyView = (function() {
             self.imageRendered.notify();//build_brushes_and_viewers());
             /* Render the overview if one is needed */
             if (self.overviewImage) {
-              self.render_overview()
+              self.render_overview(0,0)
                   // .then(function(){
                   //   /* Notify the listens that the overview has been rendered and render the brush  */
                   //   self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
@@ -496,7 +511,7 @@ const ProteinFamilyView = (function() {
           .then(function(image){
             view.canvasContext.clearRect(0, view.y_offset, view.width, view.height);
             view.render(image,options.x,options.y)
-                .then(view.render_overview.bind(view))
+                .then(view.render_overview.bind(view, 0, 0))
                 .then(function(){
                   /* Set the y scale with the protein updated name order */
                   view.set_y_scale(_.slice(view._model.getProteinNames(), 0, view.ppv))

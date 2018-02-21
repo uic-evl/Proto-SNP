@@ -193,61 +193,70 @@ const ProteinFamilyView = (function() {
       self.y_axis_length =  this._model.getProteinNames().length;
     };
 
+    self.set_chart_attributes = function(width, height){
+      /* Set the width/height attributes of the canvas for webGL*/
+      d3.select("#trendCanvas")
+          .attr("width", self.width)
+          .attr("height", self.height);
+    };
+
     /* Setter for the chart dimensions */
     self.set_chart_dimensions = function() {
+
       let container_width = self._container_width,
           residue_width = Math.floor(container_width / self.x_axis_length),
           viewer_width = residue_width * self.x_axis_length;
 
-      /*Reset the parent dom width/heights */
-      self._parentDom.classed("trend-viewer", false)
-          .classed("proteinFamilyViewer", true);
       /* Make sure the height of the data does not exceed the height of the container */
       let protein_height = self.y_axis_length * residue_width,
           new_height = self._parentDom.node().clientHeight,
           proteins_per_view = protein_height / residue_width;
 
-      /* Trend image fits in the DIV's space */
-      if(protein_height < new_height) {
-        self.height = protein_height;
-        self.width = container_width = viewer_width;
+      if(protein_height > new_height) {
+
+        $.get("./src/html/familyViewerWithOverviewTemplate.html", function(data){
+          $("#"+self._id).append(data);
+
+          self.overviewImage = true;
+          self.width = $("#trendImageColumn").width();
+
+          residue_width = Math.floor(self.width / self.x_axis_length);
+          proteins_per_view = Math.round(new_height/residue_width);
+
+          self.height = proteins_per_view * residue_width;
+
+          self.set_chart_attributes(self.width, self.height);
+          self.set_glyph_size(residue_width);
+          self.set_proteins_per_view(proteins_per_view);
+
+          /* setup the new canvas */
+          self.setup_screen_context();
+        });
       }
-      /* We must reset the height of the trend image */
-      else if(protein_height > new_height) {
-        self.overviewImage = true;
-        /* Set the new height/width */
-        /* Create a new width that is 90% of the previous, giving us room for the viewer */
-        if( (viewer_width + (viewer_width * self._overview_percentage)) > container_width ){
-          let temp_width = (container_width - (viewer_width * self._overview_percentage));
-          residue_width = Math.floor(temp_width / self.x_axis_length);
-          self.width = residue_width * self.x_axis_length;
-        }
-        else {
+
+      else {
+        $.get("./src/html/familyViewerTemplate.html", function(data) {
+          $("#" + self._id).append(data);
+
           self.width = viewer_width;
-        }
-        proteins_per_view = Math.round(new_height/residue_width);
-        self.height = proteins_per_view * residue_width;
+          self.height = protein_height;
+
+          self.set_chart_attributes(self.width, self.height);
+          self.set_glyph_size(residue_width);
+          self.set_proteins_per_view(proteins_per_view);
+
+          /* setup the new canvas */
+          self.setup_screen_context();
+        });
       }
-      this.set_glyph_size(residue_width);
-      this.set_proteins_per_view(proteins_per_view);
 
-      /* Remove the template class so that the div fits to our new sizes */
-      self._parentDom.classed("proteinFamilyViewer", false);
-      /* Resize the DOM elements to accommodate our family view*/
-      document.getElementById('trendImageViewer').parentNode.style.height = self.height+self.y_offset*2.0+2;//self.height +self.y_offset;
-      document.getElementById('trendImageViewer').style.height = self.height+self.y_offset*2.0+2;//self.height+self.y_offset;
-      document.getElementsByClassName('trendDiv')[0].style.height = self.height+self.y_offset*2.0+2;//self.height+self.y_offset;
-
-      document.getElementById('trendImageViewer').style.width = Math.ceil(container_width).toString();
-      document.getElementById('trendImageViewer').parentNode.style.width = Math.ceil(container_width);
-      document.getElementsByClassName('TrendImageView')[0].style.width = container_width;
     };
 
     /* Setter for the names of the proteins from the family */
     self.set_glyph_size = function(size) {
       /* Get and save the size of each residue for the trend image based on the width of the screen */
       self.residue_glyph_size = (size)?size:Math.floor( self.width /self.x_axis_length);
-      self.set_offsets(self.residue_glyph_size);
+      //self.set_offsets(self.residue_glyph_size);
     };
 
     /* Setter size of the offsets */
@@ -309,12 +318,54 @@ const ProteinFamilyView = (function() {
         });
     };
 
+    self.setup_backbuffer_context = function() {
+      /* Set the back buffer dimension */
+      /* Create the back buffer to render the image */
+      self.backBufferCanvas = d3Utils.create_chart_back_buffer({
+        width:self._sequenceLength,
+        height:self._proteinCount});
+
+      /* create the webgl object */
+      self.gl = self.backBufferCanvas.getContext('webgl');
+      // compiles and links the shaders and looks up uniform and attribute locations
+      self.glProgramInfo = twgl.createProgramInfo(self.gl, ['vs', 'fs']);
+      let arrays =
+          {
+            position: [
+              -1, -1, 0, 1, -1, 0, -1, 1, 0,
+              -1, 1, 0, 1, -1, 0, 1, 1, 0,
+            ]
+          };
+      // calls gl.createBuffer, gl.bindBuffer, gl.bufferData for each array
+      self.glBufferInfo = twgl.createBufferInfoFromArrays(self.gl, arrays);
+      /* Initialize the program */
+      self.gl.useProgram(self.glProgramInfo.program);
+      // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
+      twgl.setBuffersAndAttributes(self.gl, self.glProgramInfo, self.glBufferInfo);
+    };
+
+    self.setup_screen_context = function() {
+      /* Add the canvas and brush svg to the trend image dom*/
+      self.canvasContext = d3.select("#trendCanvas").node()
+      // d3Utils.create_chart_canvas(self._dom,
+      // {width: Math.ceil(width + self.x_offset)+1, height:self.height+ 2.0*self.y_offset,
+      //   id:"trendCanvas", class:"trendImage"})
+          .getContext('2d');
+
+      /* Set context properties to disable image "smoothing" */
+      self.canvasContext.imageSmoothingQuality = "high";
+      self.canvasContext.webkitImageSmoothingEnabled = false;
+      self.canvasContext.mozImageSmoothingEnabled = false;
+      self.canvasContext.imageSmoothingEnabled = false;
+    };
+
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
           colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring(), "family");
       /* Initialize the trend image view*/
-      let width = self.initialize(msg);
+      //let width =
+          self.initialize(msg);
 
       /* Load the tour if this is the first time a trend image is generated */
       let state = hopscotch.getState();
@@ -329,28 +380,28 @@ const ProteinFamilyView = (function() {
             /* Done initializing */
             self.initialized_promise.resolve();
             /* Notify the controller that the image has been rendered */
-            self.imageRendered.notify(build_brushes_and_viewers());
+            self.imageRendered.notify();//build_brushes_and_viewers());
             /* Render the overview if one is needed */
-            if (self.overviewImage) {
-              self.render_overview()
-                  .then(function(){
-                    /* Notify the listens that the overview has been rendered and render the brush  */
-                    self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
-                    /* Render the context line to show to what the brush relates */
-                    let contextPoints = [
-                      [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
-                      [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
-                      [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
-                    ];
-                    d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
-                    d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
-                        {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
-                  });
-            }
+            // if (self.overviewImage) {
+            //   self.render_overview()
+            //       .then(function(){
+            //         /* Notify the listens that the overview has been rendered and render the brush  */
+            //         self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
+            //         /* Render the context line to show to what the brush relates */
+            //         let contextPoints = [
+            //           [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
+            //           [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
+            //           [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
+            //         ];
+            //         d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
+            //         d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
+            //             {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
+            //       });
+            // }
             /* Enable the coloring menu */
             $("#coloring_list").find("li").removeClass("disabled");
             /* Create the legend */
-            App.residueMappingUtility.createColorLegend("family");
+            //App.residueMappingUtility.createColorLegend("family");
           }).catch(console.log.bind(console));
     });
   }
@@ -403,68 +454,25 @@ const ProteinFamilyView = (function() {
       this._proteinCount = data.proteinCount;
       this._sequenceLength = data.sequenceLength;
 
-      this._dom = this._parentDom.append("div")
-          .classed("trendDiv", true)
-          .classed("center-aligned", true);
-
       /* Initialize the chart and data dimensions */
       this.set_data_dimensions_sizes(family.data);
       this.set_chart_dimensions();
       this.set_proteins_per_view();
 
-      /* Find the width of the div */
-      let width = ((this.overviewImage) ? parseInt(this.width*1.1): this.width);
-
-      /* Set the DOM's width/height so it centers in it's parent */
-      this._dom
-          .style("width", Math.ceil(width + this.x_offset)+1)
-          .style("height", this.height + 2.0*this.y_offset);
-
-      /* Add the canvas and brush svg to the trend image dom*/
-      this.canvasContext = d3Utils.create_chart_canvas(this._dom,
-          {width: Math.ceil(width + this.x_offset)+1, height:this.height+ 2.0*this.y_offset,
-            id:"trendCanvas", class:"trendImage"})
-          .getContext('2d');
-
-      /* Set context properties to disable image "smoothing" */
-      this.canvasContext.imageSmoothingQuality = "high";
-      this.canvasContext.webkitImageSmoothingEnabled = false;
-      this.canvasContext.mozImageSmoothingEnabled = false;
-      this.canvasContext.imageSmoothingEnabled = false;
-
-      /* Set the back buffer dimension */
-      /* Create the back buffer to render the image */
-      this.backBufferCanvas = d3Utils.create_chart_back_buffer({
-        width:this._sequenceLength,
-        height:this._proteinCount});
-
-      /* create the webgl object */
-      this.gl = this.backBufferCanvas.getContext('webgl');
-      // compiles and links the shaders and looks up uniform and attribute locations
-      this.glProgramInfo = twgl.createProgramInfo(this.gl, ['vs', 'fs']);
-      let arrays =
-        {
-          position: [
-            -1, -1, 0, 1, -1, 0, -1, 1, 0,
-            -1, 1, 0, 1, -1, 0, 1, 1, 0,
-          ]
-        };
-      // calls gl.createBuffer, gl.bindBuffer, gl.bufferData for each array
-      this.glBufferInfo = twgl.createBufferInfoFromArrays(this.gl, arrays);
-      /* Initialize the program */
-      this.gl.useProgram(this.glProgramInfo.program);
-      // calls gl.bindBuffer, gl.enableVertexAttribArray, gl.vertexAttribPointer
-      twgl.setBuffersAndAttributes(this.gl, this.glProgramInfo, this.glBufferInfo);
+      this.setup_backbuffer_context();
 
       /* set the rendering scales */
       this.set_chart_scales();
       /* Clear the canvas*/
-      d3Utils.clear_chart_dom(this._dom);
+      //d3Utils.clear_chart_dom(this._dom);
+
+      this._parentDom.classed("trend-viewer", false);
+
       /* create the brush svg */
-      this.brushSVG = this.set_brush_SVG(this._dom, Math.ceil(width+ this.x_offset)+1, this.height+2.0*this.y_offset);
+      //this.brushSVG = this.set_brush_SVG(this._dom, Math.ceil(width+ this.x_offset)+1, this.height+2.0*this.y_offset);
 
       /* return the width of the family */
-      return width;
+     //return width;
     },
 
     render: function (image, x,y) {

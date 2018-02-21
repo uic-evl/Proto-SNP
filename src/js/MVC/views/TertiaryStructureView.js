@@ -169,7 +169,7 @@ function TertiaryStructureView(model, element) {
                 function(model, element) {
                   self.recolor(element);
                   self.colorChanged.notify({color:element});
-                  App.residueMappingUtility.createColorLegend("3D");
+                  //App.residueMappingUtility.createColorLegend("3D");
                 }
           });
       /* Show the view to bind the model */
@@ -201,7 +201,7 @@ function TertiaryStructureView(model, element) {
     /* Enable the coloring menu */
     $("#coloring_list").find("li").removeClass("disabled");
     /* Create the legend */
-    App.residueMappingUtility.createColorLegend("3D");
+    //App.residueMappingUtility.createColorLegend("3D");
 
     /* Load the tour if this is the first time a molecular viewer is generated */
     let state = hopscotch.getState();
@@ -365,7 +365,7 @@ TertiaryStructureView.prototype = {
     this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
 
     /* Load the geometry list */
-    $.get("./src/html/tertiaryViewerMenu.html", function (data) {
+    $.get("./src/html/tertiaryViewerMenuTemplate.html", function (data) {
       self._dom.find("div.x_title").append(data);
       self.initialize_menus();
       /* Place the name of the protein above the viewer*/

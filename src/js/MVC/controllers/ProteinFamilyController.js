@@ -192,11 +192,11 @@ const ProteinFamilyController = (function() {
     /* On Family View Rendered */
     self._view.imageRendered.attach(function(sender, args) {
       /* Create new brush views as requested by the family */
-      createFamilyPaddles(args.brushes);
+      //createFamilyPaddles(args.brushes);
       /* Create the new residue views */
-      createResidueViewers(args.frequencyViewers);
+      //createResidueViewers(args.frequencyViewers);
       /* Inform the view that the brushes are created */
-      self._view.attachBrushes(_.values(self._brushViews));
+      //self._view.attachBrushes(_.values(self._brushViews));
     });
 
     /* On Overview Rendered*/

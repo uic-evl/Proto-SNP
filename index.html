@@ -219,74 +219,76 @@
         </div>
     </div>
     <br>
-     Color Legend
-    <div class="legendRow row">
-        <div class="col-4">
-            <div class="legendSVG" id="tertiaryColorLegend"></div>
-        </div>
-        <div class="col-4">
-            <div class="legendSVG" id="familyColorLegend"></div>
-        </div>
-    </div>
+     <!--Color Legend-->
+    <!--<div class="legendRow row">-->
+        <!--<div class="col-4">-->
+            <!--<div class="legendSVG" id="tertiaryColorLegend"></div>-->
+        <!--</div>-->
+        <!--<div class="col-4">-->
+            <!--<div class="legendSVG" id="familyColorLegend"></div>-->
+        <!--</div>-->
+    <!--</div>-->
 
     <!-- Trend Image -->
     <div class="row proteinFamilyRow" id="proteinFamilyRow">
-        <div class="col-12 ">
+        <div class="col-12">
             <!-- Trend Image View-->
-            <div class="row x_panel TrendImageView center-aligned">
-                <div class="x_title view">
-                    <p class="side_by_side header">Protein Family Viewer</p>
+            <div class="row TrendImageView center-aligned">
 
-                    <div class="clearfix"></div>
-                </div>
-                <div class="col-12 trend-column x_content">
-                    <div id="trendImageViewer" class="trend-viewer">
+                <!--<div class="x_title view">-->
+                    <!--<p class="side_by_side header">Protein Family Viewer</p>-->
+                    <!--<div class="clearfix"></div>-->
+                <!--</div>-->
+
+                <div class="col-12">
+                    <div id="trendImageViewer" class="trend-viewer center-aligned">
                         <!-- Select Alignment Button -->
                         <div id="trendSplash"></div>
                     </div>
-                    <!-- Residue Frequency Viewer-->
-                    <div id="residueSummaryView" class="row residueSummaryView hidden"></div>
                 </div>
             </div>
             <!-- End Trend Image View-->
         </div>
+    </div>
 
-        <!-- Trend Image Protein Selection Modal -->
-        <div class="modal fade" id="viewerModal" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <button type="button" class="btn btn-default btn-left_viewer" data-dismiss="modal">Left Viewer</button>
-                        <button type="button" class="btn btn-default btn-right_viewer" data-dismiss="modal">Right Viewer</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+    <!-- Residue Frequency Viewer-->
+    <div id="residueSummaryView" class="row residueSummaryView hidden"></div>
+
+</div>
+
+<!-- Trend Image Protein Selection Modal -->
+<div class="modal fade" id="viewerModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="btn btn-default btn-left_viewer" data-dismiss="modal">Left Viewer</button>
+                <button type="button" class="btn btn-default btn-right_viewer" data-dismiss="modal">Right Viewer</button>
             </div>
-        </div>
-
-        <!-- Trend image set sorting protein -->
-        <!-- Trend Image Protein Selection Modal -->
-        <div class="modal fade" id="proteinSelection" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Select a protein to sort by</h4>
-                    </div>
-                    <div class="modal-body">
-                        <input id="proteinSortSelection" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="setProtein" class="btn btn-primary" data-dismiss="modal">Set Protein</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
 
+<!-- Trend image set sorting protein -->
+<!-- Trend Image Protein Selection Modal -->
+<div class="modal fade" id="proteinSelection" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Select a protein to sort by</h4>
+            </div>
+            <div class="modal-body">
+                <input id="proteinSortSelection" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="setProtein" class="btn btn-primary" data-dismiss="modal">Set Protein</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- WebGL Shaders for Trend Image -->

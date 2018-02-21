@@ -193,11 +193,11 @@ const ProteinFamilyView = (function() {
       self.y_axis_length =  this._model.getProteinNames().length;
     };
 
-    self.set_chart_attributes = function(width, height){
+    self.set_chart_attributes = function(div, width, height){
       /* Set the width/height attributes of the canvas for webGL*/
-      d3.select("#trendCanvas")
-          .attr("width", self.width)
-          .attr("height", self.height);
+      d3.select(div)
+          .attr("width", width)
+          .attr("height", height);
     };
 
     /* Setter for the chart dimensions */
@@ -218,14 +218,21 @@ const ProteinFamilyView = (function() {
           $("#"+self._id).append(data);
 
           self.overviewImage = true;
-          self.width = $("#trendImageColumn").width();
+
+          self._dom = d3.select("#trendImageColumn");
+          self.width = self._dom.node().clientWidth;
+          new_height = self._dom.node().clientHeight;
 
           residue_width = Math.floor(self.width / self.x_axis_length);
-          proteins_per_view = Math.round(new_height/residue_width);
-
+          proteins_per_view = Math.floor(new_height / residue_width);
           self.height = proteins_per_view * residue_width;
+          /* Set the main canvas width and height */
+          self.set_chart_attributes("#trendCanvas", self.width, self.height);
 
-          self.set_chart_attributes(self.width, self.height);
+          /* Set the overview canvas width and height */
+          let overview_width = d3.select("#overviewCanvas").node().parentNode.clientWidth;
+          self.set_chart_attributes("#overviewCanvas", overview_width, self.height);
+
           self.set_glyph_size(residue_width);
           self.set_proteins_per_view(proteins_per_view);
 
@@ -241,7 +248,7 @@ const ProteinFamilyView = (function() {
           self.width = viewer_width;
           self.height = protein_height;
 
-          self.set_chart_attributes(self.width, self.height);
+          self.set_chart_attributes("#trendCanvas", self.width, self.height);
           self.set_glyph_size(residue_width);
           self.set_proteins_per_view(proteins_per_view);
 
@@ -382,22 +389,22 @@ const ProteinFamilyView = (function() {
             /* Notify the controller that the image has been rendered */
             self.imageRendered.notify();//build_brushes_and_viewers());
             /* Render the overview if one is needed */
-            // if (self.overviewImage) {
-            //   self.render_overview()
-            //       .then(function(){
-            //         /* Notify the listens that the overview has been rendered and render the brush  */
-            //         self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
-            //         /* Render the context line to show to what the brush relates */
-            //         let contextPoints = [
-            //           [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
-            //           [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
-            //           [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
-            //         ];
-            //         d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
-            //         d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
-            //             {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
-            //       });
-            // }
+            if (self.overviewImage) {
+              self.render_overview()
+                  // .then(function(){
+                  //   /* Notify the listens that the overview has been rendered and render the brush  */
+                  //   self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
+                  //   /* Render the context line to show to what the brush relates */
+                  //   let contextPoints = [
+                  //     [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
+                  //     [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
+                  //     [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
+                  //   ];
+                  //   d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
+                  //   d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
+                  //       {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
+                  // });
+            }
             /* Enable the coloring menu */
             $("#coloring_list").find("li").removeClass("disabled");
             /* Create the legend */
@@ -470,9 +477,6 @@ const ProteinFamilyView = (function() {
 
       /* create the brush svg */
       //this.brushSVG = this.set_brush_SVG(this._dom, Math.ceil(width+ this.x_offset)+1, this.height+2.0*this.y_offset);
-
-      /* return the width of the family */
-     //return width;
     },
 
     render: function (image, x,y) {

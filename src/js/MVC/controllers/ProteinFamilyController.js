@@ -202,7 +202,7 @@ const ProteinFamilyController = (function() {
     /* On Overview Rendered*/
     self._view.overviewRendered.attach(function(sender, args) {
       /* Create the brush and inform the view */
-      self._view.attachBrushes([createOverviewPaddle(args)]);
+      //self._view.attachBrushes([createOverviewPaddle(args)]);
     });
   }
 

@@ -124,7 +124,6 @@ const BrushView = (function() {
     self.addBrushOverlays = function(brushObj) {
       /* 6 Masks: left/right of both vertical paddles, above/below the horizontal paddle */
       let parent = brushObj.node().parentNode,
-          y = parseInt(brushObj.selectAll('rect.selection').attr('y'))-1,
           bar_height     = parseInt(brushObj.selectAll('rect.selection').attr('height')),
           overlay_height = parseInt(brushObj.selectAll('rect.overlay').attr('height')),
           overlay_width = parseInt(brushObj.selectAll('rect.overlay').attr('width')),
@@ -268,8 +267,6 @@ const BrushView = (function() {
       /* Add the overlay masks */
       this.addBrushOverlays(brushObj);
   },
-
-
 
     redraw: function(paddle, data) {
       let brush, x, y, width, height;

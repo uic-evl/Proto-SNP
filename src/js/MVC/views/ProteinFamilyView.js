@@ -245,6 +245,7 @@ const ProteinFamilyView = (function() {
           self.set_glyph_size(residue_width);
           self.set_proteins_per_view(proteins_per_view);
           self.set_offsets();
+          self.set_chart_scales();
 
           /* Setup webGL */
           self.setup_screen_context();
@@ -269,6 +270,7 @@ const ProteinFamilyView = (function() {
           /* Store the size variables for rendering */
           self.set_glyph_size(residue_width);
           self.set_proteins_per_view(proteins_per_view);
+          self.set_chart_scales();
 
           /* Setup webGL */
           self.setup_screen_context();
@@ -499,8 +501,6 @@ const ProteinFamilyView = (function() {
 
       this.setup_backbuffer_context();
 
-      /* set the rendering scales */
-      this.set_chart_scales();
       /* Clear the canvas*/
       //d3Utils.clear_chart_dom(this._dom);
 

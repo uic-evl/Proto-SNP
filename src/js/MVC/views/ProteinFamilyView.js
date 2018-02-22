@@ -55,16 +55,19 @@ const ProteinFamilyView = (function() {
             extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]], block_size: self.residue_glyph_size,
             position: [self.y_offset, self.residue_glyph_size+self.y_offset], semantic: "horizontal",
             tooltip: function(d) { return self._model.getSelectedProtein().name; }
-          }, {
+          },
+          {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
             class:"brush vertical-left", extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]],
             block_size: self.residue_glyph_size, semantic: "left",
             position: [0, self.residue_glyph_size * verticalPaddleSize + self.y_offset]
-          }, {
+          },
+          {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
             class:"brush vertical-right", extent: [[0, self.y_offset], [self.width, self.height+self.y_offset]],
             block_size: self.residue_glyph_size, semantic: "right",
-            position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]}
+            position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
+          }
         ],
         // frequencyViewers : [
         //   {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
@@ -541,6 +544,7 @@ const ProteinFamilyView = (function() {
 
     attachBrushes: function(brushViews) {
       let view = this;
+
       /* Attach the brushes to the svg */
       brushViews.forEach(function(brushView){
         let brush = brushView.getBrush(),
@@ -551,6 +555,9 @@ const ProteinFamilyView = (function() {
         /*render the brush */
         brushView.render(brushObj);
       });
+
+      /* Render the left brush to initialize the correct overlays */
+      brushViews[1].redraw(App.VERTICAL_PADDLE, {semantic:brushViews[1]._semantic});
     },
 
     getPromise: function() { return this.initialized_promise.promise(); },

@@ -92,6 +92,9 @@ const ProteinFamilyController = (function() {
         /* Add the brush to the list of views */
         self._brushViews[brushSpec.semantic] = brushView;
       });
+
+      console.log("done");
+
     }
 
     function createResidueViewers(residueViewers) {

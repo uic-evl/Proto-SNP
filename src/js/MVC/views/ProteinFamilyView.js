@@ -84,9 +84,8 @@ const ProteinFamilyView = (function() {
     /* Builds the brush that lies on top of the overview */
     function build_overview_brush(width, height) {
       /* Get the calculated margin of the family viewer to align the frequency viewer */
-      let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
+      let //margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
           count = self._model.getProteinCount(),
-          overview_width = Math.round(self._dom.node().parentNode.clientWidth * self._overview_percentage) - margin,
           block_size = height / count,
           scale = d3.scaleLinear()
               .domain([0, count])
@@ -95,7 +94,7 @@ const ProteinFamilyView = (function() {
       /* Return the specs for the new */
       return {
         orientation: App.OVERVIEW_PADDLE,
-        width:  overview_width,
+        width:  width,
         height: height,
         paddleSize : self.brushPaddleSize,
         maxPaddleSize : self.brushPaddleSize,
@@ -103,7 +102,7 @@ const ProteinFamilyView = (function() {
         class      : "brush horizontal overview",
         block_size: block_size,
         semantic: "family",
-        extent: [[self.width+self.x_offset, self.y_offset], [self.width+self.x_offset+overview_width, height+self.y_offset]],
+        extent: [[self.x_offset, self.y_offset], [ self.overview_width + self.x_offset, height + self.y_offset]],
         position: [self.y_offset, self.brushPaddleSize+self.y_offset],
         proteinsPerView: self.ppv,
         parent: d3.select(self.brushSVG.node().parentNode)
@@ -240,6 +239,7 @@ const ProteinFamilyView = (function() {
           self.set_chart_attributes("#trendCanvas", self.width, self.height);
           self.set_chart_attributes("#overviewCanvas", self.overview_panel_width, self.height);
           self.set_chart_attributes("#trendSVG", self.width, self.height);
+          self.set_chart_attributes("#overviewSVG", self.overview_panel_width, self.height);
 
           /* Store the size variables for rendering */
           self.set_glyph_size(residue_width);
@@ -252,6 +252,7 @@ const ProteinFamilyView = (function() {
 
           /* Setup the brush SVG */
           self.brushSVG = self.set_brush_SVG("#trendSVG", self.width, self.height);
+          self.overviewSVG = self.set_brush_SVG("#overviewSVG", self.overview_width, self.height);
         });
       }
 
@@ -422,7 +423,7 @@ const ProteinFamilyView = (function() {
               self.render_overview(0,0)
                   .then(function(){
                     // /* Notify the listens that the overview has been rendered and render the brush  */
-                    // self.overviewRendered.notify({brushSpec: build_overview_brush(width, self.height)});
+                    self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
                     // /* Render the context line to show to what the brush relates */
                     //
                     // let contextPoints = [
@@ -542,13 +543,13 @@ const ProteinFamilyView = (function() {
           });
     },
 
-    attachBrushes: function(brushViews) {
+    attachBrushes: function(brushViews, svg) {
       let view = this;
 
       /* Attach the brushes to the svg */
       brushViews.forEach(function(brushView){
         let brush = brushView.getBrush(),
-            brushObj = view.brushSVG.append("g")
+            brushObj = svg.append("g")
                 .attr("class", brushView.brushObj.getBrushClass)
                 .call(brush)
                 .call(brush.move, brushView.getInitialPosition());
@@ -557,7 +558,10 @@ const ProteinFamilyView = (function() {
       });
 
       /* Render the left brush to initialize the correct overlays */
-      brushViews[1].redraw(App.VERTICAL_PADDLE, {semantic:brushViews[1]._semantic});
+      if(brushViews.length > 1){
+        brushViews[1].redraw(App.VERTICAL_PADDLE, {semantic:brushViews[1]._semantic});
+      }
+
     },
 
     getPromise: function() { return this.initialized_promise.promise(); },

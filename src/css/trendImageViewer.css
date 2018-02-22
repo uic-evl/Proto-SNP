@@ -1,4 +1,4 @@
-#trendCanvas, #trendSVG {
+#trendCanvas, #overviewCanvas, #trendSVG, #overviewSVG {
     position: absolute;
 }
 

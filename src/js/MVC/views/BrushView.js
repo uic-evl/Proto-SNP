@@ -126,7 +126,6 @@ const BrushView = (function() {
       let parent = brushObj.node().parentNode,
           y = parseInt(brushObj.selectAll('rect.selection').attr('y'))-1,
           bar_height     = parseInt(brushObj.selectAll('rect.selection').attr('height')),
-          bar_width     = parseInt(brushObj.selectAll('rect.selection').attr('width')),
           overlay_height = parseInt(brushObj.selectAll('rect.overlay').attr('height')),
           overlay_width = parseInt(brushObj.selectAll('rect.overlay').attr('width')),
           coordinates = [], class_name = "";
@@ -158,8 +157,8 @@ const BrushView = (function() {
       else if(self._orientation === App.OVERVIEW_PADDLE){
         coordinates = [
           /* Overlays above and below the overview paddle */
-          {x:parseInt(options.extent[0][0])+1, y:y, width:overlay_width, height:0, class_name:'overview_covers trend_covers'},
-          {x:parseInt(options.extent[0][0])+1, y:y+bar_height, width:overlay_width, height:overlay_height-(bar_height),
+          {x:parseInt(options.extent[0][0]), y:0, width:overlay_width, height:0, class_name:'overview_covers trend_covers'},
+          {x:parseInt(options.extent[0][0]), y:bar_height, width:overlay_width, height:overlay_height-(bar_height),
             class_name:'overview_covers trend_covers'}
           ];
       }

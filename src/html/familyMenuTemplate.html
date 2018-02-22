@@ -1,36 +1,64 @@
-<div id="family_upload_li" class="side_by_side hidden">
-    <ul class="nav navbar-nav">
-        <li>
-            <a id="settingsCog" href="#" class="dropdown-toggle helpIcon" data-toggle="dropdown">
-                <i class="fa fa-cog icon-positioning" aria-hidden="true"></i><b class="caret"></b></a>
-            <ul class="dropdown-menu multi-level">
-                <li>
-                    <label for="fileupload-open">Select an alignment file</label>
-                    <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"/>
-                </li>
-                <li class="dropdown-submenu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>
-                    <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
-                        <li class="sortingOption disabled">
-                            <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
-                        </li>
-                    </ul>
-                </li>
-                <li id="coloring-nav" class="dropdown-submenu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by</a>
-                    <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
-                        <li class="coloringOption disabled">
-                            <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
-                        </li>
-                    </ul>
-                </li>
+<!--<div id="family_upload_li" class="side_by_side hidden">-->
+    <!--<ul class="nav navbar-nav">-->
+        <!--<li>-->
+            <!--<a id="settingsCog" href="#" class="dropdown-toggle helpIcon" data-toggle="dropdown">-->
+                <!--<i class="fa fa-cog icon-positioning" aria-hidden="true"></i><b class="caret"></b></a>-->
+            <!--<ul class="dropdown-menu multi-level">-->
+                <!--<li>-->
+                    <!--<label for="fileupload-open">Select an alignment file</label>-->
+                    <!--<input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"/>-->
+                <!--</li>-->
+                <!--<li class="dropdown-submenu">-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>-->
+                    <!--<ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">-->
+                        <!--<li class="sortingOption disabled">-->
+                            <!--<a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <!--<li id="coloring-nav" class="dropdown-submenu">-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by</a>-->
+                    <!--<ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">-->
+                        <!--<li class="coloringOption disabled">-->
+                            <!--<a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</li>-->
 
-            </ul>
-        </li>
-        <li>
-            <a href="#" class="helpIcon">
-                <i id="familyHelp" class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>
-            </a>
-        </li>
-    </ul>
-</div>
+            <!--</ul>-->
+        <!--</li>-->
+        <!--<li>-->
+            <!--<a href="#" class="helpIcon">-->
+                <!--<i id="familyHelp" class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>-->
+            <!--</a>-->
+        <!--</li>-->
+    <!--</ul>-->
+<!--</div>-->
+
+<nav id="familyViewerMenu" class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-auto">
+            <!--<li class="nav-item active" id="proteinName">-->
+                <!--<a class="nav-link" href="#">-->
+                    <!--<p></p>-->
+                    <!--<span class="popup-trigger sBtn fileinput-button" id="popup-trigger-pdb">-->
+                        <!--<i class="fa fa-folder-open settingsOpenPDB hidden"></i>-->
+                    <!--</span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <li id="family_coloring_list" class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="familyColorDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Color By
+                </a>
+            </li>
+            <li id="family_sorting_list" class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="familySortDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Sort By
+                </a>
+            </li>
+        </ul>
+        <a class="navbar-text" href="#">Help
+            <i class="fa fa-question molecularHelp"></i>
+        </a>
+    </div>
+</nav>

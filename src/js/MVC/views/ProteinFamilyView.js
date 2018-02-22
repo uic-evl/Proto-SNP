@@ -223,6 +223,7 @@ const ProteinFamilyView = (function() {
           self.overviewImage = true;
 
           self._dom = d3.select("#trendImageColumn");
+          self._$dom = $("#trendImageColumn");
           self.width = self._dom.node().clientWidth;
           new_height = self._dom.node().clientHeight;
 
@@ -398,6 +399,73 @@ const ProteinFamilyView = (function() {
       self.canvasContext.imageSmoothingEnabled = false;
     };
 
+    /*Creates the geometry selection menu */
+    self.initialize_menus = function() {
+      /* Load the html menu templates */
+      $.get("./src/html/familySortingListTemplate.html", function (data) {
+
+        /* Add the elements to the list */
+        $(self._parentDom.node()).find("#family_sorting_list a").after(data);
+
+        let sortingModel = new FilteringMenuModel({
+            items: ['Set Protein ...', 'Initial Ordering','Residue Frequency', 'Weighted Edit Distance',
+              'Residue Commonality with', 'Normalized Residue Commonality with']
+          }),
+          sortingListView = new FilteringMenuView(sortingModel, { 'list' : $(self._parentDom.node()).find("#family_sorting_ul") }),
+          sortingController = new FilteringMenuController({
+            menu : "sorting",
+            models: { list: sortingModel, connected: [self._model]},
+            view: sortingListView,
+            cb:
+              function(model, element) {
+                if(element === "set_protein"){
+                  model.setSortingProtein();
+                }
+                else {
+                  model.setProteinSorting(element);
+                }
+              },
+          });
+
+        /* Show the view to bind the model */
+        sortingListView.show();
+      });
+
+      /* Load the html menu templates */
+      $.get("./src/html/familyColoringListTemplate.html", function (data) {
+        /* Add the elements to the list */
+        $(self._parentDom.node()).find("#family_coloring_list a").after(data);
+        let colorModel = new FilteringMenuModel({
+            items:['Side Chain Class', 'Side Chain Polarity', 'Frequency (Family Viewer)']
+          }),
+          colorView = new FilteringMenuView(colorModel, { 'list' : $(self._parentDom.node()).find('#family_coloring_ul') }),
+          colorController = new FilteringMenuController({
+            menu : "coloring",
+            models: { list: colorModel, connected : [self._model]},
+            view: colorView,
+            cb:
+              function(model, element) {
+                model.setProteinColoring(element);
+                //App.residueMappingUtility.createColorLegend("family");
+              }
+          });
+        /* Show the view to bind the model */
+        colorView.show();
+      });
+
+      /* Setup the help menu */
+      // $("#" + self._id + " #molecularViewerHelp").click(helpMenu);
+    };
+
+    self.setup_menu = function() {
+      /* Load the geometry list */
+      $.get("./src/html/familyMenuTemplate.html", function (data) {
+        $(self._parentDom.node()).find("div.x_title").append(data);
+        /* Setup the submenu */
+        self.initialize_menus();
+      });
+    };
+
     /* Bind the protein family listener */
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
@@ -473,6 +541,8 @@ const ProteinFamilyView = (function() {
     clear: function() {
       /* Remove all elements related to the trend image */
       this._parentDom.selectAll("*").remove();
+      // this._dom.find('.x_title *').remove();
+
       /*Reset the parent dom width/heights */
       this._parentDom.classed("trend-viewer", true)
           .classed("proteinFamilyViewer", false);
@@ -503,6 +573,10 @@ const ProteinFamilyView = (function() {
 
       /* Clear the canvas*/
       //d3Utils.clear_chart_dom(this._dom);
+
+      /* Setup the menu */
+      console.log("initialize");
+      this.setup_menu();
 
       /* Remove the black background */
       this._parentDom.classed("trend-viewer", false);

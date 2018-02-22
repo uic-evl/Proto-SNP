@@ -127,7 +127,7 @@ function TertiaryStructureView(model, element) {
       });
   };
 
-  /*Creates the geometry selection menu */
+  /*Creates the geometry/coloring selection menu */
   self.initialize_menus = function() {
     /* Load the html menu templates */
     $.get("./src/html/proteinGeometryListTemplate.html", function (data) {
@@ -365,13 +365,12 @@ TertiaryStructureView.prototype = {
     this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
 
     /* Load the geometry list */
-    $.get("./src/html/tertiaryViewerMenuTemplate.html", function (data) {
+    $.get("./src/html/tertiaryMenuTemplate.html", function (data) {
       self._dom.find("div.x_title").append(data);
       self.initialize_menus();
       /* Place the name of the protein above the viewer*/
       updateViewTitle(self._dom[0], protein_name);
       self.initialize_file_update(d3.select(self._dom[0]).select('#proteinName'));
-
     });
     /* Register the enter key to reset the selections of the view */
     //keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);

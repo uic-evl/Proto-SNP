@@ -38,6 +38,7 @@ const TertiaryStructureController = (function() {
       view.residueSelected.attach(function(sender, args) {
         sender._model.selectResidue(args);
       });
+
       view.residueDeselected.attach(function(sender, args) {
         sender._model.deselectResidue(args);
       });

@@ -10,7 +10,7 @@
 #popup-trigger-open, #popup-trigger-pdb {
     display: inline;
     position: relative;
-    background-color: #ecf0f1;
+    background-color: #f8f9fa;
 }
 
 #fileupload-open {
@@ -64,7 +64,8 @@ div.view {
     cursor: pointer;
     z-index: -1;
     color: dimgray;
-    /*background-color: #e7e7e7;*/
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
 }
 
 li > label {

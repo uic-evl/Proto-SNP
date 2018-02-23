@@ -113,10 +113,7 @@ const ProteinFamilyView = (function() {
     self.render_overview = function(x,y) {
       return new Promise(function(resolve, reject){
         /* Create the overview if the image runs off the page*/
-        // let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
-        //     overview_width = Math.round(self._dom.node().parentNode.clientWidth * self._overview_percentage) - margin,
-            /* The overview will be 1/10th of the view */
-            let overview = new Image();
+        let overview = new Image();
         /* Add the image to the canvas once it is loaded */
         overview.onload = function(){
           self.overview_context.drawImage(overview, x+self.x_offset, y+self.y_offset, self.overview_width, self.height);

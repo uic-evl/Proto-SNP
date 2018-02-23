@@ -36,6 +36,7 @@ const ProteinFamilyModel = (function() {
 
     self._proteinNames = null;
     self._parsedData = null;
+    self._fileName = "";
     self._mappings = {};
 
     self._max_frequencies = [];
@@ -132,7 +133,8 @@ const ProteinFamilyModel = (function() {
       },
 
     /* Setter for the names of the proteins from the family */
-    setFamily : function(data, type) {
+    setFamily : function(data, type, file_name) {
+      this._fileName = file_name;
       this._rawData = App.fileUtilities.parseAlignmentFile(data, type);
       map_trend_image_data(this._rawData).then(function(parsed_data) {
 
@@ -178,6 +180,7 @@ const ProteinFamilyModel = (function() {
 
       this._proteinNames = null;
       this._parsedData = null;
+      this._fileName = "";
 
       /* Update Events */
       this.selectedProteinChanged.clear();
@@ -200,6 +203,10 @@ const ProteinFamilyModel = (function() {
 
     getSequenceFrequencyAt: function(position) {
       return this._max_frequencies[position];
+    },
+
+    getFileName: function() {
+      return this._fileName;
     },
 
     getFamily: function() {

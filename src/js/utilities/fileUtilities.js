@@ -300,13 +300,15 @@ const FileUtilities = function(){
           .on('fileuploadadd', function (e, data) {
             // uploaded file
             let file = data.files[0],
-                extension = file.name.split('.').pop().toLowerCase();
+                name_parts = file.name.split('.'),
+                extension = name_parts.pop().toLowerCase(),
+                name = name_parts.pop().toLowerCase();
             // JS File reader to parse the uploaded file
             let reader = new FileReader();
             /* Callback to loading the file */
             reader.addEventListener("load", function () {
               /* Pass the file to be processed by the model */
-              cb(this.result, extension);
+              cb(this.result, extension, name);
             }, false);
             // parse the file as text
             reader.readAsText(file);

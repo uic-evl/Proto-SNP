@@ -7,6 +7,13 @@ const ProteinFamilyView = (function() {
   let PADDLE_SIZE = 6,
       MAX_PADDLE_SIZE = 10;
 
+  /* Render the title of the viewer */
+  function updateViewTitle(dom, title) {
+    let p = d3.select(dom).select('#familyName p');
+    /* Update the label */
+    p.text(_.toUpper(title));
+  }
+
   function ProteinFamilyView(model, element) {
     let self = this;
 
@@ -454,12 +461,13 @@ const ProteinFamilyView = (function() {
       // $("#" + self._id + " #molecularViewerHelp").click(helpMenu);
     };
 
-    self.setup_menu = function() {
+    self.setup_menu = function(alignment_name) {
       /* Load the geometry list */
       $.get("./src/html/familyMenuTemplate.html", function (data) {
         $(self._parentDom.node()).find("div.x_title").append(data);
         /* Setup the submenu */
         self.initialize_menus();
+        updateViewTitle(self._parentDom.node(), alignment_name);
       });
     };
 
@@ -467,9 +475,9 @@ const ProteinFamilyView = (function() {
     self._model.proteinFamilyAdded.attach(function(sender, msg){
       let family = msg.family,
           colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring(), "family");
+
       /* Initialize the trend image view*/
-      //let width =
-          self.initialize(msg);
+      self.initialize(msg);
 
       /* Load the tour if this is the first time a trend image is generated */
       let state = hopscotch.getState();
@@ -513,11 +521,11 @@ const ProteinFamilyView = (function() {
 
   ProteinFamilyView.prototype = {
 
-    file_loaded: function (data, extension) {
+    file_loaded: function (data, extension, name) {
         /* Remove the splash screen */
         this._parentDom.select('#trendSplash').remove();
         /* Update the model */
-        this.fileUploaded.notify({data: data, type: extension});
+        this.fileUploaded.notify({data: data, type: extension, name: name});
         /* enable the upload button*/
         return this.initialize_file_open(d3.select('#family_upload_li'));
       },
@@ -572,8 +580,7 @@ const ProteinFamilyView = (function() {
       //d3Utils.clear_chart_dom(this._dom);
 
       /* Setup the menu */
-      console.log("initialize");
-      this.setup_menu();
+      this.setup_menu(this._model.getFileName());
 
       /* Remove the black background */
       this._parentDom.classed("trend-viewer", false);

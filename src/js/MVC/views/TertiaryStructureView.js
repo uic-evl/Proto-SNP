@@ -21,8 +21,6 @@ const TertiaryStructureView = (function () {
   /* Render the title of the viewer */
   function updateViewTitle(dom, title) {
     let p = d3.select(dom).select('#proteinName p');
-    // let text = p.text();
-    // text.replace("(current)", _.toUpper(title));
     /* Update the label */
     p.text(_.toUpper(title));
   }

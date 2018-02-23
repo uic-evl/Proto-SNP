@@ -166,7 +166,7 @@ const ProteinFamilyController = (function() {
 
     /* On Alignment File Load */
     self._view.fileUploaded.attach(function(sender, args) {
-      sender._model.setFamily(args.data, args.type);
+      sender._model.setFamily(args.data, args.type, args.name);
     });
 
     /* On Alignment File Change */

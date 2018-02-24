@@ -30,6 +30,13 @@ const d3Utils = function () {
           .attr("transform", "translate(" + (options.x)?options.x:0 +","+ (options.y)?options.y:0 +")");
     },
 
+    set_chart_size(div, width, height) {
+      /* Set the width/height attributes of the canvas for webGL*/
+      d3.select(div)
+        .attr("width", width)
+        .attr("height", height);
+    },
+
     /* Simple d3 function to construct a line*/
     lineFunction : d3.line()
       .x(function (d) {

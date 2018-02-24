@@ -261,15 +261,16 @@ const ProteinFamilyView = (function() {
             position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
           }
         ],
-        // frequencyViewers : [
-        //   {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
-        //     block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: margin, width: self.width,
-        //     overview: self.overviewImage, offset_x:10},
-        //   {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
-        //     block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: margin, width: self.width,
-        //     overview: self.overviewImage, offset_x:10
-        //   }
-        // ]
+        frequencyViewers : [
+          {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
+            block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: 0, width: self.width,
+            overview: self.overviewImage, offset_x:0
+          },
+          {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
+            block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: 0, width: self.width,
+            overview: self.overviewImage, offset_x:0
+          }
+        ]
       };
     }
 
@@ -309,13 +310,6 @@ const ProteinFamilyView = (function() {
       self.y_axis_length = self._model.getProteinNames().length;
     }
 
-    function set_chart_attributes(div, width, height) {
-      /* Set the width/height attributes of the canvas for webGL*/
-      d3.select(div)
-          .attr("width", width)
-          .attr("height", height);
-    }
-
     /* Setter for the chart dimensions */
     function set_chart_dimensions() {
 
@@ -351,10 +345,10 @@ const ProteinFamilyView = (function() {
           self.overview_width = Math.floor(self.overview_panel_width / 2.0);
 
           /* Set the canvases' width and height */
-          set_chart_attributes("#trendCanvas", self.width, self.height);
-          set_chart_attributes("#overviewCanvas", self.overview_panel_width, self.height);
-          set_chart_attributes("#trendSVG", self.width, self.height);
-          set_chart_attributes("#overviewSVG", self.overview_panel_width, self.height);
+          d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
+          d3Utils.set_chart_size("#overviewCanvas", self.overview_panel_width, self.height);
+          d3Utils.set_chart_size("#trendSVG", self.width, self.height);
+          d3Utils.set_chart_size("#overviewSVG", self.overview_panel_width, self.height);
 
           /* Store the size variables for rendering */
           set_glyph_size(residue_width);
@@ -379,8 +373,8 @@ const ProteinFamilyView = (function() {
           self.width = viewer_width;
           self.height = protein_height;
 
-          set_chart_attributes("#trendCanvas", self.width, self.height);
-          set_chart_attributes("#trendSVG", self.width, self.height);
+          d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
+          d3Utils.set_chart_size("#trendSVG", self.width, self.height);
 
           /* Store the size variables for rendering */
           set_glyph_size(residue_width);
@@ -482,11 +476,8 @@ const ProteinFamilyView = (function() {
                     // /* Notify the listens that the overview has been rendered and render the brush  */
                     self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
                     /* Render the context line to show to what the brush relates */
-
                     let contextPoints = [
-                      [ {x:self.x_offset/2.0, y:0},{x:self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
-                     // [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
-                     // [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{x: self.width, y:self.height+self.y_offset*2.0-1} ],
+                      [ {x:self.x_offset/2.0, y:0},{x:self.x_offset/2.0, y:self.height+self.y_offset*2.0}]
                     ];
                     d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints);
                     d3Utils.render_context_bars(d3.select(self.overviewSVG.node().parentNode),

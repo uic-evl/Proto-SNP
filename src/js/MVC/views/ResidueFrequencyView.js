@@ -261,6 +261,7 @@ const ResidueFrequencyView = (function() {
       self._svg.selectAll(".frequencies")
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
     };
+
       /* Initialize the viewer */
     self.initialize(options);
   }
@@ -273,8 +274,8 @@ const ResidueFrequencyView = (function() {
       this._parent.classed("hidden", false);
       /* Set the DOM's width/height so it centers in it's parent */
       this._parent
-          .style("width", options.width)
-          .style("margin-left", options.margin)
+          // .style("width", options.width)
+          // .style("margin-left", options.margin)
           .style("height", function(){
             return (options.overviewImage) ? this.clientHeight : 75;
           });
@@ -294,7 +295,10 @@ const ResidueFrequencyView = (function() {
 
       /* Clear the dom element */
       d3Utils.clear_chart_dom(this._dom);
-      this._svg = d3Utils.create_chart_svg(this._dom, {width:this.width, height:this.height});
+
+      /* Initialize the svg */
+      this._svg = this._dom.select("svg");
+      d3Utils.set_chart_size(this._svg.node(), this.width, this.height);
 
       /* Initialize tooltip */
       this.tip = d3.tip()
@@ -322,7 +326,7 @@ const ResidueFrequencyView = (function() {
           [ {x: width_offset-1,    y: y_position},    { x: width_offset-1, y:y_position + this._barOffset}]
       ];
 
-      d3Utils.render_context_lines(this._svg, contextPoints);
+      //d3Utils.render_context_lines(this._svg, contextPoints);
     },
 
     render : function(render_options) {
@@ -340,13 +344,13 @@ const ResidueFrequencyView = (function() {
       /* Update the labels */
       this.update(render_options.residues, render_options.range);
       /* Render the context bars */
-      d3Utils.render_context_bars(this._svg,
-        {
-          x: (this.semantic==="left") ? render_options.brush_pos : render_options.brush_pos-this.width,
-          y: 1,
-          height: 10,
-          width:1
-        });
+      // d3Utils.render_context_bars(this._svg,
+      //   {
+      //     x: (this.semantic==="left") ? render_options.brush_pos : render_options.brush_pos-this.width,
+      //     y: 1,
+      //     height: 10,
+      //     width:1
+      //   });
       /* Set the visibility flag to true*/
       this._visible = true;
     },

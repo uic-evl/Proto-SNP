@@ -94,7 +94,7 @@ const ProteinFamilyController = (function() {
       $('#residueSummaryView').load("./src/html/frequencyViewer/frequencyViewerWithOverlayTemplate.html", function () {
         /* Get information about the trend image */
         let numberOfRows  = self._view.getYDimensionSize(),
-          currentProtein  = self._model.getSelectedProtein();
+            currentProtein  = self._model.getSelectedProtein();
         /* Create the frequency viewers for the family*/
         residueViewers.forEach(function(freqSpec){
           /* Create the frequency viewers */
@@ -190,7 +190,7 @@ const ProteinFamilyController = (function() {
       /* Create new brush views as requested by the family */
       createFamilyPaddles(args.brushes);
       /* Create the new residue views */
-      //createResidueViewers(args.frequencyViewers);
+      createResidueViewers(args.frequencyViewers);
       /* Inform the view that the brushes are created */
       self._view.attachBrushes(_.values(self._brushViews), self._view.brushSVG);
     });

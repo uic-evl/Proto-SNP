@@ -91,7 +91,7 @@ const ProteinFamilyController = (function() {
     }
 
     function createResidueViewers(residueViewers) {
-      $('#residueSummaryView').load("./src/html/frequencyViewerTemplate.html", function () {
+      $('#residueSummaryView').load("./src/html/frequencyViewer/frequencyViewerWithOverlayTemplate.html", function () {
         /* Get information about the trend image */
         let numberOfRows  = self._view.getYDimensionSize(),
           currentProtein  = self._model.getSelectedProtein();

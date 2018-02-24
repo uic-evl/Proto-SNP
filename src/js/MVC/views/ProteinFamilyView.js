@@ -168,7 +168,7 @@ const ProteinFamilyView = (function() {
     /*Creates the geometry selection menu */
     function initialize_menus() {
       /* Load the html menu templates */
-      $.get("./src/html/familySortingListTemplate.html", function (data) {
+      $.get("./src/html/familyViewer/familySortingListTemplate.html", function (data) {
 
         /* Add the elements to the list */
         $(self._parentDom.node()).find("#family_sorting_list a").after(data);
@@ -198,7 +198,7 @@ const ProteinFamilyView = (function() {
       });
 
       /* Load the html menu templates */
-      $.get("./src/html/familyColoringListTemplate.html", function (data) {
+      $.get("./src/html/familyViewer/familyColoringListTemplate.html", function (data) {
         /* Add the elements to the list */
         $(self._parentDom.node()).find("#family_coloring_list a").after(data);
         let colorModel = new FilteringMenuModel({
@@ -331,7 +331,7 @@ const ProteinFamilyView = (function() {
       /* The test to see if we need an overview */
       if (protein_height > new_height) {
 
-        $.get("./src/html/familyViewerWithOverviewTemplate.html", function (data) {
+        $.get("./src/html/familyViewer/familyViewerWithOverviewTemplate.html", function (data) {
           $("#" + self._id).append(data);
 
           self.overviewImage = true;
@@ -373,7 +373,7 @@ const ProteinFamilyView = (function() {
       }
 
       else {
-        $.get("./src/html/familyViewerTemplate.html", function (data) {
+        $.get("./src/html/familyViewer/familyViewerTemplate.html", function (data) {
           $("#" + self._id).append(data);
 
           self.width = viewer_width;
@@ -443,7 +443,7 @@ const ProteinFamilyView = (function() {
 
     function load_menu_template(alignment_name) {
       /* Load the geometry list */
-      $.get("./src/html/familyMenuTemplate.html", function (data) {
+      $.get("./src/html/familyViewer/familyMenuTemplate.html", function (data) {
         $(self._parentDom.node()).find("div.x_title").append(data);
         /* Setup the submenu */
         initialize_menus();
@@ -511,7 +511,7 @@ const ProteinFamilyView = (function() {
       let view = this;
       /* load the splash screen if there is no model data*/
       if (!view._model.isEmpty()) {
-        $('#trendSplash').load("./src/html/familySplashTemplate.html", function () {
+        $('#trendSplash').load("./src/html/familyViewer/familySplashTemplate.html", function () {
           let splash = $(this);
           /* Setup the upload callback for files */
           App.fileUtilities.familyUploadSetup(splash.find("#fileupload-family"), view.file_loaded.bind(view))

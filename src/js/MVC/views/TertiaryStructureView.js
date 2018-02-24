@@ -127,7 +127,7 @@ function TertiaryStructureView(model, element) {
   /*Creates the geometry/coloring selection menu */
   self.initialize_menus = function() {
     /* Load the html menu templates */
-    $.get("./src/html/proteinGeometryListTemplate.html", function (data) {
+    $.get("./src/html/tertiaryViewer/proteinGeometryListTemplate.html", function (data) {
       /* Add the elements to the list */
       self._dom.find("#geometry_list a").after(data);
       let geometryListModel = new FilteringMenuModel({
@@ -151,7 +151,7 @@ function TertiaryStructureView(model, element) {
     });
 
     /* Load the html menu templates */
-    $.get("./src/html/proteinColoringListTemplate.html", function (data) {
+    $.get("./src/html/tertiaryViewer/proteinColoringListTemplate.html", function (data) {
       /* Add the elements to the list */
       self._dom.find("#protein_coloring_list a").after(data);
       let coloringListModel = new FilteringMenuModel({
@@ -257,7 +257,7 @@ TertiaryStructureView.prototype = {
     // /* load the splash screen if there is no model data*/
     if (!view._model.isEmpty()) {
       /* Load the splash template */
-      this._dom.find('#splash').load("./src/html/tertiarySplashTemplate.html", function () {
+      this._dom.find('#splash').load("./src/html/tertiaryViewer/tertiarySplashTemplate.html", function () {
         /* Store a reference to the splash DOM*/
         let splash = $(this),
           splash_trigger = splash.find("#popup-trigger-molecule");
@@ -362,7 +362,7 @@ TertiaryStructureView.prototype = {
     this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
 
     /* Load the geometry list */
-    $.get("./src/html/tertiaryMenuTemplate.html", function (data) {
+    $.get("./src/html/tertiaryViewer/tertiaryMenuTemplate.html", function (data) {
       self._dom.find("div.x_title").append(data);
       self.initialize_menus();
       /* Place the name of the protein above the viewer*/

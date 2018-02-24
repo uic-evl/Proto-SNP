@@ -605,26 +605,26 @@ const ProteinFamilyView = (function() {
           .then(function (image) {
             view.canvasContext.clearRect(0, view.y_offset, view.width, view.height);
             view.render(image, options.x, options.y)
-                .then(view.render_overview.bind(view, 0, 0))
+                .then(view.render_overview.bind(view,0,0))
                 .then(function () {
                   /* Set the y scale with the protein updated name order */
-                  view.set_y_scale(_.slice(view._model.getProteinNames(), 0, view.ppv))
+                  set_y_scale(_.slice(view._model.getProteinNames(), 0, view.ppv))
                 });
           });
     };
 
     self.recolor = function (options) {
       let view = this;
-      view.initialize_back_buffer(view._model.getFamily().data, options.color)
+      initialize_back_buffer(view._model.getFamily().data, options.color)
           .then(function (image) {
             view.canvasContext.clearRect(0, view.y_offset, view.width, view.height);
+            view.overview_context.clearRect(0,  0, view.overview_panel_width, view.height);
             view.render(image, options.x, options.y)
-                .then(view.render_overview.bind(view));
+                .then(view.render_overview.bind(view,0,0));
           });
     };
 
     self.attachBrushes = function (brushViews, svg) {
-      let view = this;
       /* Attach the brushes to the svg */
       brushViews.forEach(function (brushView) {
         let brush = brushView.getBrush(),

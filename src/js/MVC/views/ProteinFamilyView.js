@@ -106,8 +106,8 @@ const ProteinFamilyView = (function() {
 
       /* Setup the upload callback for files */
       App.fileUtilities.familyUploadSetup(d3.select("#fileupload-open-family").node(),
-          function (data, extension) {
-            self.fileUpdated.notify({data: data, type: extension});
+          function (data, extension, file_name) {
+            self.fileUpdated.notify({data: data, type: extension, name: file_name});
           })
           .done(function () {
             input.style.width = parent.clientWidth;

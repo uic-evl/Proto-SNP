@@ -324,7 +324,7 @@ const BrushView = (function() {
           /* reposition the x of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
               .attr("x", (x+width))
-              .attr('width', parseInt(brush_right.attr("x")) - (x+width));
+              .attr('width', ()=>{ let w =parseInt(brush_right.attr("x")) - (x+width); return (w > -1) ? w : 0 });
 
         }
         else if(data.semantic === "right"){
@@ -340,11 +340,11 @@ const BrushView = (function() {
           /* Reposition the x of the right vertical overlays */
           d3.selectAll('rect.right_vertical_covers')
             .attr('x', x + width)
-            .attr('width', overview_width - (x + width));
+            .attr('width', ()=>{ let w = overview_width - (x + width);  return (w > -1) ? w : 0 });
 
           /* reposition the width of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
-              .attr('width', x - (parseInt(brush_left.attr("x"))+width_left) );
+              .attr('width', ()=>{ let w = x - (parseInt(brush_left.attr("x"))+width_left); return (w > -1) ? w : 0 });
         }
 
       }

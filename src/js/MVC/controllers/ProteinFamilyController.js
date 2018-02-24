@@ -88,13 +88,9 @@ const ProteinFamilyController = (function() {
             }
           }
         });
-
         /* Add the brush to the list of views */
         self._brushViews[brushSpec.semantic] = brushView;
       });
-
-      console.log("done");
-
     }
 
     function createResidueViewers(residueViewers) {
@@ -176,7 +172,7 @@ const ProteinFamilyController = (function() {
       self._view.clear();
 
       /* Clear the brushes and frequency view */
-      d3.select("#residueSummaryView").selectAll("*").remove();
+      //d3.select("#residueSummaryView").selectAll("*").remove();
       d3.selectAll('.d3-tip').remove();
 
       /* Remove the context menu from the trend image */
@@ -189,7 +185,7 @@ const ProteinFamilyController = (function() {
       self._brushViews = {};
 
       /* Set the family to being initialization */
-      sender._model.setFamily(args.data, args.type);
+      sender._model.setFamily(args.data, args.type, args.name);
     });
 
     /* On Family View Rendered */

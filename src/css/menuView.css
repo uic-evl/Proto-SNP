@@ -7,14 +7,24 @@
     transform: translate(0,50%);
 }
 
-#popup-trigger-open, #popup-trigger-pdb {
+#popup-trigger-open, #popup-trigger-pdb, #popup-trigger-alignment {
     display: inline;
     position: relative;
     background-color: #f8f9fa;
 }
 
-#fileupload-open {
+.load-alignment {
+    font-size:inherit !important;
+}
+
+#fileupload-open, #fileupload-open-family {
     cursor: pointer;
+}
+
+#fileupload-open-family {
+    font-size: inherit !important;
+    transform: translateX(-90%) !important;
+    left: 0;
 }
 
 .geometry_dropdown, .coloring_dropdown {
@@ -58,7 +68,7 @@ div.view {
     margin: 0;
 }
 
-#settingsOpen, .settingsOpenPdb, .molecularHelp {
+#settingsOpen, .settingsOpenPdb, .molecularHelp, .settingsOpenFamily {
     font-size: 16px;
     padding: 0 0 0 5px;
     cursor: pointer;

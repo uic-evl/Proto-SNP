@@ -82,8 +82,7 @@ function TertiaryStructureView(model, element) {
   /* Reset the splash page to launch on 'folder icon' click */
   self.initialize_file_update = function(dom) {
     /* Display the upload icon by the viewer name */
-    dom
-      .select(".settingsOpenPDB").classed("hidden", false);
+    dom.select(".settingsOpenPDB").classed("hidden", false);
 
     /* Setup the splash screen activation */
     $(dom.node()).click(function(){

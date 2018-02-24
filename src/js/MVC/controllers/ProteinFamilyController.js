@@ -29,11 +29,8 @@ const ProteinFamilyController = (function() {
         selection[1] = Math.round(selection[1]);
         /* Render the context bar that links the views*/
         let y = msg.selection[0] + (msg.selection[1]- msg.selection[0])/2.0;
-        // d3Utils.render_context_bars(overviewSpec.brushSpec.parent,
-        //     {
-        //       x:self._view.getWidth()+self._view.getXOffset()/4.0, y: y,
-        //       height: 1, width:self._view.getXOffset()/2.0
-        //     });
+        d3Utils.render_context_bars(overviewSpec.brushSpec.parent,
+            {x: self._view.getXOffset()/4.0, y: y, height: 1, width: self._view.getXOffset()/2.0});
         /* Render the new view*/
         self._view.render(self._view._familyImage, 0, selection[0]*self._view.getGlyphSize());
         /* Update the selection */

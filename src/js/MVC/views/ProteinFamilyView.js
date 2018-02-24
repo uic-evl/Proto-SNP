@@ -156,11 +156,7 @@ const ProteinFamilyView = (function() {
 
     function initialize_screen_context() {
       /* Add the canvas and brush svg to the trend image dom*/
-      self.canvasContext = d3.select("#trendCanvas").node()
-      // d3Utils.create_chart_canvas(self._dom,
-      // {width: Math.ceil(width + self.x_offset)+1, height:self.height+ 2.0*self.y_offset,
-      //   id:"trendCanvas", class:"trendImage"})
-          .getContext('2d');
+      self.canvasContext = d3.select("#trendCanvas").node().getContext('2d');
 
       /* Set context properties to disable image "smoothing" */
       self.canvasContext.imageSmoothingQuality = "high";
@@ -238,10 +234,6 @@ const ProteinFamilyView = (function() {
       let verticalPaddleSize = PADDLE_SIZE,
           horizontalPaddleSize = 1,
           maxPaddleSize = MAX_PADDLE_SIZE;
-
-      /* Get the calculated margin of the family viewer to align the frequency viewer */
-      // let margin = parseInt(window.getComputedStyle(self._dom.node())["margin-left"]);
-
       return {
         brushes: [
           {
@@ -283,9 +275,7 @@ const ProteinFamilyView = (function() {
 
     /* Builds the brush that lies on top of the overview */
     function build_overview_brush(width, height) {
-      /* Get the calculated margin of the family viewer to align the frequency viewer */
-      let //margin = parseInt(window.getComputedStyle(self._dom.node())["margin-right"]),
-          count = self._model.getProteinCount(),
+      let count = self._model.getProteinCount(),
           block_size = height / count,
           scale = d3.scaleLinear()
               .domain([0, count])
@@ -305,7 +295,7 @@ const ProteinFamilyView = (function() {
         extent: [[self.x_offset, self.y_offset], [self.overview_width + self.x_offset, height + self.y_offset]],
         position: [self.y_offset, self.brushPaddleSize + self.y_offset],
         proteinsPerView: self.ppv,
-        parent: d3.select(self.brushSVG.node().parentNode)
+        parent: d3.select(self.overviewSVG.node().parentNode)
       }
     }
 
@@ -491,16 +481,16 @@ const ProteinFamilyView = (function() {
                   .then(function () {
                     // /* Notify the listens that the overview has been rendered and render the brush  */
                     self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
-                    // /* Render the context line to show to what the brush relates */
-                    //
-                    // let contextPoints = [
-                    //   [ {x:self.width+self.x_offset/2.0, y:0},{x:self.width+self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
-                    //   [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
-                    //   [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{ x: self.width, y:self.height+self.y_offset*2.0-1} ],
-                    // ];
-                    // d3Utils.render_context_lines(d3.select(self.brushSVG.node().parentNode), contextPoints);
-                    // d3Utils.render_context_bars(d3.select(self.brushSVG.node().parentNode),
-                    //     {x:self.width+self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
+                    /* Render the context line to show to what the brush relates */
+
+                    let contextPoints = [
+                      [ {x:self.x_offset/2.0, y:0},{x:self.x_offset/2.0, y:self.height+self.y_offset*2.0}],
+                     // [ {x:self.width+self.x_offset/2.0-1, y: 1}, { x: self.width, y:1} ],
+                     // [ {x:self.width+self.x_offset/2.0-1, y: self.height+self.y_offset*2.0-1},{x: self.width, y:self.height+self.y_offset*2.0-1} ],
+                    ];
+                    d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints);
+                    d3Utils.render_context_bars(d3.select(self.overviewSVG.node().parentNode),
+                        {x:self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
                   });
             }
             /* Enable the coloring menu */

@@ -98,6 +98,7 @@ const BrushView = (function() {
       }
       else if(options.orientation === App.VERTICAL_PADDLE){
         // Round the two event extents to the nearest row
+
         d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0]/block_size)*block_size);
         d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1]/block_size)*block_size);
 
@@ -271,16 +272,6 @@ const BrushView = (function() {
     redraw: function(paddle, data) {
       let brush, x, y, width, height;
 
-      let overview_height = parseInt(d3.select('g.horizontal rect.overlay').attr('height'));
-          brush = d3.select('g.horizontal rect.selection');
-          y = parseInt(brush.attr('y'));
-          height = parseInt(brush.attr('height'));
-
-      /* Resize the vertical covers */
-      d3.selectAll("rect.vertical_covers")
-        .attr("y", function(d,i){ return ( !((i+1)%2) ?(y+height):d.y)})
-        .attr("height", function(d,i) { return !((i+1)%2) ? overview_height-(y+height-d.y) : y-d.y });
-
       if(paddle === App.OVERVIEW_PADDLE) {
         let overview_height = parseInt(d3.select('g.horizontal rect.overlay').attr('height'));
         brush = d3.select('g.overview rect.selection');
@@ -295,19 +286,28 @@ const BrushView = (function() {
           });
       }
       else if(paddle === App.HORIZONTAL_PADDLE) {
-        /* Update the Horizontal brush */
+        let overview_height = parseInt(d3.select('g.horizontal rect.overlay').attr('height'));
+        brush = d3.select('g.horizontal rect.selection');
+        y = parseInt(brush.attr('y'));
+        height = parseInt(brush.attr('height'));
+
+        /* Resize the vertical covers */
+        d3.selectAll("rect.vertical_covers")
+            .attr("y", function(d,i){ return ( !((i+1)%2) ?(y+height):d.y)})
+            .attr("height", function(d,i) {
+              return !((i+1)%2) ? overview_height-(y+height) : y-d.y
+            });
 
         /* Resize the horizontal covers */
         d3.selectAll("rect.horizontal_covers")
           .attr("y", function(d,i){
             return ((i)?(y+height):d.y)})
           .attr("height", function(d,i) {
-            return (i) ? overview_height-(y+height-d.y) : y-d.y;
+            return (i) ? overview_height-(y+height) : y-d.y;
           });
       }
       else if(paddle === App.VERTICAL_PADDLE) {
         let overview_width = parseInt(d3.select('g.horizontal rect.overlay').attr('width'));
-
         /* Get the brush that moved */
         if(data.semantic === "left"){
           let brush_right = d3.select('g.vertical-right rect.selection');
@@ -320,7 +320,6 @@ const BrushView = (function() {
           /* Reposition the x of the left vertical overlays */
           d3.selectAll('rect.left_vertical_covers')
               .attr('width', x);
-
           /* reposition the x of the horizontal covers */
           d3.selectAll("rect.horizontal_covers")
               .attr("x", (x+width))

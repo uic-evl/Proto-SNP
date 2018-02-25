@@ -144,9 +144,7 @@ const ProteinFamilyView = (function() {
     }
 
     function initialize_overview_canvas() {
-
       self.overview_context = d3.select("#overviewCanvas").node().getContext('2d');
-
       /* Set context properties to disable image "smoothing" */
       self.overview_context.imageSmoothingQuality = "high";
       self.overview_context.webkitImageSmoothingEnabled = false;
@@ -157,7 +155,6 @@ const ProteinFamilyView = (function() {
     function initialize_screen_context() {
       /* Add the canvas and brush svg to the trend image dom*/
       self.canvasContext = d3.select("#trendCanvas").node().getContext('2d');
-
       /* Set context properties to disable image "smoothing" */
       self.canvasContext.imageSmoothingQuality = "high";
       self.canvasContext.webkitImageSmoothingEnabled = false;
@@ -335,10 +332,9 @@ const ProteinFamilyView = (function() {
           self.width = self._dom.node().clientWidth;
           new_height = self._dom.node().clientHeight;
 
-          residue_width = Math.floor(self.width / self.x_axis_length);
+          residue_width = self.width / self.x_axis_length;
           proteins_per_view = Math.floor(new_height / residue_width);
-          self.height = proteins_per_view * residue_width;
-
+          self.height = Math.floor(proteins_per_view * residue_width);
 
           /* Set the overview canvas width and height */
           self.overview_panel_width = Math.floor(d3.select("#overviewCanvas").node().parentNode.clientWidth);
@@ -621,6 +617,7 @@ const ProteinFamilyView = (function() {
       /* Render the left brush to initialize the correct overlays */
       if (brushViews.length > 1) {
         brushViews[1].redraw(App.VERTICAL_PADDLE, {semantic: brushViews[1]._semantic});
+        brushViews[0].redraw(App.HORIZONTAL_PADDLE, {semantic: brushViews[0]._semantic});
       }
 
     };

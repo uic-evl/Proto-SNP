@@ -65,7 +65,7 @@ const ProteinFamilyController = (function() {
             /* Invert the d3 selection to determine the horizontal mapping */
             let selection = msg.selection,
                 middle_selection = parseInt((selection[0] + selection[1])/2.0),
-                modelSelection = self._view.getYAxisScale().invert(middle_selection);
+                modelSelection = self._view.getYAxisScale().invert(_.clamp(middle_selection,0,Math.round(selection[1])));
             /* Set the current selection in the model*/
             self._model.setSelectedProtein(modelSelection);
           }
@@ -75,8 +75,8 @@ const ProteinFamilyController = (function() {
             let selection = msg.selection,
                 currentSelection = selection.map(self._view.getXAxisScale().invert);
             // (It's sad that I have to do this -- Floating pt errors)
-            currentSelection[0] = parseInt(Math.round(currentSelection[0]));
-            currentSelection[1] = parseInt(Math.round(currentSelection[1]));
+            currentSelection[0] = parseInt(Math.ceil(currentSelection[0]));
+            currentSelection[1] = parseInt(Math.ceil(currentSelection[1]));
 
             /* Set the current selection in the model*/
             let previousSelection = self._model.getSelectedResidues(options.semantic).selection;
@@ -103,9 +103,14 @@ const ProteinFamilyController = (function() {
           self._frequencyViews[freqSpec.semantic] = freqView;
           /* Render the viewers depending on the brush's position */
           let brushPos = self._brushViews[freqSpec.semantic].getInitialPosition(),
-            selection = _.map(brushPos, (o)=>{ return parseInt(o/freqSpec.block_size); }),
-            maxFrequencies  = self._model.getMaxSequenceFrequenciesFromRange(selection),
-            frequencies  = self._model.getSequenceFrequenciesFromRange(selection);
+              selection = brushPos.map(self._view.getXAxisScale().invert);
+
+          // (It's sad that I have to do this -- Floating pt errors)
+          selection[0] = parseInt(Math.ceil(selection[0]));
+          selection[1] = parseInt(Math.ceil(selection[1]));
+
+          let maxFrequencies  = self._model.getMaxSequenceFrequenciesFromRange(selection),
+              frequencies  = self._model.getSequenceFrequenciesFromRange(selection);
           /* Set the initial selections in the model */
           self._model.setSelectedResidues(freqSpec.semantic, selection);
           /*Render the view */

@@ -326,7 +326,7 @@ const ResidueFrequencyView = (function() {
           [ {x: width_offset-1,    y: y_position},    { x: width_offset-1, y:y_position + this._barOffset}]
       ];
 
-      //d3Utils.render_context_lines(this._svg, contextPoints);
+      d3Utils.render_context_lines(this._svg, contextPoints);
     },
 
     render : function(render_options) {
@@ -344,13 +344,12 @@ const ResidueFrequencyView = (function() {
       /* Update the labels */
       this.update(render_options.residues, render_options.range);
       /* Render the context bars */
-      // d3Utils.render_context_bars(this._svg,
-      //   {
-      //     x: (this.semantic==="left") ? render_options.brush_pos : render_options.brush_pos-this.width,
-      //     y: 1,
-      //     height: 10,
-      //     width:1
-      //   });
+      d3Utils.render_context_bars(this._svg,
+        {
+          x: (this.semantic==="left") ? render_options.brush_pos : render_options.brush_pos-this.width,
+          y: 1,
+          height: 10, width:1
+        });
       /* Set the visibility flag to true*/
       this._visible = true;
     },

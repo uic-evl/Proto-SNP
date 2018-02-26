@@ -114,5 +114,4 @@ var App = App || {};
 
   /* start the application once the DOM is ready */
   document.addEventListener('DOMContentLoaded', init);
-
 })();

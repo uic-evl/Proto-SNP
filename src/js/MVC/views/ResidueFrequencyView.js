@@ -169,13 +169,10 @@ const ResidueFrequencyView = (function() {
           .attr("class", function(d,i){return "freq_bars r" + i})
           .attr("width", self.glyph_width)
           .attr("height", self.bar_height)
-          .attr('y', function(d) { return self.y_offset; })
-          .attr('x', function(d, i) { return self.xScale(i) })
+          .attr('y', ()=> { return self.y_offset; })
+          .attr('x', (d, i)=>{ return self.xScale(i) })
           .on('mouseover', createStackedBarChart)
           .on('mouseout', this.tip.hide)
-          .on('click', function(d,i,a) {
-            console.log(d);
-          })
           .style("fill", "white");
 
       /* Remove the unneeded bars */
@@ -200,7 +197,7 @@ const ResidueFrequencyView = (function() {
           .on('mouseout', this.tip.hide)
           .on('click', function(d,i,a) {
             let protein = self._model.getSelectedProtein();
-            let occ = App.textUtilities.occurrences(protein.sequence.join(), d[0]);
+            App.textUtilities.occurrences(protein.sequence.join(), d[0]);
           })
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
       ;
@@ -274,10 +271,8 @@ const ResidueFrequencyView = (function() {
       this._parent.classed("hidden", false);
       /* Set the DOM's width/height so it centers in it's parent */
       this._parent
-          // .style("width", options.width)
-          // .style("margin-left", options.margin)
           .style("height", function(){
-            return (options.overviewImage) ? this.clientHeight : 75;
+            return (options.overviewImage) ? this.clientHeight : options.default_height;
           });
 
       this.width   = options.width / 2.0;

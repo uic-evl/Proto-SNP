@@ -270,9 +270,11 @@ const ProteinFamilyView = (function() {
     }
 
     function build_brushes_and_viewers() {
+
       let verticalPaddleSize = PADDLE_SIZE,
           horizontalPaddleSize = 1,
           maxPaddleSize = MAX_PADDLE_SIZE;
+
       return {
         brushes: [
           {
@@ -283,9 +285,7 @@ const ProteinFamilyView = (function() {
             block_size: self.residue_glyph_size,
             position: [self.y_offset, self.residue_glyph_size + self.y_offset],
             semantic: "horizontal",
-            tooltip: function (d) {
-              return self._model.getSelectedProtein().name;
-            }
+            tooltip: () => { return self._model.getSelectedProtein().name; }
           },
           {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
@@ -303,11 +303,11 @@ const ProteinFamilyView = (function() {
         frequencyViewers : [
           {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
             block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: 0, width: self.width,
-            overview: self.overviewImage, offset_x:0
+            overview: self.overviewImage, offset_x:0, default_height : 75
           },
           {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
             block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: 0, width: self.width,
-            overview: self.overviewImage, offset_x:0
+            overview: self.overviewImage, offset_x:0, default_height : 75
           }
         ]
       };
@@ -540,9 +540,6 @@ const ProteinFamilyView = (function() {
       set_chart_dimensions();
 
       setup_backbuffer_context();
-
-      /* Clear the canvas*/
-      //d3Utils.clear_chart_dom(this._dom);
 
       /* Setup the menu */
       load_menu_template(this._model.getFileName());

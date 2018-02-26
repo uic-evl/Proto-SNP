@@ -84,7 +84,7 @@ var App = App || {};
     views = [proteinFamilyController, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
 
     let launchModal = function() {
-      $('#startupModal').load("./src/html/modals/startupModal.html", function(){
+      $('#startupModalDiv').load("./src/html/modals/startupModal.html", function(){
 
         /* Launch the initial data modal */
         $("#initialModal").modal().on('shown.bs.modal', function (e) {
@@ -130,7 +130,7 @@ var App = App || {};
       });
     };
 
-    checkResolution(launchModal);
+    //checkResolution(launchModal);
 
     /* Show the tertiary viewers */
     leftTertiaryStructureView.show();
@@ -145,6 +145,10 @@ var App = App || {};
     $(window).resize(function(){
       waitForFinalEvent(resize, 100, "Resize complete")
     });
+
+    /* Register the about modal */
+    $('#aboutModalDiv').load("./src/html/modals/aboutModal.html");
+
   }
 
   /* start the application once the DOM is ready */

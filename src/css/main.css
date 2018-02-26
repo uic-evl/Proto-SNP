@@ -38,6 +38,10 @@ body {
     color: white;
 }
 
+#about_name {
+    font-weight:bold;
+}
+
 .black-background {
     background-color: black;
 }

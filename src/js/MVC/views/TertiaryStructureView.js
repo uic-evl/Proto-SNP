@@ -327,11 +327,11 @@ TertiaryStructureView.prototype = {
     /* Set the options for the PV viewer*/
     let options = {
       antialias: true, outline: false,
-      quality : 'low',
+      quality : 'medium',
       near: 0.1,
       background: "black",
-      width : parseInt(d3.select(dom).style('width')),
-      height : parseInt(d3.select(dom).style('height')),
+      width : 'auto',//parseInt(d3.select(dom).style('width')),
+      height : 'auto',//parseInt(d3.select(dom).style('height')),
       selectionColor: "#984ea3"
     };
     /* insert the molecularViewer under the DOM element */
@@ -340,7 +340,7 @@ TertiaryStructureView.prototype = {
     this.linkInteractions();
 
     /* Set the canvas' position to absolute so we can overlay */
-    $dom.find('canvas')
+    $dom.find('canvas').first()
         .addClass('tertiaryViewer');
 
     /* Setup the event callbacks */
@@ -351,6 +351,7 @@ TertiaryStructureView.prototype = {
     let axisDOM = document.createElement('div'),
         width = options.width/4.0,
         height = options.height/4.0;
+
     /* Set the axis' attributes */
     axisDOM.className = 'axisViewer';
     axisDOM.style.height = height;
@@ -391,6 +392,13 @@ TertiaryStructureView.prototype = {
       geometry.colorBy(colorProteinBy.call(this, colorMap));
       /* Redraw */
       viewer.requestRedraw();
+    }
+  },
+
+  resize : function() {
+    if(this._model.isEmpty()) {
+      /* Update the canvas width/height */
+      this.pvViewer.fitParent();
     }
   }
 };

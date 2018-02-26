@@ -353,6 +353,10 @@ const ResidueFrequencyView = (function() {
       /* Set the visibility flag to true*/
       this._visible = true;
     },
+
+    resize : function() {
+
+    }
   };
   return ResidueFrequencyView;
 })();

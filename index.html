@@ -192,13 +192,11 @@
     <!-- 3D Molecule Viewers -->
     <div class="molecularViewersRow row no-gutters">
         <div class="col-10">
-            <div id="molecularViewerTemplate" class="row no-gutters" style="width:100%" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
+            <div id="molecularViewerTemplate" class="row w-100 no-gutters" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
             <!-- Tertiary Viewer -->
             <script type="text/html" id="molecularViewers" >
                 <div class="col-6" data-bind="attr: {id: $data._id}">
-
                     <div class="x_title view absolute tertiary_viewer_width"></div>
-
                     <div id="pvDiv" class="molecular-viewer">
                         <div id="splash"></div>
                     </div>

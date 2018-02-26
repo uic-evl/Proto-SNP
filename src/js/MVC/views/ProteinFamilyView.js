@@ -602,6 +602,10 @@ const ProteinFamilyView = (function() {
           });
     };
 
+    self.resize = function () {
+
+    };
+
     self.attachBrushes = function (brushViews, svg) {
       /* Attach the brushes to the svg */
       brushViews.forEach(function (brushView) {

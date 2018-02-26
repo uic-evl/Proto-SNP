@@ -127,8 +127,11 @@ const PrimaryStructureView = (function() {
           .on("click", spanSelected.bind(view))
           // EXIT: Remove unneeded DOM elements
           .exit().remove();
-    }
+    },
 
+    resize: function() {
+
+    }
   };
 
   return PrimaryStructureView;

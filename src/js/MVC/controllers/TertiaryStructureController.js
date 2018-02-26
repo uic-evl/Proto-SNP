@@ -13,7 +13,6 @@ const TertiaryStructureController = (function() {
     self._views = views;
     self._controllers = controllers;
 
-
     /* Setup the callback listeners for each view*/
     self._views.forEach(function(view, idx){
 
@@ -81,6 +80,7 @@ const TertiaryStructureController = (function() {
 
     /*  Bind the view with knockoutJS */
     ko.applyBindings({views: this._views}, $("#molecularViewerTemplate")[0]);
+
   }
 
   TertiaryStructureController.prototype = {};

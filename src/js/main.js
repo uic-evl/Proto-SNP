@@ -5,13 +5,22 @@ var App = App || {};
 
 (function(){
 
+  /* File utility setup */
+  App.fileUtilities = new FileUtilities();
+  App.dataUtilities = new DatabaseMappingUtils();
+  App.residueMappingUtility = new ResidueMappingUtility();
+
+  /* List of views */
+  let views = [];
+
+  function resize() {
+    views.forEach(function(v){
+      v.resize();
+    });
+  }
+
   /* Starting point of the program. Initializes the application */
   function init() {
-
-    /* File utility setup */
-    App.fileUtilities = new FileUtilities();
-    App.dataUtilities = new DatabaseMappingUtils();
-    App.residueMappingUtility = new ResidueMappingUtility();
 
     let proteinFamilyModel = new ProteinFamilyModel(),
         proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
@@ -26,6 +35,9 @@ var App = App || {};
     let leftPrimaryStructureView  = new PrimaryStructureView(leftProteinModel, {id: "leftMolecularViewer-Sequence", position:"left"}),
         rightPrimaryStructureView = new PrimaryStructureView(rightProteinModel, {id: "rightMolecularViewer-Sequence", position:"right"}),
         primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
+
+    /* Save the views in an array*/
+    views = [proteinFamilyView, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
 
     /* Launch the initial data modal */
     // $("#initialModal").modal().on('shown.bs.modal', function (e) {
@@ -77,6 +89,9 @@ var App = App || {};
     /* Show the sequence viewers */
     leftPrimaryStructureView.show();
     rightPrimaryStructureView.show();
+
+    /* Register the resize callbacks */
+    $(window).resize(resize);
   }
 
   /* start the application once the DOM is ready */

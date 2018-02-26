@@ -159,9 +159,6 @@ const FileUtilities = function(){
           .append($('<span/>').text(file.name));
 
         /*Upload Button - loads the file into the viewer*/
-        // let uploadButton = $('<button/>')
-        //   .addClass('btn btn-primary uploadPDB')
-        //   .text('Upload')
         viewer.find("#next")
           .on('click', function () {
 
@@ -180,8 +177,6 @@ const FileUtilities = function(){
             // parse the file as text
             reader.readAsText(file);
 
-            // Remove the div and buttons
-            // $(this).parent().remove();
             // abort the upload (we aren't passing it to a server)
             data.abort();
 
@@ -236,12 +231,15 @@ const FileUtilities = function(){
           let node = $('<p/>')
               .append($('<span/>').text(file.name));
 
+          /* Hide the 'Choose file' button */
+          let splash = $(this).parent();
+          splash.hide();
+
           /*Upload Button - loads the file into the viewer*/
           let uploadButton = $('<button/>')
               .addClass('btn btn-primary uploadPDB')
               .text('Upload')
               .on('click', function () {
-
                 // JS File reader to parse the uploaded file
                 let reader = new FileReader(),
                     /* Save the file name in the closure scope */
@@ -264,6 +262,8 @@ const FileUtilities = function(){
 
                 // re-enable the select protein button
                 select.prop('disabled', false);
+                /* reshow the 'choose a file' */
+                splash.show();
               });
 
           /* Cancel button -- removes the chosen file and removes the div items*/
@@ -276,6 +276,8 @@ const FileUtilities = function(){
                 $this.parent().remove();
                 data.abort();
                 select.prop('disabled', false);
+                /* reshow the 'choose a file' */
+                splash.show()
               });
 
           /* Append the Upload and Cancel Buttons */

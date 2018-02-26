@@ -77,6 +77,11 @@ ul li a.disabled {
     z-index: 10;
 }
 
+#next {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
 .x_panel {
     width: 100%;
     margin-bottom: 10px;

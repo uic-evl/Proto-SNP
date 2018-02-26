@@ -9,6 +9,7 @@
         <div class="fa fa-times fa-lg overlay-close" id="overlayClose"></div>
 
         <div id="splashTemplate" data-bind="template: {name: 'uploadForm'}"></div>
+
         <script type="text/html" id="uploadForm">
             <form class="signup-form" data-bind="submit: $data.downloadPDB">
             <div class="container-fluid">
@@ -24,7 +25,7 @@
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-8">
                         <span class="fileUpload">Or: </span>
                         <br>
                         <span id="upload" class="btn btn-success fileinput-button viewer-upload">
@@ -36,7 +37,8 @@
                     </div>
                 </div>
             </div>
-        </form>
+            </form>
+
         </script>
     </div>
 </div>

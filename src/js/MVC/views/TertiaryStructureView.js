@@ -349,8 +349,8 @@ TertiaryStructureView.prototype = {
 
     /* Create the div for the 3D axis */
     let axisDOM = document.createElement('div'),
-        width = parseInt(d3.select(dom).style('width'))/4.0,
-        height = parseInt(d3.select(dom).style('height'))/4.0;
+        width = parseInt(parseInt(d3.select(dom).style('width'))/4.0),
+        height = parseInt(parseInt(d3.select(dom).style('height'))/4.0);
 
     /* Set the axis' attributes */
     axisDOM.className = 'axisViewer';

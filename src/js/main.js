@@ -55,47 +55,51 @@ var App = App || {};
     /* Save the views in an array*/
     views = [proteinFamilyController, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
 
-    /* Launch the initial data modal */
-    // $("#initialModal").modal().on('shown.bs.modal', function (e) {
-    //
-    //   let modal = $(this);
-    //
-    //   /* Setup the file upload plugin */
-    //   App.fileUtilities.initialUploadSetup(modal,
-    //       function (metadata, result) {
-    //         /* Initialize the viewer based on the input data */
-    //         switch(metadata.extension){
-    //           case "pdb":
-    //             leftTertiaryStructureView.file_loaded(metadata, result);
-    //             // Start the tour!
-    //             break;
-    //           case "msf":
-    //           case "fa":
-    //             proteinFamilyView.file_loaded(result, metadata.extension);
-    //             break;
-    //         }
-    //
-    //         /* destroy the file upload */
-    //         modal.find("#fileUploadInput").fileupload('destroy');
-    //         /* Close the modal */
-    //         $("#initialModal").modal('hide');
-    //       });
-    //
-    //   /* Link the protein form to the model utilities */
-    //   modal.find("#initialDataForm").on("submit", function(){
-    //     let name = $(this).serialize().split('=')[1];
-    //     App.fileUtilities.ajaxFromRCMB(name, function(blob){
-    //       if(blob){
-    //         blob.name = name + ".pdb";
-    //         modal.find("#fileUploadInput").fileupload('add', {files: blob });
-    //       }
-    //       modal.find("#protein-name").val('');
-    //     });
-    //
-    //     return false;
-    //   });
-    //
-    // });
+   $('#startupModal').load("./src/html/startupModal.html", function(){
+
+      /* Launch the initial data modal */
+      $("#initialModal").modal().on('shown.bs.modal', function (e) {
+
+        let modal = $(this);
+
+        /* Setup the file upload plugin */
+        App.fileUtilities.initialUploadSetup(modal,
+          function (metadata, result) {
+            /* Initialize the viewer based on the input data */
+            switch(metadata.extension){
+              case "pdb":
+                leftTertiaryStructureView.file_loaded(metadata, result);
+                // Start the tour!
+                break;
+              case "msf":
+              case "fa":
+                proteinFamilyView.file_loaded(result, metadata.extension);
+                break;
+            }
+
+            /* destroy the file upload */
+            modal.find("#fileUploadInput").fileupload('destroy');
+            /* Close the modal */
+            $("#initialModal").modal('hide');
+          });
+
+        /* Link the protein form to the model utilities */
+        modal.find("#initialDataForm").on("submit", function(){
+          let name = $(this).serialize().split('=')[1];
+          App.fileUtilities.ajaxFromRCMB(name, function(blob){
+            if(blob){
+              blob.name = name + ".pdb";
+              modal.find("#fileUploadInput").fileupload('add', {files: blob });
+            }
+            modal.find("#protein-name").val('');
+          });
+
+          return false;
+        });
+
+      });
+
+    });
 
     /* Show the tertiary viewers */
     leftTertiaryStructureView.show();

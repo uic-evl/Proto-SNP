@@ -27,6 +27,11 @@
     left: 0;
 }
 
+#fileupload-open-family {
+    font-size: inherit !important;
+    left: 0;
+}
+
 .geometry_dropdown, .coloring_dropdown {
     padding: 0 !important;
     margin: 0 !important;

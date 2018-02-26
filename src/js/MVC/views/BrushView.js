@@ -228,10 +228,6 @@ const BrushView = (function() {
           .html(options.tooltip);
       }
 
-      if(!options.handles) {
-        console.log("brush");
-      }
-
     },
 
     getInitialPosition : function() { return this.brushObj.getInitialPosition(); },
@@ -305,8 +301,7 @@ const BrushView = (function() {
 
         /* Resize the horizontal covers */
         d3.selectAll("rect.horizontal_covers")
-          .attr("y", function(d,i){
-            return ((i)?(y+height):d.y)})
+          .attr("y", function(d,i){ return ((i)?(y+height):d.y)} )
           .attr("height", function(d,i) {
             return (i) ? overview_height-(y+height) : y-d.y;
           });

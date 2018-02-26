@@ -28,16 +28,44 @@ var App = App || {};
     };
   })();
 
-  function resize() {
+  let warning_resolution = function(cb) {
+    swal({
+      title: 'Resolution Warning',
+      text: "The suggested resolution for this application is 1024x768 or larger. Smaller resolutions could lead to visual artifacts and loss of smoother interactions. ",
+      type: 'warning',
+      confirmButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.value) {
+        cb();
+      }
+    })
+  };
 
-    views.forEach(function(v){
-      v.resize();
-    });
+  function checkResolution(cb) {
+    let w = window.innerWidth,
+      h = window.innerHeight;
+
+    /* check the resolution of the resize*/
+    if(w < 1024 || h < 768) {
+      warning_resolution(cb);
+    }
+    else {
+      cb();
+    }
+  }
+
+  function resize() {
+    let r = ()=> {
+      views.forEach(function (v) {
+        v.resize();
+      });
+    };
+    /* Check the resolution */
+    checkResolution(r);
   }
 
   /* Starting point of the program. Initializes the application */
   function init() {
-
     let proteinFamilyModel = new ProteinFamilyModel(),
         proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
         proteinFamilyController = new ProteinFamilyController(proteinFamilyModel, proteinFamilyView);
@@ -55,51 +83,54 @@ var App = App || {};
     /* Save the views in an array*/
     views = [proteinFamilyController, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
 
-   $('#startupModal').load("./src/html/startupModal.html", function(){
+    let launchModal = function() {
+      $('#startupModal').load("./src/html/modals/startupModal.html", function(){
 
-      /* Launch the initial data modal */
-      $("#initialModal").modal().on('shown.bs.modal', function (e) {
+        /* Launch the initial data modal */
+        $("#initialModal").modal().on('shown.bs.modal', function (e) {
 
-        let modal = $(this);
+          let modal = $(this);
 
-        /* Setup the file upload plugin */
-        App.fileUtilities.initialUploadSetup(modal,
-          function (metadata, result) {
-            /* Initialize the viewer based on the input data */
-            switch(metadata.extension){
-              case "pdb":
-                leftTertiaryStructureView.file_loaded(metadata, result);
-                // Start the tour!
-                break;
-              case "msf":
-              case "fa":
-                proteinFamilyView.file_loaded(result, metadata.extension);
-                break;
-            }
+          /* Setup the file upload plugin */
+          App.fileUtilities.initialUploadSetup(modal,
+            function (metadata, result) {
+              /* Initialize the viewer based on the input data */
+              switch(metadata.extension){
+                case "pdb":
+                  leftTertiaryStructureView.file_loaded(metadata, result);
+                  // Start the tour!
+                  break;
+                case "msf":
+                case "fa":
+                  proteinFamilyView.file_loaded(result, metadata.extension);
+                  break;
+              }
 
-            /* destroy the file upload */
-            modal.find("#fileUploadInput").fileupload('destroy');
-            /* Close the modal */
-            $("#initialModal").modal('hide');
+              /* destroy the file upload */
+              modal.find("#fileUploadInput").fileupload('destroy');
+              /* Close the modal */
+              $("#initialModal").modal('hide');
+            });
+
+          /* Link the protein form to the model utilities */
+          modal.find("#initialDataForm").on("submit", function(){
+            let name = $(this).serialize().split('=')[1];
+            App.fileUtilities.ajaxFromRCMB(name, function(blob){
+              if(blob){
+                blob.name = name + ".pdb";
+                modal.find("#fileUploadInput").fileupload('add', {files: blob });
+              }
+              modal.find("#protein-name").val('');
+            });
+            return false;
           });
 
-        /* Link the protein form to the model utilities */
-        modal.find("#initialDataForm").on("submit", function(){
-          let name = $(this).serialize().split('=')[1];
-          App.fileUtilities.ajaxFromRCMB(name, function(blob){
-            if(blob){
-              blob.name = name + ".pdb";
-              modal.find("#fileUploadInput").fileupload('add', {files: blob });
-            }
-            modal.find("#protein-name").val('');
-          });
-
-          return false;
         });
 
       });
+    };
 
-    });
+    checkResolution(launchModal);
 
     /* Show the tertiary viewers */
     leftTertiaryStructureView.show();

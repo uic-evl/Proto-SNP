@@ -174,7 +174,7 @@ const ProteinFamilyController = (function() {
       self._view.clear();
 
       /* Clear the brushes and frequency view */
-      //d3.select("#residueSummaryView").selectAll("*").remove();
+      d3.select("#residueSummaryView").selectAll("*").remove();
       d3.selectAll('.d3-tip').remove();
 
       /* Remove the context menu from the trend image */
@@ -207,7 +207,27 @@ const ProteinFamilyController = (function() {
     });
   }
 
-  ProteinFamilyController.prototype = {};
+  ProteinFamilyController.prototype = {
+    resize: function() {
+      if(this._model.isEmpty()){
+        this._view.clear();
+        /* Clear the brushes and frequency view */
+        d3.select("#residueSummaryView").selectAll("*").remove();
+        d3.selectAll('.d3-tip').remove();
+
+        /* Remove the context menu from the trend image */
+        this._brushViews['horizontal'].removeContextMenu();
+
+        delete this._brushViews;
+        delete this._frequencyViews;
+
+        this._frequencyViews = {};
+        this._brushViews = {};
+
+        this._view.resize();
+      }
+    }
+  };
 
   return ProteinFamilyController;
 })();

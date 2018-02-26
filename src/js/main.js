@@ -13,7 +13,23 @@ var App = App || {};
   /* List of views */
   let views = [];
 
+  /* Taken from https://stackoverflow.com/questions/2854407/javascript-jquery-window-resize-how-to-fire-after-the-resize-is-completed */
+  /* This function is used to ensure that the resize event complete before firing */
+  let waitForFinalEvent = (function () {
+    let timers = {};
+    return function (callback, ms, uniqueId) {
+      if (!uniqueId) {
+        uniqueId = "Don't call this twice without a uniqueId";
+      }
+      if (timers[uniqueId]) {
+        clearTimeout (timers[uniqueId]);
+      }
+      timers[uniqueId] = setTimeout(callback, ms);
+    };
+  })();
+
   function resize() {
+
     views.forEach(function(v){
       v.resize();
     });
@@ -37,7 +53,7 @@ var App = App || {};
         primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
 
     /* Save the views in an array*/
-    views = [proteinFamilyView, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
+    views = [proteinFamilyController, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
 
     /* Launch the initial data modal */
     // $("#initialModal").modal().on('shown.bs.modal', function (e) {
@@ -91,7 +107,9 @@ var App = App || {};
     rightPrimaryStructureView.show();
 
     /* Register the resize callbacks */
-    $(window).resize(resize);
+    $(window).resize(function(){
+      waitForFinalEvent(resize, 100, "Resize complete")
+    });
   }
 
   /* start the application once the DOM is ready */

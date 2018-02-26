@@ -11,8 +11,6 @@ const ProteinFamilyView = (function() {
   function ProteinFamilyView(model, element) {
     let self = this;
 
-    self.initialized_promise = $.Deferred();
-
     self._model = model;
     self._id = element.id;
 
@@ -40,6 +38,50 @@ const ProteinFamilyView = (function() {
     self.fileUpdated = new EventNotification(this);
     self.imageRendered = new EventNotification(this);
     self.overviewRendered = new EventNotification(this);
+
+    /* Bind the protein family listener */
+    self._model.proteinFamilyAdded.attach(function (sender, msg) {
+      let family = msg.family,
+          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring(), "family");
+
+      /* Initialize the trend image view*/
+      self.initialize(msg);
+
+      /* Load the tour if this is the first time a trend image is generated */
+      let state = hopscotch.getState();
+      if (!state || state.indexOf('introduction_tour:') === 0) {
+        hopscotch.startTour(App.tour_family);
+      }
+      /* Initialize the back buffer with the family data */
+      initialize_back_buffer(family.data, colorMapping)
+      /* Render the family view */
+          .then(self.render.bind(self, self._familyImage, 0, 0))
+          .then(function () {
+            /* Done initializing */
+            // self.initialized_promise.resolve();
+            /* Notify the controller that the image has been rendered */
+            self.imageRendered.notify(build_brushes_and_viewers());
+            /* Render the overview if one is needed */
+            if (self.overviewImage) {
+              self.render_overview(0, 0)
+                  .then(function () {
+                    // /* Notify the listens that the overview has been rendered and render the brush  */
+                    self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
+                    /* Render the context line to show to what the brush relates */
+                    let contextPoints = [
+                      [ {x:self.x_offset/2.0, y:0},{x:self.x_offset/2.0, y:self.height+self.y_offset*2.0}]
+                    ];
+                    d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints);
+                    d3Utils.render_context_bars(d3.select(self.overviewSVG.node().parentNode),
+                        {x:self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
+                  });
+            }
+            /* Enable the coloring menu */
+            $("#coloring_list").find("li").removeClass("disabled");
+            /* Create the legend */
+            //App.residueMappingUtility.createColorLegend("family");
+          }).catch(console.log.bind(console));
+    });
 
     function initialize_back_buffer(family, colorMapping) {
       return new Promise(function (resolve, reject) {
@@ -312,9 +354,10 @@ const ProteinFamilyView = (function() {
 
       let container_width = self._container_width,
           residue_width = Math.floor(container_width / self.x_axis_length),
-          viewer_width = residue_width * self.x_axis_length;
+          viewer_width = residue_width * self.x_axis_length,
+          initialized_promise = $.Deferred();
 
-      /* Make sure the height of the data does not exceed the height of the container */
+          /* Make sure the height of the data does not exceed the height of the container */
       let protein_height = self.y_axis_length * residue_width,
           new_height = self._parentDom.node().clientHeight,
           proteins_per_view = protein_height / residue_width;
@@ -359,9 +402,10 @@ const ProteinFamilyView = (function() {
           /* Setup the brush SVG */
           self.brushSVG    = set_brush_SVG("#trendSVG", self.width, self.height);
           self.overviewSVG = set_brush_SVG("#overviewSVG", self.overview_width, self.height);
+
+          initialized_promise.resolve();
         });
       }
-
       else {
         $.get("./src/html/familyViewer/familyViewerTemplate.html", function (data) {
           $("#" + self._id).append(data);
@@ -382,9 +426,11 @@ const ProteinFamilyView = (function() {
 
           /* Setup the brush SVG */
           self.brushSVG = set_brush_SVG("#trendSVG", self.width, self.height);
+
+          initialized_promise.resolve();
         });
       }
-
+      return initialized_promise;
     }
 
     /* Setter for the names of the proteins from the family */
@@ -443,50 +489,6 @@ const ProteinFamilyView = (function() {
       });
     }
 
-    /* Bind the protein family listener */
-    self._model.proteinFamilyAdded.attach(function (sender, msg) {
-      let family = msg.family,
-          colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring(), "family");
-
-      /* Initialize the trend image view*/
-      self.initialize(msg);
-
-      /* Load the tour if this is the first time a trend image is generated */
-      let state = hopscotch.getState();
-      if (!state || state.indexOf('introduction_tour:') === 0) {
-        hopscotch.startTour(App.tour_family);
-      }
-      /* Initialize the back buffer with the family data */
-      initialize_back_buffer(family.data, colorMapping)
-      /* Render the family view */
-          .then(self.render.bind(self, self._familyImage, 0, 0))
-          .then(function () {
-            /* Done initializing */
-            self.initialized_promise.resolve();
-            /* Notify the controller that the image has been rendered */
-            self.imageRendered.notify(build_brushes_and_viewers());
-            /* Render the overview if one is needed */
-            if (self.overviewImage) {
-              self.render_overview(0, 0)
-                  .then(function () {
-                    // /* Notify the listens that the overview has been rendered and render the brush  */
-                    self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
-                    /* Render the context line to show to what the brush relates */
-                    let contextPoints = [
-                      [ {x:self.x_offset/2.0, y:0},{x:self.x_offset/2.0, y:self.height+self.y_offset*2.0}]
-                    ];
-                    d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints);
-                    d3Utils.render_context_bars(d3.select(self.overviewSVG.node().parentNode),
-                        {x:self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
-                  });
-            }
-            /* Enable the coloring menu */
-            $("#coloring_list").find("li").removeClass("disabled");
-            /* Create the legend */
-            //App.residueMappingUtility.createColorLegend("family");
-          }).catch(console.log.bind(console));
-    });
-
     self.file_loaded = function (data, extension, name) {
       /* Remove the splash screen */
       this._parentDom.select('#trendSplash').remove();
@@ -536,7 +538,6 @@ const ProteinFamilyView = (function() {
       /* Initialize the chart and data dimensions */
       set_data_dimensions_sizes(family.data);
       set_chart_dimensions();
-      set_proteins_per_view();
 
       setup_backbuffer_context();
 
@@ -604,6 +605,33 @@ const ProteinFamilyView = (function() {
 
     self.resize = function () {
 
+      /* reset the width of the container */
+      self._parentDom = d3.select("#" + self._id);
+      self._parentDom.classed("trend-viewer", false);
+      self._container_width = d3.select('div.TrendImageView').node().clientWidth;
+
+      /* Initialize the chart and data dimensions */
+      set_chart_dimensions()
+          .then(self.render.bind(self, self._familyImage, 0, 0))
+          .then(function () {
+            /* Notify the controller that the image has been rendered */
+            self.imageRendered.notify(build_brushes_and_viewers());
+            /* Render the overview if one is needed */
+            if (self.overviewImage) {
+              self.render_overview(0, 0)
+                  .then(function () {
+                    // /* Notify the listens that the overview has been rendered and render the brush  */
+                    self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
+                    /* Render the context line to show to what the brush relates */
+                    let contextPoints = [
+                      [{x: self.x_offset / 2.0, y: 0}, {x: self.x_offset / 2.0, y: self.height + self.y_offset * 2.0}]
+                    ];
+                    d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints);
+                    d3Utils.render_context_bars(d3.select(self.overviewSVG.node().parentNode),
+                        {x: self.x_offset / 4.0, y: self.brushPaddleSize / 2.0, height: 1, width: self.x_offset / 2.0});
+                  });
+            }
+      });
     };
 
     self.attachBrushes = function (brushViews, svg) {

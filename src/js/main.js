@@ -130,7 +130,7 @@ var App = App || {};
       });
     };
 
-    //checkResolution(launchModal);
+    checkResolution(launchModal);
 
     /* Show the tertiary viewers */
     leftTertiaryStructureView.show();

@@ -132,7 +132,7 @@
                             <span class="fa fa-info-circle"></span> About
                         </button>
                         <button class="btn navbar-btn btn-danger" data-toggle="modal" id="helpButton">
-                            <span class="fa fa-info-circle"></span> Help
+                            <span class="fa fa-question-circle"></span> Help
                         </button>
                     </li>
                 </ul>
@@ -165,6 +165,9 @@
                 <div id="sequenceViewerTemplate" class="row no-gutters" style="width:100%" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
                 <script type="text/html" id="sequenceViewers">
                     <div class="col-6 sequence-container black-background">
+                        <div class="primary_sequence_help center-vertically hidden">
+                            <p class="help_text text-sm-center">Please load a second protein </p>
+                        </div>
                         <div data-bind="attr: {id: $data._id}"></div>
                     </div>
                 </script>
@@ -215,7 +218,6 @@
 </div>
 
 <!-- Trend image set sorting protein -->
-<!-- Trend Image Protein Selection Modal -->
 <div class="modal fade" id="proteinSelection" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">

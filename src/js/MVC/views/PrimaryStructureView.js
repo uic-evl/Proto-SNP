@@ -106,6 +106,10 @@ const PrimaryStructureView = (function() {
         .classed("black-background", false)
         .selectAll(".col-6")
         .classed("black-background", false);
+
+      /* Remove the "load a protein text" */
+      d3.select(view._dom.parentNode).select("div.primary_sequence_help").remove();
+      d3.select("div.primary_sequence_help").classed("hidden", false);
   },
 
     /* Render the sequence list */

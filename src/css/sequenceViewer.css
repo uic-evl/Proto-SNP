@@ -43,3 +43,8 @@
     background-color: #f7f7f7;
     border: solid 1px #aaa;
 }
+
+.help_text {
+    color: white;
+    text-align: center;
+}

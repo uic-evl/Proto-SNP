@@ -84,36 +84,27 @@ const FileUtilities = function(){
   /* Parse a FASTA File */
   function parse_FASTA(file_data) {
     /* Parse the lines of the file */
-    let lines = file_data.split('>'),
-      family = {},
+    let family = {},
         max_length = 0,
         length_changed = false;
-    /* Iterate over each line*/
-    lines.forEach(function(line, idx){
-      // If an empty line, continue
-      if(!line.length) return;
-      /* Create a regex pattern to check for the header lines */
-      let regex_data = /((\w*)\/?\d*-?\d*)\s*(\S*)/ ,
-        /* Perform the regex matching on the line */
-        parsedLine = line.match(regex_data);
 
-      /* If parsed, create the dictionary for the entry  */
-      if(parsedLine){
-        /* Create the dictionary entry */
-        family[parsedLine[1]] = {
-          name                   : parsedLine[2],
-          full_name              : parsedLine[1],
-          length                 : parsedLine[3].length,
-          sequence               : _.toUpper(parsedLine[3]),
-          scores                 : {initial: lines.length - idx}
-        };
-      }
+    let fasta = require("biojs-io-fasta"),
+        sequences = fasta.parse(file_data);
+
+    sequences.forEach(function(seq){
+      family[seq.id] = {
+        name: seq.name,
+        id: seq.id,
+        length: seq.seq.length,
+        sequence: _.toUpper(seq.seq),
+        scores: {initial: sequences.length - seq.id}
+      };
 
       /* Check the max length against the previous max*/
-      if(max_length === 0) max_length = family[parsedLine[1]].length;
-      else if(family[parsedLine[1]].length > max_length || family[parsedLine[1]].length < max_length) {
+      if(max_length === 0) max_length = family[seq.id].length;
+      else if(family[seq.id].length > max_length || family[seq.id].length < max_length) {
         length_changed = true;
-        max_length = Math.max(max_length, family[parsedLine[1]].length);
+        max_length = Math.max(max_length, family[seq.id].length);
       }
 
       /* The max length changed. Pad the protein sequences to the longest length*/
@@ -125,6 +116,7 @@ const FileUtilities = function(){
       }
 
     });
+
     return split_sequence(family);
   }
 
@@ -332,7 +324,6 @@ const FileUtilities = function(){
         if (xhr.readyState === 4 && xhr.status === 200){
           cb(this.response);
         }
-
       };
       xhr.responseType = 'blob';
 

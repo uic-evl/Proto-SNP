@@ -7,14 +7,22 @@
     opacity: 0.8;
 }
 
-g.brush.horizontal > .handle {
+g.brush.horizontal.no_handles > .handle {
+    display: none;
+}
+
+g.brush.vertical-left.no_handles > .handle {
+    display: none;
+}
+
+g.brush.vertical-right.no_handles > .handle {
     display: none;
 }
 
 .trend-viewer {
     background-color: black;
     width: 100%;
-    height: 45%;
+    height: 35%;
 }
 
 text.mono {

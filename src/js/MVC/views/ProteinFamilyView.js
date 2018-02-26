@@ -271,16 +271,29 @@ const ProteinFamilyView = (function() {
 
     function build_brushes_and_viewers() {
 
-      let verticalPaddleSize = PADDLE_SIZE,
-          horizontalPaddleSize = 1,
-          maxPaddleSize = MAX_PADDLE_SIZE;
+      let fv_parent = d3.select("div.residueSummaryView"),
+          parent_height = parseInt(fv_parent.node().clientHeight),
+          fv_height = (self.overviewImage) ? parent_height * 0.75 : parent_height,
+          fv_width = self.width/2.0,
+          bar_height = parseInt(fv_height * 0.3),
+          bar_width = bar_height * 2.0,
+          handles = "";
+
+        let horizontalPaddleSize = 1,
+            verticalPaddleSize = (bar_width * PADDLE_SIZE < fv_width) ? PADDLE_SIZE : 4,
+            maxPaddleSize = (bar_width * MAX_PADDLE_SIZE < fv_width) ? MAX_PADDLE_SIZE : parseInt(fv_width/bar_width) - 1;
+
+        /* if the brush min/max is the same size, remove the handles */
+        if(maxPaddleSize === verticalPaddleSize) {
+          handles = "no_handles";
+        }
 
       return {
         brushes: [
           {
             orientation: App.HORIZONTAL_PADDLE,
             paddleSize: horizontalPaddleSize,
-            class: "brush horizontal main",
+            class: "brush horizontal main no_handles",
             extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
             block_size: self.residue_glyph_size,
             position: [self.y_offset, self.residue_glyph_size + self.y_offset],
@@ -289,25 +302,25 @@ const ProteinFamilyView = (function() {
           },
           {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-            class: "brush vertical-left", extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
+            class: "brush vertical-left " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
             block_size: self.residue_glyph_size, semantic: "left",
             position: [0, self.residue_glyph_size * verticalPaddleSize + self.y_offset]
           },
           {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-            class: "brush vertical-right", extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
+            class: "brush vertical-right " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
             block_size: self.residue_glyph_size, semantic: "right",
             position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
           }
         ],
         frequencyViewers : [
-          {id: 'leftResidueSummaryViewer',  parent: "residueSummaryView", semantic: "left",  max_items: maxPaddleSize,
+          {id: 'leftResidueSummaryViewer',  parent: fv_parent, semantic: "left",  max_items: maxPaddleSize,
             block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: 0, width: self.width,
-            overview: self.overviewImage, offset_x:0, default_height : 75
+            height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0
           },
-          {id: 'rightResidueSummaryViewer',  parent: "residueSummaryView", semantic: "right", max_items: maxPaddleSize,
+          {id: 'rightResidueSummaryViewer',  parent: fv_parent, semantic: "right", max_items: maxPaddleSize,
             block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: 0, width: self.width,
-            overview: self.overviewImage, offset_x:0, default_height : 75
+            height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0
           }
         ]
       };
@@ -329,7 +342,7 @@ const ProteinFamilyView = (function() {
         paddleSize: self.brushPaddleSize,
         maxPaddleSize: self.brushPaddleSize,
         scale: scale,
-        class: "brush horizontal overview",
+        class: "brush horizontal overview no_handles",
         block_size: block_size,
         semantic: "family",
         extent: [[self.x_offset, self.y_offset], [self.overview_width + self.x_offset, height + self.y_offset]],

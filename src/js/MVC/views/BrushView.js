@@ -64,10 +64,10 @@ const BrushView = (function() {
       if( brush_size > maxPaddleSize){
         /* Check which side was brushed */
         if(selection[0] === previousSelection[0]){
-          selection[1] = selection[0] + maxPaddleSize;
+          selection[1] = selection[0] + maxPaddleSize - 1;
         }
         else {
-          selection[0] = selection[1] - maxPaddleSize;
+          selection[0] = selection[1] - maxPaddleSize - 1;
         }
       }
       else if (brush_size < minPaddleSize) {
@@ -227,6 +227,11 @@ const BrushView = (function() {
           .offset([-10, 0])
           .html(options.tooltip);
       }
+
+      if(!options.handles) {
+        console.log("brush");
+      }
+
     },
 
     getInitialPosition : function() { return this.brushObj.getInitialPosition(); },

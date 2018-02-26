@@ -11,9 +11,10 @@ const ResidueFrequencyView = (function() {
 
     self._id = options.id;
     self._dom = d3.select("#"+self._id);
-    self._parent = d3.select("div."+options.parent);
+    self._parent = options.parent;
 
-    self._barOffset = 10;
+    self._barOffset_x = 0;
+    self._barOffset_y = 10;
     self._familyMemberCount = options.rows;
     self._svg = null;
     self._visible = false;
@@ -169,8 +170,8 @@ const ResidueFrequencyView = (function() {
           .attr("class", function(d,i){return "freq_bars r" + i})
           .attr("width", self.glyph_width)
           .attr("height", self.bar_height)
-          .attr('y', ()=> { return self.y_offset; })
-          .attr('x', (d, i)=>{ return self.xScale(i) })
+          .attr('y', ()=> { return self.y_offset })
+          .attr('x', (d, i)=>{ return self.xScale(i) - self.glyph_width/4.0; })
           .on('mouseover', createStackedBarChart)
           .on('mouseout', this.tip.hide)
           .style("fill", "white");
@@ -189,7 +190,7 @@ const ResidueFrequencyView = (function() {
           .attr("class", "frequencies")
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequency)
-          .attr('x', function(d, i) { return self.xScale(i) })
+          .attr('x', function(d, i) { return self.xScale(i) - self.glyph_width/4.0 })
           .attr('y', function(d) { return self.yScale(d[1]) + self.y_offset; })
           .attr("width", self.glyph_width)
           .attr("height", function(d) { return ( self.bar_height - self.yScale(d[1]) )  })
@@ -216,8 +217,8 @@ const ResidueFrequencyView = (function() {
           .attr("class", "residueText")
           /* Merge the old elements (if they exist) with the new data */
           .merge(frequencyText)
-          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2.0 })
-          .attr("y", ()=>{return self.bar_height + self._barOffset + self.y_offset;})
+          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 4.0 })
+          .attr("y", ()=>{return self.bar_height + self._barOffset_y + self.y_offset;})
           .attr("dy", ".35em")
           .text(function(d){ return d[0] })
           .style("text-anchor", "middle")
@@ -241,8 +242,8 @@ const ResidueFrequencyView = (function() {
           .attr("class", "selectionText")
           /* Merge the old elements (if they exist) with the new data */
           .merge(selectionText)
-          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 2.0 })
-          .attr("y", () => {return self.y_offset - self._barOffset;})
+          .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 4.0 })
+          .attr("y", () => {return self.y_offset - self._barOffset_y;})
           .attr("dy", ".3em")
           .text(function(d,i){ return '(' + (range[0] + i+1) + ') ' + d[0] })
           .style("text-anchor", "middle")
@@ -271,18 +272,16 @@ const ResidueFrequencyView = (function() {
       this._parent.classed("hidden", false);
       /* Set the DOM's width/height so it centers in it's parent */
       this._parent
-          .style("height", function(){
-            return (options.overviewImage) ? this.clientHeight : options.default_height;
-          });
+          .style("height",  this.clientHeight);
 
       this.width   = options.width / 2.0;
-      this.height  = this._parent.node().clientHeight;
+      this.height  = options.height;
       this.aspectRatio  = this.height/this.width;
       this.semantic = options.semantic;
 
-      this.bar_height = this.height  * 0.3;
-      this.y_offset = (this.height - this.bar_height + this._barOffset)/2.0;
-      this.glyph_width = this.bar_height * 2.0;
+      this.bar_height = options.bar_height;
+      this.y_offset = (this.height - this.bar_height + this._barOffset_y)/2.0;
+      this.glyph_width = options.bar_width;
 
       this._dom
           .style("width", this.width)
@@ -310,15 +309,15 @@ const ResidueFrequencyView = (function() {
       this.range = [options.offset_x, this.width];
 
       let scale = d3.scaleLinear().domain([0, options.max_items]).range(this.range),
-        y_position = this._barOffset/2.0,
+        y_position = this._barOffset_y/2.0,
         /* Set the width of the context line */
         width_offset = scale(options.max_items-1);
-        width_offset += (scale(options.max_items) - width_offset) * 0.9;
+        width_offset += (scale(options.max_items) - width_offset) * 0.95;
 
       let contextPoints = [
-          [ {x: this._barOffset,   y:y_position},     { x: width_offset, y: y_position}],
-          [ {x: this._barOffset+1, y: y_position},    { x: this._barOffset+1, y:y_position + this._barOffset} ],
-          [ {x: width_offset-1,    y: y_position},    { x: width_offset-1, y:y_position + this._barOffset}]
+          [ {x: this._barOffset_x,   y:y_position},   { x: width_offset, y: y_position}],
+          [ {x: this._barOffset_x+1, y: y_position},  { x: this._barOffset_x+1, y:y_position + this._barOffset_y} ],
+          [ {x: width_offset,    y: y_position},      { x: width_offset, y:y_position + this._barOffset_y}]
       ];
 
       d3Utils.render_context_lines(this._svg, contextPoints);

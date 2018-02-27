@@ -6,7 +6,7 @@
       id: "introduction_tour_3D",
       steps: [
         {
-          title: "Welcome to FixingTIM!",
+          title: "Welcome to Proto-SNP!",
           content: "Let me take you on a quick tour.",
           target: "menu",
           placement: "bottom",
@@ -104,7 +104,7 @@
       id: "introduction_tour_family",
       steps: [
         {
-          title: "Welcome to FixingTIM!",
+          title: "Welcome to Proto-SNP!",
           content: "Let me take you on a quick tour.",
           target: "menu",
           placement: "bottom",

@@ -67,6 +67,14 @@ App.OVERVIEW_PADDLE   = 3;
       return this;
     }
 
+    function set_help_text() {
+
+    }
+
+    function set_help_position() {
+
+    }
+
     /* Brush class name */
     function set_brush_class(brushClassName) {
       self.brush_class = brushClassName;
@@ -103,6 +111,8 @@ App.OVERVIEW_PADDLE   = 3;
       setPaddleExtent     : set_brush_extent,
       setPaddleSize       : set_brush_paddle_size,
       setMaxPaddleSize    : set_max_brush_paddle_size,
+      setHelpText         : set_help_text,
+      setHelpPosition     : set_help_position,
       setFrequencyViewer  : set_frequency_viewer_pointer,
       setBrushClass       : set_brush_class,
       getPaddleSize       : get_brush_paddle_size,
@@ -138,7 +148,6 @@ App.OVERVIEW_PADDLE   = 3;
         case App.HORIZONTAL_PADDLE:
         case App.OVERVIEW_PADDLE:
           return _.assign( {}, new HorizontalPaddle, new Brush );
-          break;
         case App.VERTICAL_PADDLE:
           return _.assign( {}, new VerticalPaddle, new Brush );
       }

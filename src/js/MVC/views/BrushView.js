@@ -210,6 +210,9 @@ const BrushView = (function() {
     initialize: function(options) {
       let view = this;
       view.class = options.class;
+      view.helpText = options.helpText;
+      view.helpPosition = options.helpPosition;
+
       /* Construct the brush based on the orientation */
       view.brushObj =
           App.BrushFactory.createBrush(options.orientation)
@@ -242,6 +245,16 @@ const BrushView = (function() {
 
     getBrushElement: function() { return document.getElementsByClassName(this.brushObj.getBrushClass())[0]; },
 
+    setHelpText: function(brushObj, text) {
+      brushObj.select("rect.selection")
+          .attr("data-intro", text);
+    },
+
+    setHelpPosition: function(brushObj, pos) {
+      brushObj.select("rect.selection")
+          .attr("data-position", pos);
+    },
+
     render: function(brushObj) {
       /* Remove the pointer events from the brush overlays to prevent:
        * 1: Deleting the brush on a wrong click
@@ -268,6 +281,10 @@ const BrushView = (function() {
 
       /* Add the overlay masks */
       this.addBrushOverlays(brushObj);
+
+      /* Add the help text */
+      this.setHelpText(brushObj, this.helpText);
+      this.setHelpPosition(brushObj, this.helpPosition);
   },
 
     redraw: function(paddle, data) {

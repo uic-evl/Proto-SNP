@@ -295,6 +295,8 @@ const ProteinFamilyView = (function() {
             paddleSize: horizontalPaddleSize,
             class: "brush horizontal main no_handles",
             extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
+            helpText: "Use this paddle to select a protein in the alignment for observation.",
+            helpPosition: "top",
             block_size: self.residue_glyph_size,
             position: [self.y_offset, self.residue_glyph_size + self.y_offset],
             semantic: "horizontal",
@@ -303,6 +305,8 @@ const ProteinFamilyView = (function() {
           {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
             class: "brush vertical-left " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
+            helpText: "Use this paddle to select a subset of residues for closer observation in the frequency bars, below.",
+            helpPosition: "right",
             block_size: self.residue_glyph_size, semantic: "left",
             position: [0, self.residue_glyph_size * verticalPaddleSize + self.y_offset]
           },
@@ -310,6 +314,8 @@ const ProteinFamilyView = (function() {
             orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
             class: "brush vertical-right " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
             block_size: self.residue_glyph_size, semantic: "right",
+            helpText: "Use this paddle to select a subset of residues for closer observation in the frequency bars, below.",
+            helpPosition: "left",
             position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
           }
         ],
@@ -344,6 +350,9 @@ const ProteinFamilyView = (function() {
         scale: scale,
         class: "brush horizontal overview no_handles",
         block_size: block_size,
+        helpText: "This paddle appears when the align is too large to render on one screen. Use this paddle to control " +
+        "which part of the alignment is displayed. ",
+        helpPosition: "top",
         semantic: "family",
         extent: [[self.x_offset, self.y_offset], [self.overview_width + self.x_offset, height + self.y_offset]],
         position: [self.y_offset, self.brushPaddleSize + self.y_offset],

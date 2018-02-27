@@ -126,7 +126,6 @@ var App = App || {};
           });
 
         });
-
       });
     };
 
@@ -143,7 +142,7 @@ var App = App || {};
 
     /* Register the resize callbacks */
     $(window).resize(function(){
-      waitForFinalEvent(resize, 500, "Resize complete")
+      waitForFinalEvent(resize, 400, "Resize complete")
     });
 
     /* Register the about modal */

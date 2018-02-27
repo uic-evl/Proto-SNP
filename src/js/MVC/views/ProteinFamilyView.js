@@ -381,10 +381,11 @@ const ProteinFamilyView = (function() {
         $.get("./src/html/familyViewer/familyViewerWithOverviewTemplate.html", function (data) {
           $("#" + self._id).append(data);
 
-          self.overviewImage = true;
-
           self._dom = d3.select("#trendImageColumn");
           self._$dom = $("#trendImageColumn");
+
+          self.overviewImage = true;
+
           self.width = self._dom.node().clientWidth;
           new_height = self._dom.node().clientHeight;
 
@@ -423,8 +424,14 @@ const ProteinFamilyView = (function() {
         $.get("./src/html/familyViewer/familyViewerTemplate.html", function (data) {
           $("#" + self._id).append(data);
 
-          self.width = viewer_width;
+          self._dom = d3.select("#trendImageColumn");
+          self._$dom = $("#trendImageColumn");
+
+          self.width = self._dom.node().clientWidth;
           self.height = protein_height;
+
+          /* Remove reset the trend columns height*/
+          self._dom.style("height", self.height);
 
           d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
           d3Utils.set_chart_size("#trendSVG", self.width, self.height);
@@ -529,7 +536,8 @@ const ProteinFamilyView = (function() {
     self.clear = function () {
       /* Remove all elements related to the trend image */
       this._parentDom.selectAll("*").remove();
-      // this._dom.find('.x_title *').remove();
+      /* Reset the trendColumn's height to 35% */
+      this._dom.style('height', "35%");
 
       /*Reset the parent dom width/heights */
       this._parentDom.classed("trend-viewer", true)

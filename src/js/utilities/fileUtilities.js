@@ -14,7 +14,6 @@ const FileUtilities = function(){
       .done(function() {
         cb(url)
     })
-
   }
 
   function split_sequence(family){
@@ -153,7 +152,6 @@ const FileUtilities = function(){
         /*Upload Button - loads the file into the viewer*/
         viewer.find("#next")
           .on('click', function () {
-
             // JS File reader to parse the uploaded file
             let reader = new FileReader(),
               /* Save the file name in the closure scope */
@@ -163,7 +161,7 @@ const FileUtilities = function(){
             /* Event to fire once the file loads*/
             reader.addEventListener("load", function () {
               /* Pass the file to be processed by the model */
-              cb({protein_name: fileName, extension: extension}, this.result);
+              cb({protein_name: fileName, extension: extension, name: fileName}, this.result);
             }, false);
 
             // parse the file as text

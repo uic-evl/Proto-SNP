@@ -491,6 +491,7 @@ const ProteinFamilyView = (function() {
     }
 
     function load_menu_template(alignment_name) {
+      let initialized_promise = $.Deferred();
       /* Load the geometry list */
       $.get("./src/html/familyViewer/familyMenuTemplate.html", function (data) {
         $(self._parentDom.node()).find("div.x_title").append(data);
@@ -499,7 +500,10 @@ const ProteinFamilyView = (function() {
         updateViewTitle(self._parentDom.node(), alignment_name);
         /* enable the upload button*/
         initialize_file_open(d3.select('.settingsOpenFamily'));
+
+        initialized_promise.resolve();
       });
+      return initialized_promise;
     }
 
     self.file_loaded = function (data, extension, name) {
@@ -614,7 +618,6 @@ const ProteinFamilyView = (function() {
     };
 
     self.resize = function () {
-
       /* reset the width of the container */
       self._parentDom = d3.select("#" + self._id);
       self._parentDom.classed("trend-viewer", false);
@@ -622,6 +625,7 @@ const ProteinFamilyView = (function() {
 
       /* Initialize the chart and data dimensions */
       set_chart_dimensions()
+          .then(load_menu_template.bind(self, self._model.getFileName()))
           .then(self.render.bind(self, self._familyImage, 0, 0))
           .then(function () {
             /* Notify the controller that the image has been rendered */

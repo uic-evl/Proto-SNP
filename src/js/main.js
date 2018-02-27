@@ -102,7 +102,7 @@ var App = App || {};
                   break;
                 case "msf":
                 case "fa":
-                  proteinFamilyView.file_loaded(result, metadata.extension);
+                  proteinFamilyView.file_loaded(result, metadata.extension, metadata.name);
                   break;
               }
 
@@ -143,7 +143,7 @@ var App = App || {};
 
     /* Register the resize callbacks */
     $(window).resize(function(){
-      waitForFinalEvent(resize, 100, "Resize complete")
+      waitForFinalEvent(resize, 500, "Resize complete")
     });
 
     /* Register the about modal */

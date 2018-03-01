@@ -70,6 +70,12 @@ body {
     transform: translateY(-50%);
 }
 
+.abs-center-x {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 ul li a.disabled {
     pointer-events:none;
     opacity:0.4;

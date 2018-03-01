@@ -12,6 +12,7 @@
 
 #molecularViewerA {
     padding-right: 0;
+    border-right: 1px solid;
 }
 
 #molecularViewerB {

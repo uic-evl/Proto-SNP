@@ -250,9 +250,6 @@ const ProteinFamilyView = (function() {
         /* Show the view to bind the model */
         colorView.show();
       });
-
-      /* Setup the help menu */
-      // $("#" + self._id + " #molecularViewerHelp").click(helpMenu);
     }
 
     /* Render the title of the viewer */
@@ -509,6 +506,13 @@ const ProteinFamilyView = (function() {
         updateViewTitle(self._parentDom.node(), alignment_name);
         /* enable the upload button*/
         initialize_file_open(d3.select('.settingsOpenFamily'));
+
+        if(self.overviewImage){
+          $("#alignmentViewer").text("Alignment Viewer (Subset)");
+        }
+        else {
+          $("#alignmentViewer").text("Alignment Viewer");
+        }
 
         initialized_promise.resolve();
       });

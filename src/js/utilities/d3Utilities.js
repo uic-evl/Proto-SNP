@@ -79,23 +79,19 @@ const d3Utils = function () {
     render_context_lines : function(context, points, width) {
     /* Add the context bar above viewers */
       if(context.node && context.node().nodeName === "svg"){
-      let lines = context.selectAll("line")
-          .data(points).enter().append("line")
+
+      let lines = context.selectAll(".context-line")
+          .data(points);
+
+      lines.enter().append("line")
+        .merge(lines)
           .attr('x1', function(d,i){return d[0].x})
           .attr('y1', function(d,i){return d[0].y})
           .attr('x2', function(d,i){return d[1].x})
           .attr('y2', function(d,i){return d[1].y})
-          .attr("shape-rendering", "auto");
-
-      if(width) {
-        lines.attr("stroke-width", width)
-        .attr("class", "context-line")
-      }
-      else {
-        lines.attr("class", "context-line context-line-width")
-      }
-
-          // .style("shape-rendering", "optimizeQuality");
+          .attr("shape-rendering", "auto")
+          .classed("context-line", true)
+          .classed("context-line-width", !!(width));
     }
     else {
         points.forEach(function(point){

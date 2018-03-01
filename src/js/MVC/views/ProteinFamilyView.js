@@ -63,17 +63,10 @@ const ProteinFamilyView = (function() {
                     self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
                     /* Render the context line to show to what the brush relates */
                     let contextPoints = [
-                      [
-                          {x:0, y:0},{x:self.x_offset-1, y:0},
-                      ],
-                      [
-                        {x:0, y:self.height},{x:self.x_offset-1, y:self.brushPaddleSize}
-
-                      ]
+                      [{x:0, y:0},{x:self.x_offset, y:0}],
+                      [{x:0, y:self.height},{x:self.x_offset, y:self.brushPaddleSize}]
                     ];
                     d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, 0.2);
-                    // d3Utils.render_context_bars(d3.select(self.overviewSVG.node().parentNode),
-                        // {x:self.x_offset/4.0, y: self.brushPaddleSize/2.0, height: 1, width:self.x_offset/2.0});
                   });
             }
             /* Enable the coloring menu */

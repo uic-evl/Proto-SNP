@@ -22,9 +22,12 @@
 }
 
 .context-line {
-    stroke-width: 2;
     stroke: black;
     fill: none;
+}
+
+.context-line-width {
+    stroke-width: 2;
 }
 
 .axisPop text{

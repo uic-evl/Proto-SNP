@@ -76,13 +76,26 @@ const d3Utils = function () {
     },
 
     /* Render the line above the bars */
-    render_context_lines : function(context, points) {
+    render_context_lines : function(context, points, width) {
     /* Add the context bar above viewers */
       if(context.node && context.node().nodeName === "svg"){
-      return context.selectAll(".context-bar").data(points)
-          .enter().append("path")
-          .attr("d", (d) => { return d3Utils.lineFunction(d)})
-          .attr("class", "context-bar");
+      let lines = context.selectAll("line")
+          .data(points).enter().append("line")
+          .attr('x1', function(d,i){return d[0].x})
+          .attr('y1', function(d,i){return d[0].y})
+          .attr('x2', function(d,i){return d[1].x})
+          .attr('y2', function(d,i){return d[1].y})
+          .attr("shape-rendering", "auto");
+
+      if(width) {
+        lines.attr("stroke-width", width)
+        .attr("class", "context-line")
+      }
+      else {
+        lines.attr("class", "context-line context-line-width")
+      }
+
+          // .style("shape-rendering", "optimizeQuality");
     }
     else {
         points.forEach(function(point){
@@ -101,7 +114,7 @@ const d3Utils = function () {
     render_context_bars : function(svg, render_options) {
     /* Add the bars to the viewer */
     let bar = svg
-        .selectAll(".context-line")
+        .selectAll(".context-bar")
         .data([render_options]);
 
     // UPDATE: add new elements if needed
@@ -110,7 +123,7 @@ const d3Utils = function () {
         .append('rect')
         /* Merge the old elements (if they exist) with the new data */
         .merge(bar)
-        .attr("class", "context-line")
+        .attr("class", "context-bar")
         .attr("width", render_options.width)
         .attr("height", render_options.height)
         .attr('y', render_options.y)

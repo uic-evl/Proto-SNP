@@ -168,9 +168,6 @@ function TertiaryStructureView(model, element) {
       /* Show the view to bind the model */
       coloringListView.show();
     });
-
-    /* Setup the help menu */
-    $("#" + self._id + " #molecularViewerHelp").click(helpMenu);
   };
 
   /* Attach the listeners */

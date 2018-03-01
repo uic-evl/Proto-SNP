@@ -1,4 +1,4 @@
-<nav id="molecularViewerMenu" class="navbar navbar-expand-md navbar-light bg-light py-md-0">
+<nav id="molecularViewerMenu" class="navbar navbar-expand-md navbar-light bg-light py-md-0 px-0">
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active py-0" id="proteinName">
@@ -9,15 +9,24 @@
                     </span>
                 </a>
             </li>
-            <li id="geometry_list" class="nav-item dropdown py-0">
-                <a class="nav-link dropdown-toggle" href="#" id="geometryDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Geometry
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle wrenchDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span id="popup-trigger sBtn fileinput-button family-wrench">
+                        <i class="fa fa-wrench proteinSettingsWrench"></i>
+                    </span>
                 </a>
-            </li>
-            <li id="protein_coloring_list" class="nav-item dropdown py-0">
-                <a class="nav-link dropdown-toggle" href="#" id="colorDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Color By
-                </a>
+                <ul class="dropdown-menu">
+                    <li id="geometry_list" class="dropdown-submenu py-0">
+                        <a class="dropdown-item dropdown-toggle" href="#" id="geometryDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Geometry
+                        </a>
+                    </li>
+                    <li id="protein_coloring_list" class="dropdown-submenu py-0">
+                        <a class="dropdown-item dropdown-toggle" href="#" id="colorDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Color By
+                        </a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </div>

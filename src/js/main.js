@@ -123,7 +123,6 @@ var App = App || {};
             });
             return false;
           });
-
         });
       });
     };
@@ -146,7 +145,28 @@ var App = App || {};
 
     /* Register the about modal and help popup */
     $('#aboutModalDiv').load("./src/html/modals/aboutModal.html");
-    $('#helpButton').on("click", ()=>{$('body').chardinJs().start()});
+    $('#helpButton').on("click", function(){
+      let span = $(this).find("span"),
+          icon_class = span.attr('class');
+
+      /* Toggle the help icon */
+      if(icon_class === "fa fa-question") {
+        span.attr('class', "fa fa-times")
+      }
+      else {
+        span.attr('class', "fa fa-question")
+      }
+      /* Toggle the overlay */
+      $('body').chardinJs().toggle();
+
+      /* Alternate exit */
+      $(".svgOverlay").mouseup(function() {
+        span.attr('class', "fa fa-question")
+      });
+      $(".chardinjs-overlay").mouseup(function() {
+        span.attr('class', "fa fa-question")
+      });
+    });
   }
 
   /* start the application once the DOM is ready */

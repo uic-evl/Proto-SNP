@@ -7,7 +7,6 @@ const ProteinFamilyView = (function() {
   let PADDLE_SIZE = 6,
       MAX_PADDLE_SIZE = 10;
 
-
   function ProteinFamilyView(model, element) {
     let self = this;
 
@@ -259,9 +258,9 @@ const ProteinFamilyView = (function() {
 
     /* Render the title of the viewer */
     function updateViewTitle(dom, title) {
-      let p = d3.select(dom).select('#familyName p');
-      /* Update the label */
-      p.text(_.toUpper(title));
+      let i = d3.select(dom).select('#familyFolder');
+      /* Update the title tooltip  */
+      i.attr("title", title);
     }
 
     function build_brushes_and_viewers() {

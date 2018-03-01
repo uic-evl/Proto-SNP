@@ -7,7 +7,7 @@
     transform: translate(0,50%);
 }
 
-#popup-trigger-open, #popup-trigger-pdb, #popup-trigger-alignment {
+#popup-trigger-open, #popup-trigger-pdb, #popup-trigger-alignment, #family-wrench {
     display: inline;
     position: relative;
     background-color: #f8f9fa;
@@ -81,6 +81,40 @@ div.view {
     color: dimgray;
     background-color: #f8f9fa;
     border-color: #f8f9fa;
+}
+
+.wrenchDropdown.dropdown-toggle::after {
+    display:none
+}
+
+.settingsWrench, .proteinSettingsWrench {
+    font-size: 16px;
+    padding-top: 4px;
+    cursor: pointer;
+    z-index: -1;
+    color: dimgray;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+
+.settingsWrench {
+    padding-left: 15px;
+}
+
+#main_container a.nav-link {
+    padding: .25rem 0.5rem !important;
+}
+
+#helpButton.btn-info:focus, #helpButton.btn:focus {
+    box-shadow: none!important;
+}
+
+#aboutButton .btn-info:focus, #aboutButton.btn:focus {
+    box-shadow: none!important;
+}
+
+.top {
+    z-index: 9999999;
 }
 
 li > label {

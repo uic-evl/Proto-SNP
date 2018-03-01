@@ -12,12 +12,13 @@
 
 #molecularViewerA {
     padding-right: 0;
-    border-right: 1px solid;
+    border-right: 2px solid white;
 }
 
 #molecularViewerB {
     padding-left: 0;
     padding-right: 0;
+    border-right: 2px solid white;
 }
 
 .tertiaryViewer, .axisViewer {

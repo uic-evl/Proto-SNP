@@ -508,12 +508,11 @@ const ProteinFamilyView = (function() {
         initialize_file_open(d3.select('.settingsOpenFamily'));
 
         if(self.overviewImage){
-          $("#alignmentViewer").text("Alignment Viewer (Subset)");
+          $("#alignmentViewer").text("Family Alignment (Subset)");
         }
         else {
-          $("#alignmentViewer").text("Alignment Viewer");
+          $("#alignmentViewer").text("Family Alignment");
         }
-
         initialized_promise.resolve();
       });
       return initialized_promise;

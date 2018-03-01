@@ -98,7 +98,6 @@ var App = App || {};
               switch(metadata.extension){
                 case "pdb":
                   leftTertiaryStructureView.file_loaded(metadata, result);
-                  // Start the tour!
                   break;
                 case "msf":
                 case "fa":
@@ -145,9 +144,9 @@ var App = App || {};
       waitForFinalEvent(resize, 400, "Resize complete")
     });
 
-    /* Register the about modal */
+    /* Register the about modal and help popup */
     $('#aboutModalDiv').load("./src/html/modals/aboutModal.html");
-
+    $('#helpButton').on("click", ()=>{$('body').chardinJs().start()});
   }
 
   /* start the application once the DOM is ready */

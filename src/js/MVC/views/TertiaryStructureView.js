@@ -49,10 +49,6 @@ function TertiaryStructureView(model, element) {
   self.splash = null;
   self.staticLabel = '';
 
-  function helpMenu() {
-    hopscotch.startTour(App.tour_3D, 1);
-  }
-
   /* The user has uploaded or downloaded a PDB file */
   self.fileUploaded = new EventNotification(this);
   self.fileUpdated = new EventNotification(this);
@@ -199,12 +195,6 @@ function TertiaryStructureView(model, element) {
     $("#coloring_list").find("li").removeClass("disabled");
     /* Create the legend */
     //App.residueMappingUtility.createColorLegend("3D");
-
-    /* Load the tour if this is the first time a molecular viewer is generated */
-    let state = hopscotch.getState();
-    if (!state || state.indexOf('introduction_tour:') === 0){
-      hopscotch.startTour(App.tour_3D);
-    }
 
   });
 

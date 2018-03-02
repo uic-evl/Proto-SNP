@@ -14,11 +14,14 @@ const BrushView = (function() {
     self._semantic = options.semantic;
     self._class = "";
     self._menuSelection = "";
+    self.brush = null;
 
     self.overlays = [];
 
     self.brushMoved = null;
     self.proteinSelected = null;
+
+    self.dispatch =  d3.dispatch('brushstart', 'brushend', 'brush');
 
     let block_size = options.block_size;
 
@@ -43,16 +46,6 @@ const BrushView = (function() {
       self.redraw(App.OVERVIEW_PADDLE, msg);
     });
 
-  function brushResizePath(d) {
-      let e = +(d.type === "right"),
-          x = e ? 1 : -1,
-          y = d.height;
-      return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " "
-          + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 "
-          + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8)
-          + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
-  }
-
     /* Utility to clamp the brush sizes */
     function clamp_brush_sizes(selection, previousSelection) {
 
@@ -67,10 +60,10 @@ const BrushView = (function() {
       if (brush_size > maxPaddleSize) {
         /* Check which side was brushed */
         if (selection[0] === previousSelection[0]) {
-          selection[1] = selection[0] + maxPaddleSize - 1;
+          selection[1] = selection[0] + maxPaddleSize;
         }
         else {
-          selection[0] = selection[1] - maxPaddleSize - 1;
+          selection[0] = selection[1] - maxPaddleSize;
         }
       }
       else if (brush_size < minPaddleSize) {
@@ -85,22 +78,71 @@ const BrushView = (function() {
       return selection;
     }
 
-    function addBrushHandles(brushObj, semantic) {
-      let h = +brushObj.select('.selection').attr("height"),
-          x = +brushObj.select('.selection').attr("x"),
-          y = h/10 + h/4;
+    function brushDownByHandle() {
+      d3.event.stopPropagation();
+      d3.event.preventDefault();
 
-      if(semantic === "right") {
-          x = x + (+brushObj.select(".selection").attr("width"));
+
+      let _this = this,
+          d3_window = d3.select(window),
+          mouse = d3.mouse(brush.node());
+
+      d3_window
+        .on("mousemove.brush", function() {
+          brushMoveByHandle(_this)
+        })
+        .on("mouseup.brush", brushUpByHandle);
+
+
+    }
+
+    function brushMoveByHandle() {
+
+      let mouse = d3.mouse(options.brush.node());
+
+      if(options.type === "right") {
+        console.log(options);
       }
+      else if(options.type === "left") {
+        console.log(options);
+      }
+
+      self.dispatch.call("brush");
+    }
+
+    function brushUpByHandle(brush, d) {
+
+      self.dispatch.call("brushend");
+    }
+
+    function brushHandlePath(d) {
+      let e = +(d.type === "right"),
+        x = e ? 1 : -1,
+        y = d.height;
+      return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " "
+        + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 "
+        + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8)
+        + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
+    }
+
+    function addBrushHandles(brushObj, semantic) {
+          let h = +brushObj.select('.selection').attr("height"),
+              x = +brushObj.select('.selection').attr("x"),
+              y = h/10 + h/4;
+
+      if(semantic === "right") {x = x + (+brushObj.select(".selection").attr("width")); }
 
       /* Add the handle to the brush */
       self.handle = brushObj.selectAll(".handle--custom")
         .data([{type: semantic, height: h/10}])
         .enter().append("path")
-        .attr("class", "handle--custom")
+        .attr("class", "handle--custom selection")
+        .attr("cursor", "move")
         .attr("stroke", "#000")
-        .attr("d", brushResizePath);
+        .attr("d", brushHandlePath)
+        .on("mousedown.brush", brushDownByHandle);
+        // .on("mousemove.brush", brushMoveByHandle.bind(null, brushObj))
+        // .on("mouseup.brush", brushUpByHandle.bind(null, brushObj));
 
       /* Center the handle */
       self.handle
@@ -109,100 +151,57 @@ const BrushView = (function() {
 
     function addBrushOverlays(brushObj) {
       /* 6 Masks: left/right of both vertical paddles, above/below the horizontal paddle */
-      let parent = brushObj.node().parentNode,
-        bar_height = parseInt(brushObj.selectAll('rect.selection').attr('height')),
-        overlay_height = parseInt(brushObj.selectAll('rect.overlay').attr('height')),
-        overlay_width = parseInt(brushObj.selectAll('rect.overlay').attr('width')),
-        coordinates = [], class_name = "";
+      let bar_height = +(brushObj.selectAll('rect.selection').attr('height')),
+          overlay_height = +(brushObj.selectAll('rect.overlay').attr('height')),
+          overlay_width = +(brushObj.selectAll('rect.overlay').attr('width')),
+          coordinates = [];
       /* Orientation specific settings */
       if (self._orientation === App.HORIZONTAL_PADDLE) {
         /* The coordinates of opaque covers */
         coordinates = [
           /* Overlays above and below the horizontal paddle */
           {x: 0, y: 0, width: overlay_width, height: 0, class_name: 'horizontal_covers trend_covers'},
-          {
-            x: 0,
-            y: bar_height,
-            width: overlay_width,
-            height: overlay_height - (bar_height),
-            class_name: 'horizontal_covers trend_covers'
-          },
+          {x: 0, y: bar_height, width: overlay_width, height: overlay_height - (bar_height),
+            class_name: 'horizontal_covers trend_covers'},
         ];
       }
       else if (self._orientation === App.VERTICAL_PADDLE && self._semantic === "left") {
         /* Overlays for the left paddle */
         coordinates = [
           {x: 0, y: 0, width: 0, height: 0, class_name: 'left_vertical_covers vertical_covers trend_covers'},
-          {
-            x: 0,
-            y: bar_height,
-            width: 0,
-            height: overlay_height - (bar_height),
-            class_name: 'left_vertical_covers vertical_covers trend_covers'
-          },
+          {x: 0, y: bar_height, width: 0, height: overlay_height - (bar_height),
+            class_name: 'left_vertical_covers vertical_covers trend_covers'},
         ];
       }
       else if (self._orientation === App.VERTICAL_PADDLE && self._semantic === "right") {
         coordinates = [
           /* Overlays for the right paddle */
-          {
-            x: overlay_width,
-            y: 0,
-            width: 0,
-            height: 0,
-            class_name: 'right_vertical_covers vertical_covers trend_covers'
+          {x: overlay_width, y: 0, width: 0, height: 0, class_name: 'right_vertical_covers vertical_covers trend_covers'
           },
-          {
-            x: overlay_width,
-            y: bar_height,
-            width: 0,
-            height: overlay_height - (bar_height),
-            class_name: 'right_vertical_covers vertical_covers trend_covers'
-          }
+          {x: overlay_width, y: bar_height, width: 0, height: overlay_height - (bar_height),
+            class_name: 'right_vertical_covers vertical_covers trend_covers' }
         ];
       }
       else if (self._orientation === App.OVERVIEW_PADDLE) {
         coordinates = [
           /* Overlays above and below the overview paddle */
-          {
-            x: parseInt(options.extent[0][0]),
-            y: 0,
-            width: overlay_width,
-            height: 0,
-            class_name: 'overview_covers trend_covers'
-          },
-          {
-            x: parseInt(options.extent[0][0]),
-            y: bar_height,
-            width: overlay_width,
-            height: overlay_height - (bar_height),
-            class_name: 'overview_covers trend_covers'
-          }
+          {x: +(options.extent[0][0]), y: 0, width: overlay_width, height: 0,
+            class_name: 'overview_covers trend_covers'},
+          {x: +(options.extent[0][0]), y: bar_height, width: overlay_width, height: overlay_height - (bar_height),
+            class_name: 'overview_covers trend_covers'}
         ];
       }
 
       /* Append the two covers to the brush svg */
-      d3.select(parent)
+      d3.select(brushObj.node())
         .selectAll("paddle_overlays")
-        .data(coordinates, function (d) {
-          return d;
-        })
+        .data(coordinates, function (d) {return d;})
         .enter().append('rect')
-        .attr("class", function (d) {
-          return d.class_name
-        })
-        .attr("x", function (d) {
-          return d.x
-        })
-        .attr("y", function (d) {
-          return d.y
-        })
-        .attr('width', function (d) {
-          return d.width;
-        })
-        .attr('height', function (d) {
-          return d.height;
-        })
+        .attr("class", function (d) { return d.class_name })
+        .attr("x", function (d) { return d.x })
+        .attr("y", function (d) {return d.y })
+        .attr('width', function (d) {return d.width;})
+        .attr('height', function (d) {return d.height;})
         .attr('fill', '#ecf0f1');
     }
 
@@ -252,8 +251,8 @@ const BrushView = (function() {
       }
       else if (options.orientation === App.VERTICAL_PADDLE) {
         // Round the two event extents to the nearest row
-        d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0] / block_size) * block_size);
-        d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1] / block_size) * block_size);
+        d3.event.selection[0] = +(Math.round(d3.event.selection[0] / block_size) * block_size);
+        d3.event.selection[1] = +(Math.round(d3.event.selection[1] / block_size) * block_size);
 
         // clamp the paddle to the min/max size
         clamp_brush_sizes(d3.event.selection, self._model.getSelectedResidues(options.semantic).previous);
@@ -275,31 +274,19 @@ const BrushView = (function() {
       self.brushMoved.notify({options: options, selection: d3.event.selection});
     };
 
-    self.getInitialPosition= function () {
-        return this.brushObj.getInitialPosition();
-    };
+    self.getInitialPosition = function () {return this.brushObj.getInitialPosition(); };
 
-    self.getBrush= function () {
-      return this.brushObj.brush;
-    };
+    self.getBrush = function () { return this.brushObj.brush; };
 
-    self.getSelection= function () {
-      return this._selection
-    };
+    self.getSelection = function () { return this._selection };
 
-    self.setSelection= function (selection) {
-      this._selection = selection;
-    };
+    self.setSelection = function (selection) { this._selection = selection; };
 
-    self.getScale= function () {
-      return this._scale
-    };
+    self.getScale = function () { return this._scale };
 
-    self.getBrushElement= function () {
-      return document.getElementsByClassName(this.brushObj.getBrushClass())[0];
-    };
+    self.getBrushElement = function () { return document.getElementsByClassName(this.brushObj.getBrushClass())[0]; };
 
-    self.removeContextMenu= function () {
+    self.removeContextMenu = function () {
       $('.btn-left_viewer').off('click');
       $('.btn-right_viewer').off('click');
     };
@@ -309,10 +296,12 @@ const BrushView = (function() {
        * 1: Deleting the brush on a wrong click
        * 2: Interference between brushes
        */
+
+      self.brushObj = brushObj;
       brushObj.selectAll('.overlay')
         .style("pointer-events", "none");
       /* Let d3 decide the best rendering for the brushes */
-      brushObj.selectAll('.selection')
+      self.brushObj.selectAll('.selection')
         .style("shape-rendering", "auto");
 
       /* add the context menu for the horizontal bar*/
@@ -322,18 +311,16 @@ const BrushView = (function() {
       }
       /* Add the tooltip if one was created */
       if (this._tooltip) {
-        brushObj.call(this._tooltip);
-        brushObj.select('rect.selection')
+        self.brushObj.call(this._tooltip);
+        self.brushObj.select('rect.selection')
           .on('mouseover', this._tooltip.show)
           .on('mouseout', this._tooltip.hide);
       }
 
-      if(this._orientation === App.VERTICAL_PADDLE){
-          addBrushHandles(brushObj, this._semantic);
-      }
+      if(this._orientation === App.VERTICAL_PADDLE){ addBrushHandles(self.brushObj, this._semantic); }
 
       /* Add the overlay masks and the paddles */
-      addBrushOverlays(brushObj);
+      addBrushOverlays();
 
       /* Add the help text */
       setHelpText(brushObj, this.helpText);
@@ -341,7 +328,7 @@ const BrushView = (function() {
     };
 
     self.redraw = function (paddle, data) {
-        let brush_sel, brush, x, y, width, height;
+        let brush, parent, x, y, width, height;
 
         if (paddle === App.OVERVIEW_PADDLE) {
           let overview_height = parseInt(d3.select('g.horizontal rect.overlay').attr('height'));
@@ -380,16 +367,17 @@ const BrushView = (function() {
             });
         }
         else if (paddle === App.VERTICAL_PADDLE) {
-          let overview_width = parseInt(d3.select('g.horizontal rect.overlay').attr('width'));
+          let overview_width = +(d3.select('g.horizontal rect.overlay').attr('width')),
+              brush_left = d3.select('g.vertical-left rect.selection'),
+              brush_right = d3.select('g.vertical-right rect.selection');
           /* Get the brush that moved */
           if (data.semantic === "left") {
-            let brush_right = d3.select('g.vertical-right rect.selection');
-            brush = d3.select('g.vertical-left');
-            brush_sel = brush.select('rect.selection');
+            brush = brush_left;
+            parent = brush.node().parentNode;
 
             /* Get the new positions */
-            x = parseInt(brush_sel.attr('x'));
-            width = parseInt(brush_sel.attr('width'));
+            x = +(brush.attr('x'));
+            width = +(brush.attr('width'));
 
             /* Reposition the x of the left vertical overlays */
             d3.selectAll('rect.left_vertical_covers')
@@ -398,20 +386,17 @@ const BrushView = (function() {
             d3.selectAll("rect.horizontal_covers")
               .attr("x", (x + width))
               .attr('width', () => {
-                let w = parseInt(brush_right.attr("x")) - (x + width);
+                let w = +(brush_right.attr("x")) - (x + width);
                 return (w > -1) ? w : 0
               });
           }
           else if (data.semantic === "right") {
-            let brush_left = d3.select('g.vertical-left rect.selection'),
-                width_left = parseInt(brush_left.attr('width'));
+            brush = brush_right;
+            parent = brush.node().parentNode;
 
-            brush = d3.select('g.vertical-right');
-            brush_sel = brush.select('rect.selection');
-
-              /* Get the new positions */
-            x = parseInt(brush_sel.attr('x'));
-            width = parseInt(brush_sel.attr('width'));
+            /* Get the new positions */
+            x = +(brush.attr('x'));
+            width = +(brush.attr('width'));
 
             /* Reposition the x of the right vertical overlays */
             d3.selectAll('rect.right_vertical_covers')
@@ -424,17 +409,19 @@ const BrushView = (function() {
             /* reposition the width of the horizontal covers */
             d3.selectAll("rect.horizontal_covers")
               .attr('width', () => {
-                let w = x - (parseInt(brush_left.attr("x")) + width_left);
+                let width_left = +(brush_left.attr('width')),
+                    w = x - (+(brush_left.attr("x")) + width_left);
                 return (w > -1) ? w : 0
               });
             x = x+width;
           }
             // /* Move the brush paddle */
-            height = parseInt(brush_sel.attr('height'));
+            height = +(brush.attr('height'));
             let y = (height/4 + height/10);
 
-            brush.select(".handle--custom").attr("display", null)
-                .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
+            d3.select(parent).select(".handle--custom").attr("display", null)
+              .attr("transform",()=>{ return "translate(" + [x,y] + ")"; })
+              .raise();
         }
       };
 

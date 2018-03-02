@@ -17,10 +17,19 @@ const BrushView = (function() {
 
     self.overlays = [];
 
-    let block_size = options.block_size;
-
     self.brushMoved = null;
     self.proteinSelected = null;
+
+    let block_size = options.block_size,
+        brushResizePath = function(d) {
+          let e = +(d.type === "e"),
+            x = e ? 1 : -1,
+            y = d.height/2;
+          return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " "
+            + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 "
+            + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8)
+            + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
+        };
 
     /* set the initial selections */
     if (self._orientation === App.OVERVIEW_PADDLE) { self._selection = options.position; }
@@ -73,6 +82,17 @@ const BrushView = (function() {
         }
       }
       return selection;
+    }
+
+    function addBrushHandles(brushObj) {
+      let h = brushObj.select('.selection').attr("height");
+      let handle = brushObj.selectAll(".handle--custom")
+        .data([{type: "w", height: h}, {type: "e", height: h}])
+        .enter().append("path")
+        .attr("class", "handle--custom")
+        .attr("stroke", "#000")
+        .attr("cursor", "ew-resize")
+        .attr("d", brushResizePath);
     }
 
     function addBrushOverlays(brushObj) {
@@ -244,34 +264,6 @@ const BrushView = (function() {
       self.brushMoved.notify({options: options, selection: d3.event.selection});
     };
 
-    self.initialize = function (options) {
-      let view = this;
-      view.class = options.class;
-      view.helpText = options.helpText;
-      view.helpPosition = options.helpPosition;
-
-      /* Construct the brush based on the orientation */
-      view.brushObj =
-        App.BrushFactory.createBrush(options.orientation)
-          .setPaddleSize(options.paddleSize)
-          .setMaxPaddleSize(options.maxPaddleSize)
-          .setBrushClass(options.class)
-          .setPaddleExtent(options.extent)
-          .setInitialPosition(options.position)
-          .onBrush(function () {
-            view.onBrush.call(this)
-          });
-
-      /* Add a tooltip if specified */
-      if (options.tooltip) {
-        view._tooltip = d3.tip()
-          .attr('class', 'd3-tip')
-          .offset([-10, 0])
-          .html(options.tooltip);
-      }
-
-    };
-
     self.getInitialPosition= function () {
         return this.brushObj.getInitialPosition();
     };
@@ -325,8 +317,9 @@ const BrushView = (function() {
           .on('mouseout', this._tooltip.hide);
       }
 
-      /* Add the overlay masks */
+      /* Add the overlay masks and the paddles */
       addBrushOverlays(brushObj);
+      addBrushHandles(brushObj);
 
       /* Add the help text */
       setHelpText(brushObj, this.helpText);
@@ -428,6 +421,34 @@ const BrushView = (function() {
 
     /* Mixin the utilities */
     _.mixin(self, new jQueryContextUtils(self));
+
+    self.initialize = function (options) {
+      let view = this;
+      view.class = options.class;
+      view.helpText = options.helpText;
+      view.helpPosition = options.helpPosition;
+
+      /* Construct the brush based on the orientation */
+      view.brushObj =
+        App.BrushFactory.createBrush(options.orientation)
+          .setPaddleSize(options.paddleSize)
+          .setMaxPaddleSize(options.maxPaddleSize)
+          .setBrushClass(options.class)
+          .setPaddleExtent(options.extent)
+          .setInitialPosition(options.position)
+          .onBrush(function () {
+            view.onBrush.call(this)
+          });
+
+      /* Add a tooltip if specified */
+      if (options.tooltip) {
+        view._tooltip = d3.tip()
+          .attr('class', 'd3-tip')
+          .offset([-10, 0])
+          .html(options.tooltip);
+      }
+
+    };
 
     /* Initialize the d3 brush */
     self.initialize(options);

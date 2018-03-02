@@ -35,3 +35,8 @@ text.mono {
 #trendImageColumn {
     height: 35%;
 }
+
+.handle--custom {
+    cursor: move;
+    z-index: 999
+}

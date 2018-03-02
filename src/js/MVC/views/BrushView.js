@@ -20,16 +20,7 @@ const BrushView = (function() {
     self.brushMoved = null;
     self.proteinSelected = null;
 
-    let block_size = options.block_size,
-        brushResizePath = function(d) {
-          let e = +(d.type === "e"),
-            x = e ? 1 : -1,
-            y = d.height/2;
-          return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " "
-            + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 "
-            + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8)
-            + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
-        };
+    let block_size = options.block_size;
 
     /* set the initial selections */
     if (self._orientation === App.OVERVIEW_PADDLE) { self._selection = options.position; }
@@ -51,6 +42,16 @@ const BrushView = (function() {
     self._model.proteinOverviewChanged.attach(function (sender, msg) {
       self.redraw(App.OVERVIEW_PADDLE, msg);
     });
+
+  function brushResizePath(d) {
+      let e = +(d.type === "right"),
+          x = e ? 1 : -1,
+          y = d.height;
+      return "M" + (.5 * x) + "," + y + "A6,6 0 0 " + e + " "
+          + (6.5 * x) + "," + (y + 6) + "V" + (2 * y - 6) + "A6,6 0 0 "
+          + e + " " + (.5 * x) + "," + (2 * y) + "Z" + "M" + (2.5 * x) + "," + (y + 8)
+          + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
+  }
 
     /* Utility to clamp the brush sizes */
     function clamp_brush_sizes(selection, previousSelection) {
@@ -84,15 +85,26 @@ const BrushView = (function() {
       return selection;
     }
 
-    function addBrushHandles(brushObj) {
-      let h = brushObj.select('.selection').attr("height");
-      let handle = brushObj.selectAll(".handle--custom")
-        .data([{type: "w", height: h}, {type: "e", height: h}])
+    function addBrushHandles(brushObj, semantic) {
+      let h = +brushObj.select('.selection').attr("height"),
+          x = +brushObj.select('.selection').attr("x"),
+          y = h/10 + h/4;
+
+      if(semantic === "right") {
+          x = x + (+brushObj.select(".selection").attr("width"));
+      }
+
+      /* Add the handle to the brush */
+      self.handle = brushObj.selectAll(".handle--custom")
+        .data([{type: semantic, height: h/10}])
         .enter().append("path")
         .attr("class", "handle--custom")
         .attr("stroke", "#000")
-        .attr("cursor", "ew-resize")
         .attr("d", brushResizePath);
+
+      /* Center the handle */
+      self.handle
+          .attr("transform",()=>{ return "translate(" + [parseInt(x),y] + ")"; });
     }
 
     function addBrushOverlays(brushObj) {
@@ -240,7 +252,6 @@ const BrushView = (function() {
       }
       else if (options.orientation === App.VERTICAL_PADDLE) {
         // Round the two event extents to the nearest row
-
         d3.event.selection[0] = parseInt(Math.round(d3.event.selection[0] / block_size) * block_size);
         d3.event.selection[1] = parseInt(Math.round(d3.event.selection[1] / block_size) * block_size);
 
@@ -248,7 +259,7 @@ const BrushView = (function() {
         clamp_brush_sizes(d3.event.selection, self._model.getSelectedResidues(options.semantic).previous);
 
         /* Programatically move to the clamp*/
-        d3.select(this).call(d3.event.target.move, d3.event.selection)
+        d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
       else {
         d3.event.selection[0] = Math.round(d3.event.selection[0] / block_size) * block_size;
@@ -293,7 +304,7 @@ const BrushView = (function() {
       $('.btn-right_viewer').off('click');
     };
 
-    self.render= function (brushObj) {
+    self.render = function (brushObj) {
       /* Remove the pointer events from the brush overlays to prevent:
        * 1: Deleting the brush on a wrong click
        * 2: Interference between brushes
@@ -317,9 +328,12 @@ const BrushView = (function() {
           .on('mouseout', this._tooltip.hide);
       }
 
+      if(this._orientation === App.VERTICAL_PADDLE){
+          addBrushHandles(brushObj, this._semantic);
+      }
+
       /* Add the overlay masks and the paddles */
       addBrushOverlays(brushObj);
-      addBrushHandles(brushObj);
 
       /* Add the help text */
       setHelpText(brushObj, this.helpText);
@@ -327,7 +341,7 @@ const BrushView = (function() {
     };
 
     self.redraw = function (paddle, data) {
-        let brush, x, y, width, height;
+        let brush_sel, brush, x, y, width, height;
 
         if (paddle === App.OVERVIEW_PADDLE) {
           let overview_height = parseInt(d3.select('g.horizontal rect.overlay').attr('height'));
@@ -335,9 +349,7 @@ const BrushView = (function() {
           y = parseInt(brush.attr('y'));
           height = parseInt(brush.attr('height'));
           d3.selectAll("rect.overview_covers")
-            .attr("y", function (d, i) {
-              return ((i) ? (y + height) : d.y)
-            })
+            .attr("y", function (d, i) { return ((i) ? (y + height) : d.y) })
             .attr("height", function (d, i) {
               let h = (i) ? overview_height - (y + height - d.y) : y - d.y;
               return (h > -1) ? h : 0;
@@ -372,11 +384,12 @@ const BrushView = (function() {
           /* Get the brush that moved */
           if (data.semantic === "left") {
             let brush_right = d3.select('g.vertical-right rect.selection');
-            brush = d3.select('g.vertical-left rect.selection');
+            brush = d3.select('g.vertical-left');
+            brush_sel = brush.select('rect.selection');
 
             /* Get the new positions */
-            x = parseInt(brush.attr('x'));
-            width = parseInt(brush.attr('width'));
+            x = parseInt(brush_sel.attr('x'));
+            width = parseInt(brush_sel.attr('width'));
 
             /* Reposition the x of the left vertical overlays */
             d3.selectAll('rect.left_vertical_covers')
@@ -388,17 +401,17 @@ const BrushView = (function() {
                 let w = parseInt(brush_right.attr("x")) - (x + width);
                 return (w > -1) ? w : 0
               });
-
           }
           else if (data.semantic === "right") {
             let brush_left = d3.select('g.vertical-left rect.selection'),
-              width_left = parseInt(brush_left.attr('width'));
+                width_left = parseInt(brush_left.attr('width'));
 
-            brush = d3.select('g.vertical-right rect.selection');
+            brush = d3.select('g.vertical-right');
+            brush_sel = brush.select('rect.selection');
 
-            /* Get the new positions */
-            x = parseInt(brush.attr('x'));
-            width = parseInt(brush.attr('width'));
+              /* Get the new positions */
+            x = parseInt(brush_sel.attr('x'));
+            width = parseInt(brush_sel.attr('width'));
 
             /* Reposition the x of the right vertical overlays */
             d3.selectAll('rect.right_vertical_covers')
@@ -414,8 +427,14 @@ const BrushView = (function() {
                 let w = x - (parseInt(brush_left.attr("x")) + width_left);
                 return (w > -1) ? w : 0
               });
+            x = x+width;
           }
+            // /* Move the brush paddle */
+            height = parseInt(brush_sel.attr('height'));
+            let y = (height/4 + height/10);
 
+            brush.select(".handle--custom").attr("display", null)
+                .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
         }
       };
 

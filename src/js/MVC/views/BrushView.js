@@ -82,37 +82,38 @@ const BrushView = (function() {
       d3.event.stopPropagation();
       d3.event.preventDefault();
 
-
       let _this = this,
           d3_window = d3.select(window),
-          mouse = d3.mouse(brush.node());
+          mouse = d3.mouse(self.brush.node());
 
-      d3_window
-        .on("mousemove.brush", function() {
-          brushMoveByHandle(_this)
-        })
+      d3_window.on("mousemove.brush", function() { return brushMoveByHandle(_this);})
         .on("mouseup.brush", brushUpByHandle);
 
-
+      self.origin = d3.mouse(this);
     }
 
     function brushMoveByHandle() {
+      let mouse = d3.mouse(self.brush.node());
 
-      let mouse = d3.mouse(options.brush.node());
-
-      if(options.type === "right") {
-        console.log(options);
+      if(options.semantic === "right") {
+        console.log(mouse);
       }
-      else if(options.type === "left") {
-        console.log(options);
+      else if(options.semantic === "left") {
+        console.log(mouse);
       }
 
-      self.dispatch.call("brush");
+      return self.dispatch.call("brush", this, {
+        mode: "move"
+      });
     }
 
-    function brushUpByHandle(brush, d) {
+    function brushUpByHandle() {
 
-      self.dispatch.call("brushend");
+      let d3_window = d3.select(window);
+      d3_window.on("mousemove.brush",null).on("mouseup.brush", null);
+
+
+      return self.dispatch.call("brushend");
     }
 
     function brushHandlePath(d) {
@@ -297,11 +298,11 @@ const BrushView = (function() {
        * 2: Interference between brushes
        */
 
-      self.brushObj = brushObj;
+      self.brush = brushObj;
       brushObj.selectAll('.overlay')
         .style("pointer-events", "none");
       /* Let d3 decide the best rendering for the brushes */
-      self.brushObj.selectAll('.selection')
+      brushObj.selectAll('.selection')
         .style("shape-rendering", "auto");
 
       /* add the context menu for the horizontal bar*/
@@ -311,16 +312,16 @@ const BrushView = (function() {
       }
       /* Add the tooltip if one was created */
       if (this._tooltip) {
-        self.brushObj.call(this._tooltip);
-        self.brushObj.select('rect.selection')
+        brushObj.call(this._tooltip);
+        brushObj.select('rect.selection')
           .on('mouseover', this._tooltip.show)
           .on('mouseout', this._tooltip.hide);
       }
 
-      if(this._orientation === App.VERTICAL_PADDLE){ addBrushHandles(self.brushObj, this._semantic); }
+      if(this._orientation === App.VERTICAL_PADDLE){ addBrushHandles(brushObj, this._semantic); }
 
       /* Add the overlay masks and the paddles */
-      addBrushOverlays();
+      addBrushOverlays(brushObj);
 
       /* Add the help text */
       setHelpText(brushObj, this.helpText);

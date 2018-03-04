@@ -113,6 +113,11 @@ div.view {
     box-shadow: none!important;
 }
 
+#alignmentViewerOverview, #alignmentViewer {
+    color: rgba(0,0,0,.5);
+    cursor: default;
+}
+
 .top {
     z-index: 9999999;
 }

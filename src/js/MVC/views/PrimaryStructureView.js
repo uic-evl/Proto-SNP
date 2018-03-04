@@ -71,7 +71,6 @@ const PrimaryStructureView = (function() {
           })
           .classed("selected_sequence", false);
     });
-
   }
 
   PrimaryStructureView.prototype = {
@@ -133,9 +132,7 @@ const PrimaryStructureView = (function() {
           .exit().remove();
     },
 
-    resize: function() {
-
-    }
+    resize: function() {}
   };
 
   return PrimaryStructureView;

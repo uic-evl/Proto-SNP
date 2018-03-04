@@ -10,9 +10,9 @@
     overflow-x: hidden;
 }
 
-/* Disable the scroll bar from rendering */
-.sequence::-webkit-scrollbar
-{  display: none;  }
+/*!* Disable the scroll bar from rendering *!*/
+/*.sequence::-webkit-scrollbar*/
+/*{  display: none;  }*/
 
 .sequence-container {
     padding: 0;
@@ -47,4 +47,12 @@
 .help_text {
     color: white;
     text-align: center;
+}
+
+.right_scroll {
+    direction: ltr;
+}
+
+.left_scroll {
+    direction: rtl;
 }

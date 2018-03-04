@@ -17,6 +17,7 @@
     <link type="text/css" rel="stylesheet" href="lib/css/d3-context-menu.min.css">
     <link type="text/css" rel="stylesheet" href="lib/css/example-styles.min.css">
     <link type="text/css" rel="stylesheet" href="lib/css/jquery.contextMenu.min.css" >
+
     <link type="text/css" rel="stylesheet" href="lib/css/chardinjs.css" >
 
     <!-- CSS SRC -->
@@ -59,6 +60,8 @@
     <script type='text/javascript' src="lib/js/jQuery-context/jquery.ui.position.min.js"></script>
     <script type='text/javascript' src="lib/js/jQuery-context/main.min.js"></script>
     <script type='text/javascript' src="lib/js/typehead.bundle.js"></script>
+
+    <!-- jQuery scroll  -->
 
     <!-- Bootstrap -->
     <!--<script type='text/javascript' src='lib/js/bootstrap.min.js'></script>-->
@@ -110,7 +113,6 @@
 </head>
 
 <body>
-
 <!-- Navigation menu -->
 <nav id="menu" class="navbar navbar-light no-gutters">
     <div class="container-fluid p-0" style="width: 100%">
@@ -154,10 +156,12 @@
         <!-- Sequence Viewer -->
         <div class="col-2 sequenceViewers">
             <div class="x_title view"></div>
-            <div id="sequenceViewer" style="width:100%" class="black-background">
-                <div id="sequenceViewerTemplate" class="row no-gutters" style="width:100%" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
+            <div id="sequenceViewer" class="w-100 black-background">
+                <div id="sequenceViewerTemplate" class="row no-gutters w-100"
+                     data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
                 <script type="text/html" id="sequenceViewers">
-                    <div class="col-6 sequence-container black-background">
+                    <div class="col-6 sequence-container black-background"
+                         data-bind="css: { left_scroll: $data._position === 'left' }">
                         <div class="primary_sequence_help center-vertically hidden">
                             <p class="help_text text-sm-center">Please load a second protein </p>
                         </div>
@@ -179,7 +183,7 @@
     <!--</div>-->
 
     <!-- Trend Image -->
-    <div class="row proteinFamilyRow" id="proteinFamilyRow">
+    <div class="row proteinFamilyRow no-gutters" id="proteinFamilyRow">
         <div class="col-12">
             <!-- Trend Image View-->
             <div class="row TrendImageView center-aligned">

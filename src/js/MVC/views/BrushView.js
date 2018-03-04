@@ -119,26 +119,40 @@ const BrushView = (function() {
                 + "V" + (2 * y - 8) + "M" + (4.5 * x) + "," + (y + 8) + "V" + (2 * y - 8);
         }
 
-        function addBrushHandles(brushObj, semantic) {
-            let h = +brushObj.select('.selection').attr("height"),
+        function brushHandleShapes(brushObj, semantic) {
+            let h = +brushObj.select('.overlay').attr("height"),
+                w = +brushObj.select('.overlay').attr("width"),
                 x = +brushObj.select('.selection').attr("x"),
-                y = h/10 + h/4;
+                height = h/20,
+                width = w/25,
+                y = h/2 - height/4;
 
-            if(semantic === "right") {x = x + (+brushObj.select(".selection").attr("width")); }
+            if(semantic === "left") {x = x + (+brushObj.select(".selection").attr("width")); }
+            if(semantic === "right") {x = x - width}
 
+            self.handle
+                .append("rect")
+                .attr("height", height)
+                .attr("width", width)
+                .attr("transform",()=>{ return "translate(" + [x,y] + ")"; })
+
+            /* Center the handle */
+            // handle
+            // // .attr("transform", function(d){return "rotate("+d.rotate+")"})
+            //     .attr("transform",(d)=>{ return "translate(" + [x,y] + ")"; })
+        }
+
+        function addBrushHandles(brushObj, semantic) {
             /* Add the handle to the brush */
             self.handle = brushObj.selectAll(".handle--custom")
-                .data([{type: semantic, height: h/10}])
-                .enter().append("path")
+                .data([{type: semantic}])
+                .enter().append("g")
                 .attr("class", "handle--custom selection")
                 .attr("cursor", "move")
                 .attr("stroke", "#000")
-                .attr("d", brushHandlePath)
+                // .attr("d", brushHandlePath)
                 .on("mousedown.brush", brushDownByHandle);
-
-            /* Center the handle */
-            self.handle
-                .attr("transform",()=>{ return "translate(" + [parseInt(x),y] + ")"; });
+            brushHandleShapes(brushObj, semantic);
         }
 
         function addBrushSVGMasks(brushObj) {
@@ -273,7 +287,7 @@ const BrushView = (function() {
                     .on('mouseout', this._tooltip.hide);
             }
 
-            if(this._orientation === App.VERTICAL_PADDLE){ addBrushHandles(brushObj, this._semantic); }
+            if(this._orientation === App.VERTICAL_PADDLE) addBrushHandles(brushObj, this._semantic);
 
             /* Add the overlay masks and the paddles */
             addBrushSVGMasks(brushObj);
@@ -294,20 +308,20 @@ const BrushView = (function() {
                 .attr("width", brush_sel.attr("width"))
                 .attr("height", brush_sel.attr("height"));
 
-            if(handle.node()) {
-                /* Move the brush paddle */
-                let translate = d3Utils.get_translate_values(handle),
-                    x = (self._semantic==="left") ?
-                        brush_sel.attr("x") :
-                        +brush_sel.attr("x") + (+brush_sel.attr("width"));
-
-                handle.attr("display", null)
-                    .attr("transform",()=>{ return "translate(" + [x,translate[1]] + ")"; })
-                    .raise();
-
-                d3.select(self.mask).select("#"+self._semantic+"handle")
-                    .attr("transform", handle.attr("transform"));
-            }
+            // if(handle.node()) {
+            //     /* Move the brush paddle */
+            //     let translate = d3Utils.get_translate_values(handle),
+            //         x = (self._semantic==="left") ?
+            //             brush_sel.attr("x") :
+            //             +brush_sel.attr("x") + (+brush_sel.attr("width"));
+            //
+            //     handle.attr("display", null)
+            //         .attr("transform",()=>{ return "translate(" + [x,translate[1]] + ")"; })
+            //         .raise();
+            //
+            //     d3.select(self.mask).select("#"+self._semantic+"handle")
+            //         .attr("transform", handle.attr("transform"));
+            // }
 
         };
 

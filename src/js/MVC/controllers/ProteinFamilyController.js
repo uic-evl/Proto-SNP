@@ -110,15 +110,15 @@ const ProteinFamilyController = (function() {
           selection[0] = parseInt(Math.ceil(selection[0]));
           selection[1] = parseInt(Math.ceil(selection[1]));
 
-          let maxFrequencies  = self._model.getMaxSequenceFrequenciesFromRange(selection),
-              frequencies  = self._model.getSequenceFrequenciesFromRange(selection);
+          let maxFrequencies  = self._model.getMaxSequenceFrequenciesFromRange(selection);
           /* Set the initial selections in the model */
           self._model.setSelectedResidues(freqSpec.semantic, selection);
           /*Render the view */
           freqView.render({
             maxFrequencies:maxFrequencies,
             residues:currentProtein.sequence.slice(selection[0], selection[1]),
-            brush_pos: brushPos[0] + (brushPos[1]-brushPos[0])/2.0,
+            brush_center: brushPos[0] + (brushPos[1]-brushPos[0])/2.0,
+            brush_pos: brushPos,
             range: [selection[0], selection[1]]
           });
         });

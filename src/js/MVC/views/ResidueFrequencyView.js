@@ -140,8 +140,9 @@ const ResidueFrequencyView = (function() {
       self.render({
         maxFrequencies:maxFrequencies,
         residues:protein.sequence.slice(selection[0], selection[1]),
-        brush_pos: selection[0]*options.block_size + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0,
-        range: [selection[0], selection[1]]
+        brush_center: selection[0]*options.block_size + (selection[1]*options.block_size - selection[0]*options.block_size)/2.0,
+        brush_pos: [selection[0]*options.block_size,  selection[1]*options.block_size],
+          range: [selection[0], selection[1]]
       });
     });
 
@@ -260,6 +261,38 @@ const ResidueFrequencyView = (function() {
           .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
     };
 
+    self.renderContext = function(options) {
+          let scale = d3.scaleLinear().domain([0, this.max_items]).range(this.range),
+              y_position = this._barOffset_y/2.0,
+              x_bar_position = (this.semantic==="left") ? options.brush_center : options.brush_center-this.width,
+              contextPoints = [],
+              /* Set the width of the context line */
+              width_offset = scale(this.max_items-1);
+          width_offset += (scale(this.max_items) - width_offset) * 0.95;
+
+          /* Render the context bar */
+          d3Utils.render_context_bars(this._svg,
+              {
+                  x: x_bar_position, y: 1,
+                  height: 10, width:1
+              });
+          /* render the context lines */
+          if(this.semantic === "left"){
+              contextPoints = [
+                  [ {x: this._barOffset_x, y: y_position+10},  { x: options.brush_pos[0], y: 0}],
+                  [ {x: width_offset,      y: y_position+10},  { x: options.brush_pos[1], y: 0} ],
+              ];
+          }
+          else {
+              contextPoints = [
+                  [ {x: width_offset,      y: y_position+10},  { x: options.brush_pos[1]-this.width, y: 0}],
+                  [ {x: this._barOffset_x, y: y_position+10},  { x: options.brush_pos[0]-this.width, y: 0} ],
+              ];
+          }
+          d3Utils.render_context_lines(this._summarySvg, contextPoints, 0.2);
+      }
+
+
       /* Initialize the viewer */
     self.initialize(options);
   }
@@ -282,6 +315,7 @@ const ResidueFrequencyView = (function() {
       this.bar_height = options.bar_height;
       this.y_offset = (this.height - this.bar_height + this._barOffset_y)/2.0;
       this.glyph_width = options.bar_width;
+      this.max_items = options.max_items;
 
       this._dom
           .style("width", this.width)
@@ -291,8 +325,11 @@ const ResidueFrequencyView = (function() {
       d3Utils.clear_chart_dom(this._dom);
 
       /* Initialize the svg */
-      this._svg = this._dom.select("svg");
+      this._svg = this._dom.select(".freqSVG");
       d3Utils.set_chart_size(this._svg.node(), this.width, this.height);
+
+      this._summarySvg = this._dom.select(".summarySVG");
+      d3Utils.set_chart_size(this._summarySvg.node(), this.width, this.height);
 
       /* Initialize tooltip */
       this.tip = d3.tip()
@@ -338,12 +375,8 @@ const ResidueFrequencyView = (function() {
       /* Update the labels */
       this.update(render_options.residues, render_options.range);
       /* Render the context bars */
-      d3Utils.render_context_bars(this._svg,
-        {
-          x: (this.semantic==="left") ? render_options.brush_pos : render_options.brush_pos-this.width,
-          y: 1,
-          height: 10, width:1
-        });
+      this.renderContext(render_options);
+
       /* Set the visibility flag to true*/
       this._visible = true;
     },

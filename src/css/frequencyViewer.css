@@ -4,7 +4,6 @@
 
 .residueSummaryView {
     font-size: 10px;
-    margin-top: 20px;
     /*width:100%;*/
     /* 20% the size of the trend image */
     height: 10%;
@@ -45,4 +44,13 @@
 
 .barCallout {
     padding-left: 10px;
+}
+
+.freqSVG {
+    z-index: 999;
+    margin-top: 20px;
+}
+
+.summarySVG, .freqSVG {
+    position: absolute;
 }

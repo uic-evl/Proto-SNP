@@ -82,37 +82,29 @@ const BrushView = (function() {
       d3.event.stopPropagation();
       d3.event.preventDefault();
 
-      let _this = this,
-          d3_window = d3.select(window),
-          mouse = d3.mouse(self.brush.node());
-
-      d3_window.on("mousemove.brush", function() { return brushMoveByHandle(_this);})
-        .on("mouseup.brush", brushUpByHandle);
-
-      self.origin = d3.mouse(this);
+      let d3_window = d3.select(window);
+          self.origin = d3.mouse(self.brush.node());
+      /*Set the window move callbacks to trigger the brush movement */
+      d3_window
+          .on("mousemove.brush", function() { return brushMoveByHandle(self.brush.node());})
+          .on("mouseup.brush", brushUpByHandle);
     }
 
-    function brushMoveByHandle() {
-      let mouse = d3.mouse(self.brush.node());
-
-      if(options.semantic === "right") {
-        console.log(mouse);
-      }
-      else if(options.semantic === "left") {
-        console.log(mouse);
-      }
-
-      return self.dispatch.call("brush", this, {
-        mode: "move"
-      });
+    function brushMoveByHandle(target) {
+      let mouse = d3.mouse(target),
+          movementX = mouse[0] - self.origin[0],
+          movementY = mouse[1] - self.origin[1];
+      self.origin = mouse;
+      /* dispatch our brush event */
+      return self.dispatch.call("brush", this, {mode: "move", offset: {x:movementX, y:movementY}});
     }
 
     function brushUpByHandle() {
-
       let d3_window = d3.select(window);
+      /* Clear our callbacks */
       d3_window.on("mousemove.brush",null).on("mouseup.brush", null);
-
-
+      /* Remove the extent on the side with the brush (because or a re-render */
+      removeResizeHandle();
       return self.dispatch.call("brushend");
     }
 
@@ -142,8 +134,6 @@ const BrushView = (function() {
         .attr("stroke", "#000")
         .attr("d", brushHandlePath)
         .on("mousedown.brush", brushDownByHandle);
-        // .on("mousemove.brush", brushMoveByHandle.bind(null, brushObj))
-        // .on("mouseup.brush", brushUpByHandle.bind(null, brushObj));
 
       /* Center the handle */
       self.handle
@@ -226,6 +216,12 @@ const BrushView = (function() {
       });
     }
 
+    function removeResizeHandle() {
+        /* Remove the extent on the side with the brush*/
+        if(self._semantic === "left"){ self.brush.selectAll('rect.handle--w').remove(); }
+        else{ self.brush.selectAll('rect.handle--e').remove(); }
+    }
+
     function setHelpText(brushObj, text) {
       brushObj.select("rect.selection")
         .attr("data-intro", text);
@@ -251,14 +247,15 @@ const BrushView = (function() {
         d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
       else if (options.orientation === App.VERTICAL_PADDLE) {
-        // Round the two event extents to the nearest row
+        // console.log(d3.event.selection);
+          // Round the two event extents to the nearest row
         d3.event.selection[0] = +(Math.round(d3.event.selection[0] / block_size) * block_size);
         d3.event.selection[1] = +(Math.round(d3.event.selection[1] / block_size) * block_size);
 
         // clamp the paddle to the min/max size
         clamp_brush_sizes(d3.event.selection, self._model.getSelectedResidues(options.semantic).previous);
 
-        /* Programatically move to the clamp*/
+        /* Programmatically move to the clamp*/
         d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
       else {
@@ -267,7 +264,6 @@ const BrushView = (function() {
         // Snap the brush onto the closest protein
         d3.select(this).call(d3.event.target.move, d3.event.selection);
       }
-
       /* store the selection*/
       self._selection = d3.event.selection;
 
@@ -297,13 +293,12 @@ const BrushView = (function() {
        * 1: Deleting the brush on a wrong click
        * 2: Interference between brushes
        */
-
       self.brush = brushObj;
-      brushObj.selectAll('.overlay')
-        .style("pointer-events", "none");
+      brushObj.selectAll('.overlay').style("pointer-events", "none");
       /* Let d3 decide the best rendering for the brushes */
-      brushObj.selectAll('.selection')
-        .style("shape-rendering", "auto");
+      brushObj.selectAll('.selection').style("shape-rendering", "auto");
+      /* Remove the extent on the side with the brush*/
+      removeResizeHandle();
 
       /* add the context menu for the horizontal bar*/
       if (this._orientation === App.HORIZONTAL_PADDLE) {
@@ -443,9 +438,16 @@ const BrushView = (function() {
           .setBrushClass(options.class)
           .setPaddleExtent(options.extent)
           .setInitialPosition(options.position)
-          .onBrush(function () {
-            view.onBrush.call(this)
-          });
+          .onBrush(function () { view.onBrush.call(this) });
+
+      /* Link the paddle updates */
+      self.dispatch.on("brush", function(d) {
+          let prev = d3.brushSelection(self.brush.node()),
+              new_pos = [prev[0] + d.offset.x, prev[1] + d.offset.x];
+          /* Brush with our new position */
+          view.brushObj.brush(d3.select(self.brush.node()));
+          view.brushObj.brush.move(d3.select(self.brush.node()), new_pos);
+      });
 
       /* Add a tooltip if specified */
       if (options.tooltip) {

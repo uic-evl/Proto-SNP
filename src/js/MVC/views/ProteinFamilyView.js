@@ -672,12 +672,6 @@ const ProteinFamilyView = (function() {
                 brushView.render(brushObj);
             });
 
-            /* Render the left brush to initialize the correct overlays */
-            if (brushViews.length > 1) {
-                brushViews[1].redraw(App.VERTICAL_PADDLE, {semantic: brushViews[1]._semantic});
-                brushViews[0].redraw(App.HORIZONTAL_PADDLE, {semantic: brushViews[0]._semantic});
-            }
-
         };
 
         /* Getter for the x-Axis scale */

@@ -142,8 +142,9 @@ const BrushView = (function() {
         }
 
         function addBrushSVGMasks(brushObj) {
-            /* 6 Masks: left/right of both vertical paddles, above/below the horizontal paddle */
-            let brush_rect = brushObj.select("rect.selection");
+            /* Mask out the area around the brush and handle */
+            let brush_rect = brushObj.select("rect.selection"),
+                handle = brushObj.select(".handle--custom");
             d3.select(self.mask)
                 .append("rect")
                 .attr("id", self._semantic)
@@ -151,6 +152,11 @@ const BrushView = (function() {
                 .attr("y", brush_rect.attr("y"))
                 .attr("height", brush_rect.attr("height"))
                 .attr("width", brush_rect.attr("width"));
+            if(handle.node()){
+                let handle_clone = d3Utils.clone_d3_selection(handle, self._semantic+"_handle");
+                d3.select(self.mask).node()
+                    .append(handle_clone.node());
+            }
         }
 
         function addContextMenu() {
@@ -279,12 +285,30 @@ const BrushView = (function() {
 
         self.redraw = function () {
             /* Move the brush paddle overlays */
-            let brush_sel = self.brush.select("rect.selection");
-                d3.select(self.mask).select("#"+self._semantic)
-                    .attr("x", brush_sel.attr("x"))
-                    .attr("y", brush_sel.attr("y"))
-                    .attr("width", brush_sel.attr("width"))
-                    .attr("height", brush_sel.attr("height"));
+            let brush_sel = self.brush.select("rect.selection"),
+                handle = self.brush.select(".handle--custom");
+
+            d3.select(self.mask).select("#"+self._semantic)
+                .attr("x", brush_sel.attr("x"))
+                .attr("y", brush_sel.attr("y"))
+                .attr("width", brush_sel.attr("width"))
+                .attr("height", brush_sel.attr("height"));
+
+            if(handle.node()) {
+                /* Move the brush paddle */
+                let translate = d3Utils.get_translate_values(handle),
+                    x = (self._semantic==="left") ?
+                        brush_sel.attr("x") :
+                        +brush_sel.attr("x") + (+brush_sel.attr("width"));
+
+                handle.attr("display", null)
+                    .attr("transform",()=>{ return "translate(" + [x,translate[1]] + ")"; })
+                    .raise();
+
+                d3.select(self.mask).select("#"+self._semantic+"handle")
+                    .attr("transform", handle.attr("transform"));
+            }
+
         };
 
         /* Mixin the utilities */

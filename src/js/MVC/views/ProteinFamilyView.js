@@ -289,14 +289,14 @@ const ProteinFamilyView = (function() {
                         helpPosition: "top",
                         block_size: self.residue_glyph_size,
                         position: [self.y_offset, self.residue_glyph_size + self.y_offset],
-                        semantic: "horizontal",
+                        semantic: "horizontal", mask: "#paddleMasks",
                         tooltip: () => { return self._model.getSelectedProtein().name; }
                     },
                     {
                         orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
                         class: "brush vertical-left " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
                         helpText: "Use this paddle to select a subset of residues for closer observation in the frequency bars, below.",
-                        helpPosition: "right",
+                        helpPosition: "right", mask: "#paddleMasks",
                         block_size: self.residue_glyph_size, semantic: "left",
                         position: [0, self.residue_glyph_size * verticalPaddleSize + self.y_offset]
                     },
@@ -305,7 +305,7 @@ const ProteinFamilyView = (function() {
                         class: "brush vertical-right " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
                         block_size: self.residue_glyph_size, semantic: "right",
                         helpText: "Use this paddle to select a subset of residues for closer observation in the frequency bars, below.",
-                        helpPosition: "left",
+                        helpPosition: "left", mask: "#paddleMasks",
                         position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
                     }
                 ],
@@ -343,7 +343,7 @@ const ProteinFamilyView = (function() {
                 helpText: "This paddle appears when the align is too large to render on one screen. Use this paddle to control " +
                 "which part of the alignment is displayed. ",
                 helpPosition: "top",
-                semantic: "family",
+                semantic: "family", mask: "#overviewPaddleMasks",
                 extent: [[self.x_offset, self.y_offset], [self.overview_width + self.x_offset, height + self.y_offset]],
                 position: [self.y_offset, self.brushPaddleSize + self.y_offset],
                 proteinsPerView: self.ppv,

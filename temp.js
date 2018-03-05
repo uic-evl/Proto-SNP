@@ -26,13 +26,13 @@ d3.svg.circularbrush = function() {
       .enter()
       .insert("path", "path.resize")
       .attr("d", _arc)
-      .attr("class", function(d) {return d.class + " circularbrush"})
+      .attr("class", function(d) {return d.class + " circularbrush"});
 
     _brushG.select("path.extent")
-      .on("mousedown.brush", resizeDown)
+      .on("mousedown.brush", resizeDown);
 
     _brushG.selectAll("path.resize")
-      .on("mousedown.brush", resizeDown)
+      .on("mousedown.brush", resizeDown);
 
     return _circularbrush;
   }
@@ -43,41 +43,41 @@ d3.svg.circularbrush = function() {
 
     var _actualScale = d3.scale.linear()
       .domain([-_d[1],_d[0],_d[0],_d[1]])
-      .range([_r[0],_r[1],_r[0],_r[1]])
+      .range([_r[0],_r[1],_r[0],_r[1]]);
 
     if (!arguments.length) return [_actualScale(_extent[0]),_actualScale(_extent[1])];
 
     _extent = [_scale.invert(_value[0]),_scale.invert(_value[1])];
     return this
-  }
+  };
 
   _circularbrush.handleSize = function(_value) {
     if (!arguments.length) return _handleSize;
 
     _handleSize = _value;
     return this
-  }
+  };
 
   _circularbrush.innerRadius = function(_value) {
     if (!arguments.length) return _arc.innerRadius();
 
     _arc.innerRadius(_value);
     return this
-  }
+  };
 
   _circularbrush.outerRadius = function(_value) {
     if (!arguments.length) return _arc.outerRadius();
 
     _arc.outerRadius(_value);
     return this
-  }
+  };
 
   _circularbrush.range = function(_value) {
     if (!arguments.length) return _scale.range();
 
     _scale.range(_value);
     return this
-  }
+  };
 
   d3.rebind(_circularbrush, _circularbrushDispatch, "on");
 
@@ -129,7 +129,7 @@ d3.svg.circularbrush = function() {
       var _newEndAngle = _originalBrushData.endAngle;
     }
     else if (_resize == "w") {
-      var clampedAngle = Math.min(Math.max(_originalBrushData.endAngle + (_current - _start), _originalBrushData.startAngle), _originalBrushData.startAngle + (2 * Math.PI))
+      var clampedAngle = Math.min(Math.max(_originalBrushData.endAngle + (_current - _start), _originalBrushData.startAngle), _originalBrushData.startAngle + (2 * Math.PI));
 
       if (_originalBrushData.endAngle + (_current - _start) < _originalBrushData.startAngle) {
         clampedAngle = _originalBrushData.endAngle + (_current - _start) + (Math.PI * 2);
@@ -151,13 +151,13 @@ d3.svg.circularbrush = function() {
       {startAngle: _newStartAngle, endAngle: _newEndAngle, class: "extent"},
       {startAngle: _newStartAngle - _handleSize, endAngle: _newStartAngle, class: "resize e"},
       {startAngle: _newEndAngle, endAngle: _newEndAngle + _handleSize, class: "resize w"}
-    ]
+    ];
 
 
     _brushG
       .selectAll("path.circularbrush")
       .data(_newBrushData)
-      .attr("d", _arc)
+      .attr("d", _arc);
 
     if (_newStartAngle > (Math.PI * 2)) {
       _newStartAngle = (_newStartAngle - (Math.PI * 2));
@@ -188,4 +188,4 @@ d3.svg.circularbrush = function() {
   }
 
 
-}
+};

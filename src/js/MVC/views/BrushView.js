@@ -92,8 +92,7 @@ const BrushView = (function() {
         }
 
         function brushMoveByHandle(target) {
-            let mouse = d3.mouse(target),
-                movementX, movementY;
+            let mouse = d3.mouse(target), movementX, movementY;
 
             if(self._semantic === "horizontal") {
                 movementX = self.origin[0] - mouse[0];
@@ -215,13 +214,9 @@ const BrushView = (function() {
 
             if (options.orientation === App.HORIZONTAL_PADDLE) {
 
-                console.log(d3.event.selection);
-
                 // Round the two event extents to the nearest row
-                d3.event.selection[0] = Math.floor(d3.event.selection[0] / block_size) * block_size;
-                d3.event.selection[1] = Math.floor(d3.event.selection[1] / block_size) * block_size;
-
-                console.log(d3.event.selection);
+                d3.event.selection[0] = Math.round(d3.event.selection[0] / block_size) * block_size;
+                d3.event.selection[1] = Math.round(d3.event.selection[1] / block_size) * block_size;
 
                 // Snap the brush onto the closest protein
                 d3.select(this).call(d3.event.target.move, d3.event.selection);
@@ -356,7 +351,6 @@ const BrushView = (function() {
                 let prev = d3.brushSelection(self.brush.node()), new_pos;
 
                 if(self._semantic==="horizontal"){
-                    console.log(d.offset);
                     new_pos = [prev[0] + d.offset.y, prev[1] + d.offset.y];
                 }
                 else {

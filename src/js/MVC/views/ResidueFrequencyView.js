@@ -290,7 +290,7 @@ const ResidueFrequencyView = (function() {
               ];
           }
           d3Utils.render_context_lines(this._summarySvg, contextPoints, 0.2);
-      }
+      };
 
 
       /* Initialize the viewer */

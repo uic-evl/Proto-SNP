@@ -134,9 +134,15 @@ const BrushView = (function() {
                 height = 5, width = 15, radius = 15,
                 y = h/2 - height/2;
 
-            if(semantic === "left") {x = x + (+brushObj.select(".selection").attr("width")); }
+            if(semantic === "left") {
+                x = x + (+brushObj.select(".selection").attr("width"));
+            }
             else if(semantic === "horizontal") {
                 x = (+brushObj.select(".overlay").attr("width"))/2 - height/2.0;
+                y = +brushObj.select('.selection').attr("height");
+            }
+            else if(semantic === "family") {
+                x = (+d3.select("#overviewSVG").attr("width"))/2 - height/2.0;
                 y = +brushObj.select('.selection').attr("height");
             }
 
@@ -152,6 +158,7 @@ const BrushView = (function() {
             /* Center the handle */
             self.handle
                 .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
+
         }
 
         function addBrushSVGMasks(brushObj) {
@@ -222,7 +229,6 @@ const BrushView = (function() {
                 d3.select(this).call(d3.event.target.move, d3.event.selection);
             }
             else if (options.orientation === App.VERTICAL_PADDLE) {
-                // console.log(d3.event.selection);
                 // Round the two event extents to the nearest row
                 d3.event.selection[0] = +(Math.round(d3.event.selection[0] / block_size) * block_size);
                 d3.event.selection[1] = +(Math.round(d3.event.selection[1] / block_size) * block_size);
@@ -301,7 +307,7 @@ const BrushView = (function() {
             /* Move the brush paddle overlays */
             let brush_sel = self.brush.select("rect.selection"),
                 handle = self.brush.select(".handle--custom");
-
+            /* Select the stencil in the mask */
             d3.select(self.mask).select("#"+self._semantic)
                 .attr("x", brush_sel.attr("x"))
                 .attr("y", brush_sel.attr("y"))
@@ -310,12 +316,23 @@ const BrushView = (function() {
 
             if(handle.node()) {
                 /* Move the brush paddle */
-                let translate = d3Utils.get_translate_values(handle),
-                    x = (self._semantic==="left") ?  +brush_sel.attr("x") + (+brush_sel.attr("width")) :
-                            (self._semantic==="horizontal") ?
-                                translate[0] : +brush_sel.attr("x"),
+                let translate = d3Utils.get_translate_values(handle), x, y;
 
-                y = (self._semantic==="horizontal") ? +brush_sel.attr("y") + (+brush_sel.attr("height")) : translate[1];
+
+                switch(self._semantic) {
+                    case "horizontal":
+                    case "family":
+                        x =  translate[0];
+                        y = +brush_sel.attr("y") + (+brush_sel.attr("height"));
+                        break;
+                    case "left":
+                        x = +brush_sel.attr("x") + (+brush_sel.attr("width"));
+                        y = translate[1];
+                        break;
+                    default:
+                        x = +brush_sel.attr("x");
+                        y = translate[1];
+                }
 
                 handle.attr("display", null)
                     .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
@@ -350,7 +367,7 @@ const BrushView = (function() {
             self.dispatch.on("brush", function(d) {
                 let prev = d3.brushSelection(self.brush.node()), new_pos;
 
-                if(self._semantic==="horizontal"){
+                if(self._semantic === "horizontal" || self._semantic === "family"){
                     new_pos = [prev[0] + d.offset.y, prev[1] + d.offset.y];
                 }
                 else {

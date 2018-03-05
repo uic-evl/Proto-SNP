@@ -113,8 +113,10 @@ div.view {
     box-shadow: none!important;
 }
 
-#alignmentViewerOverview, #alignmentViewer {
-    color: rgba(0,0,0,.5);
+#alignmentViewerOverview, #alignmentViewer, #sequenceViewerMenu {
+    color: dimgray;
+    font-weight: bolder;
+    font-size: 14px;
     cursor: default;
 }
 

@@ -155,13 +155,15 @@
 
         <!-- Sequence Viewer -->
         <div class="col-2 sequenceViewers">
-            <div class="x_title view"></div>
             <div id="sequenceViewer" class="w-100 black-background">
                 <div id="sequenceViewerTemplate" class="row no-gutters w-100"
                      data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
                 <script type="text/html" id="sequenceViewers">
                     <div class="col-6 sequence-container black-background"
                          data-bind="css: { left_scroll: $data._position === 'left' }">
+                        <div class="x_title view bg-light">
+                            <a id="sequenceViewerMenu" class="nav-link" href=""></a>
+                        </div>
                         <div class="primary_sequence_help center-vertically hidden">
                             <p class="help_text text-sm-center">Please load a second protein </p>
                         </div>

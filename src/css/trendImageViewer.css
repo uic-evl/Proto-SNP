@@ -2,8 +2,8 @@
     position: absolute;
 }
 
-.trend_covers {
-    background-color: #ecf0f1;
+.trend_covers, .handle--custom {
+    fill: rgb(119,119,119);
     opacity: 0.8;
 }
 

@@ -160,6 +160,10 @@ const ResidueFrequencyView = (function() {
     self.render_bars = function(residue_frequencies, selected_residues) {
       /* Add the bars to the viewer */
       let bar = self._svg
+          .append("g")
+          .attr("class", "bar_group")
+          .attr("data-intro", "Hover the mouse here to get residue frequency information.")
+          .attr("data-position", "top")
           .selectAll(".freq_bars")
           .data(residue_frequencies);
       // UPDATE: add new elements if needed
@@ -182,7 +186,8 @@ const ResidueFrequencyView = (function() {
 
       /* Color the bars according to the frequency of the residue*/
       let frequency =
-          self._svg.selectAll(".frequencies")
+          self._svg.select(".bar_group")
+              .selectAll(".frequencies")
               .data(residue_frequencies);
 
       // UPDATE: add new elements if needed
@@ -209,7 +214,7 @@ const ResidueFrequencyView = (function() {
 
     self.render_labels = function(residue_frequencies){
       /* Add the residue text to the bars */
-      let frequencyText = self._svg.selectAll(".residueText")
+      let frequencyText = self._svg.select(".bar_group").selectAll(".residueText")
           .data(residue_frequencies);
 
       // UPDATE: add new elements if needed
@@ -234,7 +239,7 @@ const ResidueFrequencyView = (function() {
 
     self.update = function(selected_residues, range) {
       /* Add the residue text to the bars */
-      let selectionText = self._svg.selectAll(".selectionText")
+      let selectionText = self._svg.select(".bar_group").selectAll(".selectionText")
           .data(selected_residues);
 
       // UPDATE: add new elements if needed

@@ -507,7 +507,7 @@ const ProteinFamilyView = (function() {
 
                 if(self.overviewImage){
                     $("#alignmentViewer").text("Family Alignment (Subset)");
-                    $("#alignmentViewerOverview").text("Overview");
+                    $("#alignmentViewerOverview").text("Family Overview");
                 }
                 else {
                     $("#alignmentViewer").text("Family Alignment");

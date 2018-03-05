@@ -131,6 +131,7 @@ const PrimaryStructureView = (function() {
                 // EXIT: Remove unneeded DOM elements
                 .exit().remove();
 
+            d3.select(view._dom.parentNode).select("div.x_title").classed("hidden", false)
             d3.select(view._dom.parentNode).select("#sequenceViewerMenu").text(protein_name);
         },
 

@@ -49,3 +49,9 @@ text.mono {
     fill-opacity: 0.8;
     mask: url("#overviewPaddleMasks");
 }
+
+.brush_overlay-rect {
+    width: 100%;
+    height:100%;
+    fill:white;
+}

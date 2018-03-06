@@ -125,7 +125,6 @@ const BrushView = (function() {
                 default:
                     return "M0,0L0,"+(d.width)+"A"+d.radius+","+d.radius+" 0 1 1 "+(-d.height)+" "+d.width+" L"+(-d.height)+",0Z";
             }
-
         }
 
         function addBrushHandles(brushObj, semantic) {
@@ -317,8 +316,6 @@ const BrushView = (function() {
             if(handle.node()) {
                 /* Move the brush paddle */
                 let translate = d3Utils.get_translate_values(handle), x, y;
-
-
                 switch(self._semantic) {
                     case "horizontal":
                     case "family":
@@ -333,16 +330,14 @@ const BrushView = (function() {
                         x = +brush_sel.attr("x");
                         y = translate[1];
                 }
-
+                /* Move the handle with the brush */
                 handle.attr("display", null)
                     .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
-
+                /* Update the mask */
                 d3.select(self.mask).select("#"+self._semantic+"_handle")
                     .attr("transform", handle.attr("transform"));
             }
-
         };
-
         /* Mixin the utilities */
         _.mixin(self, new jQueryContextUtils(self));
 
@@ -369,10 +364,19 @@ const BrushView = (function() {
 
                 if(self._semantic === "horizontal" || self._semantic === "family"){
                     new_pos = [prev[0] + d.offset.y, prev[1] + d.offset.y];
+                    /* Clamp the brush movement */
+                    if(new_pos[0] < options.extent[0][1] || new_pos[1] > options.extent[1][1]){
+                        return;
+                    }
                 }
                 else {
                     new_pos = [prev[0] + d.offset.x, prev[1] + d.offset.x];
+                    /* Clamp the brush movement */
+                    if(new_pos[0] < options.extent[0][0] || new_pos[1] > options.extent[1][0]){
+                        return;
+                    }
                 }
+
                 /* Brush with our new position */
                 view.brushObj.brush(d3.select(self.brush.node()));
                 view.brushObj.brush.move(d3.select(self.brush.node()), new_pos);
@@ -385,7 +389,6 @@ const BrushView = (function() {
                     .offset([-10, 0])
                     .html(options.tooltip);
             }
-
         };
 
         /* Initialize the d3 brush */

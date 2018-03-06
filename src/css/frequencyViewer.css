@@ -54,3 +54,8 @@
 .summarySVG, .freqSVG {
     position: absolute;
 }
+
+.rangeLabel {
+    text-anchor: middle;
+    font-weight: 900;
+}

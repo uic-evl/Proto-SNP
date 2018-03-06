@@ -35,21 +35,21 @@ const TextUtilities = function(){
     "32pt"  :{pixels: 42, EM: "2.55em"},
     "34pt"  :{pixels: 45, EM: "2.75em"},
     "36pt"  :{pixels: 48, EM: "3em"}
-  };
+  },
+
+  textContext = d3Utils.create_chart_back_buffer({width: 50, height: 50}).getContext("2d");
 
   function font_size_to_pixel_height(font_size) {
     return fontSize_PixelsHeight[font_size].pixels;
   }
 
-  function test_rendered(element) {
-    return new Promise((resolve, reject)=>{
-      if (!$(element).size()) {
-        window.requestAnimationFrame(test_rendered);
-      }else {
-        console.log("rendered");
-        resolve();
-      }
-    });
+  function get_text_width(font, txt){
+      textContext.font = font;
+      return textContext.measureText(txt).width;
+  }
+
+  function em_to_pixel_height(em){
+      return _.find(fontSize_PixelsHeight, {"EM":em}).pixels
   }
 
   function translate(x,y) {
@@ -71,7 +71,7 @@ const TextUtilities = function(){
     subString += "";
     if (subString.length <= 0) return (string.length + 1);
 
-    var n = 0,
+    let n = 0,
         occurrences = [],
         pos = 0,
         step = allowOverlapping ? 1 : subString.length;
@@ -89,9 +89,10 @@ const TextUtilities = function(){
 
   return {
     fontSizeToPixels : font_size_to_pixel_height,
-    testIfRendered   : test_rendered,
+    emToPixels       : em_to_pixel_height,
     translate        : translate,
-    occurrences       : occurrences
+    occurrences      : occurrences,
+    getTextWidth     : get_text_width
   }
 
 };

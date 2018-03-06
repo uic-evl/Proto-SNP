@@ -160,10 +160,6 @@ const ResidueFrequencyView = (function() {
     self.render_bars = function(residue_frequencies, selected_residues) {
       /* Add the bars to the viewer */
       let bar = self._svg
-          .append("g")
-          .attr("class", "bar_group")
-          .attr("data-intro", "Hover the mouse here to get residue frequency information.")
-          .attr("data-position", "top")
           .selectAll(".freq_bars")
           .data(residue_frequencies);
       // UPDATE: add new elements if needed
@@ -186,7 +182,8 @@ const ResidueFrequencyView = (function() {
 
       /* Color the bars according to the frequency of the residue*/
       let frequency =
-          self._svg.select(".bar_group")
+          self._svg
+              // .select(".bar_group")
               .selectAll(".frequencies")
               .data(residue_frequencies);
 
@@ -214,7 +211,10 @@ const ResidueFrequencyView = (function() {
 
     self.render_labels = function(residue_frequencies){
       /* Add the residue text to the bars */
-      let frequencyText = self._svg.select(".bar_group").selectAll(".residueText")
+      let frequencyText =
+          self._svg
+              // .select(".bar_group")
+              .selectAll(".residueText")
           .data(residue_frequencies);
 
       // UPDATE: add new elements if needed
@@ -239,7 +239,10 @@ const ResidueFrequencyView = (function() {
 
     self.update = function(selected_residues, range) {
       /* Add the residue text to the bars */
-      let selectionText = self._svg.select(".bar_group").selectAll(".selectionText")
+      let selectionText =
+          self._svg
+              // .select(".bar_group")
+              .selectAll(".selectionText")
           .data(selected_residues);
 
       // UPDATE: add new elements if needed
@@ -263,7 +266,7 @@ const ResidueFrequencyView = (function() {
 
       /* Update the color for matching residues*/
       self._svg.selectAll(".frequencies")
-          .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; })
+          .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; });
     };
 
     self.renderContext = function(options) {
@@ -298,6 +301,35 @@ const ResidueFrequencyView = (function() {
               ];
           }
           d3Utils.render_context_lines(this._summarySvg, contextPoints, 0.2);
+
+        /* Add range text between the context lines */
+        let range_text = (options.range[0]+1) + " - " + options.range[1],
+            range_labels = this._summarySvg.selectAll(".rangeLabel")
+            .data([{text:range_text, width: this._summarySvg.attr("width")}]);
+
+        /* Create / merge */
+        range_labels
+            .enter().append("text")
+            .attr("class", "rangeLabel")
+            .merge(range_labels)
+            .attr('x', function(d, i) {
+                /* Get the width of the rendered text*/
+                let font_family = utils.getComputedStyleValue(this, "font-family"),
+                    font_size   = "0.5em",
+                    font = font_size + "px " + font_family,
+                    text_length = App.textUtilities.getTextWidth(font, d.text),
+                    /* Center of the brush */
+                    center = (contextPoints[0][1].x + contextPoints[1][1].x)/2.0,
+                    end_position = center + text_length/2.0;
+                /* Test the text length */
+                if(end_position > d.width){
+                    center = center - (end_position-d.width);
+                }
+                return center;
+            })
+            .attr("y", App.textUtilities.emToPixels("0.5em")/2.0)
+            .attr("dy", "0.5em")
+            .text(range_text);
       };
 
       /* Initialize the viewer */
@@ -388,9 +420,7 @@ const ResidueFrequencyView = (function() {
       this._visible = true;
     },
 
-    resize : function() {
-
-    }
+    resize : function() {}
   };
   return ResidueFrequencyView;
 })();

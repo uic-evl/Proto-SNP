@@ -267,11 +267,17 @@ const ProteinFamilyView = (function() {
                 fv_width = self.width/2.0,
                 bar_height = parseInt(fv_height * 0.3),
                 bar_width = bar_height * 2.0,
+                font_family = utils.getComputedStyleValue(d3.select("#residueSummaryView").node(), "font-family"),
+                font_size   = App.textUtilities.emToPixels("0.5em"),
+                font = font_size + "px " + font_family,
+                text_length = Math.ceil(App.textUtilities.getTextWidth(font, "Consensus")),
+
                 handles = "";
 
             let horizontalPaddleSize = 1,
-                verticalPaddleSize = (bar_width * PADDLE_SIZE < fv_width) ? PADDLE_SIZE : 4,
-                maxPaddleSize = (bar_width * MAX_PADDLE_SIZE < fv_width) ? MAX_PADDLE_SIZE : parseInt(fv_width/bar_width) - 1;
+                verticalPaddleSize = ( (bar_width * PADDLE_SIZE + text_length) < fv_width) ? PADDLE_SIZE : 4,
+                maxPaddleSize = ((bar_width * MAX_PADDLE_SIZE + text_length) < fv_width)
+                    ? MAX_PADDLE_SIZE : parseInt(fv_width/bar_width) - 1;
 
             /* if the brush min/max is the same size, remove the handles */
             if(maxPaddleSize === verticalPaddleSize) {
@@ -312,11 +318,13 @@ const ProteinFamilyView = (function() {
                 frequencyViewers : [
                     {id: 'leftResidueSummaryViewer',  parent: fv_parent, semantic: "left",  max_items: maxPaddleSize,
                         block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: 0, width: self.width,
-                        height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0
+                        height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0,
+                        label_size: text_length
                     },
                     {id: 'rightResidueSummaryViewer',  parent: fv_parent, semantic: "right", max_items: maxPaddleSize,
                         block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: 0, width: self.width,
-                        height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0
+                        height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0,
+                        label_size: text_length
                     }
                 ]
             };

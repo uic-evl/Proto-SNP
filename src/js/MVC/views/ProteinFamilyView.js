@@ -285,7 +285,7 @@ const ProteinFamilyView = (function() {
                         paddleSize: horizontalPaddleSize,
                         class: "brush horizontal main no_handles",
                         extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
-                        helpText: "Drag here to select a protein to examine in greater detail.",
+                        helpText: "Drag here to select a different protein.",
                         helpPosition: "top",
                         block_size: self.residue_glyph_size,
                         position: [self.y_offset, self.residue_glyph_size + self.y_offset],
@@ -295,7 +295,7 @@ const ProteinFamilyView = (function() {
                     {
                         orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
                         class: "brush vertical-left " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
-                        helpText: "Drag here to select a subset of residues. ",
+                        helpText: "Drag here to select a different subset of residues. ",
                         helpPosition: "right", mask: "#paddleMasks",
                         block_size: self.residue_glyph_size, semantic: "left",
                         position: [0, self.residue_glyph_size * verticalPaddleSize + self.y_offset]
@@ -304,7 +304,7 @@ const ProteinFamilyView = (function() {
                         orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
                         class: "brush vertical-right " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
                         block_size: self.residue_glyph_size, semantic: "right",
-                        helpText: "Drag here to select a subset of residues.",
+                        helpText: "Drag here to select a different subset of residues.",
                         helpPosition: "left", mask: "#paddleMasks",
                         position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
                     }

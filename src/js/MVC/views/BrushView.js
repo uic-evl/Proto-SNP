@@ -212,7 +212,7 @@ const BrushView = (function() {
                 .attr("data-position", pos);
         }
 
-        self.onBrush = function () {
+        self.onBrush = function (d) {
             /* We only want to capture user events. */
             if (!d3.event.sourceEvent) return;
             if (!d3.event.selection) return; // Ignore empty selections.
@@ -249,6 +249,11 @@ const BrushView = (function() {
 
             /* Notify the listeners */
             self.brushMoved.notify({options: options, selection: d3.event.selection});
+
+            /* Show the tooltip on brush move */
+            if(self._orientation === App.HORIZONTAL_PADDLE){
+                self._tooltip.show(d, self.brush.select('rect.selection').node())
+            }
         };
 
         self.getInitialPosition = function () {return this.brushObj.getInitialPosition(); };
@@ -276,7 +281,9 @@ const BrushView = (function() {
             self.brush = brushObj;
             brushObj.selectAll('.overlay').style("pointer-events", "none");
             /* Let d3 decide the best rendering for the brushes */
-            brushObj.selectAll('.selection').style("shape-rendering", "auto");
+            brushObj.selectAll('.selection')
+                .style("shape-rendering", "auto")
+                .style("stroke", "none");
             /* Remove the extent on the side with the brush*/
             removeResizeHandle();
 

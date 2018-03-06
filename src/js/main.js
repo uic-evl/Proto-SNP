@@ -5,155 +5,148 @@ var App = App || {};
 
 (function(){
 
-  /* File utility setup */
-  App.fileUtilities = new FileUtilities();
-  App.dataUtilities = new DatabaseMappingUtils();
-  App.residueMappingUtility = new ResidueMappingUtility();
+    /* File utility setup */
+    App.fileUtilities = new FileUtilities();
+    App.dataUtilities = new DatabaseMappingUtils();
+    App.residueMappingUtility = new ResidueMappingUtility();
 
-  /* List of views */
-  let views = [];
+    /* List of views */
+    let views = [];
 
-  let warning_resolution = function(cb) {
-    swal({
-      title: 'Resolution Warning',
-      text: "The suggested resolution for this application is 1024x768 or larger. Smaller resolutions could lead to visual artifacts and loss of smoother interactions. ",
-      type: 'warning',
-      confirmButtonColor: '#3085d6',
-    }).then((result) => {
-      if (result.value) {
-        cb();
-      }
-    })
-  };
+    function checkResolution(cb) {
+        let w = window.innerWidth,
+            h = window.innerHeight;
 
-  function checkResolution(cb) {
-    let w = window.innerWidth,
-      h = window.innerHeight;
-
-    /* check the resolution of the resize*/
-    if(w < 1024 || h < 768) {
-      warning_resolution(cb);
+        /* check the resolution of the resize*/
+        if(w < 1024 || h < 768) {
+            utils.warning_resolution(cb);
+        }
+        else {
+            cb();
+        }
     }
-    else {
-      cb();
+
+    function resize() {
+        let r = ()=> {
+            views.forEach(function (v) {
+                v.resize();
+            });
+        };
+        /* Check the resolution */
+        checkResolution(r);
     }
-  }
 
-  function resize() {
-    let r = ()=> {
-      views.forEach(function (v) {
-        v.resize();
-      });
-    };
-    /* Check the resolution */
-    checkResolution(r);
-  }
+    function setupInfo() {
+        /* Register the about modal and help popup */
+        $('#aboutModalDiv').load("./src/html/modals/aboutModal.html");
+        $('#helpButton').on("click", function(){
+            let span = $(this).find("span"),
+                icon_class = span.attr('class');
 
-  /* Starting point of the program. Initializes the application */
-  function init() {
-    let proteinFamilyModel = new ProteinFamilyModel(),
-        proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
-        proteinFamilyController = new ProteinFamilyController(proteinFamilyModel, proteinFamilyView);
+            /* Toggle the help icon */
+            if(icon_class === "fa fa-question") {
+                span.attr('class', "fa fa-times")
+            }
+            else {
+                span.attr('class', "fa fa-question")
+            }
+            /* Toggle the overlay */
+            $('body').chardinJs().toggle();
 
-    let leftProteinModel = new ProteinModel(), rightProteinModel = new ProteinModel(),
-        leftTertiaryStructureView = new TertiaryStructureView(leftProteinModel, {id: "molecularViewerA", position:"left"}),
-        rightTertiaryStructureView = new TertiaryStructureView(rightProteinModel, {id: "molecularViewerB", position:"right"}),
-        tertiaryStructuresController = new TertiaryStructureController(
-            [leftProteinModel, rightProteinModel], [leftTertiaryStructureView, rightTertiaryStructureView], proteinFamilyController);
-
-    let leftPrimaryStructureView  = new PrimaryStructureView(leftProteinModel, {id: "leftMolecularViewer-Sequence", position:"left"}),
-        rightPrimaryStructureView = new PrimaryStructureView(rightProteinModel, {id: "rightMolecularViewer-Sequence", position:"right"}),
-        primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
-
-    /* Save the views in an array*/
-    views = [proteinFamilyController, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
-
-    let launchModal = function() {
-      $('#startupModalDiv').load("./src/html/modals/startupModal.html", function(){
-
-        /* Launch the initial data modal */
-        $("#initialModal").modal().on('shown.bs.modal', function (e) {
-
-          let modal = $(this);
-
-          /* Setup the file upload plugin */
-          App.fileUtilities.initialUploadSetup(modal,
-            function (metadata, result) {
-              /* Initialize the viewer based on the input data */
-              switch(metadata.extension){
-                case "pdb":
-                  leftTertiaryStructureView.file_loaded(metadata, result);
-                  break;
-                case "msf":
-                case "fa":
-                  proteinFamilyView.file_loaded(result, metadata.extension, metadata.name);
-                  break;
-              }
-
-              /* destroy the file upload */
-              modal.find("#fileUploadInput").fileupload('destroy');
-              /* Close the modal */
-              $("#initialModal").modal('hide');
+            /* Alternate exit */
+            $(".svgOverlay").mouseup(function() {
+                span.attr('class', "fa fa-question")
             });
-
-          /* Link the protein form to the model utilities */
-          modal.find("#initialDataForm").on("submit", function(){
-            let name = $(this).serialize().split('=')[1];
-            App.fileUtilities.ajaxFromRCMB(name, function(blob){
-              if(blob){
-                blob.name = name + ".pdb";
-                modal.find("#fileUploadInput").fileupload('add', {files: blob });
-              }
-              modal.find("#protein-name").val('');
+            $(".chardinjs-overlay").mouseup(function() {
+                span.attr('class', "fa fa-question")
             });
-            return false;
-          });
         });
-      });
-    };
+    }
 
-    checkResolution(launchModal);
+    /* Starting point of the program. Initializes the application */
+    function init() {
+        let proteinFamilyModel = new ProteinFamilyModel(),
+            proteinFamilyView = new ProteinFamilyView(proteinFamilyModel, {id: "trendImageViewer"}),
+            proteinFamilyController = new ProteinFamilyController(proteinFamilyModel, proteinFamilyView);
 
-    /* Show the tertiary viewers */
-    leftTertiaryStructureView.show();
-    rightTertiaryStructureView.show();
-    proteinFamilyView.show();
+        let leftProteinModel = new ProteinModel(), rightProteinModel = new ProteinModel(),
+            leftTertiaryStructureView = new TertiaryStructureView(leftProteinModel, {id: "molecularViewerA", position:"left"}),
+            rightTertiaryStructureView = new TertiaryStructureView(rightProteinModel, {id: "molecularViewerB", position:"right"}),
+            tertiaryStructuresController = new TertiaryStructureController(
+                [leftProteinModel, rightProteinModel], [leftTertiaryStructureView, rightTertiaryStructureView], proteinFamilyController);
 
-    /* Show the sequence viewers */
-    leftPrimaryStructureView.show();
-    rightPrimaryStructureView.show();
+        let leftPrimaryStructureView  = new PrimaryStructureView(leftProteinModel, {id: "leftMolecularViewer-Sequence", position:"left"}),
+            rightPrimaryStructureView = new PrimaryStructureView(rightProteinModel, {id: "rightMolecularViewer-Sequence", position:"right"}),
+            primaryStructuresController = new PrimaryStructureController({}, [leftPrimaryStructureView, rightPrimaryStructureView]);
 
-    /* Register the resize callbacks */
-    $(window).resize(function(){
-      waitForFinalEvent(resize, 400, "Resize complete")
-    });
+        /* Save the views in an array*/
+        views = [proteinFamilyController, rightTertiaryStructureView, leftTertiaryStructureView, rightPrimaryStructureView, leftPrimaryStructureView];
 
-    /* Register the about modal and help popup */
-    $('#aboutModalDiv').load("./src/html/modals/aboutModal.html");
-    $('#helpButton').on("click", function(){
-      let span = $(this).find("span"),
-          icon_class = span.attr('class');
+        let launchModal = function() {
+            $('#startupModalDiv').load("./src/html/modals/startupModal.html", function(){
 
-      /* Toggle the help icon */
-      if(icon_class === "fa fa-question") {
-        span.attr('class', "fa fa-times")
-      }
-      else {
-        span.attr('class', "fa fa-question")
-      }
-      /* Toggle the overlay */
-      $('body').chardinJs().toggle();
+                /* Launch the initial data modal */
+                $("#initialModal").modal().on('shown.bs.modal', function (e) {
 
-      /* Alternate exit */
-      $(".svgOverlay").mouseup(function() {
-        span.attr('class', "fa fa-question")
-      });
-      $(".chardinjs-overlay").mouseup(function() {
-        span.attr('class', "fa fa-question")
-      });
-    });
-  }
+                    let modal = $(this);
 
-  /* start the application once the DOM is ready */
-  document.addEventListener('DOMContentLoaded', init);
+                    /* Setup the file upload plugin */
+                    App.fileUtilities.initialUploadSetup(modal,
+                        function (metadata, result) {
+                            /* Initialize the viewer based on the input data */
+                            switch(metadata.extension){
+                                case "pdb":
+                                    leftTertiaryStructureView.file_loaded(metadata, result);
+                                    break;
+                                case "msf":
+                                case "fa":
+                                    proteinFamilyView.file_loaded(result, metadata.extension, metadata.name);
+                                    break;
+                            }
+
+                            /* destroy the file upload */
+                            modal.find("#fileUploadInput").fileupload('destroy');
+                            /* Close the modal */
+                            $("#initialModal").modal('hide');
+                        });
+
+                    /* Link the protein form to the model utilities */
+                    modal.find("#initialDataForm").on("submit", function(){
+                        let name = $(this).serialize().split('=')[1];
+                        App.fileUtilities.ajaxFromRCMB(name, function(blob){
+                            if(blob){
+                                blob.name = name + ".pdb";
+                                modal.find("#fileUploadInput").fileupload('add', {files: blob });
+                            }
+                            modal.find("#protein-name").val('');
+                        });
+                        return false;
+                    });
+                });
+            });
+        };
+
+        checkResolution(launchModal);
+
+        /* Show the tertiary viewers */
+        leftTertiaryStructureView.show();
+        rightTertiaryStructureView.show();
+        proteinFamilyView.show();
+
+        /* Show the sequence viewers */
+        leftPrimaryStructureView.show();
+        rightPrimaryStructureView.show();
+
+        /* Register the resize callbacks */
+        $(window).resize(function(){
+            utils.waitForFinalEvent(resize, 400, "Resize complete")
+        });
+
+        /* Setup the info and help buttons */
+        setupInfo();
+
+    }
+
+    /* start the application once the DOM is ready */
+    document.addEventListener('DOMContentLoaded', init);
 })();

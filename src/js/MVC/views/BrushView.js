@@ -23,7 +23,8 @@ const BrushView = (function() {
         self.proteinSelected = null;
 
         self.dispatch =  d3.dispatch('brushstart', 'brushend', 'brush');
-
+        self.movementX = 0;
+        self.movementY = 0;
         let block_size = options.block_size;
 
         /* set the initial selections */
@@ -92,19 +93,19 @@ const BrushView = (function() {
         }
 
         function brushMoveByHandle(target) {
-            let mouse = d3.mouse(target), movementX, movementY;
+            let mouse = d3.mouse(target);
 
             if(self._semantic === "horizontal") {
-                movementX = self.origin[0] - mouse[0];
-                movementY = mouse[1] - self.origin[1];
+                self.movementX += self.origin[0] - mouse[0];
+                self.movementY += mouse[1] - self.origin[1];
             }
             else {
-                movementX = mouse[0] - self.origin[0];
-                movementY = mouse[1] - self.origin[1];
+                self.movementX += mouse[0] - self.origin[0];
+                self.movementY += mouse[1] - self.origin[1];
             }
             self.origin = mouse;
             /* dispatch our brush event */
-            return self.dispatch.call("brush", this, {mode: "move", offset: {x:movementX, y:movementY}});
+            return self.dispatch.call("brush", this, {mode: "move", offset: {x:self.movementX, y:self.movementY}});
         }
 
         function brushUpByHandle() {
@@ -157,7 +158,6 @@ const BrushView = (function() {
             /* Center the handle */
             self.handle
                 .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
-
         }
 
         function addBrushSVGMasks(brushObj) {
@@ -219,13 +219,17 @@ const BrushView = (function() {
             if (d3.event.sourceEvent.type === "brush") return; // if the event isn't associated with a mouse move
 
             if (options.orientation === App.HORIZONTAL_PADDLE) {
-
                 // Round the two event extents to the nearest row
                 d3.event.selection[0] = Math.round(d3.event.selection[0] / block_size) * block_size;
                 d3.event.selection[1] = Math.round(d3.event.selection[1] / block_size) * block_size;
 
                 // Snap the brush onto the closest protein
                 d3.select(this).call(d3.event.target.move, d3.event.selection);
+
+                /* Reset the tween movement */
+                if(self._selection[1] !== d3.event.selection[1]) {
+                    self.movementY = 0;
+                }
             }
             else if (options.orientation === App.VERTICAL_PADDLE) {
                 // Round the two event extents to the nearest row
@@ -237,6 +241,11 @@ const BrushView = (function() {
 
                 /* Programmatically move to the clamp*/
                 d3.select(this).call(d3.event.target.move, d3.event.selection);
+
+                /* Reset the tween movement */
+                if(self._selection[0] !== d3.event.selection[0]) {
+                    self.movementX = 0;
+                }
             }
             else {
                 d3.event.selection[0] = Math.round(d3.event.selection[0] / block_size) * block_size;
@@ -244,6 +253,7 @@ const BrushView = (function() {
                 // Snap the brush onto the closest protein
                 d3.select(this).call(d3.event.target.move, d3.event.selection);
             }
+
             /* store the selection*/
             self._selection = d3.event.selection;
 
@@ -364,6 +374,10 @@ const BrushView = (function() {
                     .setPaddleExtent(options.extent)
                     .setInitialPosition(options.position)
                     .onBrush(function () { view.onBrush.call(this) });
+                    // .onEnd(function() {
+                    //     if(options.orientation === App.HORIZONTAL_PADDLE){
+                    //         view._tooltip.hide();
+                    //     } });
 
             /* Link the paddle updates */
             self.dispatch.on("brush", function(d) {
@@ -373,6 +387,8 @@ const BrushView = (function() {
                     new_pos = [prev[0] + d.offset.y, prev[1] + d.offset.y];
                     /* Clamp the brush movement */
                     if(new_pos[0] < options.extent[0][1] || new_pos[1] > options.extent[1][1]){
+                        self.movementX = 0;
+                        self.movementY = 0;
                         return;
                     }
                 }
@@ -380,6 +396,8 @@ const BrushView = (function() {
                     new_pos = [prev[0] + d.offset.x, prev[1] + d.offset.x];
                     /* Clamp the brush movement */
                     if(new_pos[0] < options.extent[0][0] || new_pos[1] > options.extent[1][0]){
+                        self.movementX = 0;
+                        self.movementY = 0;
                         return;
                     }
                 }
@@ -397,7 +415,6 @@ const BrushView = (function() {
                     .html(options.tooltip);
             }
         };
-
         /* Initialize the d3 brush */
         self.initialize(options);
 

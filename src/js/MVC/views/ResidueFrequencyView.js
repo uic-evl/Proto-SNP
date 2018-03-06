@@ -305,7 +305,7 @@ const ResidueFrequencyView = (function() {
         /* Add range text between the context lines */
         let range_text = (options.range[0]+1) + " - " + options.range[1],
             range_labels = this._summarySvg.selectAll(".rangeLabel")
-            .data([{text:range_text, width: this._summarySvg.attr("width")}]);
+            .data([{text:range_text, width: this._summarySvg.attr("width"), size:"0.8em"}]);
 
         /* Create / merge */
         range_labels
@@ -315,7 +315,7 @@ const ResidueFrequencyView = (function() {
             .attr('x', function(d, i) {
                 /* Get the width of the rendered text*/
                 let font_family = utils.getComputedStyleValue(this, "font-family"),
-                    font_size   = "0.5em",
+                    font_size   = d.size,
                     font = font_size + "px " + font_family,
                     text_length = App.textUtilities.getTextWidth(font, d.text),
                     /* Center of the brush */
@@ -327,8 +327,8 @@ const ResidueFrequencyView = (function() {
                 }
                 return center;
             })
-            .attr("y", App.textUtilities.emToPixels("0.5em")/2.0)
-            .attr("dy", "0.5em")
+            .attr("y", (d)=>{return App.textUtilities.emToPixels(d.size)/4.0})
+            .attr("dy", (d)=>{return d.size})
             .text(range_text);
       };
 

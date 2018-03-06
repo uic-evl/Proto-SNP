@@ -39,14 +39,14 @@ text.mono {
 .paddleOverlay {
     stroke: none;
     fill: #ecf0f1;
-    fill-opacity: 0.8;
+    fill-opacity: 0.6;
     mask: url("#paddleMasks");
 }
 
 .overviewPaddleOverlay {
     stroke: none;
     fill: #ecf0f1;
-    fill-opacity: 0.8;
+    fill-opacity: 0.6;
     mask: url("#overviewPaddleMasks");
 }
 

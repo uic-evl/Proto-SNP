@@ -373,11 +373,12 @@ const BrushView = (function() {
                     .setBrushClass(options.class)
                     .setPaddleExtent(options.extent)
                     .setInitialPosition(options.position)
-                    .onBrush(function () { view.onBrush.call(this) });
-                    // .onEnd(function() {
-                    //     if(options.orientation === App.HORIZONTAL_PADDLE){
-                    //         view._tooltip.hide();
-                    //     } });
+                    .onBrush(function () {
+                        view.onBrush.call(this);
+                        if(options.orientation === App.HORIZONTAL_PADDLE) {
+                            utils.waitForFinalEvent(view._tooltip.hide, 1000, "Brushing complete");
+                        }
+                    });
 
             /* Link the paddle updates */
             self.dispatch.on("brush", function(d) {

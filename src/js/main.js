@@ -139,7 +139,7 @@ var App = App || {};
 
         /* Register the resize callbacks */
         $(window).resize(function(){
-            utils.waitForFinalEvent(resize, 400, "Resize complete")
+            utils.waitForFinalEvent(resize, 400, "Resize complete");
         });
 
         /* Setup the info and help buttons */

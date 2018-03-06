@@ -271,32 +271,34 @@ const ResidueFrequencyView = (function() {
               y_position = this._barOffset_y/2.0,
               x_bar_position = (this.semantic==="left") ? options.brush_center : options.brush_center-this.width,
               contextPoints = [],
+              summary_margin = utils.getComputedStyleValue(this._dom.select(".freqSVG").node(), "margin-top"),
               /* Set the width of the context line */
-              width_offset = scale(this.max_items-1);
+              width_offset = scale(this.max_items-1),
+              context_bar_height = 10,
+              context_offset_y = context_bar_height+summary_margin;
           width_offset += (scale(this.max_items) - width_offset) * 0.95;
 
           /* Render the context bar */
           d3Utils.render_context_bars(this._svg,
               {
                   x: x_bar_position, y: 1,
-                  height: 10, width:1
+                  height: context_bar_height, width:1
               });
           /* render the context lines */
           if(this.semantic === "left"){
               contextPoints = [
-                  [ {x: this._barOffset_x, y: y_position+10},  { x: options.brush_pos[0], y: 0}],
-                  [ {x: width_offset,      y: y_position+10},  { x: options.brush_pos[1], y: 0} ],
+                  [ {x: this._barOffset_x, y: y_position+summary_margin},  { x: options.brush_pos[0], y: 0}],
+                  [ {x: width_offset,      y: y_position+summary_margin},  { x: options.brush_pos[1], y: 0} ],
               ];
           }
           else {
               contextPoints = [
-                  [ {x: width_offset,      y: y_position+10},  { x: options.brush_pos[1]-this.width, y: 0}],
-                  [ {x: this._barOffset_x, y: y_position+10},  { x: options.brush_pos[0]-this.width, y: 0} ],
+                  [ {x: width_offset,      y: y_position+summary_margin},  { x: options.brush_pos[1]-this.width, y: 0}],
+                  [ {x: this._barOffset_x, y: y_position+summary_margin},  { x: options.brush_pos[0]-this.width, y: 0} ],
               ];
           }
           d3Utils.render_context_lines(this._summarySvg, contextPoints, 0.2);
       };
-
 
       /* Initialize the viewer */
     self.initialize(options);

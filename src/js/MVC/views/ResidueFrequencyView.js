@@ -21,6 +21,7 @@ const ResidueFrequencyView = (function() {
         self.frequencyRange = null;
         self.summary_margin = 0;
         self.label_offset = options.label_size;
+        self.label_length = options.label_length;
 
         self._calloutWidth = 125;
         self._calloutHeight = 200;
@@ -235,6 +236,24 @@ const ResidueFrequencyView = (function() {
                 .text(function(d, i) { return 'Most frequent: ' +  d[0] + ' \nOccurrences: ' + d[1] });
             /* Remove the unneeded frequency labels */
             frequencyText.exit().remove();
+
+            if(options.semantic === "left") {
+                /* Add the consensus label */
+                let consensus_label = self._summarySvg.selectAll(".consensusLabel")
+                    .data([{text:"Consensus", width: self._summarySvg.attr("width"),
+                        x:0, y:self.bar_height + self._barOffset_y + self.y_offset + self.summary_margin}]);
+
+                /* Create / merge */
+                consensus_label
+                    .enter().append("text")
+                    .attr("class", "consensusLabel")
+                    .merge(consensus_label)
+                    .attr('x', (d)=>{return d.x ;})
+                    .attr("y", (d)=>{return d.y ;})
+                    .attr("dy", (d)=>{return d.size})
+                    .text((d)=>{return d.text;});
+            }
+
         };
 
         self.update = function(selected_residues, range) {
@@ -251,10 +270,10 @@ const ResidueFrequencyView = (function() {
                 .attr("class", "selectionText")
                 /* Merge the old elements (if they exist) with the new data */
                 .merge(selectionText)
-                .attr('x', function(d, i) { return self.xScale(i) + self.glyph_width / 4.0 })
+                .attr('x', (d, i)=> { return self.xScale(i) + self.glyph_width / 4.0 })
                 .attr("y", () => {return self.y_offset - self._barOffset_y;})
                 .attr("dy", "0.5em")
-                .text(function(d,i){ return '(' + (range[0] + i+1) + ') ' + d[0] })
+                .text((d,i)=>{ return '(' + (range[0] + i+1) + ') ' + d[0] })
                 .style("text-anchor", "middle")
                 .style("font-weight", "900")
                 .style('cursor', 'default')
@@ -266,7 +285,39 @@ const ResidueFrequencyView = (function() {
 
             /* Update the color for matching residues*/
             self._svg.selectAll(".frequencies")
-                .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; });
+                .attr("fill", (d,i)=>{ return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; });
+
+            if(options.semantic === "left") {
+
+                /* Add label for the protein's name */
+                let protein_label = self._summarySvg.selectAll(".proteinLabel")
+                    .data([{
+                        text: self._model.getSelectedProtein().name,
+                        width: self._summarySvg.attr("width"),
+                        size: "0.5em",
+                        x: 0,
+                        y: self.y_offset - self._barOffset_y + self.summary_margin
+                    }]);
+
+                /* Create / merge */
+                protein_label
+                    .enter().append("text")
+                    .attr("class", "proteinLabel")
+                    .merge(protein_label)
+                    .attr('x', (d) => {
+                        return d.x;
+                    })
+                    .attr("y", (d) => {
+                        return d.y;
+                    })
+                    .attr("dy", (d) => {
+                        return d.size
+                    })
+                    .text((d) => {
+                        return App.textUtilities.truncate(d.text, self.label_length);
+                    });
+
+            }
         };
 
         self.renderContext = function(options) {
@@ -403,7 +454,7 @@ const ResidueFrequencyView = (function() {
             /* Set the scales based on the new selection */
             this.set_scales(render_options.maxFrequencies, this._familyMemberCount, render_options.residues);
             /* Re-set the range to center glyphs */
-            this.range[0] = (this.width - this.xScale(render_options.residues.length-1) + this.label_offset)/2.0;
+            this.range[0] = (this.width - this.xScale(render_options.residues.length-1) )/2.0 + this.label_offset;
             this.xScale.range(this.range);
 
             // console.log(this.width-this.xScale(render_options.residues.length-1));

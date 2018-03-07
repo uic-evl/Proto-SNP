@@ -16,6 +16,7 @@ const BrushView = (function() {
         self._menuSelection = "";
         self.brush = null;
         self.mask = "";
+        self.hasMask = false;
 
         self.overlays = [];
 
@@ -37,15 +38,15 @@ const BrushView = (function() {
 
         /* Bind the event listens */
         self._model.selectedProteinChanged.attach(function (sender, msg) {
-            self.redraw(App.HORIZONTAL_PADDLE);
+            if(self.hasMask) self.redraw(App.HORIZONTAL_PADDLE);
         });
 
         self._model.selectedResiduesChanged.attach(function (sender, msg) {
-            self.redraw(App.VERTICAL_PADDLE);
+            if(self.hasMask) self.redraw(App.VERTICAL_PADDLE);
         });
 
         self._model.proteinOverviewChanged.attach(function (sender, msg) {
-            self.redraw(App.OVERVIEW_PADDLE);
+            if(self.hasMask) self.redraw(App.OVERVIEW_PADDLE);
         });
 
         /* Utility to clamp the brush sizes */
@@ -176,6 +177,7 @@ const BrushView = (function() {
                 d3.select(self.mask).node()
                     .append(handle_clone.node());
             }
+            self.hasMask = true;
         }
 
         function addContextMenu() {
@@ -321,8 +323,9 @@ const BrushView = (function() {
 
         self.redraw = function () {
             /* Move the brush paddle overlays */
-            let brush_sel = self.brush.select("rect.selection"),
-                handle = self.brush.select(".handle--custom");
+            let brush = d3.select(document.getElementsByClassName(self.class)[0]),
+                brush_sel = brush.select("rect.selection"),
+                handle = brush.select(".handle--custom");
             /* Select the stencil in the mask */
             d3.select(self.mask).select("#"+self._semantic)
                 .attr("x", brush_sel.attr("x"))
@@ -355,6 +358,7 @@ const BrushView = (function() {
                     .attr("transform", handle.attr("transform"));
             }
         };
+
         /* Mixin the utilities */
         _.mixin(self, new jQueryContextUtils(self));
 

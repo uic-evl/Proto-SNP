@@ -105,7 +105,7 @@ const ProteinFamilyModel = (function() {
             this._rawData = null;
             this._mappings = {};
             this._selectedProtein = null;
-            self._selectedProteinIndex = 0;
+            this._selectedProteinIndex = 0;
             this._selectedResidues = {left: [], right: []};
             this._previousSelectedResidues = {left: [], right: []};
             this.mappingPromise = null;
@@ -253,6 +253,9 @@ const ProteinFamilyModel = (function() {
         },
 
         setSelectedResidues: function (position, selection) {
+            if(_.intersection(this._selectedResidues[position], selection).length === selection.length){
+                return this;
+            }
             this._previousSelectedResidues[position] = this._selectedResidues[position];
             this._selectedResidues[position] = selection;
             /* Notify all listeners */

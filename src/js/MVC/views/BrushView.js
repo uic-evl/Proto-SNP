@@ -105,7 +105,7 @@ const BrushView = (function() {
             }
             self.origin = mouse;
             /* dispatch our brush event */
-            return self.dispatch.call("brush", this, {mode: "move", offset: {x:self.movementX, y:self.movementY}});
+            return self.dispatch.call("brush", null, {mode: "move", offset: {x:self.movementX, y:self.movementY}});
         }
 
         function brushUpByHandle() {
@@ -358,6 +358,11 @@ const BrushView = (function() {
         /* Mixin the utilities */
         _.mixin(self, new jQueryContextUtils(self));
 
+        self.moveBrush = function(pos) {
+            self.brushObj.brush(d3.select(self.brush.node()));
+            self.brushObj.brush.move(d3.select(self.brush.node()), pos);
+        };
+
         self.initialize = function (options) {
             let view = this;
             view.class = options.class;
@@ -383,7 +388,6 @@ const BrushView = (function() {
             /* Link the paddle updates */
             self.dispatch.on("brush", function(d) {
                 let prev = d3.brushSelection(self.brush.node()), new_pos;
-
                 if(self._semantic === "horizontal" || self._semantic === "family"){
                     new_pos = [prev[0] + d.offset.y, prev[1] + d.offset.y];
                     /* Clamp the brush movement */
@@ -402,10 +406,8 @@ const BrushView = (function() {
                         return;
                     }
                 }
-
                 /* Brush with our new position */
-                view.brushObj.brush(d3.select(self.brush.node()));
-                view.brushObj.brush.move(d3.select(self.brush.node()), new_pos);
+                self.moveBrush(new_pos);
             });
 
             /* Add a tooltip if specified */
@@ -416,6 +418,7 @@ const BrushView = (function() {
                     .html(options.tooltip);
             }
         };
+
         /* Initialize the d3 brush */
         self.initialize(options);
 

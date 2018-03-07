@@ -124,8 +124,7 @@ const ProteinFamilyView = (function() {
                 /* Create the family image */
                 self._familyImage = new Image();
                 /* Add the image to the canvas once it is loaded */
-                self._familyImage.onload = function() { resolve(this); }
-                ;
+                self._familyImage.onload = function() { resolve(this); };
                 /* Add the data to the image*/
                 self._familyImage.src = self._backBufferImage;
             });
@@ -690,19 +689,19 @@ const ProteinFamilyView = (function() {
         };
 
         self.getGlyphSize = function () {
-            return this.residue_glyph_size;
+            return self.residue_glyph_size;
         };
 
         self.getWidth = function () {
-            return this.width;
+            return self.width;
         };
 
         self.getXOffset = function () {
-            return this.x_offset;
+            return self.x_offset;
         };
 
         self.getXDimensionSize = function () {
-            return this.x_axis_length;
+            return self.x_axis_length;
         };
 
         self.getYDimensionSize = function () {

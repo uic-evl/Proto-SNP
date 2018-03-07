@@ -99,6 +99,32 @@ const ProteinFamilyModel = (function() {
             return !!this._parsedData;
         },
 
+        /* Clear the model to load a new family */
+        clear: function() {
+            this._parsedData = null;
+            this._rawData = null;
+            this._mappings = {};
+            this._selectedProtein = null;
+            self._selectedProteinIndex = 0;
+            this._selectedResidues = {left: [], right: []};
+            this._previousSelectedResidues = {left: [], right: []};
+            this.mappingPromise = null;
+            this._max_frequencies = [];
+
+            this._sequenceSortingAlgorithms = null;
+
+            this._proteinSorting = "initial";
+            this._proteinColoring = "";
+
+            this._proteinNames = null;
+            this._parsedData = null;
+            this._fileName = "";
+
+            /* Update Events */
+            this.selectedProteinChanged.clear();
+            this.selectedResiduesChanged.clear();
+        },
+
         calculate_scores : function(protein, cb) {
             /* If the browser does not support web workers, execute the code sequentially */
             if (!window.Worker) {
@@ -132,6 +158,14 @@ const ProteinFamilyModel = (function() {
             }
         },
 
+        addProteinMapping: function(name,protein) {
+            if(this._mappings[name].indexOf(protein.pdb) < 0){
+                this._mappings[name].push(protein.pdb);
+                return true;
+            }
+            return false;
+        },
+
         /* Setter for the names of the proteins from the family */
         setFamily : function(data, type, file_name) {
             this._fileName = file_name;
@@ -161,68 +195,104 @@ const ProteinFamilyModel = (function() {
             }.bind(this));
         },
 
-        /* Clear the model to load a new family */
-        clear: function() {
-            this._parsedData = null;
-            this._rawData = null;
-            this._mappings = {};
-            this._selectedProtein = null;
-            self._selectedProteinIndex = 0;
-            this._selectedResidues = {left: [], right: []};
-            this._previousSelectedResidues = {left: [], right: []};
-            this.mappingPromise = null;
-            this._max_frequencies = [];
-
-            this._sequenceSortingAlgorithms = null;
-
-            this._proteinSorting = "initial";
-            this._proteinColoring = "";
-
-            this._proteinNames = null;
-            this._parsedData = null;
-            this._fileName = "";
-
-            /* Update Events */
-            this.selectedProteinChanged.clear();
-            this.selectedResiduesChanged.clear();
+        setSortingProtein: function() {
+            let self = this,
+                elements = self.getProteinNames();
+            /* Open the selection modal and setup auto-complete */
+            $('#proteinSelection').modal('show')
+                .on('shown.bs.modal', function (event) {
+                    /* Setup the input prediction list*/
+                    let proteins = new Bloodhound({
+                        datumTokenizer: Bloodhound.tokenizers.whitespace,
+                        queryTokenizer: Bloodhound.tokenizers.whitespace,
+                        local: elements
+                    });
+                    /* Initialize the input prediction */
+                    $('#proteinSortSelection').typeahead(
+                        {
+                            hint: true,
+                            highlight: true,
+                            minLength: 1
+                        },
+                        {
+                            name: 'proteins',
+                            source: proteins
+                        });
+                    /* Give the input focus */
+                    $(event.target).find('#proteinSortSelection').focus();
+                })
+                .on("hide.bs.modal", function(event){
+                    /* Get the protein based on the input of the user */
+                    let inputField = $(event.target).find('#proteinSortSelection'),
+                        proteinName = inputField.val(),
+                        protein = _.filter(self._rawData, ['name', proteinName])[0];
+                    /* Clear the protein */
+                    inputField.val('');
+                    /* If it was a valid protein, set the sorting to be based on the selection*/
+                    if(protein){
+                        self.calculate_scores(protein, self.setProteinSorting.bind(self,self._proteinSorting));
+                    }
+                });
         },
 
-        getMaxSequenceFrequenciesFromRange: function(range) {
-            let fragments = this._sequenceSortingAlgorithms.getFragmentCountsFromRange(range[0], range[1]),
-                curFragments = [];
-            fragments.forEach(function(fragment) {
-                /* Get the highest occurring residue and it's frequency */
-                curFragments.push(_.maxBy(_.toPairs(fragment), function(o){ return o[1] }));
-            });
-            return curFragments;
+        setOverviewOffset: function(offset){
+            this._selectedProteinOffset = offset;
+            // /* Set the selected protein to reflect the change */
+            // let selection = this._proteinNames[this._selectedProteinIndex + this._selectedProteinOffset];
+            // this._selectedProtein = _.filter(this._rawData, ['name', selection])[0];
+            this.proteinOverviewChanged.notify({selection: this._selectedProtein});
+            // this.selectedProteinChanged.notify({selection: this._selectedProtein});
         },
 
-        getSequenceFrequenciesFromRange: function(range) {
-            return this._sequenceSortingAlgorithms.getFragmentCountsFromRange(range[0], range[1]);
+        setSelectedProtein: function (protein_name) {
+            this._selectedProtein = _.filter(this._rawData, ['name', protein_name])[0];
+            this._selectedProteinIndex = this._proteinNames.indexOf(protein_name);
+            /* Notify all listeners */
+            this.selectedProteinChanged.notify({selection: this._selectedProtein});
+            return this;
         },
 
-        getSequenceFrequencyAt: function(position) {
-            return this._max_frequencies[position];
+        setSelectedResidues: function (position, selection) {
+            this._previousSelectedResidues[position] = this._selectedResidues[position];
+            this._selectedResidues[position] = selection;
+            /* Notify all listeners */
+            this.selectedResiduesChanged.notify(
+                { semantic : position,
+                    selection: this._selectedResidues[position],
+                    previous : this._previousSelectedResidues[position]
+                }
+            );
+            return this;
         },
 
-        getFileName: function() {
-            return this._fileName;
-        },
-
-        getFamily: function() {
-            return this._parsedData;
-        },
-
-        getProteinMappings: function() {
-            return this.mappingPromise;
-        },
-
-        addProteinMapping: function(name,protein) {
-            if(this._mappings[name].indexOf(protein.pdb) < 0){
-                this._mappings[name].push(protein.pdb);
-                return true;
+        setProteinSorting: function (sorting) {
+            if(sorting){
+                this._proteinSorting = sorting;
+                let
+                    /* Save a reference to the model */
+                    model = this;
+                /* Reorder the raw data */
+                this._rawData = _.chain(this._rawData)
+                    .sortBy((protein) => {
+                        return protein.scores[sorting];
+                    }).reverse().slice(0, this.ppv).value();
+                /* Remap the data then notify the controller */
+                map_trend_image_data(this._rawData).then(function(parsed_data){
+                    /* Save the new parsed data and names */
+                    model._parsedData = parsed_data;
+                    model.setProteinNames();
+                    /* Set the selected protein to reflect the change */
+                    let selection = model._proteinNames[model._selectedProteinIndex + model._selectedProteinOffset];
+                    model.setSelectedProtein(selection);
+                    /* notify the listeners */
+                    model.proteinSortingChanged.notify({
+                        scheme: model._proteinSorting,
+                        data : parsed_data,
+                        colorScheme: model._proteinColoring});
+                    return Promise.resolve();
+                });
             }
-            return false;
+            return this;
         },
 
         setProteinMappings: function() {
@@ -276,6 +346,46 @@ const ProteinFamilyModel = (function() {
             }
         },
 
+        setProteinColoring: function (coloring) {
+            this._proteinColoring = coloring;
+            this.proteinColoringChanged.notify({scheme: this._proteinColoring});
+            return this;
+        },
+
+        getCurrentProteinPosition : function() {
+            return this._selectedProteinIndex;
+        },
+
+        getMaxSequenceFrequenciesFromRange: function(range) {
+            let fragments = this._sequenceSortingAlgorithms.getFragmentCountsFromRange(range[0], range[1]),
+                curFragments = [];
+            fragments.forEach(function(fragment) {
+                /* Get the highest occurring residue and it's frequency */
+                curFragments.push(_.maxBy(_.toPairs(fragment), function(o){ return o[1] }));
+            });
+            return curFragments;
+        },
+
+        getSequenceFrequenciesFromRange: function(range) {
+            return this._sequenceSortingAlgorithms.getFragmentCountsFromRange(range[0], range[1]);
+        },
+
+        getSequenceFrequencyAt: function(position) {
+            return this._max_frequencies[position];
+        },
+
+        getFileName: function() {
+            return this._fileName;
+        },
+
+        getFamily: function() {
+            return this._parsedData;
+        },
+
+        getProteinMappings: function() {
+            return this.mappingPromise;
+        },
+
         getProteinNames : function() { return this._proteinNames; },
 
         getProteinCount : function() { return this._proteinNames.length; },
@@ -287,62 +397,6 @@ const ProteinFamilyModel = (function() {
             return _.filter(this._rawData, ['name', selection])[0];
         },
 
-        setSortingProtein: function() {
-            let self = this,
-                elements = self.getProteinNames();
-            /* Open the selection modal and setup auto-complete */
-            $('#proteinSelection').modal('show')
-                .on('shown.bs.modal', function (event) {
-                    /* Setup the input prediction list*/
-                    let proteins = new Bloodhound({
-                        datumTokenizer: Bloodhound.tokenizers.whitespace,
-                        queryTokenizer: Bloodhound.tokenizers.whitespace,
-                        local: elements
-                    });
-                    /* Initialize the input prediction */
-                    $('#proteinSortSelection').typeahead(
-                        {
-                            hint: true,
-                            highlight: true,
-                            minLength: 1
-                        },
-                        {
-                            name: 'proteins',
-                            source: proteins
-                        });
-                    /* Give the input focus */
-                    $(event.target).find('#proteinSortSelection').focus();
-                })
-                .on("hide.bs.modal", function(event){
-                    /* Get the protein based on the input of the user */
-                    let inputField = $(event.target).find('#proteinSortSelection'),
-                        proteinName = inputField.val(),
-                        protein = _.filter(self._rawData, ['name', proteinName])[0];
-                    /* Clear the protein */
-                    inputField.val('');
-                    /* If it was a valid protein, set the sorting to be based on the selection*/
-                    if(protein){
-                        self.calculate_scores(protein, self.setProteinSorting.bind(self,self._proteinSorting));
-                    }
-                });
-        },
-
-        setOverviewOffset: function(offset){
-            this._selectedProteinOffset = offset;
-            /* Set the selected protein to reflect the change */
-            let selection = this._proteinNames[this._selectedProteinIndex + this._selectedProteinOffset];
-            this._selectedProtein = _.filter(this._rawData, ['name', selection])[0];
-            this.proteinOverviewChanged.notify({selection: this._selectedProtein});
-        },
-
-        setSelectedProtein: function (proteinName) {
-            this._selectedProtein = _.filter(this._rawData, ['name', proteinName])[0];
-            this._selectedProteinIndex = this._proteinNames.indexOf(proteinName);
-            /* Notify all listeners */
-            this.selectedProteinChanged.notify({selection: this._selectedProtein});
-            return this;
-        },
-
         getSelectedResidues: function (position) {
             return {
                 selection: this._selectedResidues[position],
@@ -350,59 +404,9 @@ const ProteinFamilyModel = (function() {
             }
         },
 
-        setSelectedResidues: function (position, selection) {
-            this._previousSelectedResidues[position] = this._selectedResidues[position];
-            this._selectedResidues[position] = selection;
-            /* Notify all listeners */
-            this.selectedResiduesChanged.notify(
-                { semantic : position,
-                    selection: this._selectedResidues[position],
-                    previous : this._previousSelectedResidues[position]
-                }
-            );
-            return this;
-        },
-
         getProteinSorting: function () { return this._proteinSorting; },
 
         getProteinColoring: function () { return this._proteinColoring; },
-
-        setProteinSorting: function (sorting) {
-            if(sorting){
-                this._proteinSorting = sorting;
-                let
-                    /* Save a reference to the model */
-                    model = this;
-                /* Reorder the raw data */
-                this._rawData = _.chain(this._rawData)
-                    .sortBy((protein) => {
-                        return protein.scores[sorting];
-                    }).reverse().slice(0, this.ppv).value();
-                /* Remap the data then notify the controller */
-                map_trend_image_data(this._rawData).then(function(parsed_data){
-                    /* Save the new parsed data and names */
-                    model._parsedData = parsed_data;
-                    model.setProteinNames();
-                    /* Set the selected protein to reflect the change */
-                    let selection = model._proteinNames[model._selectedProteinIndex + model._selectedProteinOffset];
-                    model.setSelectedProtein(selection);
-                    /* notify the listeners */
-                    model.proteinSortingChanged.notify({
-                        scheme: model._proteinSorting,
-                        data : parsed_data,
-                        colorScheme: model._proteinColoring});
-                    return Promise.resolve();
-                });
-            }
-            return this;
-        },
-
-        setProteinColoring: function (coloring) {
-            this._proteinColoring = coloring;
-            this.proteinColoringChanged.notify({scheme: this._proteinColoring});
-            return this;
-        }
-
     };
 
     return ProteinFamilyModel;

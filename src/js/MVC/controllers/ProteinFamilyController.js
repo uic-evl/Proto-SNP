@@ -26,15 +26,7 @@ const ProteinFamilyController = (function() {
                 selection[0] = Math.round(selection[0]);
                 selection[1] = Math.round(selection[1]);
 
-                /* TODO Get the main brush position */
-
-                /* TODO Check if it's still in the view */
-                /* TODO  if so, move the brush to it */
-                /* TODO if it's not, set the current protein to the top */
-
-
                 /* Render the context bar that links the views */
-                let y = msg.selection[0] + (msg.selection[1]- msg.selection[0])/2.0;
                 let contextPoints = [
                     [{x:0, y:0},{x:self._view.x_offset, y:msg.selection[0]}],
                     [{x:0, y:self._view.height}, {x:self._view.x_offset, y:msg.selection[1]}]
@@ -45,6 +37,26 @@ const ProteinFamilyController = (function() {
                 self._view.render(self._view._familyImage, 0, selection[0]*self._view.getGlyphSize());
                 /* Update the selection */
                 self._model.setOverviewOffset(selection[0]);
+
+                /* TODO Get the main brush position */
+                let selected_protein_position = self._model.getCurrentProteinPosition();
+                /* Check if it's still in the view */
+                if(selected_protein_position >= selection[0] && selected_protein_position <= selection[1] ) {
+                    /* TODO  if so, move the brush to it */
+                    let new_idx = selected_protein_position - selection[0],
+                        current_brush_selection = self._brushViews['horizontal'].getSelection(),
+                        new_brush_y = [new_idx*self._view.getGlyphSize(), (new_idx+1)*self._view.getGlyphSize()];
+
+                    console.log(new_brush_y);
+                    console.log(current_brush_selection[0] - new_brush_y[0]);
+                    self._brushViews['horizontal'].dispatch
+                        .call("brush", null, {mode: "move", offset: {x:0, y: new_brush_y[0]-current_brush_selection[0] }});
+                }
+                else {
+                    /* TODO if it's not, set the current protein to the top */
+
+                }
+
             });
 
             self._brushViews['overview'] = overviewBrush;

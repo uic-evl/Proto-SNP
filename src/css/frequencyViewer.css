@@ -3,10 +3,8 @@
 }
 
 .residueSummaryView {
-    font-size: 10px;
-    /*width:100%;*/
-    /* 20% the size of the trend image */
-    height: 12%;
+    font-size: 0.6em;
+    height: 10%;
 }
 
 .frequency-left, .frequency-right {

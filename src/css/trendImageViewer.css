@@ -55,3 +55,7 @@ text.mono {
     height:100%;
     fill:white;
 }
+
+.proteinFamilyRow {
+    padding-top: 10px;
+}

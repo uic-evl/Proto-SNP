@@ -14,7 +14,7 @@ const ResidueFrequencyView = (function() {
         self._parent = options.parent;
 
         self._barOffset_x = 0;
-        self._barOffset_y = 10;
+        self._barOffset_y = 8;
         self._familyMemberCount = options.rows;
         self._svg = null;
         self._visible = false;
@@ -26,7 +26,11 @@ const ResidueFrequencyView = (function() {
         self._calloutWidth = 125;
         self._calloutHeight = 200;
 
-        let trendImage = d3.select("#trendImageViewer").node();
+        let trendImage = d3.select("#trendImageViewer").node(),
+            menu_height = d3.select("#menu").node().clientHeight,
+            body_height = d3.select("#main_container").node().clientHeight,
+            window_height = window.innerHeight;
+        self.space = window_height - body_height - menu_height;
         self.left_padding = utils.getComputedStyleValue(trendImage, "padding-left");
         self.right_padding = utils.getComputedStyleValue(trendImage, "padding-right");
 
@@ -128,7 +132,7 @@ const ResidueFrequencyView = (function() {
             let protein_label = self._summarySvg.selectAll(".proteinLabel")
                 .data([{
                     text: self._model.getSelectedProtein().name, size: "0.5em",
-                    x: 0, y: self.y_offset - self._barOffset_y + self.summary_margin
+                    x: 0, y: self.y_offset - self._barOffset_y + self.summary_margin +1
                 }]);
 
             /* Create / merge */
@@ -420,7 +424,7 @@ const ResidueFrequencyView = (function() {
             this.summary_margin = utils.getComputedStyleValue(this._dom.select(".freqSVG").node(), "margin-top");
 
             this._summarySvg = this._dom.select(".summarySVG");
-            d3Utils.set_chart_size(this._summarySvg.node(), this.width, this.height+this.summary_margin);
+            d3Utils.set_chart_size(this._summarySvg.node(), this.width, this.height+this.summary_margin+self.space);
 
             if(options.semantic === "left"){
                 this._svg.style("right",0);

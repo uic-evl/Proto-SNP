@@ -63,6 +63,31 @@ const TextUtilities = function(){
             return string;
     }
 
+    function wrap(text, width) {
+        text.each(function() {
+            let text = d3.select(this),
+                words = text.text().split(/\s+/).reverse(),
+                word,
+                line = [],
+                lineNumber = 0,
+                lineHeight = 1.1, // ems
+                y = text.attr("y"),
+                dy = parseFloat(text.attr("dy")),
+                tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                if (tspan.node().getComputedTextLength() > width) {
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                }
+            }
+        });
+    }
+
+
     /** Function that count occurrences of a substring in a string;
      * @param {String} string               The string
      * @param {String} subString            The sub string to search for
@@ -72,7 +97,7 @@ const TextUtilities = function(){
      * @see Unit Test https://jsfiddle.net/Victornpb/5axuh96u/
      * @see http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string/7924240#7924240
      */
-    function occurrences(string, subString, allowOverlapping) {
+   function occurrences(string, subString, allowOverlapping) {
 
         string += "";
         subString += "";
@@ -100,7 +125,8 @@ const TextUtilities = function(){
         translate        : translate,
         truncate         : truncate,
         occurrences      : occurrences,
-        getTextWidth     : get_text_width
+        getTextWidth     : get_text_width,
+        wordWrap         : wrap
     }
 
 };

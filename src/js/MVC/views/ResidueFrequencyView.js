@@ -247,7 +247,6 @@ const ResidueFrequencyView = (function() {
                 consensus_label
                     .enter().append("text")
                     .attr("class", "consensusLabel")
-                    .merge(consensus_label)
                     .attr('x', (d)=>{return d.x ;})
                     .attr("y", (d)=>{return d.y ;})
                     .attr("dy", (d)=>{return d.size})
@@ -260,7 +259,6 @@ const ResidueFrequencyView = (function() {
             /* Add the residue text to the bars */
             let selectionText =
                 self._svg
-                // .select(".bar_group")
                     .selectAll(".selectionText")
                     .data(selected_residues);
 
@@ -290,33 +288,37 @@ const ResidueFrequencyView = (function() {
             if(options.semantic === "left") {
 
                 /* Add label for the protein's name */
-                let protein_label = self._summarySvg.selectAll(".proteinLabel")
-                    .data([{
-                        text: self._model.getSelectedProtein().name,
-                        width: self._summarySvg.attr("width"),
-                        size: "0.5em",
-                        x: 0,
-                        y: self.y_offset - self._barOffset_y + self.summary_margin
-                    }]);
+                let protein_label = self.g_text.selectAll(".proteinLabel")
+                    .data([
+                        {
+                            text: self._model.getSelectedProtein().name,
+                            width: self._summarySvg.attr("width"),
+                            size: "0.5em",
+                            x: 0,
+                            y: self.y_offset - self._barOffset_y + self.summary_margin
+                        },
+                        {
+                            text: "Residue",
+                            width: self._summarySvg.attr("width"),
+                            size: "1.5em",
+                            x: 10,
+                            y: self.y_offset - self._barOffset_y + self.summary_margin
+                        }
+                    ])
+                    .attr("class", "proteinLabel");
+
 
                 /* Create / merge */
                 protein_label
-                    .enter().append("text")
-                    .attr("class", "proteinLabel")
+                    .enter().append("tspan")
+                        .attr('x', (d) => { return d.x; })
+                        .attr("y", (d)=>{return d.y})
+                        .attr("dy", (d) => {return d.size})
                     .merge(protein_label)
-                    .attr('x', (d) => {
-                        return d.x;
-                    })
-                    .attr("y", (d) => {
-                        return d.y;
-                    })
-                    .attr("dy", (d) => {
-                        return d.size
-                    })
-                    .text((d) => {
-                        return App.textUtilities.truncate(d.text, self.label_length);
-                    });
+                    .text((d,i)=>{return App.textUtilities.truncate(d.text, self.label_length) });
 
+
+                protein_label.exit().remove();
             }
         };
 
@@ -440,6 +442,15 @@ const ResidueFrequencyView = (function() {
                 /* Set the width of the context line */
                 width_offset = scale(options.max_items-1);
             width_offset += (scale(options.max_items) - width_offset) * 0.95;
+
+            self.g_text = self._summarySvg
+                .append("g")
+                .attr("class", "proteinLabel")
+                .append("text");
+                // .attr('x', (d) => { return d.x; })
+                // .attr("y", (d) => {return d.y;});
+
+
 
             let contextPoints = [
                 [ {x: this._barOffset_x,   y:y_position},   { x: width_offset, y: y_position}],

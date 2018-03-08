@@ -26,6 +26,10 @@ const ResidueFrequencyView = (function() {
         self._calloutWidth = 125;
         self._calloutHeight = 200;
 
+        let trendImage = d3.select("#trendImageViewer").node();
+        self.left_padding = utils.getComputedStyleValue(trendImage, "padding-left");
+        self.right_padding = utils.getComputedStyleValue(trendImage, "padding-right");
+
         function createStackedBarChart(d,i) {
             /* Show the tooltip*/
             self.tip.show(d,i);
@@ -119,6 +123,26 @@ const ResidueFrequencyView = (function() {
                 .text("Residue Count");
         }
 
+        function updateProteinLabel() {
+            /* Add label for the protein's name */
+            let protein_label = self._summarySvg.selectAll(".proteinLabel")
+                .data([{
+                    text: self._model.getSelectedProtein().name, size: "0.5em",
+                    x: 0, y: self.y_offset - self._barOffset_y + self.summary_margin
+                }]);
+
+            /* Create / merge */
+            protein_label
+                .enter().append("g").append("text")
+                .attr("class", "proteinLabel")
+                .merge(protein_label)
+                .attr('x', (d) => {return d.x;})
+                .attr("y", (d) => {return d.y;})
+                .attr("dy", (d) => {return d.size})
+                .text((d) => {return App.textUtilities.truncate(d.text, self.label_length) + " Residue"})
+                .call(App.textUtilities.wordWrap, self.label_offset+5);
+        }
+
         /* Set the model listeners */
         /* Update on horizontal paddle move */
         self._model.selectedProteinChanged.attach(function(sender, msg){
@@ -127,7 +151,7 @@ const ResidueFrequencyView = (function() {
             /* Render the view */
             let selection = self._model.getSelectedResidues(options.semantic).selection,
                 protein = msg.selection;
-            /*Render the view */
+            /* Render the view */
             self.update(protein.sequence.slice(selection[0], selection[1]), [selection[0], selection[1]]);
         });
 
@@ -240,17 +264,22 @@ const ResidueFrequencyView = (function() {
             if(options.semantic === "left") {
                 /* Add the consensus label */
                 let consensus_label = self._summarySvg.selectAll(".consensusLabel")
-                    .data([{text:"Consensus", width: self._summarySvg.attr("width"),
-                        x:0, y:self.bar_height + self._barOffset_y + self.y_offset + self.summary_margin}]);
+                    .data(
+                        [{
+                            text:"Family Consensus Residue",
+                            width: self._summarySvg.attr("width"), size: "0.5em",
+                            x:0, y:self.bar_height/2.0 + self._barOffset_y + self.y_offset + self.summary_margin
+                        }]);
 
                 /* Create / merge */
                 consensus_label
-                    .enter().append("text")
+                    .enter().append("g").append("text")
                     .attr("class", "consensusLabel")
                     .attr('x', (d)=>{return d.x ;})
                     .attr("y", (d)=>{return d.y ;})
                     .attr("dy", (d)=>{return d.size})
-                    .text((d)=>{return d.text;});
+                    .text((d)=>{return d.text;})
+                    .call(App.textUtilities.wordWrap, self.label_offset+5);
             }
 
         };
@@ -260,7 +289,7 @@ const ResidueFrequencyView = (function() {
             let selectionText =
                 self._svg
                     .selectAll(".selectionText")
-                    .data(selected_residues);
+                    .data(selected_residues,(d)=>{return d} ) ;
 
             // UPDATE: add new elements if needed
             selectionText
@@ -286,39 +315,7 @@ const ResidueFrequencyView = (function() {
                 .attr("fill", (d,i)=>{ return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; });
 
             if(options.semantic === "left") {
-
-                /* Add label for the protein's name */
-                let protein_label = self.g_text.selectAll(".proteinLabel")
-                    .data([
-                        {
-                            text: self._model.getSelectedProtein().name,
-                            width: self._summarySvg.attr("width"),
-                            size: "0.5em",
-                            x: 0,
-                            y: self.y_offset - self._barOffset_y + self.summary_margin
-                        },
-                        {
-                            text: "Residue",
-                            width: self._summarySvg.attr("width"),
-                            size: "1.5em",
-                            x: 10,
-                            y: self.y_offset - self._barOffset_y + self.summary_margin
-                        }
-                    ])
-                    .attr("class", "proteinLabel");
-
-
-                /* Create / merge */
-                protein_label
-                    .enter().append("tspan")
-                        .attr('x', (d) => { return d.x; })
-                        .attr("y", (d)=>{return d.y})
-                        .attr("dy", (d) => {return d.size})
-                    .merge(protein_label)
-                    .text((d,i)=>{return App.textUtilities.truncate(d.text, self.label_length) });
-
-
-                protein_label.exit().remove();
+                updateProteinLabel();
             }
         };
 
@@ -330,6 +327,7 @@ const ResidueFrequencyView = (function() {
                 /* Set the width of the context line */
                 width_offset = scale(this.max_items-1),
                 context_bar_height = 10,
+                offset = self.left_padding,
                 context_offset_y = context_bar_height+self.summary_margin;
             width_offset += (scale(this.max_items) - width_offset) * 0.95;
 
@@ -342,8 +340,8 @@ const ResidueFrequencyView = (function() {
             /* render the context lines */
             if(this.semantic === "left"){
                 contextPoints = [
-                    [ {x: this._barOffset_x, y: y_position+self.summary_margin},  { x: options.brush_pos[0], y: 0}],
-                    [ {x: width_offset,      y: y_position+self.summary_margin},  { x: options.brush_pos[1], y: 0} ],
+                    [ {x: this._barOffset_x+offset, y: y_position+self.summary_margin},  { x: options.brush_pos[0]+offset, y: 0}],
+                    [ {x: width_offset+offset,      y: y_position+self.summary_margin},  { x: options.brush_pos[1]+offset, y: 0} ],
                 ];
             }
             else {
@@ -417,11 +415,20 @@ const ResidueFrequencyView = (function() {
 
             /* Initialize the svg */
             this._svg = this._dom.select(".freqSVG");
+
             d3Utils.set_chart_size(this._svg.node(), this.width, this.height);
-            self.summary_margin = utils.getComputedStyleValue(this._dom.select(".freqSVG").node(), "margin-top");
+            this.summary_margin = utils.getComputedStyleValue(this._dom.select(".freqSVG").node(), "margin-top");
 
             this._summarySvg = this._dom.select(".summarySVG");
-            d3Utils.set_chart_size(this._summarySvg.node(), this.width, this.height+self.summary_margin);
+            d3Utils.set_chart_size(this._summarySvg.node(), this.width, this.height+this.summary_margin);
+
+            if(options.semantic === "left"){
+                this._svg.style("right",0);
+            }
+            else {
+                this._svg.style("left",0);
+                this._summarySvg.style("left",0);
+            }
 
             /* Initialize tooltip */
             this.tip = d3.tip()
@@ -442,15 +449,6 @@ const ResidueFrequencyView = (function() {
                 /* Set the width of the context line */
                 width_offset = scale(options.max_items-1);
             width_offset += (scale(options.max_items) - width_offset) * 0.95;
-
-            self.g_text = self._summarySvg
-                .append("g")
-                .attr("class", "proteinLabel")
-                .append("text");
-                // .attr('x', (d) => { return d.x; })
-                // .attr("y", (d) => {return d.y;});
-
-
 
             let contextPoints = [
                 [ {x: this._barOffset_x,   y:y_position},   { x: width_offset, y: y_position}],

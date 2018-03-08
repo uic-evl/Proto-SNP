@@ -81,7 +81,13 @@ const TextUtilities = function(){
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
-                    tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                    if(tspan.text().length > 0) {
+                        tspan = text.append("tspan")
+                            .attr("x", 0)
+                            .attr("y", y)
+                            .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                            .text(word);
+                    }
                 }
             }
         });
@@ -98,7 +104,6 @@ const TextUtilities = function(){
      * @see http://stackoverflow.com/questions/4009756/how-to-count-string-occurrence-in-string/7924240#7924240
      */
    function occurrences(string, subString, allowOverlapping) {
-
         string += "";
         subString += "";
         if (subString.length <= 0) return (string.length + 1);

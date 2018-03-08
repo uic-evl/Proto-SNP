@@ -269,8 +269,10 @@ const ProteinFamilyView = (function() {
                 font_family = '"Open Sans", sans-serif',
                 font_size   = 10,
                 font = font_size + "px " + font_family,
-                text_size = Math.ceil(App.textUtilities.getTextWidth(font, "Consensus")) + 5,
+                max_name_length = _.maxBy(self._model.getProteinNames(), (d)=>{ return d.length}),
                 text_length = 10,
+                text_size = Math.ceil(App.textUtilities
+                    .getTextWidth(font, App.textUtilities.truncate(max_name_length,text_length)))/2.0 + 5,
                 handles = "";
 
             let horizontalPaddleSize = 1,

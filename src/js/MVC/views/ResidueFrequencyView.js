@@ -330,7 +330,7 @@ const ResidueFrequencyView = (function() {
 
             /* Update the color for matching residues*/
             self._svg.selectAll(".frequencies")
-                .attr("fill", (d,i)=>{ return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#43a2ca"; });
+                .attr("fill", (d,i)=>{ return (d[0] === selected_residues[i]) ?  "#D3D3D3" : "#990000"; });
 
             if(options.semantic === "left") {
                 updateProteinLabel();

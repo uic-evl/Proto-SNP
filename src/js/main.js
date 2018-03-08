@@ -144,7 +144,6 @@ var App = App || {};
 
         /* Setup the info and help buttons */
         setupInfo();
-
     }
 
     /* start the application once the DOM is ready */

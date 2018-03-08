@@ -238,10 +238,10 @@ const ProteinFamilyModel = (function() {
         setOverviewOffset: function(offset){
             this._selectedProteinOffset = offset;
             // /* Set the selected protein to reflect the change */
-            // let selection = this._proteinNames[this._selectedProteinIndex + this._selectedProteinOffset];
-            // this._selectedProtein = _.filter(this._rawData, ['name', selection])[0];
+            let selection = this._proteinNames[this._selectedProteinIndex + this._selectedProteinOffset];
+            this._selectedProtein = _.filter(this._rawData, ['name', selection])[0];
             this.proteinOverviewChanged.notify({selection: this._selectedProtein});
-            // this.selectedProteinChanged.notify({selection: this._selectedProtein});
+            this.selectedProteinChanged.notify({selection: this._selectedProtein});
         },
 
         setSelectedProtein: function (protein_name) {

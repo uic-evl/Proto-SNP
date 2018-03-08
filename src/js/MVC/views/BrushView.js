@@ -38,15 +38,15 @@ const BrushView = (function() {
 
         /* Bind the event listens */
         self._model.selectedProteinChanged.attach(function (sender, msg) {
-            if(self.hasMask) self.redraw(App.HORIZONTAL_PADDLE);
+           self.redraw(App.HORIZONTAL_PADDLE);
         });
 
         self._model.selectedResiduesChanged.attach(function (sender, msg) {
-            if(self.hasMask) self.redraw(App.VERTICAL_PADDLE);
+            self.redraw(App.VERTICAL_PADDLE);
         });
 
         self._model.proteinOverviewChanged.attach(function (sender, msg) {
-            if(self.hasMask) self.redraw(App.OVERVIEW_PADDLE);
+            self.redraw(App.OVERVIEW_PADDLE);
         });
 
         /* Utility to clamp the brush sizes */
@@ -96,7 +96,7 @@ const BrushView = (function() {
         function brushMoveByHandle(target) {
             let mouse = d3.mouse(target);
 
-            if(self._semantic === "horizontal") {
+            if(self._semantic === "horizontal" || self._semantic === "family") {
                 self.movementX += self.origin[0] - mouse[0];
                 self.movementY += mouse[1] - self.origin[1];
             }

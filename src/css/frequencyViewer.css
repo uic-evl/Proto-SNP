@@ -57,3 +57,15 @@
     text-anchor: middle;
     font-weight: 900;
 }
+
+#frequencyLabel {
+    text-align: center;
+    position: absolute;
+}
+
+#frequencyViewer {
+    color: dimgray;
+    font-weight: bolder;
+    font-size: 12px;
+    cursor: default;
+}

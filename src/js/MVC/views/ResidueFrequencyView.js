@@ -147,6 +147,20 @@ const ResidueFrequencyView = (function() {
                 .call(App.textUtilities.wordWrap, self.label_offset+5);
         }
 
+        function addTextBackground(el) {
+            let ctx =  self._summarySvg.node(),
+                SVGRect = el.getBBox();
+
+            let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", SVGRect.x);
+            rect.setAttribute("y", SVGRect.y);
+            rect.setAttribute("width", SVGRect.width);
+            rect.setAttribute("height", SVGRect.height);
+            rect.setAttribute("class", "rangeBackground");
+            rect.setAttribute("fill", "#ecf0f1");
+            self._summarySvg.node().insertBefore(rect, el);
+        }
+
         /* Set the model listeners */
         /* Update on horizontal paddle move */
         self._model.selectedProteinChanged.attach(function(sender, msg){
@@ -384,6 +398,10 @@ const ResidueFrequencyView = (function() {
                 .attr("y", (d)=>{return App.textUtilities.emToPixels(d.size)/4.0})
                 .attr("dy", (d)=>{return d.size})
                 .text(range_text);
+
+            /* Add a background to the label */
+            d3.selectAll(".rangeBackground").remove();
+            addTextBackground(self._summarySvg.select(".rangeLabel").node());
         };
 
         /* Initialize the viewer */

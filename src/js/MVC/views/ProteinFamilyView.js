@@ -24,7 +24,6 @@ const ProteinFamilyView = (function() {
         self.gl = null;
         self.glBufferInfo = null;
 
-        /* Set according to the glyph size */
         self.x_offset = 0;
         self.y_offset = 0;
 
@@ -391,10 +390,11 @@ const ProteinFamilyView = (function() {
 
                     self.width = self._dom.node().clientWidth;
                     new_height = self._dom.node().clientHeight;
+                    self.offset_y = utils.getComputedStyleValue(self._dom.select("#trendCanvas").node(), "margin-top");
 
                     residue_width = self.width / self.x_axis_length;
                     proteins_per_view = Math.floor(new_height / residue_width);
-                    self.height = Math.floor(proteins_per_view * residue_width);
+                    self.height = Math.floor(proteins_per_view * residue_width) +self.offset_y;
 
                     /* Set the overview canvas width and height */
                     self.overview_panel_width = Math.floor(d3.select("#overviewCanvas").node().parentNode.clientWidth);
@@ -403,7 +403,7 @@ const ProteinFamilyView = (function() {
                     /* Set the canvases' width and height */
                     d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
                     d3Utils.set_chart_size("#overviewCanvas", self.overview_panel_width, self.height);
-                    d3Utils.set_chart_size("#trendSVG", self.width, self.height);
+                    d3Utils.set_chart_size("#trendSVG", self.width, self.height+self.offset_y);
                     d3Utils.set_chart_size("#overviewSVG", self.overview_panel_width, self.height);
 
                     /* Store the size variables for rendering */
@@ -417,7 +417,7 @@ const ProteinFamilyView = (function() {
                     initialize_overview_canvas();
 
                     /* Setup the brush SVG */
-                    self.brushSVG    = set_brush_SVG("#trendSVG", self.width, self.height);
+                    self.brushSVG    = set_brush_SVG("#trendSVG", self.width, self.height+self.offset_y);
                     self.overviewSVG = set_brush_SVG("#overviewSVG", self.overview_width, self.height);
 
                     initialized_promise.resolve();
@@ -437,7 +437,7 @@ const ProteinFamilyView = (function() {
                     self._dom.style("height", self.height);
 
                     d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
-                    d3Utils.set_chart_size("#trendSVG", self.width, self.height);
+                    d3Utils.set_chart_size("#trendSVG", self.width, self.height+self.offset_y);
 
                     /* Store the size variables for rendering */
                     set_glyph_size(residue_width);
@@ -495,9 +495,7 @@ const ProteinFamilyView = (function() {
                 .append("g")
                 .attr("class", "brushes")
                 .attr("width", width)
-                .attr("height", height)
-                .attr("x", 0)
-                .attr("y", 0);
+                .attr("height", height);
         }
 
         function load_menu_template(alignment_name) {

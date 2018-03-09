@@ -32,14 +32,13 @@ const ProteinFamilyController = (function() {
                 /* TODO  if so, move the brush to it */
                 /* TODO if it's not, set the current protein to the top */
 
-
                 /* Render the context bar that links the views */
                 let y = msg.selection[0] + (msg.selection[1]- msg.selection[0])/2.0;
                 let contextPoints = [
                     [{x:0, y:0},{x:self._view.x_offset, y:msg.selection[0]}],
                     [{x:0, y:self._view.height}, {x:self._view.x_offset, y:msg.selection[1]}]
                 ];
-                d3Utils.render_context_lines(overviewSpec.brushSpec.parent, contextPoints, 0.2);
+                d3Utils.render_context_lines(overviewSpec.brushSpec.parent, contextPoints, "context-line-width");
 
                 /* Render the new view*/
                 self._view.render(self._view._familyImage, 0, selection[0]*self._view.getGlyphSize());

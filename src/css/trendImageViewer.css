@@ -47,7 +47,7 @@ text.mono {
 .paddleOverlay {
     stroke: none;
     fill: #ecf0f1;
-    fill-opacity: 1;
+    fill-opacity: 0.6;
     mask: url("#paddleMasks");
 }
 

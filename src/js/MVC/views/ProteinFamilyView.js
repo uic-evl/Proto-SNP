@@ -65,7 +65,7 @@ const ProteinFamilyView = (function() {
                                     [{x:0, y:0},{x:self.x_offset, y:0}],
                                     [{x:0, y:self.height},{x:self.x_offset, y:self.brushPaddleSize}]
                                 ];
-                                d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, 0.2);
+                                d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, "family-line-width");
                             });
                     }
                     /* Enable the coloring menu */
@@ -659,7 +659,7 @@ const ProteinFamilyView = (function() {
                                     [{x:0, y:0},{x:self.x_offset, y:0}],
                                     [{x:0, y:self.height},{x:self.x_offset, y:self.brushPaddleSize}]
                                 ];
-                                d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, 0.2);
+                                d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, "family-line-width");
                             });
                     }
                 });

@@ -124,7 +124,7 @@ const d3Utils = function () {
         },
 
         /* Render the line above the bars */
-        render_context_lines : function(context, points, width) {
+        render_context_lines : function(context, points, width_class) {
             /* Add the context bar above viewers */
             if(context.node && context.node().nodeName === "svg"){
 
@@ -139,7 +139,7 @@ const d3Utils = function () {
                     .attr('y2', function(d,i){return d[1].y})
                     .attr("shape-rendering", "auto")
                     .classed("context-line", true)
-                    .classed("context-line-width", !!(width));
+                    .classed(width_class, true);
             }
             else {
                 points.forEach(function(point){

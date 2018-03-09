@@ -368,7 +368,7 @@ const ResidueFrequencyView = (function() {
                     [ {x: this._barOffset_x, y: y_position+self.summary_margin},  { x: options.brush_pos[0]-this.width, y: 0} ],
                 ];
             }
-            d3Utils.render_context_lines(this._summarySvg, contextPoints, 0.2);
+            d3Utils.render_context_lines(this._summarySvg, contextPoints, "context-line-width");
 
             /* Add range text between the context lines */
             let range_text = (options.range[0]+1) + " - " + options.range[1],

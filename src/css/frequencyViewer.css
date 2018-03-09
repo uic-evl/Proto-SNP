@@ -28,6 +28,10 @@
     stroke-width: 0.2;
 }
 
+.family-line-width {
+    stroke-width: 0.6;
+}
+
 .axisPop text{
     fill: white;
 }

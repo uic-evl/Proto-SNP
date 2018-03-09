@@ -1,64 +1,10 @@
 <html>
 
 <head>
-    <script type='text/javascript' src='lib/js/minified/lodash.min.js'></script>
-    <script type='text/javascript' src='lib/js/d3.js'></script>
-    <script src="http://d3js.org/queue.v1.min.js"></script>
-
-    <script type="application/javascript" src="src/js/utilities/residueMappingUtilities.js"></script>
-    <script src="https://twgljs.org/dist/twgl.min.js"></script>
-    <script type="application/javascript" src="testGL.js"></script>
 
 </head>
 
 <body>
-
-<script id="vs" type="notjs">
-attribute vec4 position;
-
-varying vec2 v_texCoord;
-
-void main() {
-  gl_Position = position;
-
-  // Since we know we'll be passing in -1 to +1 for position
-  v_texCoord = position.xy * 0.5 + 0.5;
-}
-</script>
-
-<script id="fs" type="notjs">
-precision highp float;
-
-// texture
-uniform sampler2D u_texture;
-
-// texture dimensions
-uniform vec2 u_textureSize;
-
-// texture position
-varying vec2 v_texCoord;
-
-// residue size
-uniform float u_residue_size;
-
-void main() {
-
-   // compute 1 pixel in texture coordinates.
-   vec2 currPixel = vec2(1.0, 1.0) / u_textureSize;
-   currPixel = currPixel / u_residue_size;
-
-   currPixel.x = floor(currPixel.x);
-   currPixel.y = floor(currPixel.y);
-
-   gl_FragColor =
-    texture2D(u_texture, v_texCoord);
-
-}
-  </script>
-
-<canvas style="display:none" id="canvas" width="373px" height="640px"></canvas>
-<canvas id="family" width="1119px" height="348px"></canvas>
-
+<img src="src/svg/up_arrow.svg" style="stroke:red">
 </body>
-
 </html>

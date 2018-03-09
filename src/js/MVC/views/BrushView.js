@@ -121,6 +121,7 @@ const BrushView = (function() {
         function brushHandlePath(d) {
             switch(d.type) {
                 case "left":
+                case "family":
                     return "M0,0L"+d.width+",0A"+d.radius+","+d.radius+" 0 1 1 "+d.width+" "+d.height+" L0,"+d.height+"Z";
                 case "right":
                     return "M0,0L"+(-d.width)+",0A"+d.radius+","+d.radius+" 0 1 0 "+(-d.width)+" "+d.height+" L0,"+d.height+"Z";
@@ -143,8 +144,8 @@ const BrushView = (function() {
                 y = +brushObj.select('.selection').attr("height");
             }
             else if(semantic === "family") {
-                x = (+d3.select("#overviewSVG").attr("width"))/2 - height/2.0;
-                y = +brushObj.select('.selection').attr("height");
+                x = x + (+brushObj.select(".selection").attr("width"));
+                y = +brushObj.select('.selection').attr("height")/2.0;
             }
 
             /* Add the handle to the brush */
@@ -338,9 +339,12 @@ const BrushView = (function() {
                 let translate = d3Utils.get_translate_values(handle), x, y;
                 switch(self._semantic) {
                     case "horizontal":
-                    case "family":
                         x =  translate[0];
                         y = +brush_sel.attr("y") + (+brush_sel.attr("height"));
+                        break;
+                    case "family":
+                        x =  translate[0];
+                        y = +brush_sel.attr("y") + (+brush_sel.attr("height"))/2.0;
                         break;
                     case "left":
                         x = +brush_sel.attr("x") + (+brush_sel.attr("width"));

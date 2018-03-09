@@ -288,25 +288,26 @@ const ProteinFamilyView = (function() {
                         orientation: App.HORIZONTAL_PADDLE,
                         paddleSize: horizontalPaddleSize,
                         class: "brush horizontal main no_handles",
-                        extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
+                        extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         helpText: "Drag here to select a different protein.",
                         helpPosition: "top",
                         block_size: self.residue_glyph_size,
-                        position: [self.y_offset, self.residue_glyph_size + self.y_offset],
+                        position: [self.offset_y, self.residue_glyph_size + self.offset_y],
                         semantic: "horizontal", mask: "#paddleMasks",
                         tooltip: () => { return self._model.getSelectedProtein().name; }
                     },
                     {
                         orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-                        class: "brush vertical-left " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
+                        class: "brush vertical-left " + handles,
+                        extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         helpText: "Drag here to select a different subset of residues. ",
                         helpPosition: "right", mask: "#paddleMasks",
                         block_size: self.residue_glyph_size, semantic: "left",
-                        position: [0, self.residue_glyph_size * verticalPaddleSize + self.y_offset]
+                        position: [0, self.residue_glyph_size * verticalPaddleSize]
                     },
                     {
                         orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
-                        class: "brush vertical-right " + handles, extent: [[0, self.y_offset], [self.width, self.height + self.y_offset]],
+                        class: "brush vertical-right " + handles, extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         block_size: self.residue_glyph_size, semantic: "right",
                         helpText: "Drag here to select a different subset of residues.",
                         helpPosition: "left", mask: "#paddleMasks",
@@ -315,12 +316,12 @@ const ProteinFamilyView = (function() {
                 ],
                 frequencyViewers : [
                     {id: 'leftResidueSummaryViewer',  parent: fv_parent, semantic: "left",  max_items: maxPaddleSize,
-                        block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align", margin: 0, width: self.width,
+                        block_size: self.residue_glyph_size, offset: self.offset_y, class: "center-align", margin: 0, width: self.width,
                         height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0,
                         label_size: text_size, label_length: text_length
                     },
                     {id: 'rightResidueSummaryViewer',  parent: fv_parent, semantic: "right", max_items: maxPaddleSize,
-                        block_size: self.residue_glyph_size, offset: self.y_offset, class: "center-align",  margin: 0, width: self.width,
+                        block_size: self.residue_glyph_size, offset: self.offset_y, class: "center-align",  margin: 0, width: self.width,
                         height: fv_height, bar_height: bar_height, bar_width:bar_width, overview: self.overviewImage, offset_x:0,
                         label_size: 0, label_length: 0
                     }
@@ -390,15 +391,16 @@ const ProteinFamilyView = (function() {
 
                     self.width = self._dom.node().clientWidth;
                     new_height = self._dom.node().clientHeight;
-                    self.offset_y = utils.getComputedStyleValue(self._dom.select("#trendCanvas").node(), "margin-top");
 
                     residue_width = self.width / self.x_axis_length;
                     proteins_per_view = Math.floor(new_height / residue_width);
-                    self.height = Math.floor(proteins_per_view * residue_width) +self.offset_y;
+                    self.height = Math.floor(proteins_per_view * residue_width);
 
                     /* Set the overview canvas width and height */
                     self.overview_panel_width = Math.floor(d3.select("#overviewCanvas").node().parentNode.clientWidth);
                     self.overview_width = Math.floor(self.overview_panel_width / 2.0);
+
+                    set_offsets();
 
                     /* Set the canvases' width and height */
                     d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
@@ -409,7 +411,6 @@ const ProteinFamilyView = (function() {
                     /* Store the size variables for rendering */
                     set_glyph_size(residue_width);
                     set_proteins_per_view(proteins_per_view);
-                    set_offsets();
                     set_chart_scales();
 
                     /* Setup webGL */
@@ -465,6 +466,7 @@ const ProteinFamilyView = (function() {
         /* Setter size of the offsets */
         function set_offsets() {
             self.x_offset = Math.floor((self.overview_panel_width - self.overview_width) / 2.0);
+            self.offset_y = utils.getComputedStyleValue(self._dom.select("#trendCanvas").node(), "margin-top");
         }
 
         /* Setter for the number of proteins we can display in a single view */
@@ -476,7 +478,7 @@ const ProteinFamilyView = (function() {
             /* construct the y-scale */
             self.yScale = d3.scaleBand()
                 .domain(values)
-                .range([self.y_offset, self.ppv * self.residue_glyph_size + self.y_offset]);
+                .range([self.offset_y, self.ppv * self.residue_glyph_size + self.offset_y]);
         }
 
         /* Setter for the trend image scales */

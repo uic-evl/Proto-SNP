@@ -307,7 +307,7 @@ const ResidueFrequencyView = (function() {
             let selectionText =
                 self._svg
                     .selectAll(".selectionText")
-                    .data(selected_residues,(d)=>{return d} ) ;
+                    .data(selected_residues) ;
 
             // UPDATE: add new elements if needed
             selectionText

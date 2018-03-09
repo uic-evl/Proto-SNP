@@ -21,7 +21,7 @@ App.OVERVIEW_PADDLE   = 3;
       let brush = d3.select(document.getElementsByClassName(this.brush_class)[0]);
       /* Move the brush */
       brush
-          .transition().duration(100)
+          // .transition().duration(100)
           .call(this.brush.move, pos);
       return this;
     }

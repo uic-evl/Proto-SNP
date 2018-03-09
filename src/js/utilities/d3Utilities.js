@@ -21,6 +21,16 @@ const d3Utils = function () {
     };
 
     return {
+
+        import_svg: function(svg_path, cb) {
+            // load the external svg from a file
+            d3.xml(svg_path, function(err,xml) {
+                if(err) throw err;
+                let importedNode = document.importNode(xml.documentElement, true);
+                cb(d3.select(importedNode).select("g"));
+            });
+        },
+
         /* Clear the chart DOM of all elements */
         clear_chart_dom : function (domObj) {
             domObj.selectAll().remove();

@@ -405,7 +405,7 @@ const ProteinFamilyView = (function() {
                     /* Set the canvases' width and height */
                     d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
                     d3Utils.set_chart_size("#overviewCanvas", self.overview_panel_width, self.height);
-                    d3Utils.set_chart_size("#trendSVG", self.width, self.height+self.offset_y);
+                    d3Utils.set_chart_size("#trendSVG", self.width+self.overview_width/2.0, self.height+self.offset_y);
                     d3Utils.set_chart_size("#overviewSVG", self.overview_panel_width, self.height);
 
                     /* Store the size variables for rendering */

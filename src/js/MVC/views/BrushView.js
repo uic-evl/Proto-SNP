@@ -119,47 +119,87 @@ const BrushView = (function() {
         }
 
         function brushHandlePath(d) {
+
             switch(d.type) {
-                case "left":
+                case "horizontal":
                 case "family":
-                    return "M0,0L"+d.width+",0A"+d.radius+","+d.radius+" 0 1 1 "+d.width+" "+d.height+" L0,"+d.height+"Z";
+                    return "M0,0L"+d.width+",0"+
+                       // "A"+d.radius+","+d.radius+" 0 1 1 "+
+                        "L"+d.width+" "+d.height+" L0,"+d.height+"Z";
                 case "right":
-                    return "M0,0L"+(-d.width)+",0A"+d.radius+","+d.radius+" 0 1 0 "+(-d.width)+" "+d.height+" L0,"+d.height+"Z";
+                case "left":
+                    // return "M0,0L"+(-d.width)+",0A"+d.radius+","+d.radius+" 0 1 0 "+(-d.width)+" "+d.height+" L0,"+d.height+"Z";
+                    return "M0,0L0,"+(-d.width)+
+                        //"A"+d.radius+","+d.radius+" 0 1 0 "
+                        "L"+(-d.height)+" "+(-d.width)+
+                        " L"+(-d.height)+",0Z";
                 default:
                     return "M0,0L0,"+(d.width)+"A"+d.radius+","+d.radius+" 0 1 1 "+(-d.height)+" "+d.width+" L"+(-d.height)+",0Z";
             }
         }
 
+        function addSVGBackground(el) {
+            let ctx =  d3.select("#trendCanvas").node(),
+                SVGRect = el.getBBox();
+
+            let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", SVGRect.x);
+            rect.setAttribute("y", SVGRect.y);
+            rect.setAttribute("width", SVGRect.width);
+            rect.setAttribute("height", SVGRect.height);
+            rect.setAttribute("class", "rangeBackground");
+            rect.setAttribute("fill", "#ecf0f1");
+            self.handle.node().insertBefore(rect, el);
+        }
+
         function addBrushHandles(brushObj, semantic) {
-            let h = +brushObj.select('.overlay').attr("height"),
+            let h = +brushObj.select('.selection').attr("height"),
+                w = +brushObj.select('.selection').attr("width"),
                 x = +brushObj.select('.selection').attr("x"),
-                height = 5, width = 15, radius = 15,
-                y = h/2 - height/2;
+                y = +brushObj.select('.selection').attr("y"),
+                height = block_size, width = 40, radius = 20;
 
-            if(semantic === "left") {
-                x = x + (+brushObj.select(".selection").attr("width"));
-            }
-            else if(semantic === "horizontal") {
-                x = (+brushObj.select(".overlay").attr("width"))/2 - height/2.0;
-                y = +brushObj.select('.selection').attr("height");
-            }
-            else if(semantic === "family") {
-                x = x + (+brushObj.select(".selection").attr("width"));
-                y = +brushObj.select('.selection').attr("height")/2.0;
+                switch(self._semantic) {
+                case "horizontal":
+                    x += w/2.0;
+                    break;
+                case "family":
+                    x += w;
+                    y += h/2.0;
+                    break;
+                case "left":
+                case "right":
+                    x += w/2.0 - height/2.0;
+                    break;
             }
 
-            /* Add the handle to the brush */
             self.handle = brushObj.selectAll(".handle--custom")
                 .data([{type: semantic, height:height, width: width, radius: radius}])
-                .enter().append("path")
-                .attr("class", "handle--custom selection")
-                .attr("cursor", "move")
-                .attr("d", brushHandlePath)
-                .on("mousedown.brush", brushDownByHandle);
+                .enter().append("g");
 
+            self.handle.append("rect")
+                .attr("width", 40)
+                .attr("height", 40)
+                .style("fill", "#ecf0f1");
+
+
+            // .attr("d", brushHandlePath);
+
+            let paddle = self.handle.append("svg:image")
+                .attr("id",semantic + "_svg")
+                .attr("xlink:href", "src/svg/plain.png")
+                .attr("width", "40px")
+                .attr("height", "40px");
+
+            self.handle
+                .attr("class", "handle--custom selection")
+                .attr("cursor", "move");
+
+            // .on("mousedown.brush", brushDownByHandle)
             /* Center the handle */
             self.handle
                 .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
+
         }
 
         function addBrushSVGMasks(brushObj) {
@@ -173,11 +213,11 @@ const BrushView = (function() {
                 .attr("y", brush_rect.attr("y"))
                 .attr("height", brush_rect.attr("height"))
                 .attr("width", brush_rect.attr("width"));
-            if(handle.node()){
-                let handle_clone = d3Utils.clone_d3_selection(handle, self._semantic+"_handle");
-                d3.select(self.mask).node()
-                    .append(handle_clone.node());
-            }
+            // if(handle.node()){
+            //     let handle_clone = d3Utils.clone_d3_selection(handle, self._semantic+"_handle");
+            //     d3.select(self.mask).node()
+            //         .append(handle_clone.node());
+            // }
             self.hasMask = true;
         }
 
@@ -339,27 +379,25 @@ const BrushView = (function() {
                 let translate = d3Utils.get_translate_values(handle), x, y;
                 switch(self._semantic) {
                     case "horizontal":
-                        x =  translate[0];
-                        y = +brush_sel.attr("y") + (+brush_sel.attr("height"));
+                        x =  +translate[0];
+                        y = +brush_sel.attr("y") - (+handle.attr("height"))/2.0;
                         break;
                     case "family":
-                        x =  translate[0];
-                        y = +brush_sel.attr("y") + (+brush_sel.attr("height"))/2.0;
+                        x =  +translate[0];
+                        y = +brush_sel.attr("y");//+ (+brush_sel.attr("height"))/2.0;
                         break;
                     case "left":
-                        x = +brush_sel.attr("x") + (+brush_sel.attr("width"));
-                        y = translate[1];
+                    case "right":
+                        x = +brush_sel.attr("x");// + (+brush_sel.attr("width"))/2.0 + block_size/2.0;
+                        y = +brush_sel.attr("y");
                         break;
-                    default:
-                        x = +brush_sel.attr("x");
-                        y = translate[1];
                 }
                 /* Move the handle with the brush */
                 handle.attr("display", null)
                     .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
                 /* Update the mask */
-                d3.select(self.mask).select("#"+self._semantic+"_handle")
-                    .attr("transform", handle.attr("transform"));
+                // d3.select(self.mask).select("#"+self._semantic+"_handle")
+                //     .attr("transform", handle.attr("transform"));
             }
         };
 
@@ -421,7 +459,7 @@ const BrushView = (function() {
             /* Add a tooltip if specified */
             if (options.tooltip) {
                 view._tooltip = d3.tip()
-                    .attr('class', 'd3-tip')
+                    .attr('class', 'd3-tip protein-name-tooltip')
                     .offset([-10, 0])
                     .html(options.tooltip);
             }

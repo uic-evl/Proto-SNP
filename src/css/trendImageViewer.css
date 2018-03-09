@@ -59,3 +59,7 @@ text.mono {
 .proteinFamilyRow {
     padding-top: 10px;
 }
+
+.familyViewerRow, .frequencyViewerRow {
+    margin-top: 50px;
+}

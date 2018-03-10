@@ -385,7 +385,8 @@ const BrushView = (function() {
         };
 
         self.initialize = function (options) {
-            let view = this;
+            let view = this,
+                menuItems = d3.select("#familySettingsElements");
             view.class = options.class;
             view.helpText = options.helpText;
             view.helpPosition = options.helpPosition;
@@ -400,10 +401,26 @@ const BrushView = (function() {
                     .setPaddleExtent(options.extent)
                     .setInitialPosition(options.position)
                     .onBrush(function () {
+                        // if(options.orientation === App.VERTICAL_PADDLE) {
+                        //     menuItems.classed("familySettingsElements_top", false)
+                        //         .classed("familySettingsElements_bottom", true);
+                        // }
+
                         view.onBrush.call(this);
+
                         if(options.orientation === App.HORIZONTAL_PADDLE) {
                             utils.waitForFinalEvent(view._tooltip.hide, 1000, "Brushing complete");
                         }
+
+                    })
+                    .onEnd(function(){
+                        // if(options.orientation === App.VERTICAL_PADDLE) {
+                        //     utils.waitForFinalEvent(function(){
+                        //         menuItems.classed("familySettingsElements_bottom", false)
+                        //             .classed("familySettingsElements_top", true);
+                        //     }, 500, "Brushing complete");
+                        //
+                        // }
                     });
 
             /* Link the paddle updates */

@@ -98,12 +98,12 @@ div.view {
 }
 
 .settingsWrench {
-    padding-left: 15px;
+    padding-left: 10px;
 }
 
-#main_container a.nav-link {
-    padding: .25rem 0.5rem !important;
-}
+/*#main_container a.nav-link {*/
+    /*padding: .25rem 0.5rem !important;*/
+/*}*/
 
 #helpButton.btn-info:focus, #helpButton.btn:focus {
     box-shadow: none!important;
@@ -214,4 +214,12 @@ li > label:hover {
     text-align: center;
     font-size: 12px;
     line-height: 1.42857;
+}
+
+.familySettingsElements_top {
+    z-index: 2;
+}
+
+.familySettingsElements_bottom {
+    z-index: 0;
 }

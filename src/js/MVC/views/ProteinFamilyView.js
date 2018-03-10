@@ -428,7 +428,6 @@ const ProteinFamilyView = (function() {
                     /* Store the size variables for rendering */
                     set_glyph_size(residue_width);
                     set_proteins_per_view(proteins_per_view);
-                    set_chart_scales();
 
                     /* Setup webGL */
                     initialize_screen_context();
@@ -484,6 +483,7 @@ const ProteinFamilyView = (function() {
         function set_offsets() {
             self.x_offset = Math.floor((self.overview_panel_width - self.overview_width) / 2.0);
             self.offset_y = utils.getComputedStyleValue(d3.select("#familySettings").node(), "height");
+            set_chart_scales();
         }
 
         /* Setter for the number of proteins we can display in a single view */
@@ -591,13 +591,9 @@ const ProteinFamilyView = (function() {
                 set_chart_dimensions().then(function(){
                     /* Initialize the chart and data dimensions */
                     setup_backbuffer_context();
-
-                    // set_brush_dimensions();
                     load_menu_template(self._model.getFileName()).then(set_brush_dimensions);
-
                     /* Remove the black background */
                     self._parentDom.classed("trend-viewer", false);
-
                     resolve();
                 });
             });

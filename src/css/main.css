@@ -148,3 +148,7 @@ ul li a.disabled {
     display: inline-block;
     /*margin-left: 10px;*/
 }
+
+.d3-tip{
+    z-index: 10;
+}

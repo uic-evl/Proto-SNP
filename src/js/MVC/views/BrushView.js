@@ -154,7 +154,7 @@ const BrushView = (function() {
             self.handle.append("rect")
                 .attr("width", (d)=>{return d.width})
                 .attr("height", (d)=>{return d.height})
-                .style("fill", "#ecf0f1");
+                .style("fill", "none");
 
             self.handle.append("svg:image")
                 .attr("id",semantic + "_svg")
@@ -168,7 +168,6 @@ const BrushView = (function() {
                 .attr("cursor", "move")
                 .on("mousedown.brush", brushDownByHandle)
                 .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
-
         }
 
         function addBrushSVGMasks(brushObj) {

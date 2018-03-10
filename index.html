@@ -185,6 +185,14 @@
             <!-- Trend Image View-->
             <div class="row TrendImageView center-aligned">
                 <div id="trendImageViewer" class="col-12 trend-viewer center-aligned">
+                    <svg id="trendSVG" class="hidden">
+                        <defs>
+                            <mask id="paddleMasks">
+                                <rect height="100%" width="100%" class="brush_overlay-rect"></rect>
+                            </mask>
+                        </defs>
+                        <rect height="100%" width="100%" class="paddleOverlay"></rect>
+                    </svg>
                     <div id="trendSplash"></div>
                 </div>
             </div>

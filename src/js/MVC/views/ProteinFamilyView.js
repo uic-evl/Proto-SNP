@@ -43,8 +43,11 @@ const ProteinFamilyView = (function() {
                 colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring(), "family");
 
             /* Initialize the trend image view*/
-            self.initialize(msg);
+            self.initialize(msg)
+                .then(initialize_trend_image.bind(self,family,colorMapping));
+        });
 
+        function initialize_trend_image(family, colorMapping) {
             /* Initialize the back buffer with the family data */
             initialize_back_buffer(family.data, colorMapping)
             /* Render the family view */
@@ -73,7 +76,7 @@ const ProteinFamilyView = (function() {
                     /* Create the legend */
                     //App.residueMappingUtility.createColorLegend("family");
                 }).catch(console.log.bind(console));
-        });
+        }
 
         function initialize_back_buffer(family, colorMapping) {
             return new Promise(function (resolve, reject) {
@@ -367,9 +370,23 @@ const ProteinFamilyView = (function() {
             self.y_axis_length = self._model.getProteinNames().length;
         }
 
+        /* Setter for the brush dimensions */
+        function set_brush_dimensions() {
+            /* Set the offsets based on the menu */
+            set_offsets();
+            /* Set the brush sizes */
+            d3Utils.set_chart_size("#trendSVG", self.width+self.overview_width/2.0, self.height+self.offset_y);
+            self.brushSVG = set_brush_SVG("#trendSVG", self.width, self.height+self.offset_y);
+            d3.select("#trendSVG").classed("hidden", false);
+
+            /* Size the trend image overlay*/
+            d3.select(".brush_overlay-rect")
+                .attr("height", self.height)
+                .attr("y", self.offset_y);
+        }
+
         /* Setter for the chart dimensions */
         function set_chart_dimensions() {
-
             let container_width = self._container_width,
                 residue_width = Math.floor(container_width / self.x_axis_length),
                 initialized_promise = $.Deferred();
@@ -390,7 +407,7 @@ const ProteinFamilyView = (function() {
                     self.overviewImage = true;
 
                     self.width = self._dom.node().clientWidth;
-                    new_height = self._dom.node().clientHeight;
+                    new_height = self._parentDom.node().clientHeight;//self._dom.node().clientHeight;
 
                     residue_width = self.width / self.x_axis_length;
                     proteins_per_view = Math.floor(new_height / residue_width);
@@ -400,12 +417,12 @@ const ProteinFamilyView = (function() {
                     self.overview_panel_width = Math.floor(d3.select("#overviewCanvas").node().parentNode.clientWidth);
                     self.overview_width = Math.floor(self.overview_panel_width / 2.0);
 
-                    set_offsets();
+                   // set_offsets();
 
                     /* Set the canvases' width and height */
                     d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
                     d3Utils.set_chart_size("#overviewCanvas", self.overview_panel_width, self.height);
-                    d3Utils.set_chart_size("#trendSVG", self.width+self.overview_width/2.0, self.height+self.offset_y);
+                    //d3Utils.set_chart_size("#trendSVG", self.width+self.overview_width/2.0, self.height+self.offset_y);
                     d3Utils.set_chart_size("#overviewSVG", self.overview_panel_width, self.height);
 
                     /* Store the size variables for rendering */
@@ -418,7 +435,7 @@ const ProteinFamilyView = (function() {
                     initialize_overview_canvas();
 
                     /* Setup the brush SVG */
-                    self.brushSVG    = set_brush_SVG("#trendSVG", self.width, self.height+self.offset_y);
+                    //self.brushSVG    = set_brush_SVG("#trendSVG", self.width, self.height+self.offset_y);
                     self.overviewSVG = set_brush_SVG("#overviewSVG", self.overview_width, self.height);
 
                     initialized_promise.resolve();
@@ -438,7 +455,7 @@ const ProteinFamilyView = (function() {
                     self._dom.style("height", self.height);
 
                     d3Utils.set_chart_size("#trendCanvas", self.width, self.height);
-                    d3Utils.set_chart_size("#trendSVG", self.width, self.height+self.offset_y);
+                    //d3Utils.set_chart_size("#trendSVG", self.width, self.height+self.offset_y);
 
                     /* Store the size variables for rendering */
                     set_glyph_size(residue_width);
@@ -449,7 +466,7 @@ const ProteinFamilyView = (function() {
                     initialize_screen_context();
 
                     /* Setup the brush SVG */
-                    self.brushSVG = set_brush_SVG("#trendSVG", self.width, self.height);
+                    //self.brushSVG = set_brush_SVG("#trendSVG", self.width, self.height);
 
                     initialized_promise.resolve();
                 });
@@ -466,7 +483,7 @@ const ProteinFamilyView = (function() {
         /* Setter size of the offsets */
         function set_offsets() {
             self.x_offset = Math.floor((self.overview_panel_width - self.overview_width) / 2.0);
-            self.offset_y = utils.getComputedStyleValue(self._dom.select("#trendCanvas").node(), "margin-top");
+            self.offset_y = utils.getComputedStyleValue(d3.select("#familySettings").node(), "height");
         }
 
         /* Setter for the number of proteins we can display in a single view */
@@ -565,22 +582,25 @@ const ProteinFamilyView = (function() {
         };
 
         self.initialize = function (data) {
+            return new Promise(function(resolve, reject){
+                let family = data.family;
+                self._proteinCount = data.proteinCount;
+                self._sequenceLength = data.sequenceLength;
 
-            let family = data.family;
-            this._proteinCount = data.proteinCount;
-            this._sequenceLength = data.sequenceLength;
+                set_data_dimensions_sizes(family.data);
+                set_chart_dimensions().then(function(){
+                    /* Initialize the chart and data dimensions */
+                    setup_backbuffer_context();
 
-            /* Initialize the chart and data dimensions */
-            set_data_dimensions_sizes(family.data);
-            set_chart_dimensions();
+                    // set_brush_dimensions();
+                    load_menu_template(self._model.getFileName()).then(set_brush_dimensions);
 
-            setup_backbuffer_context();
+                    /* Remove the black background */
+                    self._parentDom.classed("trend-viewer", false);
 
-            /* Setup the menu */
-            load_menu_template(this._model.getFileName());
-
-            /* Remove the black background */
-            this._parentDom.classed("trend-viewer", false);
+                    resolve();
+                });
+            });
         };
 
         /* Renders the image overview onto the canvas */

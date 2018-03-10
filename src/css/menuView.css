@@ -23,8 +23,8 @@
 
 #fileupload-open-family {
     font-size: inherit !important;
-    transform: translateX(-90%) !important;
     left: 0;
+    width: 25px
 }
 
 #fileupload-open-family {

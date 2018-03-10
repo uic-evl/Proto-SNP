@@ -123,36 +123,44 @@ const BrushView = (function() {
                 w = +brushObj.select('.overlay').attr("width"),
                 x = +brushObj.select('.selection').attr("x"),
                 y = +brushObj.select('.selection').attr("y"),
-                height = block_size, width = 35, radius = 20;
+                height = block_size, image_width = 40, image_height = 25,
+                image = "";
 
                 switch(self._semantic) {
                 case "horizontal":
                     x += w/2.0;
+                    image = "src/svg/vertical_paddle.png";
+                    image_width = 25;
+                    image_height = 40;
                     break;
                 case "family":
                     x += w;
                     y += h/2.0;
+                    image = "src/svg/vertical_paddle.png";
+                    image_width = 25;
+                    image_height = 40;
                     break;
                 case "left":
                 case "right":
                     x += w/2.0 - height/2.0;
+                    image = "src/svg/horizontal_paddle.png";
                     break;
             }
 
             self.handle = brushObj.selectAll(".handle--custom")
-                .data([{type: semantic, height:height, width: width, radius: radius}])
+                .data([{type: semantic, height:image_height, width: image_width}])
                 .enter().append("g");
 
             self.handle.append("rect")
                 .attr("width", (d)=>{return d.width})
-                .attr("height", (d)=>{return d.width})
+                .attr("height", (d)=>{return d.height})
                 .style("fill", "#ecf0f1");
 
-            let paddle = self.handle.append("svg:image")
+            self.handle.append("svg:image")
                 .attr("id",semantic + "_svg")
-                .attr("xlink:href", "src/svg/plain2.png")
+                .attr("xlink:href", image)
                 .attr("width", (d)=>{return d.width})
-                .attr("height", (d)=>{return d.width});
+                .attr("height", (d)=>{return d.height});
 
             /* Center the handle */
             self.handle
@@ -332,32 +340,40 @@ const BrushView = (function() {
 
             if(handle.node()) {
                 /* Move the brush paddle */
-                let translate = d3Utils.get_translate_values(handle), x, y;
+                let translate = d3Utils.get_translate_values(handle), x, y,
+                    center_h = (+brush_sel.attr("height"))/2.0 - (+handle.select("rect").attr("height"))/2.0,
+                    center_v = (+brush_sel.attr("width"))/2.0 - (+handle.select("rect").attr("width"))/2.0;
                 switch(self._semantic) {
                     case "horizontal":
                         x =  +brush_sel.attr("width");
-                        y = +brush_sel.attr("y") - (+handle.select("rect").attr("height"))/2.0
-                            + (+brush_sel.attr("height"))/2.0;
+                        y = +brush_sel.attr("y") + center_h;
                         break;
                     case "family":
                         x =  +translate[0];
-                        y = +brush_sel.attr("y") - (+handle.select("rect").attr("height"))/2.0
-                            + (+brush_sel.attr("height"))/2.0;
-
+                        y = +brush_sel.attr("y") + center_h;
+                        //(+handle.select("rect").attr("height"))/2.0+ (+brush_sel.attr("height"))/2.0 -5;
                         break;
                     case "left":
                     case "right":
-                        x = +brush_sel.attr("x") -  (+handle.select("rect").attr("width"))/2.0
-                            + (+brush_sel.attr("width"))/2.0;
+                        x = +brush_sel.attr("x") + center_v;
                         y = +brush_sel.attr("y") - (+handle.select("rect").attr("height"));
+
+                        let w = (+handle.select("rect").attr("width")),
+                            end_position = x + (w),
+                            total_width = +brush.select(".overlay").attr("width");
+
+                        /* Test the text length */
+                        if(end_position > total_width ){
+                            x -= (end_position-total_width);
+                        }
+                        else if(x < 0) {
+                            x = 0;
+                        }
                         break;
                 }
                 /* Move the handle with the brush */
                 handle.attr("display", null)
                     .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
-                /* Update the mask */
-                // d3.select(self.mask).select("#"+self._semantic+"_handle")
-                //     .attr("transform", handle.attr("transform"));
             }
         };
 

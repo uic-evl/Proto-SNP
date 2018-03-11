@@ -101,10 +101,6 @@ div.view {
     padding-left: 10px;
 }
 
-/*#main_container a.nav-link {*/
-    /*padding: .25rem 0.5rem !important;*/
-/*}*/
-
 #helpButton.btn-info:focus, #helpButton.btn:focus {
     box-shadow: none!important;
 }

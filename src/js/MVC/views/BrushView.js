@@ -295,6 +295,11 @@ const BrushView = (function() {
             $('.btn-right_viewer').off('click');
         };
 
+        self.moveBrush = function(pos) {
+            self.brushObj.brush(d3.select(self.brush.node()));
+            self.brushObj.brush.move(d3.select(self.brush.node()), pos);
+        };
+
         self.render = function (brushObj) {
             /* Remove the pointer events from the brush overlays to prevent:
              * 1: Deleting the brush on a wrong click
@@ -379,11 +384,6 @@ const BrushView = (function() {
                 handle.attr("display", null)
                     .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
             }
-        };
-
-        self.moveBrush = function(pos) {
-            self.brushObj.brush(d3.select(self.brush.node()));
-            self.brushObj.brush.move(d3.select(self.brush.node()), pos);
         };
 
         self.initialize = function (options) {

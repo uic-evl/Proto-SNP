@@ -79,3 +79,7 @@ text.mono {
 .horizontal_paddle_handle {
     fill: none;
 }
+
+svg:hover g.handle--custom.selection {
+    z-index: 3;
+}

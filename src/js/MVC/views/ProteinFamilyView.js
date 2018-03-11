@@ -43,8 +43,12 @@ const ProteinFamilyView = (function() {
                 colorMapping = App.residueMappingUtility.getColor(self._model.getProteinColoring(), "family");
 
             /* Initialize the trend image view*/
-            self.initialize(msg)
-                .then(initialize_trend_image.bind(self,family,colorMapping));
+            $.get("./src/html/familyViewer/brushOverlayTemplate.html", function (data) {
+                $("#trendImageViewer").append(data);
+
+                self.initialize(msg)
+                    .then(initialize_trend_image.bind(self,family,colorMapping));
+            });
         });
 
         function initialize_trend_image(family, colorMapping) {
@@ -654,31 +658,40 @@ const ProteinFamilyView = (function() {
         self.resize = function () {
             /* reset the width of the container */
             self._parentDom = d3.select("#" + self._id);
-            self._parentDom.classed("trend-viewer", false);
             self._container_width = d3.select('div.TrendImageView').node().clientWidth;
 
-            /* Initialize the chart and data dimensions */
-            set_chart_dimensions()
-                .then(load_menu_template.bind(self, self._model.getFileName()))
-                .then(self.render.bind(self, self._familyImage, 0, 0))
-                .then(function () {
-                    /* Notify the controller that the image has been rendered */
-                    self.imageRendered.notify(build_brushes_and_viewers());
-                    /* Render the overview if one is needed */
-                    if (self.overviewImage) {
-                        self.render_overview(0, 0)
-                            .then(function () {
-                                // /* Notify the listens that the overview has been rendered and render the brush  */
-                                self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
-                                /* Render the context line to show to what the brush relates */
-                                let contextPoints = [
-                                    [{x:0, y:0},{x:self.x_offset, y:0}],
-                                    [{x:0, y:self.height},{x:self.x_offset, y:self.brushPaddleSize}]
-                                ];
-                                d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, "family-line-width");
-                            });
-                    }
-                });
+            $.get("./src/html/familyViewer/brushOverlayTemplate.html", function (data) {
+                /* Add the trend image svg */
+                $("#trendImageViewer").append(data);
+
+                /* Initialize the chart and data dimensions */
+                set_chart_dimensions()
+                    .then(function(){
+                        setup_backbuffer_context();
+                        self._parentDom.classed("trend-viewer", false);
+                        return load_menu_template(self._model.getFileName()).then(set_brush_dimensions);
+                    })
+                    .then(self.render.bind(self, self._familyImage, 0, 0))
+                    .then(function () {
+                        /* Notify the controller that the image has been rendered */
+                        self.imageRendered.notify(build_brushes_and_viewers());
+                        /* Render the overview if one is needed */
+                        if (self.overviewImage) {
+                            self.render_overview(0, 0)
+                                .then(function () {
+                                    // /* Notify the listens that the overview has been rendered and render the brush  */
+                                    self.overviewRendered.notify({brushSpec: build_overview_brush(self.overview_width, self.height)});
+                                    /* Render the context line to show to what the brush relates */
+                                    let contextPoints = [
+                                        [{x:0, y:0},{x:self.x_offset, y:0}],
+                                        [{x:0, y:self.height},{x:self.x_offset, y:self.brushPaddleSize}]
+                                    ];
+                                    d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, "family-line-width");
+                                });
+                        }
+                    });
+            });
+
         };
 
         self.attachBrushes = function (brushViews, svg) {

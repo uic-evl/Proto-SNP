@@ -123,7 +123,7 @@ const BrushView = (function() {
                 w = +brushObj.select('.overlay').attr("width"),
                 x = +brushObj.select('.selection').attr("x"),
                 y = +brushObj.select('.selection').attr("y"),
-                height = block_size, image_width = 40, image_height = 25,
+                image_width = 40, image_height = 25,
                 image = "";
 
                 switch(self._semantic) {
@@ -142,7 +142,7 @@ const BrushView = (function() {
                     break;
                 case "left":
                 case "right":
-                    x += w/2.0 - height/2.0;
+                    x += w/2.0 - block_size/2.0;
                     image = "src/svg/horizontal_paddle.png";
                     break;
             }
@@ -154,7 +154,8 @@ const BrushView = (function() {
             self.handle.append("rect")
                 .attr("width", (d)=>{return d.width})
                 .attr("height", (d)=>{return d.height})
-                .style("fill", "none");
+                .classed("vertical_paddle_handle", (self._orientation === App.VERTICAL_PADDLE))
+                .classed("horizontal_paddle_handle", !(self._orientation === App.VERTICAL_PADDLE));
 
             self.handle.append("svg:image")
                 .attr("id",semantic + "_svg")
@@ -258,6 +259,11 @@ const BrushView = (function() {
                 d3.event.selection[1] = Math.round(d3.event.selection[1] / block_size) * block_size;
                 // Snap the brush onto the closest protein
                 d3.select(this).call(d3.event.target.move, d3.event.selection);
+
+                /* Reset the tween movement */
+                if(self._selection[1] !== d3.event.selection[1]) {
+                    self.movementY = 0;
+                }
             }
 
             /* store the selection*/
@@ -350,7 +356,6 @@ const BrushView = (function() {
                     case "family":
                         x =  +translate[0];
                         y = +brush_sel.attr("y") + center_h;
-                        //(+handle.select("rect").attr("height"))/2.0+ (+brush_sel.attr("height"))/2.0 -5;
                         break;
                     case "left":
                     case "right":
@@ -376,9 +381,6 @@ const BrushView = (function() {
             }
         };
 
-        /* Mixin the utilities */
-        _.mixin(self, new jQueryContextUtils(self));
-
         self.moveBrush = function(pos) {
             self.brushObj.brush(d3.select(self.brush.node()));
             self.brushObj.brush.move(d3.select(self.brush.node()), pos);
@@ -401,26 +403,23 @@ const BrushView = (function() {
                     .setPaddleExtent(options.extent)
                     .setInitialPosition(options.position)
                     .onBrush(function () {
-                        // if(options.orientation === App.VERTICAL_PADDLE) {
-                        //     menuItems.classed("familySettingsElements_top", false)
-                        //         .classed("familySettingsElements_bottom", true);
-                        // }
-
+                        if(options.orientation === App.VERTICAL_PADDLE) {
+                            menuItems.classed("familySettingsElements_top", false)
+                                .classed("familySettingsElements_bottom", true);
+                        }
                         view.onBrush.call(this);
-
                         if(options.orientation === App.HORIZONTAL_PADDLE) {
                             utils.waitForFinalEvent(view._tooltip.hide, 1000, "Brushing complete");
                         }
-
                     })
                     .onEnd(function(){
-                        // if(options.orientation === App.VERTICAL_PADDLE) {
-                        //     utils.waitForFinalEvent(function(){
-                        //         menuItems.classed("familySettingsElements_bottom", false)
-                        //             .classed("familySettingsElements_top", true);
-                        //     }, 500, "Brushing complete");
-                        //
-                        // }
+                        if(options.orientation === App.VERTICAL_PADDLE) {
+                            utils.waitForFinalEvent(function(){
+                                menuItems.classed("familySettingsElements_bottom", false)
+                                    .classed("familySettingsElements_top", true);
+                            }, 500, "Brushing complete");
+
+                        }
                     });
 
             /* Link the paddle updates */
@@ -456,6 +455,9 @@ const BrushView = (function() {
                     .html(options.tooltip);
             }
         };
+
+        /* Mixin the utilities */
+        _.mixin(self, new jQueryContextUtils(self));
 
         /* Initialize the d3 brush */
         self.initialize(options);

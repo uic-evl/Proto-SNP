@@ -71,3 +71,11 @@ text.mono {
 .familyViewerRow {
     margin-top: 0;
 }
+
+.vertical_paddle_handle {
+    fill: #f8f9fa;
+}
+
+.horizontal_paddle_handle {
+    fill: none;
+}

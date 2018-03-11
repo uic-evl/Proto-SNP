@@ -210,12 +210,12 @@ const BrushView = (function() {
         }
 
         function setHelpText(brushObj, text) {
-            brushObj.select("rect.selection")
+            self.handle//.select("rect.selection")
                 .attr("data-intro", text);
         }
 
         function setHelpPosition(brushObj, pos) {
-            brushObj.select("rect.selection")
+            self.handle//.select("rect.selection")
                 .attr("data-position", pos);
         }
 

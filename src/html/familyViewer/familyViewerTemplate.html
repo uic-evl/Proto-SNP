@@ -1,19 +1,10 @@
 <div class="row no-gutters">
     <div class="col-12">
-        <div class="x_title view"></div>
+        <div id="familySettings" class="x_title view"></div>
     </div>
 </div>
-<div id="familyViewerRow" class="row w-100 no-gutters">
+<div class="row w-100 no-gutters">
     <div id="trendImageColumn" class="col-12">
-        <canvas id="trendCanvas" class="trendImage"></canvas>
-        <svg id="trendSVG">
-            <defs>
-                <mask id="paddleMasks">
-                    <rect height="100%" width="100%" class="brush_overlay-rect"></rect>
-                </mask>
-            </defs>
-            <rect height="100%" width="100%" class="paddleOverlay"></rect>
-        </svg>
+        <canvas id="trendCanvas" class="trendImage familyViewerRow"></canvas>
     </div>
-
 </div>

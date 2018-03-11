@@ -704,6 +704,7 @@ const ProteinFamilyView = (function() {
                         .call(brush.move, brushView.getInitialPosition());
                 /*render the brush */
                 brushView.render(brushObj);
+                brushView.redraw();
             });
 
         };

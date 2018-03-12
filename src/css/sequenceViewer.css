@@ -1,5 +1,5 @@
 #sequenceViewer {
-    height: 40%;
+    height: 37%;
     overflow-y: hidden;
     overflow-x: hidden;
     margin-right: 0;
@@ -10,9 +10,9 @@
     overflow-x: hidden;
 }
 
-/* Disable the scroll bar from rendering */
-.sequence::-webkit-scrollbar
-{  display: none;  }
+/*!* Disable the scroll bar from rendering *!*/
+/*.sequence::-webkit-scrollbar*/
+/*{  display: none;  }*/
 
 .sequence-container {
     padding: 0;
@@ -26,6 +26,7 @@
     vertical-align: bottom;
     background: #fff;
     height: 100%;
+    width: 100%;
     padding: 0;
 }
 
@@ -41,4 +42,17 @@
     font-weight: bold;
     background-color: #f7f7f7;
     border: solid 1px #aaa;
+}
+
+.help_text {
+    color: white;
+    text-align: center;
+}
+
+.right_scroll {
+    direction: ltr;
+}
+
+.left_scroll {
+    direction: rtl;
 }

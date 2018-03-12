@@ -7,14 +7,29 @@
     transform: translate(0,50%);
 }
 
-#popup-trigger-open, #popup-trigger-pdb {
+#popup-trigger-open, #popup-trigger-pdb, #popup-trigger-alignment, #family-wrench {
     display: inline;
     position: relative;
-    background-color: #ecf0f1;
+    background-color: #f8f9fa;
 }
 
-#fileupload-open {
+.load-alignment {
+    font-size:inherit !important;
+}
+
+#fileupload-open, #fileupload-open-family {
     cursor: pointer;
+}
+
+#fileupload-open-family {
+    font-size: inherit !important;
+    left: 0;
+    width: 25px
+}
+
+#fileupload-open-family {
+    font-size: inherit !important;
+    left: 0;
 }
 
 .geometry_dropdown, .coloring_dropdown {
@@ -25,12 +40,8 @@
     float: none !important
 }
 
-.tertiary_viewer_width {
-    width: 95% !important;
-}
-
 #protein_coloring_list, #geometry_list, #proteinName, #molecularViewerHelp {
-    background-color: #e7e7e7;
+    /*background-color: #e7e7e7;*/
     color: #555;
 }
 
@@ -62,13 +73,51 @@ div.view {
     margin: 0;
 }
 
-#settingsOpen, .settingsOpenPdb, .molecularHelp {
+#settingsOpen, .settingsOpenPdb, .molecularHelp, .settingsOpenFamily {
     font-size: 16px;
     padding: 0 0 0 5px;
     cursor: pointer;
     z-index: -1;
     color: dimgray;
-    background-color: #e7e7e7;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+
+.wrenchDropdown.dropdown-toggle::after {
+    display:none
+}
+
+.settingsWrench, .proteinSettingsWrench {
+    font-size: 16px;
+    padding-top: 20%;
+    cursor: pointer;
+    z-index: -1;
+    color: dimgray;
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+
+.settingsWrench {
+    padding-left: 10px;
+}
+
+#helpButton.btn-info:focus, #helpButton.btn:focus {
+    box-shadow: none!important;
+}
+
+#aboutButton .btn-info:focus, #aboutButton.btn:focus {
+    box-shadow: none!important;
+}
+
+#alignmentViewerOverview, #alignmentViewer, #sequenceViewerMenu {
+    color: dimgray;
+    font-weight: bolder;
+    font-size: 14px;
+    cursor: default;
+}
+
+.top {
+    z-index: 9999999;
 }
 
 li > label {
@@ -151,4 +200,22 @@ li > label:hover {
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+
+.familySettingsElements_top {
+    z-index: 2;
+}
+
+.familySettingsElements_bottom {
+    z-index: 0;
 }

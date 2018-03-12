@@ -8,8 +8,6 @@ const PrimaryStructureController = (function() {
     this._model = models;
     this._views = views;
 
-    let _this = this;
-
     /* Attach the listeners to the view */
     this._views.forEach(function(view){
       /* Residue selected event */

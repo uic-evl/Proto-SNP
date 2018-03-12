@@ -14,7 +14,6 @@ const FileUtilities = function(){
       .done(function() {
         cb(url)
     })
-
   }
 
   function split_sequence(family){
@@ -84,36 +83,27 @@ const FileUtilities = function(){
   /* Parse a FASTA File */
   function parse_FASTA(file_data) {
     /* Parse the lines of the file */
-    let lines = file_data.split('>'),
-      family = {},
+    let family = {},
         max_length = 0,
         length_changed = false;
-    /* Iterate over each line*/
-    lines.forEach(function(line, idx){
-      // If an empty line, continue
-      if(!line.length) return;
-      /* Create a regex pattern to check for the header lines */
-      let regex_data = /((\w*)\/?\d*-?\d*)\s*(\S*)/ ,
-        /* Perform the regex matching on the line */
-        parsedLine = line.match(regex_data);
 
-      /* If parsed, create the dictionary for the entry  */
-      if(parsedLine){
-        /* Create the dictionary entry */
-        family[parsedLine[1]] = {
-          name                   : parsedLine[2],
-          full_name              : parsedLine[1],
-          length                 : parsedLine[3].length,
-          sequence               : _.toUpper(parsedLine[3]),
-          scores                 : {initial: lines.length - idx}
-        };
-      }
+    let fasta = require("biojs-io-fasta"),
+        sequences = fasta.parse(file_data);
+
+    sequences.forEach(function(seq){
+      family[seq.id] = {
+        name: seq.name,
+        id: seq.id,
+        length: seq.seq.length,
+        sequence: _.toUpper(seq.seq),
+        scores: {initial: sequences.length - seq.id}
+      };
 
       /* Check the max length against the previous max*/
-      if(max_length === 0) max_length = family[parsedLine[1]].length;
-      else if(family[parsedLine[1]].length > max_length || family[parsedLine[1]].length < max_length) {
+      if(max_length === 0) max_length = family[seq.id].length;
+      else if(family[seq.id].length > max_length || family[seq.id].length < max_length) {
         length_changed = true;
-        max_length = Math.max(max_length, family[parsedLine[1]].length);
+        max_length = Math.max(max_length, family[seq.id].length);
       }
 
       /* The max length changed. Pad the protein sequences to the longest length*/
@@ -125,6 +115,7 @@ const FileUtilities = function(){
       }
 
     });
+
     return split_sequence(family);
   }
 
@@ -159,12 +150,8 @@ const FileUtilities = function(){
           .append($('<span/>').text(file.name));
 
         /*Upload Button - loads the file into the viewer*/
-        // let uploadButton = $('<button/>')
-        //   .addClass('btn btn-primary uploadPDB')
-        //   .text('Upload')
         viewer.find("#next")
           .on('click', function () {
-
             // JS File reader to parse the uploaded file
             let reader = new FileReader(),
               /* Save the file name in the closure scope */
@@ -174,14 +161,12 @@ const FileUtilities = function(){
             /* Event to fire once the file loads*/
             reader.addEventListener("load", function () {
               /* Pass the file to be processed by the model */
-              cb({protein_name: fileName, extension: extension}, this.result);
+              cb({protein_name: fileName, extension: extension, name: fileName}, this.result);
             }, false);
 
             // parse the file as text
             reader.readAsText(file);
 
-            // Remove the div and buttons
-            // $(this).parent().remove();
             // abort the upload (we aren't passing it to a server)
             data.abort();
 
@@ -236,12 +221,15 @@ const FileUtilities = function(){
           let node = $('<p/>')
               .append($('<span/>').text(file.name));
 
+          /* Hide the 'Choose file' button */
+          let splash = $(this).parent();
+          splash.hide();
+
           /*Upload Button - loads the file into the viewer*/
           let uploadButton = $('<button/>')
               .addClass('btn btn-primary uploadPDB')
               .text('Upload')
               .on('click', function () {
-
                 // JS File reader to parse the uploaded file
                 let reader = new FileReader(),
                     /* Save the file name in the closure scope */
@@ -264,6 +252,8 @@ const FileUtilities = function(){
 
                 // re-enable the select protein button
                 select.prop('disabled', false);
+                /* reshow the 'choose a file' */
+                splash.show();
               });
 
           /* Cancel button -- removes the chosen file and removes the div items*/
@@ -276,6 +266,8 @@ const FileUtilities = function(){
                 $this.parent().remove();
                 data.abort();
                 select.prop('disabled', false);
+                /* reshow the 'choose a file' */
+                splash.show()
               });
 
           /* Append the Upload and Cancel Buttons */
@@ -300,13 +292,15 @@ const FileUtilities = function(){
           .on('fileuploadadd', function (e, data) {
             // uploaded file
             let file = data.files[0],
-                extension = file.name.split('.').pop().toLowerCase();
+                name_parts = file.name.split('.'),
+                extension = name_parts.pop().toLowerCase(),
+                name = name_parts.pop().toLowerCase();
             // JS File reader to parse the uploaded file
             let reader = new FileReader();
             /* Callback to loading the file */
             reader.addEventListener("load", function () {
               /* Pass the file to be processed by the model */
-              cb(this.result, extension);
+              cb(this.result, extension, name);
             }, false);
             // parse the file as text
             reader.readAsText(file);
@@ -328,7 +322,6 @@ const FileUtilities = function(){
         if (xhr.readyState === 4 && xhr.status === 200){
           cb(this.response);
         }
-
       };
       xhr.responseType = 'blob';
 

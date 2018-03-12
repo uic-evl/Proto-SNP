@@ -6,7 +6,8 @@
     <!-- CSS LIB -->
     <link type="text/css" rel="stylesheet" href="lib/css/hopscotch.css" >
 
-    <link type="text/css" rel="stylesheet" href="lib/css/bootstrap.min.css">
+    <!--<link type="text/css" rel="stylesheet" href="lib/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link type="text/css" rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600">
@@ -17,22 +18,25 @@
     <link type="text/css" rel="stylesheet" href="lib/css/example-styles.min.css">
     <link type="text/css" rel="stylesheet" href="lib/css/jquery.contextMenu.min.css" >
 
+    <link type="text/css" rel="stylesheet" href="lib/css/chardinjs.css" >
+
     <!-- CSS SRC -->
-    <link type="text/css" rel="stylesheet" href="src/css/sequenceViewer.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/splash.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/trendImageViewer.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/frequencyViewer.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/molecularViewer.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/colorLegend.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/menuView.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/loadingSpinner.min.css">
-    <link type="text/css" rel="stylesheet" href="src/css/main.min.css">
+    <link type="text/css" rel="stylesheet" href="src/css/sequenceViewer.css">
+    <link type="text/css" rel="stylesheet" href="src/css/splash.css">
+    <link type="text/css" rel="stylesheet" href="src/css/trendImageViewer.css">
+    <link type="text/css" rel="stylesheet" href="src/css/frequencyViewer.css">
+    <link type="text/css" rel="stylesheet" href="src/css/molecularViewer.css">
+    <link type="text/css" rel="stylesheet" href="src/css/colorLegend.css">
+    <link type="text/css" rel="stylesheet" href="src/css/menuView.css">
+    <link type="text/css" rel="stylesheet" href="src/css/loadingSpinner.css">
+    <link type="text/css" rel="stylesheet" href="src/css/main.css">
 
     <!-- JS LIB -->
     <script type='text/javascript' src='lib/js/bio-pv.js'></script>
     <script type='text/javascript' src='lib/js/three.min.js'></script>
 
     <!-- Data Visualization Libs -->
+    <!--<script src="https://d3js.org/d3.v4.js"></script>-->
     <script type='text/javascript' src='lib/js/d3.min.js'></script>
     <script type='text/javascript' src="lib/js/queue.v1.min.js"></script>
     <script type='text/javascript' src='lib/js/d3-tip.min.js'></script>
@@ -55,10 +59,16 @@
     <script type='text/javascript' src="lib/js/jQuery-context/jquery.contextMenu.min.js"></script>
     <script type='text/javascript' src="lib/js/jQuery-context/jquery.ui.position.min.js"></script>
     <script type='text/javascript' src="lib/js/jQuery-context/main.min.js"></script>
+    <script type='text/javascript' src="lib/js/typehead.bundle.js"></script>
 
     <!-- Bootstrap -->
-    <script type='text/javascript' src='lib/js/bootstrap.min.js'></script>
-    <script type="text/javascript" src="lib/js/hopscotch.min.js"></script>
+    <!--<script type='text/javascript' src='lib/js/bootstrap.min.js'></script>-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+    <script type='text/javascript' src="http://wzrd.in/bundle/biojs-io-fasta@latest"></script>
+    <script type='text/javascript' src="lib/js/sweetalert2.all.js"></script>
+    <script type='text/javascript' src="lib/js/chardinjs.js"></script>
 
     <!-- JS SRC -->
 
@@ -95,7 +105,7 @@
     <script type='text/javascript' src='src/js/utilities/textUtilities.js'></script>
     <script type='text/javascript' src='src/js/utilities/promiseUtilities.js'></script>
     <script type='text/javascript' src='src/js/utilities/jQueryContextUtility.js'></script>
-    <script type='text/javascript' src='src/js/utilities/feature_tour.js'></script>
+    <script type='text/javascript' src='src/js/utilities/utilities.js'></script>
 
     <!-- Main entry into the program -->
     <script type='text/javascript' src='src/js/main.js'></script>
@@ -103,250 +113,127 @@
 
 <body>
 <!-- Navigation menu -->
-<nav id="menu" class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-1 header_col">
-                <div id="header_logo">
-                    <a href="https://www.evl.uic.edu">
-                        <img src="images/logo.png" onmouseover="this.src='images/logo_on.png';"
-                             onmouseout="this.src='images/logo.png'" alt="evl" title="evl" height="78px" width="191px">
-                    </a>
-                </div>
+<nav id="menu" class="navbar navbar-light no-gutters">
+    <div class="container-fluid p-0" style="width: 100%">
+        <div class="row w-100 no-gutters">
+            <div class="col-auto mr-auto">
+                <h2 class="center-vertically">Proto-SNP</h2>
             </div>
-            <div class="col-md-2">
-                <h2 class="main_title">Proto-SNP</h2>
-            </div>
-            <div class="col-md-1">
-                <ul class="nav navbar-nav help_about">
-                    <li><a href="#">About</a></li>
+            <div class="col-auto ml-auto">
+                <ul class="navbar-nav center-vertically top">
+                    <li class="nav-item">
+                        <button class="btn navbar-btn btn-info btn-circle" data-toggle="modal" data-target="#aboutModal" id="aboutButton">
+                            <span class="fa fa-info"></span>
+                        </button>
+                        <button class="btn navbar-btn btn-info btn-circle" id="helpButton">
+                            <span class="fa fa-question"></span>
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </nav>
 
-<div class="modal fade" id="initialModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="initialModalLabel">Select Data</h2>
-            </div>
-
-            <div class="modal-body">
-                <div class="container">
-
-                    <div class="row mainRow">
-
-                        <div class="col-md-5 right_align">
-                            <p>Select a protein by entering its PDB Code, then pressing Enter:</p>
-                            <br>
-                            <p>Upload a multiple sequence alignment file <br>or your own PDB (.msa, .fa, .pdb):</p>
-                            <a href="https://github.com/uic-evl/Proto-SNP/raw/master/sample_data/sample_data.zip">Sample Data</a>
-                        </div>
-
-                        <div class="col-md-4 dataPanel">
-                            <div class="row pdbQuery">
-                                <form id="initialDataForm" class="signup-form">
-                                    <div class="col-md-12">
-                                        <!--<label for="protein-name">PDB Code (ex: 2YPI):</label>-->
-                                        <input id="protein-name" placeholder="PDB Code (ex: 2YPI)" type="text" name="name" autocomplete="off"/>
-                                    </div>
-                                </form>
-                            </div><!-- End row-->
-
-                            <!--<div class="col-md-6">-->
-                            <div class="row initialUploadOptions">
-                                <div class="col-md-12">
-                                    <span id="upload"
-                                          class="btn btn-success fileinput-button viewer-upload side_by_side">
-                                                 <i class="fa fa-plus-square-o"></i><span> Select file...</span>
-                                                <input id="fileUploadInput" type="file" name="files[]" accept=".pdb,.msf,.fa">
-                                                </span>
-                                    <br><br>
-                                    <div id="files" class="files"></div>
-                                </div>
-                            </div> <!-- End initial upload options -->
-
-                        </div><!-- End Data Panel -->
-                    </div> <!-- End Main Row-->
-
-                </div> <!-- End Container-->
-            </div> <!-- End Modal Body-->
-            <div class="modal-footer">
-                <button id="next" type="button" class="btn btn-primary" >Next</button>
-            </div>
-            </div> <!-- End Modal Content-->
-
-        </div>
-    </div>
-
 <!-- Main container of the application -->
-<div class="container-fluid">
+<div class="container-fluid" id="main_container" style="width:100%">
     <!-- 3D Molecule Viewers -->
-    <div class="row molecularViewersRow">
-        <div id="molecularViewerTemplate" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
-        <!-- Tertiary Viewer -->
-        <script type="text/html" id="molecularViewers" >
-            <div class="col-md-5 " data-bind="attr: {id: $data._id}">
-                <div class="x_title view absolute tertiary_viewer_width">
-                    <div id="molecularViewerMenu" class="hidden">
-                        <ul data-bind="attr: {id: String($data._id)+'_nav'}" class="nav navbar-nav tertiary-nav">
-                            <li id="proteinName"> <a href="#">
-                                <p></p>
-                                <span class="popup-trigger sBtn fileinput-button"
-                                      id="popup-trigger-pdb">
-                                     <i class="fa fa-folder-open settingsOpenPDB hidden"></i>
-                                </span>
-                                </a>
-                            </li>
-                            <li id="geometry_list" class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                                   aria-expanded="false">Geometry <span style="padding-top: 3px;" class="caret"></span>
-                                </a>
-                            </li>
-                            <li id="protein_coloring_list" class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                                   aria-expanded="false">Color By<span style="padding-top: 3px;" class="caret"></span>
-                                </a>
-                            </li>
-                            <li id="molecularViewerHelp"> <a href="#">
-                                <p class="side_by_side">Help</p>
-                                <span class="side_by_side">
-                                     <i class="fa fa-question molecularHelp"></i>
-                                </span>
-                            </a>
-                            </li>
-                        </ul>
+    <div class="molecularViewersRow row no-gutters">
+        <div class="col-10">
+            <div id="molecularViewerTemplate" class="row w-100 no-gutters" data-bind="template: {name: 'molecularViewers', foreach : views}"></div>
+            <!-- Tertiary Viewer -->
+            <script type="text/html" id="molecularViewers" >
+                <div class="col-6" data-bind="attr: {id: $data._id}">
+                    <div class="x_title view absolute tertiary_viewer_width"></div>
+                    <div id="pvDiv" class="molecular-viewer">
+                        <div id="splash"></div>
                     </div>
                 </div>
-                <div id="pvDiv" class="molecular-viewer x_content">
-                    <div id="splash"></div>
-                </div>
-            </div>
-        </script>
+            </script>
+        </div>
 
         <!-- Sequence Viewer -->
-        <div class="col-md-2 sequenceViewers">
-            <div class="x_title view"></div>
-            <div id="sequenceViewer" class="row black-background">
-                <div id="sequenceViewerTemplate" data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
+        <div class="col-2 sequenceViewers">
+            <div id="sequenceViewer" class="w-100">
+                <div id="sequenceViewerTemplate" class="row no-gutters w-100"
+                     data-bind="template: {name: 'sequenceViewers', foreach : views}"></div>
                 <script type="text/html" id="sequenceViewers">
-                    <div class="col-md-6 sequence-container black-background">
+                    <div class="col-6 sequence-container"
+                         data-bind="css: { left_scroll: $data._position === 'left' }">
+                        <div class="x_title view bg-light hidden">
+                            <span id="sequenceViewerMenu" class="nav-link"></span>
+                        </div>
                         <div data-bind="attr: {id: $data._id}"></div>
                     </div>
                 </script>
             </div>
         </div>
     </div>
-    <br>
-    <!-- Color Legend -->
-    <div class="row legendRow center-aligned">
-        <div class="col-md-4">
-            <div class="legendSVG" id="tertiaryColorLegend"></div>
-        </div>
-        <div class="col-md-4 col-md-offset-4">
-            <div class="legendSVG" id="familyColorLegend"></div>
-        </div>
-    </div>
+     <!--Color Legend-->
+    <!--<div class="legendRow row">-->
+        <!--<div class="col-4">-->
+            <!--<div class="legendSVG" id="tertiaryColorLegend"></div>-->
+        <!--</div>-->
+        <!--<div class="col-4">-->
+            <!--<div class="legendSVG" id="familyColorLegend"></div>-->
+        <!--</div>-->
+    <!--</div>-->
 
     <!-- Trend Image -->
-    <div class="row proteinFamilyRow" id="proteinFamilyRow">
-        <div class="col-md-12 ">
+    <div class="row proteinFamilyRow no-gutters" id="proteinFamilyRow">
+        <div class="col-12">
             <!-- Trend Image View-->
-            <div class="row x_panel TrendImageView center-aligned">
-                <div class="x_title view">
-                    <p class="side_by_side header">Protein Family Viewer</p>
-
-                    <div id="family_upload_li" class="side_by_side hidden">
-                        <ul class="nav navbar-nav">
-                            <li>
-                                <a id="settingsCog" href="#" class="dropdown-toggle helpIcon" data-toggle="dropdown">
-                                    <i class="fa fa-cog icon-positioning" aria-hidden="true"></i><b class="caret"></b></a>
-                                <ul class="dropdown-menu multi-level">
-                                    <li>
-                                        <label for="fileupload-open">Select an alignment file</label>
-                                        <input id="fileupload-open" type="file" name="files[]" accept=".msf, .fa"/>
-                                    </li>
-                                    <li class="dropdown-submenu">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort by</a>
-                                        <ul data-bind="foreach: filters" id="sorting_list" class="dropdown-menu">
-                                            <li class="sortingOption disabled">
-                                                <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li id="coloring-nav" class="dropdown-submenu">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Color by</a>
-                                        <ul data-bind="foreach: filters" id="coloring_list" class="dropdown-menu">
-                                            <li class="coloringOption disabled">
-                                                <a href="#" data-bind="text: filter, click: $parent.elementSelected"></a>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#" class="helpIcon">
-                                    <i id="familyHelp" class="fa fa-question-circle icon-positioning" aria-hidden="true"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="clearfix"></div>
-                </div>
-                <div class="col-md-12 trend-column x_content">
-                    <div id="trendImageViewer" class="trend-viewer">
-                        <!-- Select Alignment Button -->
-                        <div id="trendSplash"></div>
-                    </div>
-                    <!-- Residue Frequency Viewer-->
-                    <div id="residueSummaryView" class="row residueSummaryView hidden"></div>
+            <div class="row TrendImageView center-aligned">
+                <div id="trendImageViewer" class="col-12 trend-viewer center-aligned">
+                    <div id="trendSplash"></div>
                 </div>
             </div>
             <!-- End Trend Image View-->
         </div>
+    </div>
 
-        <!-- Trend Image Protein Selection Modal -->
-        <div class="modal fade" id="viewerModal" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <button type="button" class="btn btn-default btn-left_viewer" data-dismiss="modal">Left Viewer</button>
-                        <button type="button" class="btn btn-default btn-right_viewer" data-dismiss="modal">Right Viewer</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Trend image set sorting protein -->
-        <!-- Trend Image Protein Selection Modal -->
-        <div class="modal fade" id="proteinSelection" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Select a protein to sort by</h4>
-                    </div>
-                    <div class="modal-body">
-                        <input id="proteinSortSelection" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="setProtein" class="btn btn-primary" data-dismiss="modal">Set Protein</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <!-- Residue Frequency Viewer-->
+    <div class="row no-gutters familyViewerRow" id="familyResidues">
+        <div id="residueSummaryView" class="col-12 residueSummaryView center-aligned hidden"></div>
     </div>
 </div>
+
+<!-- Trend Image Protein Selection Modal -->
+<div class="modal fade" id="viewerModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="btn btn-default btn-left_viewer" data-dismiss="modal">Left Viewer</button>
+                <button type="button" class="btn btn-default btn-right_viewer" data-dismiss="modal">Right Viewer</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trend image set sorting protein -->
+<div class="modal fade" id="proteinSelection" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Select a protein to sort by</h4>
+            </div>
+            <div class="modal-body">
+                <input id="proteinSortSelection" type="text" class="typeahead tt-query" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="setProtein" class="btn btn-primary" data-dismiss="modal">Set Protein</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="startupModalDiv"></div>
+<div id="aboutModalDiv"></div>
 
 <!-- WebGL Shaders for Trend Image -->
 <script id="vs" type="notjs">

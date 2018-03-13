@@ -109,7 +109,7 @@
 }
 
 .chardinjs-show-element {
-    z-index: 9999999;
+    z-index: 9999999 !important;
     opacity: 0.8;
 }
 

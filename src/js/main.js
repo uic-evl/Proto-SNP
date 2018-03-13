@@ -39,19 +39,27 @@ var App = App || {};
     function setupInfo() {
         /* Register the about modal and help popup */
         $('#aboutModalDiv').load("./src/html/modals/aboutModal.html");
+
         $('#helpButton').on("click", function(){
             let span = $(this).find("span"),
                 icon_class = span.attr('class');
 
+            /* Open the menu */
+            $("#familySettingsDropdown").find(".dropdown-menu:first").addClass("show",true);
+
             /* Toggle the help icon */
             if(icon_class === "fa fa-question") {
-                span.attr('class', "fa fa-times")
+                span.attr('class', "fa fa-times");
             }
             else {
-                span.attr('class', "fa fa-question")
+                span.attr('class', "fa fa-question");
+                $("#familySettingsDropdown").find(".dropdown-menu:first").removeClass("show");
             }
             /* Toggle the overlay */
-            $('body').chardinJs().toggle();
+            $('body').chardinJs().toggle( ()=>{
+                /* Hide the menu */
+                $("#familySettingsDropdown").find(".dropdown-menu:first").removeClass("show");
+            });
 
             /* Alternate exit */
             $(".svgOverlay").mouseup(function() {

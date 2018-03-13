@@ -44,6 +44,7 @@
 }
 
 .residue {
+    color: dimgray;
     display: block;
     vertical-align: middle;
     height: 22px;

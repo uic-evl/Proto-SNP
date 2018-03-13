@@ -18,13 +18,25 @@ text.legendText {
     padding-top: 5px;
 }
 
-#legendLabel {
+#familyLegendLabel, #residueLegendLabel {
     text-align: center;
 }
 
-#legendViewer {
+#familyLegendViewer, #residueLegendViewer{
     color: dimgray;
     font-weight: bolder;
     font-size: 12px;
     cursor: default;
+}
+
+.row.vdivide [class*='col-']:not(:last-child):after {
+    background: #e0e0e0;
+    width: 1px;
+    content: "";
+    display:block;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    right: 0;
+    min-height: 70px;
 }

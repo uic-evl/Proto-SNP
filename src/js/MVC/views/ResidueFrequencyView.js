@@ -248,7 +248,7 @@ const ResidueFrequencyView = (function() {
                     let protein = self._model.getSelectedProtein();
                     App.textUtilities.occurrences(protein.sequence.join(), d[0]);
                 })
-                .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ?  "#43a2ca" : "#D3D3D3"; })
+                .attr("fill", function(d,i) { return (d[0] === selected_residues[i]) ? "#990000" : "#D3D3D3"; })
             ;
             /* Remove the unneeded frequency bars */
             frequency.exit().remove();

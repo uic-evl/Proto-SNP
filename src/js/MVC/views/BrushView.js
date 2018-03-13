@@ -129,14 +129,14 @@ const BrushView = (function() {
                 switch(self._semantic) {
                 case "horizontal":
                     x += w/2.0;
-                    image = "src/svg/vertical_paddle.png";
+                    image = "src/svg/vertical.png";
                     image_width = 25;
                     image_height = 40;
                     break;
                 case "family":
                     x += w;
                     y += h/2.0;
-                    image = "src/svg/vertical_paddle.png";
+                    image = "src/svg/vertical.png";
                     image_width = 25;
                     image_height = 40;
                     break;
@@ -210,12 +210,12 @@ const BrushView = (function() {
         }
 
         function setHelpText(brushObj, text) {
-            brushObj.select("rect.selection")
+            self.handle//.select("rect.selection")
                 .attr("data-intro", text);
         }
 
         function setHelpPosition(brushObj, pos) {
-            brushObj.select("rect.selection")
+            self.handle//.select("rect.selection")
                 .attr("data-position", pos);
         }
 

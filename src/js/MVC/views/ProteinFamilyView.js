@@ -308,7 +308,7 @@ const ProteinFamilyView = (function() {
                         class: "brush vertical-left " + handles,
                         extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         helpText: "Drag here to select a different subset of residues. ",
-                        helpPosition: "right", mask: "#paddleMasks",
+                        helpPosition: "bottom", mask: "#paddleMasks",
                         block_size: self.residue_glyph_size, semantic: "left",
                         position: [0, self.residue_glyph_size * verticalPaddleSize]
                     },
@@ -317,7 +317,7 @@ const ProteinFamilyView = (function() {
                         class: "brush vertical-right " + handles, extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         block_size: self.residue_glyph_size, semantic: "right",
                         helpText: "Drag here to select a different subset of residues.",
-                        helpPosition: "left", mask: "#paddleMasks",
+                        helpPosition: "bottom", mask: "#paddleMasks",
                         position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
                     }
                 ],
@@ -704,6 +704,7 @@ const ProteinFamilyView = (function() {
                         .call(brush.move, brushView.getInitialPosition());
                 /*render the brush */
                 brushView.render(brushObj);
+                brushView.redraw();
             });
 
         };

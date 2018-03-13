@@ -182,7 +182,8 @@ function ResidueMappingUtility() {
         self.residue_svg =
             d3.select(self.residueLegend).append("svg")
                 // .classed("center-aligned", true)
-                .style("width", legendElementWidth*2.0 + 2);
+                .style("width", legendElementWidth*2.0 + 2)
+                .style("height", legend_height);
 
         let residue_bars = self.residue_svg
             .selectAll(".legendElement")

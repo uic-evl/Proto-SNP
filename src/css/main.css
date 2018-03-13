@@ -70,6 +70,12 @@ body {
     transform: translateY(-50%);
 }
 
+.center-vertically_quarter {
+    position: relative;
+    top: 25%;
+    transform: translateY(-50%);
+}
+
 .abs-center-x {
     position: absolute;
     left: 50%;

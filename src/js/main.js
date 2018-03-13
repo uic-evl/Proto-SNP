@@ -31,6 +31,9 @@ var App = App || {};
             views.forEach(function (v) {
                 v.resize();
             });
+            /* Toggle the overlay */
+            $('body').chardinJs().stop();
+            $('#helpButton').find("span").attr('class', "fa fa-question");
         };
         /* Check the resolution */
         checkResolution(r);

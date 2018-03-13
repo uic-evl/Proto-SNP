@@ -32,12 +32,12 @@
 }
 .chardinjs-helper-layer.chardinjs-bottom {
     border-bottom: solid #ffff99 1px;
-    padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .chardinjs-helper-layer.chardinjs-top {
     border-top: solid #ffff99 1px;
-    padding-top: 10px;
+    margin-top: -10px;
 }
 
 .chardinjs-tooltip {

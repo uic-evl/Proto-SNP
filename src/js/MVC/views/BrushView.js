@@ -212,13 +212,18 @@ const BrushView = (function() {
         }
 
         function setHelpText(brushObj, text) {
-            self.handle//.select("rect.selection")
+            self.handle
                 .attr("data-intro", text);
         }
 
         function setHelpPosition(brushObj, pos) {
-            self.handle//.select("rect.selection")
+            self.handle
                 .attr("data-position", pos);
+        }
+
+        function setHelpWidth(brushObj, width) {
+            self.handle//.select("rect.selection")
+                .attr("data-width", width);
         }
 
         self.onBrush = function (d) {
@@ -336,6 +341,7 @@ const BrushView = (function() {
             /* Add the help text */
             setHelpText(brushObj, this.helpText);
             setHelpPosition(brushObj, this.helpPosition);
+            setHelpWidth(brushObj, this.helpWidth);
         };
 
         self.redraw = function () {
@@ -394,6 +400,7 @@ const BrushView = (function() {
             view.class = options.class;
             view.helpText = options.helpText;
             view.helpPosition = options.helpPosition;
+            view.helpWidth = options.helpWidth || 0;
             view.mask = options.mask;
 
             /* Construct the brush based on the orientation */

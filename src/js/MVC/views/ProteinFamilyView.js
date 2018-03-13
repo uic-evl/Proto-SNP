@@ -297,7 +297,7 @@ const ProteinFamilyView = (function() {
                         class: "brush horizontal main no_handles",
                         extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         helpText: "Drag here to select a different protein.",
-                        helpPosition: "top",
+                        helpPosition: "top", helpWidth: 100,
                         block_size: self.residue_glyph_size,
                         position: [self.offset_y, self.residue_glyph_size + self.offset_y],
                         semantic: "horizontal", mask: "#paddleMasks",
@@ -308,17 +308,17 @@ const ProteinFamilyView = (function() {
                         class: "brush vertical-left " + handles,
                         extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         helpText: "Drag here to select a different subset of residues. ",
-                        helpPosition: "bottom", mask: "#paddleMasks",
+                        helpPosition: "bottom", mask: "#paddleMasks", helpWidth: 125,
                         block_size: self.residue_glyph_size, semantic: "left",
-                        position: [0, self.residue_glyph_size * verticalPaddleSize]
+                        position: [self.residue_glyph_size * (verticalPaddleSize+1), (self.residue_glyph_size * (verticalPaddleSize*2+1))]
                     },
                     {
                         orientation: App.VERTICAL_PADDLE, paddleSize: verticalPaddleSize, maxPaddleSize: maxPaddleSize,
                         class: "brush vertical-right " + handles, extent: [[0, self.offset_y], [self.width, self.height + self.offset_y]],
                         block_size: self.residue_glyph_size, semantic: "right",
                         helpText: "Drag here to select a different subset of residues.",
-                        helpPosition: "bottom", mask: "#paddleMasks",
-                        position: [self.width - self.residue_glyph_size * verticalPaddleSize, self.width]
+                        helpPosition: "bottom", mask: "#paddleMasks",  helpWidth: 125,
+                        position: [self.width-(self.residue_glyph_size * (verticalPaddleSize*2+1)), self.width - (self.residue_glyph_size * verticalPaddleSize+1)]
                     }
                 ],
                 frequencyViewers : [
@@ -355,7 +355,7 @@ const ProteinFamilyView = (function() {
                 class: "brush horizontal overview no_handles",
                 block_size: block_size,
                 helpText: "Drag here to scroll the Family Alignment (Subset). ",
-                helpPosition: "top",
+                helpPosition: "top", helpWidth: 100,
                 semantic: "family", mask: "#overviewPaddleMasks",
                 extent: [[self.x_offset, self.y_offset], [self.overview_width + self.x_offset, height + self.y_offset]],
                 position: [self.y_offset, self.brushPaddleSize + self.y_offset],

@@ -1,39 +1,85 @@
-#trendCanvas, #trendSVG {
+#trendCanvas, #overviewCanvas, #trendSVG, #overviewSVG {
     position: absolute;
 }
 
-.trend_covers {
-    background-color: #ecf0f1;
+#trendSVG {
+    z-index: 1;
+}
+
+.protein-name-tooltip {
+    z-index: 2;
+}
+
+.trend_covers, .handle--custom {
+    fill: rgb(119,119,119);
     opacity: 0.8;
 }
 
-g.brush.horizontal > .handle {
+g.brush.horizontal.no_handles > .handle {
     display: none;
 }
 
-.trend-column {
-    padding : 0;
+g.brush.vertical-left.no_handles > .handle {
+    display: none;
+}
+
+g.brush.vertical-right.no_handles > .handle {
+    display: none;
 }
 
 .trend-viewer {
     background-color: black;
     width: 100%;
-    height: 40%;
+    height: 35%;
 }
-
-.proteinFamilyViewer {
-    height: 30%;
-}
-
-.proteinFamilyRow > .col-md-12 {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
 
 text.mono {
     font-size: 8px;
     font-family: monospace;
     fill: #000;
     font-weight: bold;
+}
+
+#trendImageColumn {
+    height: 35%;
+}
+
+.paddleOverlay {
+    stroke: none;
+    fill: #ecf0f1;
+    fill-opacity: 0.6;
+    mask: url("#paddleMasks");
+}
+
+.overviewPaddleOverlay {
+    stroke: none;
+    fill: #ecf0f1;
+    fill-opacity: 0.6;
+    mask: url("#overviewPaddleMasks");
+}
+
+.brush_overlay-rect {
+    width: 100%;
+    /*height:100%;*/
+    fill:white;
+}
+
+.proteinFamilyRow {
+    padding-top: 10px;
+}
+
+.familyViewerRow {
+    margin-top: 0;
+}
+
+.vertical_paddle_handle {
+    fill: #f8f9fa;
+}
+
+.horizontal_paddle_handle {
+    fill: none;
+}
+
+svg:hover g.handle--custom.selection {
+    z-index: 3;
 }

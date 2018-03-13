@@ -50,6 +50,13 @@
 .uploadPDB {
     z-index: 10;
     margin-left: 10px;
+    background-color: #41ab5d;
+    border-color: #41ab5d;
+}
+
+#protein-name {
+    margin-top: 3%;
+    color: black;
 }
 
 .main-heading {
@@ -94,8 +101,8 @@
 }
 
 .sBtn.sBtn-outline {
-    background-color: transparent;
-    border: 1px solid #fff;
+    background-color: #41ab5d;
+    /*border: 1px solid #fff;*/
 }
 
 .sBtn.sBtn-outline span {
@@ -117,7 +124,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.05);
+    /*box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.05);*/
 }
 
 .overlaySplash {
@@ -184,10 +191,9 @@
 }
 
 .overlaySplash .overlay-content .signup-form input {
-    background-color: transparent;
+    /*background-color: transparent;*/
     width: 100%;
     height: 30px;
-    margin-bottom: 20px;
     padding: 0 8px;
     border: 1px solid rgba(254, 254, 254, 0.3);
     border-radius: 5px;

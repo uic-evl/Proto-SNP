@@ -1,8 +1,17 @@
 #sequenceViewer {
-    height: 40%;
+    height: 37%;
     overflow-y: hidden;
     overflow-x: hidden;
     margin-right: 0;
+}
+
+#sequenceViewerMenu {
+    padding: 0 1rem !important;
+}
+
+#sequenceViewerHeader {
+    color: dimgray;
+    font-weight: bolder;
 }
 
 .sequenceViewers {
@@ -10,13 +19,13 @@
     overflow-x: hidden;
 }
 
-/* Disable the scroll bar from rendering */
-.sequence::-webkit-scrollbar
-{  display: none;  }
+/*!* Disable the scroll bar from rendering *!*/
+/*.sequence::-webkit-scrollbar*/
+/*{  display: none;  }*/
 
 .sequence-container {
     padding: 0;
-    height: 100%
+    height: 90%
 }
 
 .sequence {
@@ -26,6 +35,7 @@
     vertical-align: bottom;
     background: #fff;
     height: 100%;
+    width: 100%;
     padding: 0;
 }
 
@@ -34,6 +44,7 @@
 }
 
 .residue {
+    color: dimgray;
     display: block;
     vertical-align: middle;
     height: 22px;
@@ -41,4 +52,17 @@
     font-weight: bold;
     background-color: #f7f7f7;
     border: solid 1px #aaa;
+}
+
+.help_text {
+    color: black;
+    text-align: center;
+}
+
+.right_scroll {
+    direction: ltr;
+}
+
+.left_scroll {
+    direction: rtl;
 }

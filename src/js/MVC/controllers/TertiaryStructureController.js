@@ -13,13 +13,14 @@ const TertiaryStructureController = (function() {
     self._views = views;
     self._controllers = controllers;
 
-
     /* Setup the callback listeners for each view*/
     self._views.forEach(function(view, idx){
+
       /* Add Protein Upload/Update Callbacks */
       view.fileUploaded.attach(function(sender, args) {
         sender._model.addProtein(args.metaData, args.file);
       });
+
       view.fileUpdated.attach(function(sender, args) {
         /* Clear the view and model */
         view._model.clear();
@@ -36,6 +37,7 @@ const TertiaryStructureController = (function() {
       view.residueSelected.attach(function(sender, args) {
         sender._model.selectResidue(args);
       });
+
       view.residueDeselected.attach(function(sender, args) {
         sender._model.deselectResidue(args);
       });
@@ -78,6 +80,7 @@ const TertiaryStructureController = (function() {
 
     /*  Bind the view with knockoutJS */
     ko.applyBindings({views: this._views}, $("#molecularViewerTemplate")[0]);
+
   }
 
   TertiaryStructureController.prototype = {};

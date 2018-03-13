@@ -38,6 +38,10 @@ body {
     color: white;
 }
 
+#about_name {
+    font-weight:bold;
+}
+
 .black-background {
     background-color: black;
 }
@@ -66,15 +70,26 @@ body {
     transform: translateY(-50%);
 }
 
+.abs-center-x {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 ul li a.disabled {
     pointer-events:none;
     opacity:0.4;
 }
 
 .absolute {
-    background-color: rgba(0,0,0,0.1);
+    background-color: white;
     position: absolute;
     z-index: 10;
+}
+
+#next {
+    background-color: #28a745;
+    border-color: #28a745;
 }
 
 .x_panel {
@@ -132,4 +147,8 @@ ul li a.disabled {
 .side_by_side {
     display: inline-block;
     /*margin-left: 10px;*/
+}
+
+.d3-tip{
+    z-index: 10;
 }

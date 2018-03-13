@@ -3,11 +3,8 @@
 }
 
 .residueSummaryView {
-    font-size: 10px;
-    margin-top: 20px;
-    /*width:100%;*/
-    /* 20% the size of the trend image */
-    height: 20%;
+    font-size: 0.6em;
+    height: 10%;
 }
 
 .frequency-left, .frequency-right {
@@ -22,9 +19,17 @@
 }
 
 .context-line {
-    stroke-width: 2;
     stroke: black;
     fill: none;
+    stroke-width: 2;
+}
+
+.context-line-width {
+    stroke-width: 0.2;
+}
+
+.family-line-width {
+    stroke-width: 0.6;
 }
 
 .axisPop text{
@@ -41,4 +46,33 @@
 
 .barCallout {
     padding-left: 10px;
+}
+
+.freqSVG {
+    margin-top: 20px;
+}
+
+.summarySVG, .freqSVG {
+    position: absolute;
+}
+
+.rangeLabel {
+    text-anchor: middle;
+    font-weight: 900;
+}
+
+#frequencyLabel {
+    text-align: center;
+    position: absolute;
+}
+
+#frequencyViewer {
+    color: dimgray;
+    font-weight: bolder;
+    font-size: 12px;
+    cursor: default;
+}
+
+.frequencyViewerRow {
+    margin-top: 50px;
 }

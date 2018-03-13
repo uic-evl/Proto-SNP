@@ -480,6 +480,10 @@ const ResidueFrequencyView = (function() {
             ];
 
             d3Utils.render_context_lines(this._svg, contextPoints);
+
+            if(options.semantic === "left"){
+                App.residueMappingUtility.createColorLegend("family");
+            }
         },
 
         render : function(render_options) {

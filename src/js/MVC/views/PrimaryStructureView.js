@@ -42,9 +42,9 @@ const PrimaryStructureView = (function() {
         /* New protein loaded into the view */
         self._model.proteinAdded.attach(function (sender, protein) {
             /* Initialize the viewer */
-            self.initialize();
+            self.initialize(_.toUpper(sender._proteinName));
             /* Render the sequence with of the loaded protein */
-            self.render(sender.getSequence(protein.structure), _.toUpper(sender._proteinName));
+            self.render(sender.getSequence(protein.structure));
         });
 
         /* Residue selected and added to the model */
@@ -80,21 +80,34 @@ const PrimaryStructureView = (function() {
             /* Set the DOM selector */
             view._$dom = $('#' + view._id);
             view._dom = view._$dom[0];
+            view._parent = $('div.sequenceViewers')[0];
         },
 
         /* Initialize the sequence view */
-        initialize:  function(){
+        initialize:  function(protein_name){
             let view = this;
-            /* Store the width and height*/
-            view.width = this._dom.clientWidth;
-            view.height = this._dom.clientHeight;
 
             // clear the dom of the previous list
             d3.select(view._dom).selectAll().remove();
+            d3.select(view._parent).select("div.help_text").remove();
+            d3.select(view._parent).select("#sequenceViewerHeader").classed("hidden", false);
+
+            d3.select(view._dom.parentNode).select("div.x_title").classed("hidden", false);
+            d3.select(view._dom.parentNode).select("#sequenceViewerMenu").text(protein_name);
+
+            /* Store the width and height*/
+            let header_height = utils.getComputedStyleValue(d3.select("#sequenceViewerHeader").node(), "height"),
+                viewer_heading = utils.getComputedStyleValue(d3.select(view._dom.parentNode).select("#sequenceViewerMenu").node(), "height");
+
+            view.width = view._dom.clientWidth;
+            view.height = view._parent.clientHeight - header_height - viewer_heading;
+
+            d3.select(view._parent).select("#sequenceViewer")
+                .style("height", view.height);
 
             // append a new span for the list
             d3.select(view._dom)
-                .attr("height", self.height)
+                .attr("height", view.height)
                 .append("span") // span element
                 .attr("class", "sequence")// set the styling to the sequence class
                 .style("width", "100%")
@@ -102,7 +115,7 @@ const PrimaryStructureView = (function() {
         },
 
         /* Render the sequence list */
-        render: function(sequence, protein_name) {
+        render: function(sequence) {
             let view = this;
             /* Add a span to the list view and populate it with the residues */
             let viewer = d3.select(view._dom).select("span")
@@ -120,9 +133,6 @@ const PrimaryStructureView = (function() {
                 .on("click", spanSelected.bind(view))
                 // EXIT: Remove unneeded DOM elements
                 .exit().remove();
-
-            d3.select(view._dom.parentNode).select("div.x_title").classed("hidden", false)
-            d3.select(view._dom.parentNode).select("#sequenceViewerMenu").text(protein_name);
         },
 
         resize: function() {}

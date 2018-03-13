@@ -5,6 +5,15 @@
     margin-right: 0;
 }
 
+#sequenceViewerMenu {
+    padding: 0 1rem !important;
+}
+
+#sequenceViewerHeader {
+    color: dimgray;
+    font-weight: bolder;
+}
+
 .sequenceViewers {
     overflow-y: hidden;
     overflow-x: hidden;
@@ -16,7 +25,7 @@
 
 .sequence-container {
     padding: 0;
-    height: 100%
+    height: 90%
 }
 
 .sequence {
@@ -45,7 +54,7 @@
 }
 
 .help_text {
-    color: white;
+    color: black;
     text-align: center;
 }
 

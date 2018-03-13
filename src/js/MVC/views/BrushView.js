@@ -158,7 +158,6 @@ const BrushView = (function() {
                 .classed("horizontal_paddle_handle", !(self._orientation === App.VERTICAL_PADDLE));
 
             self.handle.append("svg:image")
-                .attr("id",semantic + "_svg")
                 .attr("xlink:href", image)
                 .attr("width", (d)=>{return d.width})
                 .attr("height", (d)=>{return d.height});
@@ -166,6 +165,7 @@ const BrushView = (function() {
             /* Center the handle */
             self.handle
                 .attr("class", "handle--custom selection")
+                .attr("id",semantic + "_svg")
                 .attr("cursor", "move")
                 .on("mousedown.brush", brushDownByHandle)
                 .attr("transform",()=>{ return "translate(" + [x,y] + ")"; });
@@ -185,10 +185,12 @@ const BrushView = (function() {
             self.hasMask = true;
         }
 
-        function addContextMenu() {
+        function addContextMenu(brushObj) {
             let view = self;
             /* Create the context menu */
             self.createContextMenu('g.horizontal.main rect.selection');
+            self.createContextMenu('#horizontal_svg');
+
             /* Add the callbacks to the modal window */
             $('.btn-left_viewer').on('click', function (e) {
                 /* Hide the context menu */
@@ -314,10 +316,14 @@ const BrushView = (function() {
             /* Remove the extent on the side with the brush*/
             removeResizeHandle();
 
+            /* Add the overlay masks and the paddles */
+            addBrushHandles(brushObj, this._semantic);
+            addBrushSVGMasks(brushObj);
+
             /* add the context menu for the horizontal bar*/
             if (this._orientation === App.HORIZONTAL_PADDLE) {
                 /* Set the context menu of the horizontal brush */
-                addContextMenu();
+                addContextMenu(brushObj);
             }
             /* Add the tooltip if one was created */
             if (this._tooltip) {
@@ -326,10 +332,6 @@ const BrushView = (function() {
                     .on('mouseover', this._tooltip.show)
                     .on('mouseout', this._tooltip.hide);
             }
-
-            /* Add the overlay masks and the paddles */
-            addBrushHandles(brushObj, this._semantic);
-            addBrushSVGMasks(brushObj);
 
             /* Add the help text */
             setHelpText(brushObj, this.helpText);

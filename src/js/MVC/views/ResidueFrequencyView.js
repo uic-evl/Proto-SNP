@@ -442,7 +442,8 @@ const ResidueFrequencyView = (function() {
             this.summary_margin = utils.getComputedStyleValue(this._dom.select(".freqSVG").node(), "margin-top");
 
             this._summarySvg = this._dom.select(".summarySVG");
-            d3Utils.set_chart_size(this._summarySvg.node(), this.width, this.height+this.summary_margin+self.space);
+            d3Utils.set_chart_size(this._summarySvg.node(),
+                this.width, this.height+this.summary_margin);
 
             if(options.semantic === "left"){
                 this._svg.style("right",0);

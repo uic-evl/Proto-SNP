@@ -78,7 +78,7 @@ const ProteinFamilyView = (function() {
                     /* Enable the coloring menu */
                     $("#coloring_list").find("li").removeClass("disabled");
                     /* Create the legend */
-                    //App.residueMappingUtility.createColorLegend("family");
+                    App.residueMappingUtility.createColorLegend("family");
                 }).catch(console.log.bind(console));
         }
 
@@ -249,7 +249,7 @@ const ProteinFamilyView = (function() {
                         cb:
                             function (model, element) {
                                 model.setProteinColoring(element);
-                                //App.residueMappingUtility.createColorLegend("family");
+                                App.residueMappingUtility.createColorLegend("family");
                             }
                     });
                 /* Show the view to bind the model */
@@ -579,6 +579,9 @@ const ProteinFamilyView = (function() {
             this._parentDom.node().parentNode.removeAttribute("style");
             document.getElementsByClassName('TrendImageView')[0].removeAttribute("style");
 
+            /* Clear the legend */
+            App.residueMappingUtility.clear("family");
+
             /* Reset the overview flag */
             this.overviewImage = false;
             /* Destroy the context menu */
@@ -689,6 +692,7 @@ const ProteinFamilyView = (function() {
                                     d3Utils.render_context_lines(d3.select(self.overviewSVG.node().parentNode), contextPoints, "family-line-width");
                                 });
                         }
+                        App.residueMappingUtility.createColorLegend("family");
                     });
             });
 

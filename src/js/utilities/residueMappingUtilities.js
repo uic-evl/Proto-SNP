@@ -140,7 +140,9 @@ function ResidueMappingUtility() {
   /* Initialize the legend DOM */
   function initialize_legend(id) {
     self.legend        = document.getElementById(id);
-    self.legend_width  = self.legend.clientWidth;
+    d3.select(self.legend).classed("hidden",false);
+
+      self.legend_width  = self.legend.clientWidth;
     self.legend_height = 2.0*Math.max.apply(null, $('.view').map(function() { return $(this).height(); }).get())/2.0;
 
     if(self.legend_height < 50 ) self.legend_height = 50;
@@ -156,6 +158,7 @@ function ResidueMappingUtility() {
   function create_legend(type){
 
     let id = (type === "3D") ? "tertiaryColorLegend" : "familyColorLegend";
+
     if(!self.legend_svg[id]){
       initialize_legend(id);
     }
@@ -199,11 +202,19 @@ function ResidueMappingUtility() {
     /* Remove the unneeded bars/text */
     legend_bars.exit().remove();
     legend_text.exit().remove();
+
+  }
+
+  function clear(type) {
+      let id = (type === "3D") ? "tertiaryColorLegend" : "familyColorLegend";
+      self.legend_svg[id].remove();
+      delete self.legend_svg[id];
   }
 
   return {
     createColorLegend : create_legend,
-    getColor          : get_color_mapping
+    getColor          : get_color_mapping,
+    clear             : clear
   }
 }
 

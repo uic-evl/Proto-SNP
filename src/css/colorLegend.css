@@ -6,10 +6,25 @@ rect.legendElement {
 
 text.legendText {
     font-size: 14px;
-    font-weight: bolder;
+    font-weight: bold;
     /*font-family: monospace;*/
 }
 
 .legendSVG {
     height: 5%;
+}
+
+.legendRow {
+    padding-top: 5px;
+}
+
+#legendLabel {
+    text-align: center;
+}
+
+#legendViewer {
+    color: dimgray;
+    font-weight: bolder;
+    font-size: 12px;
+    cursor: default;
 }

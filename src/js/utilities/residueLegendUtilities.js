@@ -229,13 +229,13 @@ function ResidueMappingUtility() {
     }
 
     /* Create the legend for the current coloring scheme */
-    function create_legend(type){
+    function create_legend(type, overlay){
 
         let id = (type === "3D") ? "tertiaryColorLegend" : "familyColorLegend",
             elements = _.toPairs(currentColorMap[type]);
 
         if(!self.legend_svg[id]){
-            residue_legend(elements);
+            residue_legend(elements, overlay);
             initialize_legend(id);
         }
 

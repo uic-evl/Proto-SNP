@@ -197,22 +197,27 @@
             </div>
         </div>
     </div>
-    <!--<div class="legendRow row vdivide">-->
-        <!--<div class="offset-10 col-2">-->
-            <!--<div class="legendSVG hidden" id="residueColorLegend">-->
-                <!--<div id="residueLegendLabel">-->
-                    <!--<span id="residueLegendViewer">Residue Frequency Legend</span>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="col-5">-->
-            <!--<div class="legendSVG hidden" id="familyColorLegend">-->
-                <!--<div id="familyLegendLabel" class="w-100">-->
-                    <!--<span id="familyLegendViewer">Family Alignment Legend</span>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
+
+
+    <div id="noOverlayLegend" class="row legendSVG legendRow justify-content-md-center hidden">
+        <div  class="col-2">
+            <div class="row">
+                <div class="col-12">
+                    <div id="residueLegendLabel">
+                        <span id="residueLegendHeader">Residue Frequency Legend</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="residueLegend">
+                        <div id="residueColorLegend"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 

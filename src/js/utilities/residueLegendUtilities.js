@@ -157,13 +157,13 @@ function ResidueMappingUtility() {
 
     }
 
-    function residue_legend() {
+    function residue_legend(id) {
 
-        self.residueLegend = document.getElementById("residueColorLegend");
+        self.residueLegend = document.getElementById(id);
         d3.select(".legendRow").classed("hidden", false);
 
         let residue_elements    = _.toPairs(colorCodesByFamilyConsensus),
-            legend_width        = self.residueLegend.clientWidth/2.0,
+            legend_width        = self.residueLegend.parentNode.clientWidth/2.0,
             legend_height       = legend_width/2.0,
             legendElementWidth  = legend_width / (residue_elements.length),
             legendElementHeight = legend_width / 10.0;
@@ -229,13 +229,17 @@ function ResidueMappingUtility() {
     }
 
     /* Create the legend for the current coloring scheme */
-    function create_legend(type, overlay){
+    function create_legend(type, overview){
 
         let id = (type === "3D") ? "tertiaryColorLegend" : "familyColorLegend",
-            elements = _.toPairs(currentColorMap[type]);
+            elements = _.toPairs(currentColorMap[type]),
+            res_id = (overview)? "residueColorLegend":"residueColorLegend_noOverview";
+
+
+        self.overview = overview;
 
         if(!self.legend_svg[id]){
-            residue_legend(elements, overlay);
+            residue_legend(res_id);
             initialize_legend(id);
         }
 
@@ -284,10 +288,11 @@ function ResidueMappingUtility() {
 
     function clear(type) {
         let id = (type === "3D") ? "tertiaryColorLegend" : "familyColorLegend";
-        self.residue_svg.remove();
         self.legend_svg[id].remove();
         delete self.legend_svg[id];
+        self.residue_svg.remove();
         delete self.residue_svg;
+
     }
 
     return {

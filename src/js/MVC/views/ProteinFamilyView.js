@@ -249,7 +249,7 @@ const ProteinFamilyView = (function() {
                         cb:
                             function (model, element) {
                                 model.setProteinColoring(element);
-                                App.residueMappingUtility.createColorLegend("family");
+                                App.residueMappingUtility.createColorLegend("family", self.overviewImage);
                             }
                     });
                 /* Show the view to bind the model */

@@ -410,6 +410,9 @@ const ProteinFamilyView = (function() {
 
                     self.overviewImage = true;
 
+                    d3.select("#noOverlayLegend")
+                        .classed("hidden", true);
+
                     self.width = self._dom.node().clientWidth;
                     new_height = self._parentDom.node().clientHeight;//self._dom.node().clientHeight;
 

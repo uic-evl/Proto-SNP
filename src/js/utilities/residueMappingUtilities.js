@@ -4,10 +4,9 @@
 var App = App || {};
 
 function ResidueMappingUtility() {
+    let self = { legend_svg: {}, residue_svg : null},
 
-    let self = { legend_svg: {}, residue_svg : null};
-
-    let colorCodes = {
+    colorCodes = {
         white : {code: "#fbfff4", rgba: [251.0, 255.0, 244.0, 255.0] },
         red   : {code: "#ff3100", rgba: [255.0, 49.0,  0.0,   255.0] },
         orange: {code: "#ff8700", rgba: [255.0, 135.0, 0.0,   255.0] },
@@ -16,14 +15,14 @@ function ResidueMappingUtility() {
         tan   : {code: "#fddbc7", rgba: [253.0, 219.0, 199.0, 255.0] },
         black : {code: "#000000", rgba: [0.0,   0.0,   0.0,   255.0] },
         gray  : {code: "#A9A9A9", rgba: [128.0, 128.0, 128.0, 255.0]}
-    };
+    },
 
-    let colorCodesByFamilyConsensus = {
+    colorCodesByFamilyConsensus = {
         mismatch : "#990000",
         match: "#D3D3D3"
-    };
+    },
 
-    let colorCodesBySideChain = {
+    colorCodesBySideChain = {
         basic     : colorCodes.white,
         aliphatic : colorCodes.red,
         aromatic  : colorCodes.blue,
@@ -33,27 +32,27 @@ function ResidueMappingUtility() {
         acid      : colorCodes.tan,
         amide     : colorCodes.tan,
         gap       : colorCodes.gray
-    };
+    },
 
-    let colorCodesByPolarity = {
+    colorCodesByPolarity = {
         basic     : colorCodes.white,
         nonpolar  : colorCodes.red,
         polar     : colorCodes.blue,
         acidic    : colorCodes.green,
         gap       : colorCodes.gray
-    };
+    },
 
-    let colorCodesByResidueFrequency = {
+    colorCodesByResidueFrequency = {
         match     : colorCodes.red,
         mismatch  : colorCodes.white,
         gap       : colorCodes.gray
-    };
+    },
 
-    let colorCodesSelection = {
+    colorCodesSelection = {
         all     : colorCodes.white
-    };
+    },
 
-    let residuePropertiesByLetter = [
+    residuePropertiesByLetter = [
         {abbr: "A", sideClass: "aliphatic", polarity: "nonpolar", name:"ALA"},
         {abbr: "R", sideClass: "basic",     polarity: "basic",    name:"ARG"},
         {abbr: "N", sideClass: "amide",     polarity: "polar",    name:"ASN"},
@@ -78,10 +77,10 @@ function ResidueMappingUtility() {
         {abbr: ".", sideClass: "gap",       polarity: "gap",      name:"gap"},
         {abbr: "~", sideClass: "gap",       polarity: "gap",      name:"gap"},
         {abbr: "-", sideClass: "gap",       polarity: "gap",      name:"gap"}
-    ];
+    ],
 
     /* The current color map*/
-    let currentColorMap = {};
+    currentColorMap = {};
 
     function colorBySideChainClass(residue) {
         let residueProperties = _.find(residuePropertiesByLetter, function(r) {
@@ -98,8 +97,8 @@ function ResidueMappingUtility() {
     }
 
     /* Coloring the sequences, the fragment in the same column with the largest frequency
-     are colored with red for other fragment, if the adjacent fragment(in the column)
-     are same, they will be colored in same color
+        are colored with red for other fragment, if the adjacent fragment(in the column)
+        are same, they will be colored in same color
    */
     function colorByFrequency(residue, highest_frequency) {
         let residues = _.keys(highest_frequency),
@@ -125,19 +124,15 @@ function ResidueMappingUtility() {
             default:
                 currentColorMap[id] = colorCodesBySideChain;
                 return colorBySideChainClass;
-                break;
             case "Side Chain Polarity":
                 currentColorMap[id] = colorCodesByPolarity;
                 return colorByPolarity;
-                break;
             case "Selections Only":
                 currentColorMap[id] = colorCodesSelection;
                 return colorBySelection;
-                break;
             case "Frequency (Family Viewer)":
                 currentColorMap[id] = colorCodesByResidueFrequency;
                 return colorByFrequency;
-                break;
         }
     }
 
@@ -165,14 +160,14 @@ function ResidueMappingUtility() {
 
     function residue_legend() {
 
-        self.residueLegend    = document.getElementById("residueColorLegend");
-        d3.select(self.residueLegend).classed("hidden", false);
+        self.residueLegend = document.getElementById("residueColorLegend");
+        d3.select(".legendRow").classed("hidden", false);
 
         let residue_elements    = _.toPairs(colorCodesByFamilyConsensus),
             legend_width        = self.residueLegend.clientWidth/2.0,
             legend_height       = legend_width/2.0,
             legendElementWidth  = legend_width / (residue_elements.length),
-            legendElementHeight = legend_height / 2.0;
+            legendElementHeight = legend_width / 10.0;
 
         d3.select(self.residueLegend)
             .style("width",legendElementWidth*2.0 + 2)
@@ -199,20 +194,34 @@ function ResidueMappingUtility() {
             .attr("height", legendElementHeight)
             .attr('x', (d, i) => { return legendElementWidth * i + 1 })
             .attr('y', (d) => { return 1; })
-            .style("fill", (d) => { console.log(d);
-                return d[1] });
+            .style("fill", (d) => { return d[1] });
         /* Add the text to the legend*/
-        let residue_text = self.residue_svg.selectAll(".legendText")
+        let residue_text = self.residue_svg
+            .selectAll(".legendText")
             .data(residue_elements);
 
         residue_text.enter()
-            .append("g")
             .append("text")
             /* Merge the old elements (if they exist) with the new data */
             .merge(residue_text)
             .attr("class", "legendText")
             .text((d) => {return d[0]; })
-            .attr("x", (d, i) => { return legendElementWidth * i + 5; })
+            // .attr("transform", function(d,i){
+            //     let font_family = utils.getComputedStyleValue(this, "font-family"),
+            //         font = "0.6rem " + font_family,
+            //         text_length = App.textUtilities.getTextWidth(font, d[0]),
+            //         x = text_length/2.0 + legendElementWidth * i,
+            //         y = legendElementHeight + App.textUtilities.fontSizeToPixels("10pt");
+            //         console.log(App.textUtilities.translate(x,y));
+            //     return App.textUtilities.translate(x,y);
+            // })
+            .attr("x", function(d, i) {
+                let font_family = utils.getComputedStyleValue(this, "font-family"),
+                    font = "0.6rem " + font_family,
+                    text_length = App.textUtilities.getTextWidth(font, d[0]);
+                console.log(text_length,text_length/2.0 + legend_width/2.0 * i+1);
+                return text_length/2.0 + legendElementWidth * i;
+            })
             .attr("y", legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"))
         ;
 

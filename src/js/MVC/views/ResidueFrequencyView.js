@@ -443,7 +443,7 @@ const ResidueFrequencyView = (function() {
 
             this._summarySvg = this._dom.select(".summarySVG");
             d3Utils.set_chart_size(this._summarySvg.node(),
-                this.width, this.height+this.summary_margin);
+                this.width, this.height+this.summary_margin*2);
 
             if(options.semantic === "left"){
                 this._svg.style("right",0);

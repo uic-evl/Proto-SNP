@@ -3,7 +3,6 @@
 }
 
 .residueSummaryView {
-    font-size: 0.6em;
     height: 10%;
 }
 
@@ -59,20 +58,26 @@
 .rangeLabel {
     text-anchor: middle;
     font-weight: 900;
+    font-size: 0.6rem;
 }
 
 #frequencyLabel {
     text-align: center;
     position: absolute;
+    font-size: 0.875rem
 }
 
 #frequencyViewer {
     color: dimgray;
     font-weight: bolder;
-    font-size: 12px;
+    font-size: 0.75rem;
     cursor: default;
 }
 
 .frequencyViewerRow {
     margin-top: 50px;
+}
+
+.consensusLabel, .proteinLabel, .residueText, .selectionText {
+    font-size: 0.6rem;
 }

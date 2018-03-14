@@ -138,24 +138,23 @@ function ResidueMappingUtility() {
 
     /* Initialize the legend DOM */
     function initialize_legend(id) {
-        self.legend           = document.getElementById(id);
+        self.legend = document.getElementById("trendSVG");
 
-        d3.select(self.legend).classed("hidden",false);
+        /* Get the bounds of the nav bar and menu item */
+        let nav_width = d3.select("#familySettings").node().clientWidth,
+            nav_height = d3.select("#familySettings").node().clientHeight,
+            settings_width = d3.select("#familyName").node().clientWidth,
+            nav_offset = d3.select("#familySettings").node().getBoundingClientRect(),
+            settings_offset = d3.select("#familyName").node().getBoundingClientRect();
 
-        self.legend_width  = self.legend.clientWidth;
-        self.legend_height = 2.0*Math.max.apply(null, $('.view').map(function() { return $(this).height(); }).get())/2.0;
+        self.x = settings_offset.x + settings_width + nav_offset.x;
+        self.legend_width = (nav_width - self.x) * 0.75;
+        self.legend_height = nav_height;
 
-        self.residue_legend_width = self.residueLegend.clientWidth;
+        self.legend_svg[id] = d3.select(self.legend)
+            .append("g")
+            .attr("id", "frequencyLegend");
 
-        if(self.legend_height < 50 ) self.legend_height = 50;
-
-        self.residue_legend_height = self.legend_height;
-
-        /* Color map legend */
-        self.legend_svg[id] =
-            d3.select(self.legend)
-                .append("svg")
-                .style("width", self.legend_width);
     }
 
     function residue_legend() {
@@ -219,7 +218,6 @@ function ResidueMappingUtility() {
                 let font_family = utils.getComputedStyleValue(this, "font-family"),
                     font = "0.6rem " + font_family,
                     text_length = App.textUtilities.getTextWidth(font, d[0]);
-                console.log(text_length,text_length/2.0 + legend_width/2.0 * i+1);
                 return text_length/2.0 + legendElementWidth * i;
             })
             .attr("y", legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"))
@@ -237,49 +235,51 @@ function ResidueMappingUtility() {
             elements = _.toPairs(currentColorMap[type]);
 
         if(!self.legend_svg[id]){
-            //initialize_legend(id);
             residue_legend(elements);
+            initialize_legend(id);
         }
 
-        // let
-        //     legendElementWidth  = self.legend_width / (elements.length),
-        //     legendElementHeight = self.legend_height / 2.0;
-        //
-        // /* Add the color bands to the legend */
-        // let legend_bars = self.legend_svg[id]
-        //     .selectAll(".legendElement")
-        //     .data(elements);
-        //
-        // // UPDATE: add new elements if needed
-        // legend_bars
-        //     .enter().append('g')
-        //     .append('rect')
-        //     /* Merge the old elements (if they exist) with the new data */
-        //     .merge(legend_bars)
-        //     .attr("class", "legendElement")
-        //     .attr("width", legendElementWidth)
-        //     .attr("height", legendElementHeight)
-        //     .attr('x', (d, i) => { return legendElementWidth * i + 1 })
-        //     .attr('y', (d) => { return 1; })
-        //     .style("fill", (d) => { return d[1].code });
-        //
-        // /* Add the text to the legend*/
-        // let legend_text = self.legend_svg[id].selectAll(".legendText")
-        //     .data(elements);
-        //
-        // legend_text.enter()
-        //     .append("g")
-        //     .append("text")
-        //     /* Merge the old elements (if they exist) with the new data */
-        //     .merge(legend_text)
-        //     .attr("class", "legendText")
-        //     .text((d) => { return d[0]; })
-        //     .attr("x", (d, i) => { return legendElementWidth * i + 5; })
-        //     .attr("y", legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"));
-        //
-        // /* Remove the unneeded bars/text */
-        // legend_bars.exit().remove();
-        // legend_text.exit().remove();
+        let
+            legendElementWidth  = self.legend_width / (elements.length),
+            legendElementHeight = self.legend_height / 3.0,
+            element_height = legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"),
+            offset_y = (self.legend_height - element_height) / 2.0;
+
+        /* Add the color bands to the legend */
+        let legend_bars = self.legend_svg[id]
+            .selectAll(".legendElement")
+            .data(elements);
+
+        // UPDATE: add new elements if needed
+        legend_bars
+            .enter().append('g')
+            .append('rect')
+            /* Merge the old elements (if they exist) with the new data */
+            .merge(legend_bars)
+            .attr("class", "legendElement")
+            .attr("width", legendElementWidth)
+            .attr("height", legendElementHeight)
+            .attr('x', (d, i) => { return self.x + legendElementWidth * i + 1 })
+            .attr('y', (d) => { return offset_y})
+            .style("fill", (d) => { return d[1].code });
+
+        /* Add the text to the legend*/
+        let legend_text = self.legend_svg[id].selectAll(".legendText")
+            .data(elements);
+
+        legend_text.enter()
+            .append("g")
+            .append("text")
+            /* Merge the old elements (if they exist) with the new data */
+            .merge(legend_text)
+            .attr("class", "legendText")
+            .text((d) => { return App.textUtilities.truncate(d[0],6); })
+            .attr("x", (d, i) => { return self.x + legendElementWidth * i + 5; })
+            .attr("y", offset_y + legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"));
+
+        /* Remove the unneeded bars/text */
+        legend_bars.exit().remove();
+        legend_text.exit().remove();
     }
 
     function clear(type) {

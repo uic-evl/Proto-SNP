@@ -29,11 +29,7 @@ const utils = function () {
                 text: "The suggested resolution for this application is 1024x768 or larger. Smaller resolutions could lead to visual artifacts and loss of smoother interactions. ",
                 type: 'warning',
                 confirmButtonColor: '#3085d6',
-            }).then((result) => {
-                if (result.value) {
-                    cb();
-                }
-            })
+            }).then(cb)
         }
     }
 

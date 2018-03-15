@@ -11,19 +11,18 @@ var App = App || {};
     App.residueMappingUtility = new ResidueMappingUtility();
 
     /* List of views */
-    let views = [];
+    let views = [], warning_fired = false;
 
     function checkResolution(cb) {
         let w = window.innerWidth,
             h = window.innerHeight;
 
         /* check the resolution of the resize*/
-        if(w < 1024 || h < 768) {
+        if(!warning_fired && (w < 1024 || h < 768)) {
+            warning_fired = true;
             utils.warning_resolution(cb);
         }
-        else {
-            cb();
-        }
+        else { cb(); }
     }
 
     function resize() {

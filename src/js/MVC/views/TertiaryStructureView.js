@@ -251,9 +251,11 @@ const TertiaryStructureView = (function () {
                     /* Add the data-intro */
                     if(view._position === "left") {
                         splash_trigger.attr("data-intro", "Click here to load a protein structure into the viewer");
+                        splash_trigger.find("span.splashButton").text("Add Protein");
                     }
                     else {
                         splash_trigger.attr("data-intro", "Click here to load a (second) protein structure into the viewer");
+                        splash_trigger.find("span.splashButton").text("Add (Mutated) Protein");
                     }
                     // Launch the overlay
                         splash_trigger.click(function () {

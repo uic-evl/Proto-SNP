@@ -83,6 +83,11 @@ div.view {
     border-color: #f8f9fa;
 }
 
+.wrenchDropdown {
+    padding-left: 0;
+    padding-top: 5px;
+}
+
 .wrenchDropdown.dropdown-toggle::after {
     display:none
 }
@@ -97,9 +102,9 @@ div.view {
     border-color: #f8f9fa;
 }
 
-.settingsWrench {
-    padding-left: 10px;
-}
+/*.settingsWrench {*/
+    /*padding-left: 10px;*/
+/*}*/
 
 #helpButton.btn-info:focus, #helpButton.btn:focus {
     box-shadow: none!important;
@@ -218,4 +223,17 @@ li > label:hover {
 
 .familySettingsElements_bottom {
     z-index: 0;
+}
+
+#familyName {
+    cursor: pointer;
+}
+
+/*#familySettingsDropdown {*/
+    /*margin-left: 2vw;*/
+/*}*/
+
+#familyFolder {
+    width : 100% !important;
+    height: auto !important;
 }

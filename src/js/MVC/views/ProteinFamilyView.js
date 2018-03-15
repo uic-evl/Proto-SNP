@@ -355,7 +355,7 @@ const ProteinFamilyView = (function() {
                 class: "brush horizontal overview no_handles",
                 block_size: block_size,
                 helpText: "Drag here to scroll the Family Alignment (Subset). ",
-                helpPosition: "top", helpWidth: 100,
+                helpPosition: "bottom", helpWidth: 100,
                 semantic: "family", mask: "#overviewPaddleMasks",
                 extent: [[self.x_offset, self.y_offset], [self.overview_width + self.x_offset, height + self.y_offset]],
                 position: [self.y_offset, self.brushPaddleSize + self.y_offset],

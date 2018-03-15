@@ -158,7 +158,6 @@ function ResidueMappingUtility() {
     }
 
     function residue_legend(id) {
-
         self.residueLegend = document.getElementById(id);
         d3.select(".legendRow").classed("hidden", false);
 
@@ -205,21 +204,7 @@ function ResidueMappingUtility() {
             .merge(residue_text)
             .attr("class", "legendText")
             .text((d) => {return d[0]; })
-            // .attr("transform", function(d,i){
-            //     let font_family = utils.getComputedStyleValue(this, "font-family"),
-            //         font = "0.6rem " + font_family,
-            //         text_length = App.textUtilities.getTextWidth(font, d[0]),
-            //         x = text_length/2.0 + legendElementWidth * i,
-            //         y = legendElementHeight + App.textUtilities.fontSizeToPixels("10pt");
-            //         console.log(App.textUtilities.translate(x,y));
-            //     return App.textUtilities.translate(x,y);
-            // })
-            .attr("x", function(d, i) {
-                let font_family = utils.getComputedStyleValue(this, "font-family"),
-                    font = "0.6rem " + font_family,
-                    text_length = App.textUtilities.getTextWidth(font, d[0]);
-                return text_length/2.0 + legendElementWidth * i;
-            })
+            .attr("x",(d,i) => { return (25 + 50 * i) + "%" })
             .attr("y", legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"))
         ;
 

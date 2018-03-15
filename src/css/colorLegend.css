@@ -7,6 +7,8 @@ rect.legendElement {
 text.legendText {
     font-size: 0.6rem;
     font-weight: bold;
+    position: absolute;
+    text-anchor: middle;
 }
 
 .legendSVG {
@@ -27,3 +29,4 @@ text.legendText {
     font-size: 0.75rem;
     cursor: default;
 }
+

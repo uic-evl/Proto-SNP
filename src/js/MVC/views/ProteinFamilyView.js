@@ -590,6 +590,7 @@ const ProteinFamilyView = (function() {
         };
 
         self.initialize = function (data) {
+            $("#proteinFamilyRow").find("#dummyFamilyHeader").remove();
             return new Promise(function(resolve, reject){
                 let family = data.family;
                 self._proteinCount = data.proteinCount;

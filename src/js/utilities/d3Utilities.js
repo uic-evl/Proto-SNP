@@ -125,7 +125,6 @@ const d3Utils = function () {
 
         /* Render the line above the bars */
         render_context_lines : function(context, points, width_class) {
-            console.log(width_class);
             /* Add the context bar above viewers */
             if(context.node && context.node().nodeName === "svg"){
 

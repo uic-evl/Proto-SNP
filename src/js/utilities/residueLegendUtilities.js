@@ -153,8 +153,8 @@ function ResidueMappingUtility() {
 
         self.legend_svg[id] = d3.select(self.legend)
             .append("g")
-            .attr("id", "frequencyLegend");
-
+            .attr("id", "frequencyLegend")
+            .moveToFront();
     }
 
     function residue_legend(id) {

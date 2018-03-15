@@ -1,5 +1,5 @@
 #sequenceViewer {
-    height: 35%;
+    height: 37%;
     overflow-y: hidden;
     overflow-x: hidden;
     margin-right: 0;
@@ -25,11 +25,11 @@
 
 .sequence-container {
     padding: 0;
-    height: 90%
+    height: 100%
 }
 
 .sequence {
-    overflow-y: scroll;
+    overflow-y: auto;
     cursor: pointer;
     display: inline-block;
     vertical-align: bottom;

@@ -100,10 +100,10 @@ const PrimaryStructureView = (function() {
                 viewer_heading = utils.getComputedStyleValue(d3.select(view._dom.parentNode).select("#sequenceViewerMenu").node(), "height");
 
             view.width = view._dom.clientWidth;
-            view.height = view._parent.clientHeight - header_height - viewer_heading;
+            view.height = view._parent.clientHeight - viewer_heading - header_height;
 
             d3.select(view._parent).select("#sequenceViewer")
-                .style("height", view.height);
+                .style("padding-top", header_height);
 
             /* Set the helper text */
             d3.select("div.sequenceViewers")

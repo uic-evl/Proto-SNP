@@ -358,8 +358,8 @@ const ResidueFrequencyView = (function() {
             /* render the context lines */
             if(this.semantic === "left"){
                 contextPoints = [
-                    [ {x: this._barOffset_x+offset, y: y_position+self.summary_margin},  { x: options.brush_pos[0]+offset, y: 0}],
-                    [ {x: width_offset+offset,      y: y_position+self.summary_margin},  { x: options.brush_pos[1]+offset, y: 0} ],
+                    [ {x: this._barOffset_x, y: y_position+self.summary_margin},  { x: options.brush_pos[0], y: 0}],
+                    [ {x: width_offset,      y: y_position+self.summary_margin},  { x: options.brush_pos[1], y: 0} ],
                 ];
             }
             else {

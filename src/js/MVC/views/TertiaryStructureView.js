@@ -82,42 +82,8 @@ const TertiaryStructureView = (function () {
 
             /* Setup the splash screen activation */
             $(dom.node()).click(function(){
-                /* Hide the current 3D view */
-                self._dom.find('#pvDiv')
-                    .find(".tertiaryViewer, .axisViewer, .static-label").hide();
-                self._dom
-                    .find("#splashOverlay").addClass('open');
-                /* Hide the menu */
-                self._dom.find('.x_title').hide();
-                /* Show the splash screen */
-                self.splash.show();
+                self.launchModal();
             });
-
-            /* Click outside of the splash screen */
-            self._dom.find('#overlayBackground, #overlayClose').click(function () {
-                /* Clear the input */
-                self.clear_splash();
-
-                /* Hide the overlay */
-                self.splash.hide();
-
-                /* Show the menu */
-                self._dom.find('.x_title').show();
-
-                /* Show the 3D viewers */
-                self._dom.find(".tertiaryViewer, .axisViewer, .static-label").show();
-            });
-
-            /* Setup the upload callback for files */
-            self.splash.find("#fileUploadInput").fileupload('destroy');
-            self.splash.find("#fileUploadInput").unbind( "fileuploadadd" );
-
-            App.fileUtilities.uploadSetup(self.splash.find("#fileUploadInput"), self.splash.find("#files"),
-                function (metadata, result) {
-                    self.clear();
-                    self.fileUpdated.notify({metaData: metadata, file: result});
-                    self.clear_splash();
-                });
         };
 
         /*Creates the geometry/coloring selection menu */
@@ -167,6 +133,43 @@ const TertiaryStructureView = (function () {
                     });
                 /* Show the view to bind the model */
                 coloringListView.show();
+            });
+        };
+
+        self.launchModal = function(splash) {
+            $('#proteinModalDiv').load("./src/html/modals/proteinSelectionModal.html", function(){
+
+                /* Launch the initial data modal */
+                $("#proteinModal").modal().on('shown.bs.modal', function (e) {
+
+                    let modal = $(this);
+
+                    /* Setup the file upload plugin */
+                    App.fileUtilities.initialUploadSetup(modal,
+                        function (metadata, result) {
+                            self.file_loaded(metadata, result);
+                            /* destroy the file upload */
+                            modal.find("#fileUploadInput").fileupload('destroy');
+                            /* Close the modal */
+                            $("#proteinModal").modal('hide');
+                            /* Hide the button */
+                            if(splash) {
+                                splash.hide();
+                            }
+                    });
+                    /* Link the protein form to the model utilities */
+                    modal.find("#initialDataForm").on("submit", function(){
+                        let name = $(this).serialize().split('=')[1];
+                        App.fileUtilities.ajaxFromRCMB(name, function(blob){
+                            if(blob){
+                                blob.name = name + ".pdb";
+                                modal.find("#fileUploadInput").fileupload('add', {files: blob });
+                            }
+                            modal.find("#protein-name").val('');
+                        });
+                        return false;
+                    });
+                });
             });
         };
 
@@ -257,28 +260,11 @@ const TertiaryStructureView = (function () {
                         splash_trigger.attr("data-intro", "Click here to load a (second) protein structure into the viewer");
                         splash_trigger.find("span.splashButton").text("Add (Mutated) Protein");
                     }
-                    // Launch the overlay
-                        splash_trigger.click(function () {
-                            // hide the select protein button
-                            splash
-                                .find("#splashOverlay").addClass('open')
-                                .find('.signup-form input:first').select();
-                            splash_trigger.hide();
-                        });
-                    // If the user clicks on the overlay or the 'X', close the overlay
-                    splash.find('#overlayBackground, #overlayClose').click(function () {
-                        // reshow the button
-                        splash.find('#splashOverlay').removeClass('open');
-                        if(splash_trigger[0]){
-                            splash_trigger.show();
-                        }
+                    // Launch the modal
+                    splash_trigger.click(function () {
+                        view.launchModal(splash_trigger);
                     });
-                    /* Save the reference to the splash screen for later use */
                     view.splash = splash;
-                    /* Apply the bindings */
-                    ko.applyBindings(view, splash.find("#splashTemplate")[0]);
-                    /* Setup the upload callback for files */
-                    App.fileUtilities.uploadSetup(splash.find("#fileUploadInput"), splash.find("#files"), view.file_loaded.bind(view));
                 });
             }
         },

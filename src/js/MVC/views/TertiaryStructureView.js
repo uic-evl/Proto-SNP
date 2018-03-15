@@ -360,6 +360,8 @@ const TertiaryStructureView = (function () {
 
             /* Load the geometry list */
             $.get("./src/html/tertiaryViewer/tertiaryMenuTemplate.html", function (data) {
+                self._dom.find("div.x_title").empty();
+
                 self._dom.find("div.x_title").append(data);
                 self.initialize_menus();
                 /* Place the name of the protein above the viewer*/

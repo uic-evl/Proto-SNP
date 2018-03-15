@@ -144,7 +144,19 @@
             <!-- Tertiary Viewer -->
             <script type="text/html" id="molecularViewers" >
                 <div class="col-6" data-bind="attr: {id: $data._id}">
-                    <div class="x_title view absolute tertiary_viewer_width"></div>
+                    <div class="x_title view absolute tertiary_viewer_width">
+                        <nav id="molecularViewerMenu" class="navbar navbar-expand-md navbar-light bg-light py-md-0 px-0">
+                            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                                <ul class="navbar-nav mr-auto">
+                                    <li class="nav-item active py-0" id="proteinName">
+                                        <a class="nav-link" href="#">
+                                            <p>&nbsp;</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
                     <div id="pvDiv" class="molecular-viewer">
                         <div id="splash"></div>
                     </div>

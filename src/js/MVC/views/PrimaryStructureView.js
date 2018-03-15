@@ -105,6 +105,12 @@ const PrimaryStructureView = (function() {
             d3.select(view._parent).select("#sequenceViewer")
                 .style("height", view.height);
 
+            /* Set the helper text */
+            d3.select("div.sequenceViewers")
+                .attr("data-position", "left")
+                .attr("data-intro", "Click here to select a residue. Selections are linked to the corresponding 3D view.")
+                .attr("data-top", "70%");
+
             // append a new span for the list
             d3.select(view._dom)
                 .attr("height", view.height)

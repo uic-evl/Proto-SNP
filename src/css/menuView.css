@@ -66,7 +66,7 @@ div.view {
 .view p {
     color: dimgray;
     font-weight: bolder;
-    font-size: 14px;
+    font-size: 0.875rem;
     display: inline-block;
     text-align: center;
     clear: left;
@@ -74,7 +74,7 @@ div.view {
 }
 
 #settingsOpen, .settingsOpenPdb, .molecularHelp, .settingsOpenFamily {
-    font-size: 16px;
+    font-size: 1rem;
     padding: 0 0 0 5px;
     cursor: pointer;
     z-index: -1;
@@ -88,7 +88,7 @@ div.view {
 }
 
 .settingsWrench, .proteinSettingsWrench {
-    font-size: 16px;
+    font-size: 1rem;
     padding-top: 20%;
     cursor: pointer;
     z-index: -1;
@@ -112,7 +112,7 @@ div.view {
 #alignmentViewerOverview, #alignmentViewer, #sequenceViewerMenu {
     color: dimgray;
     font-weight: bolder;
-    font-size: 14px;
+    font-size: 0.875rem;
     cursor: default;
 }
 

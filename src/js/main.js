@@ -5,6 +5,13 @@ var App = App || {};
 
 (function(){
 
+    /* Until PDB converts to https, we must make sure our site is launched with http */
+    let loc = window.location.href;
+    if(loc.split(':')[0] === "https"){
+        window.location.href = "http" + loc.slice(4);
+    }
+
+
     /* File utility setup */
     App.fileUtilities = new FileUtilities();
     App.dataUtilities = new DatabaseMappingUtils();

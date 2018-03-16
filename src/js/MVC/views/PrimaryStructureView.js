@@ -137,6 +137,7 @@ const PrimaryStructureView = (function() {
                 .text(function(d, i) { return "(" + parseInt(i+1) + ") " + d; })
                 .style("width", "100%")
                 .on("click", spanSelected.bind(view))
+                .classed("selected_sequence")
                 // EXIT: Remove unneeded DOM elements
                 .exit().remove();
         },

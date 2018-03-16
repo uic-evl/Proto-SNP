@@ -132,12 +132,12 @@ const PrimaryStructureView = (function() {
             viewer
                 .enter().append("span")
                 .attr("class", "residue")
+                .classed("selected_sequence", false)
                 /* Merge the old elements (if they exist) with the new data */
                 .merge(viewer)
                 .text(function(d, i) { return "(" + parseInt(i+1) + ") " + d; })
                 .style("width", "100%")
                 .on("click", spanSelected.bind(view))
-                .classed("selected_sequence")
                 // EXIT: Remove unneeded DOM elements
                 .exit().remove();
         },

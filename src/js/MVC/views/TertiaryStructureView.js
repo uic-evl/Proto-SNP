@@ -39,6 +39,7 @@ const TertiaryStructureView = (function () {
     function TertiaryStructureView(model, element) {
         let self = this;
 
+
         self._model = model;
         self._id = element.id;
         self._position = element.position;
@@ -88,11 +89,16 @@ const TertiaryStructureView = (function () {
                         view: geometryListView,
                         cb:
                             function(model, element) {
-                                //self.pvViewer.rm(model.getName());
+                                let selections = self._model.getResidueSelection();
                                 self.pvViewer.clear();
                                 self.render(model.getStructure(), model.getName(), element);
+                                /* Recolor based on the previous state */
                                 self.recolor(self.colorScheme);
-                                //self.pvViewer.requestRedraw();
+                                /* Manually select the residues that were selected */
+                                selections.forEach((residue)=>{
+                                    selectionChanged.call(self, self, {residue:residue})
+                                });
+                                self.pvViewer.requestRedraw();
                             }
                     });
 
@@ -104,6 +110,7 @@ const TertiaryStructureView = (function () {
             $.get("./src/html/tertiaryViewer/proteinColoringListTemplate.html", function (data) {
                 /* Add the elements to the list */
                 self._dom.find("#protein_coloring_list a").after(data);
+                self.colorScheme = "Side Chain Class";
                 let coloringListModel = new FilteringMenuModel({
                         items: ["Side Chain Class", "Side Chain Polarity", "Selections Only"]
                     }),
@@ -181,9 +188,6 @@ const TertiaryStructureView = (function () {
 
             /* Enable the coloring menu */
             $("#coloring_list").find("li").removeClass("disabled");
-            /* Create the legend */
-            //App.residueMappingUtility.createColorLegend("3D");
-
         });
 
         self._model.proteinColoringChanged.attach(function(sender, args){

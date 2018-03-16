@@ -65,7 +65,6 @@ var pvUtils = function (context) {
           sel.addAtom(atom);
         });
       }
-
       return sel;
     },
 

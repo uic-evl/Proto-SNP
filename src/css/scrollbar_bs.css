@@ -1,23 +1,23 @@
 
-.frame::-webkit-scrollbar {
+.sequence::-webkit-scrollbar {
     -webkit-appearance: none;
 }
 
-.frame::-webkit-scrollbar:vertical {
+.sequence::-webkit-scrollbar:vertical {
     width: 11px;
 }
 
-.frame::-webkit-scrollbar:horizontal {
+.sequence::-webkit-scrollbar:horizontal {
     height: 11px;
 }
 
-.frame::-webkit-scrollbar-thumb {
+.sequence::-webkit-scrollbar-thumb {
     border-radius: 8px;
     border: 2px solid white; /* should match background, can't be transparent */
     background-color: rgba(0, 0, 0, .5);
 }
 
-.frame::-webkit-scrollbar-track {
+.sequence::-webkit-scrollbar-track {
     background-color: #fff;
     border-radius: 8px;
 }

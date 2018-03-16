@@ -14,7 +14,7 @@ const ProteinModel = (function() {
     self._selectedChain = "";
 
     self._proteinSorting = "";
-    self._proteinColoring = "";
+    self._proteinColoring = "Side Chain Class";
     self._rotation = {};
     self._zoom = null;
     self._center = null;
@@ -163,7 +163,7 @@ const ProteinModel = (function() {
 
     getProteinSorting: function() { return this._proteinSorting; },
 
-    setProteinColoring: function (coloring) {
+    setProteinColoring: function (coloring, interaction) {
       this._proteinColoring = coloring;
       if(this.isEmpty()){
         this.proteinColoringChanged.notify({scheme: coloring});
@@ -171,7 +171,9 @@ const ProteinModel = (function() {
       return this;
     },
 
-    getProteinColoring: function() { return this._proteinColoring; },
+    getProteinColoring: function() {
+      return this._proteinColoring;
+      },
 
     isEmpty : function() {
       return !!this._proteinStructure;

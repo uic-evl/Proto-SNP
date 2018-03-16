@@ -30,7 +30,7 @@ const TertiaryStructureController = (function() {
 
       view.colorChanged.attach(function(sender, args){
         let m = _.without(self._models, sender._model)[0];
-        m.setProteinColoring(args.color);
+        m.setProteinColoring(args.color, false);
       });
 
       /* Add residue selection/deselection */

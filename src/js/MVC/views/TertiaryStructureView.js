@@ -61,20 +61,6 @@ const TertiaryStructureView = (function () {
         self.modelZoomed = new EventNotification(this);
         self.cameraChanged = new EventNotification(this);
 
-        /* Clears the user input on the form */
-        self.clear_splash = function() {
-            /* Clear the input */
-            self.splash.find('#files').empty();
-            self.splash.find('#protein-name').val('');
-            self.splash.find('#fileUploadInput').val('');
-        };
-
-        /* Clears the splash input form and re-initializes the splash*/
-        self.clear_and_reinitialize = function() {
-            /* Clear the input */
-            self.clear_splash();
-        };
-
         /* Reset the splash page to launch on 'folder icon' click */
         self.initialize_file_update = function(dom) {
             /* Display the upload icon by the viewer name */
@@ -105,7 +91,8 @@ const TertiaryStructureView = (function () {
                                 //self.pvViewer.rm(model.getName());
                                 self.pvViewer.clear();
                                 self.render(model.getStructure(), model.getName(), element);
-                                self.pvViewer.requestRedraw();
+                                self.recolor(self.colorScheme);
+                                //self.pvViewer.requestRedraw();
                             }
                     });
 
@@ -127,9 +114,9 @@ const TertiaryStructureView = (function () {
                         view: coloringListView,
                         cb:
                             function(model, element) {
+                                self.colorScheme = element;
                                 self.recolor(element);
-                                self.colorChanged.notify({color:element});
-                                //App.residueMappingUtility.createColorLegend("3D");
+                                self.colorChanged.notify({color:element, model: self});
                             }
                     });
                 /* Show the view to bind the model */
@@ -236,8 +223,6 @@ const TertiaryStructureView = (function () {
         /* Callback fired when a file is loaded */
         file_loaded: function(metadata, result){
             this.fileUploaded.notify({metaData: metadata, file: result});
-            /* Clear the splash and update */
-            this.clear_and_reinitialize();
         },
 
         show: function () {

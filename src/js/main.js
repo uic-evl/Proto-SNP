@@ -34,7 +34,9 @@ var App = App || {};
     function resize() {
         let r = ()=> {
             views.forEach(function (v) {
-                v.resize();
+                if(v._model.isEmpty()){
+                    v.resize();
+                }
             });
             /* Toggle the overlay */
             $('body').chardinJs().stop();
@@ -155,6 +157,7 @@ var App = App || {};
 
         /* Register the resize callbacks */
         $(window).resize(function(){
+            console.log("resize");
             utils.waitForFinalEvent(resize, 400, "Resize complete");
         });
 

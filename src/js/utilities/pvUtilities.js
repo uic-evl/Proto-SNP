@@ -41,10 +41,10 @@ var pvUtils = function (context) {
         return redraw.apply(this, arguments);
       };
 
-      view.pvViewer._cam.__proto__.zoom = function() {
-        view.modelZoomed.notify({zoom: this._zoom});
-        return zoom.apply(this, arguments);
-      }
+      // view.pvViewer._cam.__proto__.zoom = function() {
+      //   view.modelZoomed.notify({zoom: this._zoom});
+      //   return zoom.apply(this, arguments);
+      // }
     },
 
     setColorForAtom: function (go, atom, color) {

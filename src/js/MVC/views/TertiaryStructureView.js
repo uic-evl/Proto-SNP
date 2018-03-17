@@ -80,7 +80,7 @@ const TertiaryStructureView = (function () {
                 /* Add the elements to the list */
                 self._dom.find("#geometry_list a").after(data);
                 let geometryListModel = new FilteringMenuModel({
-                        items: ['cartoon', 'tube', 'trace', 'sline', 'lines', 'lineTrace', 'spheres', 'points']
+                        items: ['cartoon', 'tube', 'trace', 'spheres']
                     }),
                     geometryListView = new FilteringMenuView(geometryListModel, { 'list' : self._dom.find('#geometry_ul') }),
                     geometryListController = new FilteringMenuController({

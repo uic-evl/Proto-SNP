@@ -278,9 +278,6 @@ const TertiaryStructureView = (function () {
             else {
                 this.fileUpdated.notify({metaData: {protein_name:name}, file: null});
             }
-
-            /* Clear the splash and update */
-            this.clear_and_reinitialize();
             return false;
         },
 

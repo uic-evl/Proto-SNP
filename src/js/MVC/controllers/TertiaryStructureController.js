@@ -28,10 +28,10 @@ const TertiaryStructureController = (function() {
         sender._model.addProtein(args.metaData, args.file);
       });
 
-      view.colorChanged.attach(function(sender, args){
-        let m = _.without(self._models, sender._model)[0];
-        m.setProteinColoring(args.color, false);
-      });
+      // view.colorChanged.attach(function(sender, args){
+      //   let m = _.without(self._models, sender._model)[0];
+      //   m.setProteinColoring(args.color, false);
+      // });
 
       /* Add residue selection/deselection */
       view.residueSelected.attach(function(sender, args) {
@@ -46,10 +46,10 @@ const TertiaryStructureController = (function() {
         // update the sender's model
         sender._model.setRotation(args.rotation, false);
         // update the other model if it is set
-        let m = _.without(self._models, sender._model)[0];
-        if(m.isEmpty()){
-          m.setRotation(args.rotation, true);
-        }
+        // let m = _.without(self._models, sender._model)[0];
+        // if(m.isEmpty()){
+        //   m.setRotation(args.rotation, true);
+        // }
       });
 
       view.modelZoomed.attach(function(sender, args){

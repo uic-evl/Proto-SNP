@@ -286,6 +286,9 @@ const ProteinFamilyModel = (function() {
                     model.setProteinNames();
                     /* Set the selected protein to reflect the change */
                     let selection = model._proteinNames[model._selectedProteinIndex + model._selectedProteinOffset];
+                    if(!selection) {
+                        selection = model._proteinNames[0];
+                    }
                     model.setSelectedProtein(selection);
                     /* notify the listeners */
                     model.proteinSortingChanged.notify({

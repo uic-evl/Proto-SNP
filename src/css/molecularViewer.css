@@ -21,13 +21,28 @@
     border-right: 2px solid white;
 }
 
-.tertiaryViewer, .axisViewer {
+.tertiaryViewer, .axisViewer, .zoomButtons {
     position: absolute;
+}
+
+.zoomButtons {
+    bottom: 5px;
+    left: 5px;
+    z-index: 2;
+}
+
+.zoom_in, .zoom_out {
+    display: block;
 }
 
 .axisViewer {
     bottom: 0;
     right: 0;
+}
+
+.zoomButtons button {
+    height: 30px;
+    width: 30px;
 }
 
 .molecular-viewer {

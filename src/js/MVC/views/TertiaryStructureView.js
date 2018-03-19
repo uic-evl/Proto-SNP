@@ -284,6 +284,23 @@ const TertiaryStructureView = (function () {
             return false;
         },
 
+        createAndAddAxisViewer: function(dom) {
+            /* Create the div for the 3D axis */
+            let axisDOM = document.createElement('div'),
+                width = parseInt(parseInt(d3.select(dom).style('width'))/4.0),
+                height = parseInt(parseInt(d3.select(dom).style('height'))/4.0);
+
+            /* Set the axis' attributes */
+            axisDOM.className = 'axisViewer';
+            axisDOM.style.height = String(height);
+            axisDOM.style.width = String(width);
+            /* Append it to the dom */
+            dom.append(axisDOM);
+
+            /* Create the axis box */
+            this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
+        },
+
         initialize: function (protein_name) {
             /* Store the pvView dom element */
             let $dom = this._dom.find('#pvDiv'),
@@ -319,20 +336,11 @@ const TertiaryStructureView = (function () {
             dom.addEventListener('mousemove', this.mouseMoveEvent);
             this.pvViewer.on('click', this.mouseClickEvent);
 
-            /* Create the div for the 3D axis */
-            let axisDOM = document.createElement('div'),
-                width = parseInt(parseInt(d3.select(dom).style('width'))/4.0),
-                height = parseInt(parseInt(d3.select(dom).style('height'))/4.0);
+            /* Create and add the axis viewer */
+            this.createAndAddAxisViewer(dom);
 
-            /* Set the axis' attributes */
-            axisDOM.className = 'axisViewer';
-            axisDOM.style.height = height;
-            axisDOM.style.width = width;
-            /* Append it to the dom */
-            dom.append(axisDOM);
-
-            /* Create the axis box */
-            this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
+            /* Show the zoom buttons */
+            $dom.find(".zoomButtons").removeClass("hidden");
 
             /* Load the geometry list */
             $.get("./src/html/tertiaryViewer/tertiaryMenuTemplate.html", function (data) {

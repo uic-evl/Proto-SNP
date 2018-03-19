@@ -157,7 +157,6 @@ var App = App || {};
 
         /* Register the resize callbacks */
         $(window).resize(function(){
-            console.log("resize");
             utils.waitForFinalEvent(resize, 400, "Resize complete");
         });
 

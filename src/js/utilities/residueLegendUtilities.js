@@ -103,6 +103,9 @@ function ResidueMappingUtility() {
     function colorByFrequency(residue, highest_frequency) {
         let residues = _.keys(highest_frequency),
             res = _.find(residuePropertiesByLetter, function(o) { return o.abbr === residue; });
+        if(!res) {
+            return  colorCodesByResidueFrequency["gap"];
+        }
         if(res.name === "gap"){
             return  colorCodesByResidueFrequency["gap"];
         }
@@ -204,7 +207,7 @@ function ResidueMappingUtility() {
             .merge(residue_text)
             .attr("class", "legendText")
             .text((d) => {return d[0]; })
-            .attr("x",(d,i) => { return (25 + 50 * i) + "%" })
+            .attr("x",(d,i) => { return 25 + 50 * i + "%" })
             .attr("y", legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"))
         ;
 
@@ -263,7 +266,7 @@ function ResidueMappingUtility() {
             .merge(legend_text)
             .attr("class", "legendText")
             .text((d) => { return App.textUtilities.truncate(d[0],6); })
-            .attr("x", (d, i) => { return self.x + legendElementWidth * i + 5; })
+            .attr("x", (d, i) => { return self.x + legendElementWidth * i + legendElementWidth/2; })
             .attr("y", offset_y + legendElementHeight + App.textUtilities.fontSizeToPixels("10pt"));
 
         /* Remove the unneeded bars/text */

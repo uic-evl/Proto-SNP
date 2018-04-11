@@ -298,6 +298,19 @@ const TertiaryStructureView = (function () {
             this.axis3D = new AxisView3D({div: axisDOM, width: width, height: height});
         },
 
+        initializeZoom: function(){
+            let viewer = this.pvViewer;
+            this._dom.find("button.zoom_in").on("click", function(){
+                viewer._cam.zoom(-1);
+                viewer.requestRedraw();
+            });
+
+            this._dom.find("button.zoom_out").on("click", function(){
+                viewer._cam.zoom(1);
+                viewer.requestRedraw();
+            });
+        },
+
         initialize: function (protein_name) {
             /* Store the pvView dom element */
             let $dom = this._dom.find('#pvDiv'),
@@ -348,6 +361,7 @@ const TertiaryStructureView = (function () {
                 /* Place the name of the protein above the viewer*/
                 updateViewTitle(self._dom[0], protein_name);
                 self.initialize_file_update(d3.select(self._dom[0]).select('#proteinName'));
+                self.initializeZoom();
             });
             /* Register the enter key to reset the selections of the view */
             //keyboardUtilities.addKeyboardCallback(13, this.zoomToSelections);

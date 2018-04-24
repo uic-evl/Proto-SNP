@@ -30,6 +30,16 @@ const utils = function () {
                 type: 'warning',
                 confirmButtonColor: '#3085d6',
             }).then(cb)
+        },
+        browser_warning: function(cb) {
+            swal({
+                title: 'Browser Warning',
+                text: "This application is currently only supported for Google Chrome. ",
+                type: 'error',
+                // confirmButtonColor: '#3085d6',
+                showCancelButton: false,
+                showConfirmButton: false
+            }).then(cb)
         }
     }
 

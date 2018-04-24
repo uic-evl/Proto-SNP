@@ -19,6 +19,13 @@ var App = App || {};
     /* List of views */
     let views = [], warning_fired = false;
 
+    function checkBrowser(cb) {
+        if (navigator.userAgent.indexOf('Chrome') < 0) {
+            utils.browser_warning(cb);
+        }
+        else { cb(); }
+    }
+
     function checkResolution(cb) {
         let w = window.innerWidth,
             h = window.innerHeight;
@@ -144,7 +151,7 @@ var App = App || {};
             });
         };
 
-        checkResolution(launchModal);
+        checkBrowser(checkResolution.bind(null,launchModal));
 
         /* Show the tertiary viewers */
         leftTertiaryStructureView.show();

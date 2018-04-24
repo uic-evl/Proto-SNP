@@ -159,6 +159,7 @@ const TertiaryStructureView = (function () {
                             if(blob){
                                 blob.name = name + ".pdb";
                                 modal.find("#fileUploadInput").fileupload('add', {files: blob });
+                                modal.find("#next").prop("disabled", false);
                             }
                             modal.find("#protein-name").val('');
                         });

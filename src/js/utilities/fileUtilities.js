@@ -149,7 +149,9 @@ const FileUtilities = function(){
         let node = $('<p/>')
           .append($('<span/>').text(file.name));
 
-        /*Upload Button - loads the file into the viewer*/
+          viewer.find("#next").prop("disabled", false);
+
+          /*Upload Button - loads the file into the viewer*/
         viewer.find("#next")
           .on('click', function () {
             // JS File reader to parse the uploaded file
@@ -181,6 +183,8 @@ const FileUtilities = function(){
           .on('click', function () {
             let $this = $(this),
               data = $this.data();
+
+            viewer.find("#next").prop("disabled", true);
 
             /* Clear the previous data and reinitialize the menu */
             viewer.find("#fileUploadInput").fileupload('destroy');
@@ -221,7 +225,9 @@ const FileUtilities = function(){
           let node = $('<p/>')
               .append($('<span/>').text(file.name));
 
-          /* Hide the 'Choose file' button */
+            viewer.find("#next").prop("disabled", false);
+
+            /* Hide the 'Choose file' button */
           let splash = $(this).parent();
           splash.hide();
 
@@ -266,7 +272,9 @@ const FileUtilities = function(){
                 $this.parent().remove();
                 data.abort();
                 select.prop('disabled', false);
-                /* reshow the 'choose a file' */
+                viewer.find("#next").prop("disabled", true);
+
+                  /* reshow the 'choose a file' */
                 splash.show()
               });
 

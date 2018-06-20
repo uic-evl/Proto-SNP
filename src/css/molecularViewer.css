@@ -25,6 +25,15 @@
     position: absolute;
 }
 
+#link3DViewers {
+    width: 20px;
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform: translateX(-20px);
+    z-index: 1000;
+}
+
 .zoomButtons {
     bottom: 5px;
     left: 5px;

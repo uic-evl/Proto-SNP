@@ -26,9 +26,7 @@ const PrimaryStructureController = (function() {
 
   }
 
-  PrimaryStructureController.prototype = {
-
-  };
+  PrimaryStructureController.prototype = {};
 
   return PrimaryStructureController;
 })();

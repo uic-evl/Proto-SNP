@@ -18,7 +18,6 @@
 #molecularViewerB {
     padding-left: 0;
     padding-right: 0;
-    border-right: 2px solid white;
 }
 
 .tertiaryViewer, .axisViewer, .zoomButtons {
@@ -45,8 +44,8 @@
 }
 
 .axisViewer {
-    bottom: 0;
-    right: 0;
+    bottom: .1%;
+    right: .1%;
 }
 
 .zoomButtons button {

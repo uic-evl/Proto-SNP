@@ -31,6 +31,8 @@ const PrimaryStructureView = (function() {
         self._model = model;
         self._id = element.id;
         self._position = element.position;
+        self._initiated = $.Deferred();
+
         self._dom = null;
 
         /* The user has selected a new protein */
@@ -71,6 +73,8 @@ const PrimaryStructureView = (function() {
                 })
                 .classed("selected_sequence", false);
         });
+
+        self.getPromise = function(){ return this._initiated.promise() };
     }
 
     PrimaryStructureView.prototype = {
@@ -118,6 +122,7 @@ const PrimaryStructureView = (function() {
                 .attr("class", "sequence")// set the styling to the sequence class
                 .style("width", "100%")
             ;
+            view._initiated.resolve(view._id);
         },
 
         /* Render the sequence list */

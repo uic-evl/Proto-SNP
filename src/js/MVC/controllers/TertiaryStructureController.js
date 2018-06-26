@@ -18,6 +18,12 @@ const TertiaryStructureController = (function() {
         $("#link3DViewers button").click(function(){
             let icon = $("#link3DIcon");
             self._linked = !self._linked;
+
+            self._views.forEach(function(view, idx){
+                if(self._linked) { view.linkInteractions(); }
+                else { view.unlinkInteractions(); }
+            });
+
             if(self._linked) { icon.removeClass("fa-unlink").addClass("fa-link");}
             else { icon.removeClass("fa-link").addClass("fa-unlink");}
         });

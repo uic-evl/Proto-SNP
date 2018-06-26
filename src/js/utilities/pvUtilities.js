@@ -22,8 +22,8 @@ var pvUtils = function (context) {
     linkInteractions: function() {
       let view = this;
       /* Inject a function to determine when the view has been moved */
-      let redraw = this.pvViewer.__proto__.requestRedraw;
-      let zoom = view.pvViewer._cam.__proto__.zoom;
+      let redraw = view._redraw = view.pvViewer.__proto__.requestRedraw;
+      let zoom = view._zoom = view.pvViewer._cam.__proto__.zoom;
 
       this.pvViewer.__proto__.requestRedraw = function(){
         if(this._redrawRequested){
@@ -45,6 +45,12 @@ var pvUtils = function (context) {
         view.modelZoomed.notify({zoom: this._zoom});
         return zoom.apply(this, arguments);
       }
+    },
+
+    unlinkInteractions: function() {
+      let view = this;
+        view.pvViewer.__proto__.requestRedraw = view._redraw;
+        view.pvViewer._cam.__proto__.zoom = view._zoom;
     },
 
     setColorForAtom: function (go, atom, color) {

@@ -195,13 +195,13 @@ const BrushView = (function() {
             $('.btn-left_viewer').on('click', function (e) {
                 /* Hide the context menu */
                 $('.context-menu-list').trigger('contextmenu:hide');
-                view.proteinSelected.notify({semantic: 'left', protein: view._menuSelection});
+                view.proteinSelected.notify({semantic: 'left', protein: view._menuSelection, associated: true});
             });
 
             $('.btn-right_viewer').on('click', function (e) {
                 /* Hide the context menu */
                 $('.context-menu-list').trigger('contextmenu:hide');
-                view.proteinSelected.notify({semantic: 'right', protein: view._menuSelection});
+                view.proteinSelected.notify({semantic: 'right', protein: view._menuSelection, associated: true});
             });
         }
 

@@ -151,7 +151,7 @@ const ResidueFrequencyView = (function() {
             let ctx =  self._summarySvg.node(),
                 SVGRect = el.getBBox();
 
-            let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            let rect = document.createElementNS("https://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", SVGRect.x);
             rect.setAttribute("y", SVGRect.y);
             rect.setAttribute("width", SVGRect.width);

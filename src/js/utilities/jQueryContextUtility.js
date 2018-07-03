@@ -13,6 +13,29 @@ var jQueryContextUtils = function (self) {
         return false;
       };
 
+      let populateMenu = function() {
+          let dfd = jQuery.Deferred();
+          self._model.getProteinMappings()
+              .then(function (PDBs) {
+                  /* Get the current protein name*/
+                  let protein = self._model.getSelectedProtein().name,
+                      menu = {};
+                  /* load the pdb names into the menu */
+                  PDBs[protein].forEach(function (p, i) {
+                      menu[p] = {
+                          name: p, className: "protein_entry",
+                          callback: clickCB
+                      }
+                  });
+                  /* If no pdbs are found, tell the user*/
+                  if (_.keys(menu).length === 0) {
+                      menu['sub1'] = {name: "No assoc. proteins", disabled: true}
+                  }
+                  dfd.resolve(menu);
+              });
+          return dfd.promise();
+      }
+
       $.contextMenu({
         selector: context,
         reposition: false,
@@ -26,28 +49,7 @@ var jQueryContextUtils = function (self) {
                   "status": {
                     name: "Associated PDBs",
                     icon: "add",
-                    items: function () {
-                      let dfd = jQuery.Deferred();
-                      self._model.getProteinMappings()
-                          .then(function (PDBs) {
-                            /* Get the current protein name*/
-                            let protein = self._model.getSelectedProtein().name,
-                                menu = {};
-                            /* load the pdb names into the menu */
-                            PDBs[protein].forEach(function (p, i) {
-                              menu[p] = {
-                                name: p, className: "protein_entry",
-                                callback: clickCB
-                              }
-                            });
-                            /* If no pdbs are found, tell the user*/
-                            if (_.keys(menu).length === 0) {
-                              menu['sub1'] = {name: "No assoc. proteins", disabled: true}
-                            }
-                            dfd.resolve(menu);
-                          });
-                      return dfd.promise();
-                    }(),
+                    items: populateMenu(),
                     className: 'pdb_names',
                   },
                   sep1: "---------",

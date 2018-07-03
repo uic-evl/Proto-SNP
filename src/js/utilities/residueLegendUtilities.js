@@ -86,7 +86,7 @@ function ResidueMappingUtility() {
         let abbr = [], prop;
         seq.forEach(function(res){
             prop = _.find(residuePropertiesByLetter, function(r) {return res === r.abbr || res === r.name;});
-            if(prop.abbr){
+            if(prop && prop.abbr){
                 abbr.push(prop.abbr);
             }
         });

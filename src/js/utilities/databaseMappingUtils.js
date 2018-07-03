@@ -16,7 +16,7 @@ const DatabaseMappingUtils = function(){
   function map_mnemonic_to_PDB(mnemonic){
     return new Promise(function(resolve, reject) {
       /* Use d3 to query UniProt for the tab-separated name conversion*/
-      d3.tsv("http://www.uniprot.org/uniprot/?query=" + mnemonic +
+      d3.tsv("https://www.uniprot.org/uniprot/?query=" + mnemonic +
           "&format=tab&compress=no&columns=entry name,database(PDB)", function(data) {
 
         /* No model exists */
@@ -43,7 +43,7 @@ const DatabaseMappingUtils = function(){
 
   function check_PDB_names(pdb_query){
     return new Promise(function(resolve, reject) {
-      d3.xml("http://www.rcsb.org/pdb/rest/idStatus?structureId="+pdb_query, function(data){
+      d3.xml("https://www.rcsb.org/pdb/rest/idStatus?structureId="+pdb_query, function(data){
         resolve([].map.call(data.querySelectorAll("record"), function(record) {
           let record_selector = d3.select(record);
           return{
@@ -57,7 +57,7 @@ const DatabaseMappingUtils = function(){
 
   function uniprot_retrieve_identifiers(query) {
     return new Promise(function(resolve, reject){
-      $.post("http://www.uniprot.org/uploadlists/",
+      $.post("https://www.uniprot.org/uploadlists/",
         { 'from': 'ACC+ID',
           'to':'ACC',
           'format': 'tab',

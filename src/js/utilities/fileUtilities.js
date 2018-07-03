@@ -333,18 +333,18 @@ const FileUtilities = function(){
       };
       xhr.responseType = 'blob';
 
-      xhr.open('GET', 'http://files.rcsb.org/download/' + proteinName + '.pdb');
+      xhr.open('GET', 'https://files.rcsb.org/download/' + proteinName + '.pdb');
       xhr.send();
     };
 
-    loadIfExists('http://files.rcsb.org/download/' + proteinName + '.pdb', get_protein)
+    loadIfExists('https://files.rcsb.org/download/' + proteinName + '.pdb', get_protein)
   }
 
   /* Load the protein from RCMB through pv.io*/
   function load_PDB_From_RCMB(proteinName, pointer){
     /* perform an async download from RCMB to fetch the requested PDB File */
     return new Promise(function(resolve, reject){
-      pv.io.fetchPdb('http://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {
+      pv.io.fetchPdb('https://files.rcsb.org/download/' + proteinName + '.pdb', function(structure) {
         /*Save the protein structure*/
         pointer.structure = structure;
         /* Resolve the promise */

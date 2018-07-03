@@ -82,6 +82,17 @@ function ResidueMappingUtility() {
     /* The current color map*/
     currentColorMap = {};
 
+    function mapNamesToAbbr(seq){
+        let abbr = [], prop;
+        seq.forEach(function(res){
+            prop = _.find(residuePropertiesByLetter, function(r) {return res === r.abbr || res === r.name;});
+            if(prop.abbr){
+                abbr.push(prop.abbr);
+            }
+        });
+        return abbr;
+    }
+
     function colorBySideChainClass(residue) {
         let residueProperties = _.find(residuePropertiesByLetter, function(r) {
             return residue === r.abbr || residue === r.name;
@@ -286,6 +297,7 @@ function ResidueMappingUtility() {
     return {
         createColorLegend : create_legend,
         getColor          : get_color_mapping,
-        clear             : clear
+        clear             : clear,
+        mapToAbbr         : mapNamesToAbbr
     }
 }

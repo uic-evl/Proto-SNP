@@ -75,13 +75,13 @@ const ProteinModel = (function() {
             /* Set the chain */
             this._selectedChain = chain || 0;
             // Array to store the sequence
-            let seq = [];
+            let name_seq = [];
             /* Iterate over the residues of the chain and add them to the array*/
             structure.chains()[this._selectedChain].eachResidue(function(res){
-                seq.push(res.name());
+                name_seq.push(res.name());
             });
             // return the sequence
-            return seq;
+            return {name: name_seq, abbr: App.residueMappingUtility.mapToAbbr(name_seq)};
         },
 
         getChain: function() { return this._selectedChain; },
@@ -116,7 +116,6 @@ const ProteinModel = (function() {
             }
             /* Notify the listeners that the selection has been changed */
             this.residueSelected.notify(options);
-
         },
 
         deselectResidue : function(options) {

@@ -46,7 +46,7 @@ const PrimaryStructureView = (function() {
             /* Initialize the viewer */
             self.initialize(_.toUpper(sender._proteinName));
             /* Render the sequence with of the loaded protein */
-            self.render(sender.getSequence(protein.structure));
+            self.render(sender.getSequence(protein.structure).name);
         });
 
         /* Residue selected and added to the model */

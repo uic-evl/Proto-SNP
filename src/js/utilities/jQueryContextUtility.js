@@ -2,7 +2,7 @@
 
 var App = App || {};
 
-var jQueryContextUtils = function (self) {
+const jQueryContextUtils = function (self) {
   return {
     createContextMenu: function (context) {
       let clickCB = function (item) {
@@ -18,8 +18,7 @@ var jQueryContextUtils = function (self) {
           self._model.getProteinMappings()
               .then(function (PDBs) {
                   /* Get the current protein name*/
-                  let protein = self._model.getSelectedProtein().name,
-                      menu = {};
+                  let protein = self._model.getSelectedProtein().name, menu = {};
                   /* load the pdb names into the menu */
                   PDBs[protein].forEach(function (p, i) {
                       menu[p] = {
@@ -34,7 +33,7 @@ var jQueryContextUtils = function (self) {
                   dfd.resolve(menu);
               });
           return dfd.promise();
-      }
+      };
 
       $.contextMenu({
         selector: context,
@@ -68,7 +67,7 @@ var jQueryContextUtils = function (self) {
                               /* update the menu if the item was added */
                               if (self._model.addProteinMapping(current_protein, protein[0])) {
                                 /* Add the new protein to the list */
-                                $('.context-menu-list').trigger('contextmenu:hide');
+                                // $('.context-menu-list').trigger('contextmenu:hide');
                               }
                             }
                           });

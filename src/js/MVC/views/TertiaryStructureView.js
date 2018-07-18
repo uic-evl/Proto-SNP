@@ -39,7 +39,6 @@ const TertiaryStructureView = (function () {
     function TertiaryStructureView(model, element) {
         let self = this;
 
-
         self._model = model;
         self._id = element.id;
         self._position = element.position;

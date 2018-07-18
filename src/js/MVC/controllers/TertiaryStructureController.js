@@ -15,7 +15,7 @@ const TertiaryStructureController = (function() {
         self._linked = true;
 
         /* Setup linked callback */
-        $("#link3DViewers button").click(function(){
+        $("#link3DViewers").find("button").click(function(){
             let icon = $("#link3DIcon");
             self._linked = !self._linked;
 

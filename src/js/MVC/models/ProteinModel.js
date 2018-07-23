@@ -94,7 +94,18 @@ const ProteinModel = (function() {
                 this._proteinStructure = structure;
                 this._proteinName = metadata.protein_name;
                 this.proteinAdded.notify({structure:this._proteinStructure, name:metadata.protein_name});
-                console.log(metadata, file);
+
+                /* Associate the protein if loaded from the family */
+                if(metadata.associated_protein){
+                    let family_seq = App.residueMappingUtility.removeGaps(metadata.associated_protein.sequence)
+                        , protein_seq = this.getSequence(structure),
+                        p1 = `>${this._proteinName}:A\n${protein_seq.abbr.join("")}`,
+                        p2 = `>${metadata.associated_protein.name}\n${family_seq}`,
+                        alignment = pairwiseAlignProtein(p1, p2, {gap: 10, begin:0, end:0.0});
+
+                    console.log(alignment);
+                }
+
 
             }.bind(this));
         },

@@ -269,14 +269,15 @@ const TertiaryStructureView = (function () {
         },
 
         /* Accept the data from the download form. Called by the upload form */
-        downloadPDB: function(formData) {
+        downloadPDB: function(formData, familyProtein) {
             let name = (typeof formData === "object")? $(formData).serialize().split('=')[1] : formData;
 
             if(!this._model.isEmpty()){
-                this.fileUploaded.notify({metaData: {protein_name:name}, file: null});
+                this.fileUploaded.notify({
+                    metaData: {protein_name:name, associated_protein: familyProtein}, file: null});
             }
             else {
-                this.fileUpdated.notify({metaData: {protein_name:name}, file: null});
+                this.fileUpdated.notify({metaData: {protein_name:name, associated_protein: familyProtein}, file: null});
             }
             return false;
         },

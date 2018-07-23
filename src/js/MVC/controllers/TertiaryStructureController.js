@@ -98,7 +98,7 @@ const TertiaryStructureController = (function() {
 
         /* Receive the protein name/viewer side that was selected from the family viewer*/
         controllers.proteinSelected.attach(function(sender, msg) {
-            self._views[semantics[msg.semantic]].downloadPDB(msg.protein);
+            self._views[semantics[msg.semantic]].downloadPDB(msg.protein, msg.familyProtein);
         });
 
         /*  Bind the view with knockoutJS */

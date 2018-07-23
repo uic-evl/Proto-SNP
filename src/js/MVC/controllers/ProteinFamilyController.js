@@ -59,6 +59,7 @@ const ProteinFamilyController = (function() {
                 if(brushSpec.orientation === App.HORIZONTAL_PADDLE){
                     /* Notify the Tertiary Controller that a new protein is loaded */
                     brushView.proteinSelected.attach(function(sender,msg){
+                        msg.familyProtein = self._model.getSelectedProtein();
                         self.proteinSelected.notify(msg);
                     });
                 }

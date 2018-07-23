@@ -93,6 +93,16 @@ function ResidueMappingUtility() {
         return abbr;
     }
 
+    function removeGapsFromSequence(seq){
+        let ret_seq = "";
+        seq.forEach(function(res){
+            if( [".", "~", " "].indexOf(res) < 0){
+                ret_seq += res;
+            }
+        });
+        return ret_seq;
+    }
+
     function colorBySideChainClass(residue) {
         let residueProperties = _.find(residuePropertiesByLetter, function(r) {
             return residue === r.abbr || residue === r.name;
@@ -298,6 +308,7 @@ function ResidueMappingUtility() {
         createColorLegend : create_legend,
         getColor          : get_color_mapping,
         clear             : clear,
-        mapToAbbr         : mapNamesToAbbr
+        mapToAbbr         : mapNamesToAbbr,
+        removeGaps        : removeGapsFromSequence
     }
 }

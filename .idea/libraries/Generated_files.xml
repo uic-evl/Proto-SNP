@@ -2,55 +2,17 @@
   <library name="Generated files" type="javaScript">
     <properties>
       <sourceFilesUrls>
-        <item url="file://$PROJECT_DIR$/lib/js/bio-pv.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/d3-context-menu.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/d3-tip.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/d3.min.js" />
-        <item url="file://$PROJECT_DIR$/lib/js/hopscotch.min.js" />
-        <item url="file://$PROJECT_DIR$/lib/js/hopscotch.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/jQuery-context/jquery.contextMenu.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/jQuery-context/main.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.fileupload-process.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.fileupload.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.iframe-transport.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.ui.widget.min.js" />
-        <item url="file://$PROJECT_DIR$/lib/js/knockout-min.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/levenshtein.min.js" />
         <item url="file://$PROJECT_DIR$/lib/js/typehead.bundle.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/Event.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/controllers/FilteringMenuController.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/controllers/PrimaryStructureController.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/controllers/ProteinFamilyController.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/controllers/TertiaryStructureController.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/models/FilteringMenuModel.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/models/FilteringMenuModel.min.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/models/ProteinFamilyModel.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/models/ProteinFamilyModel.min.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/models/ProteinModel.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/models/ProteinModel.min.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/views/AxisView3D.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/views/BrushView.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/views/FilteringMenuView.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/views/PrimaryStructureView.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/views/ProteinFamilyView.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/views/ResidueFrequencyView.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/MVC/views/TertiaryStructureView.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/algorithms/LevenshteinDistance.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/algorithms/Needleman-Wunsch.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/algorithms/SequenceSorting.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/main.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/brushUtilities.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/d3Utilities.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/databaseMappingUtils.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/feature_tour.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/fileUtilities.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/jQueryContextUtility.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/keyboardUtilities.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/promiseUtilities.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/pvUtilities.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/residueMappingUtilities.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/sequenceSortingProcessing.min.js" />
-        <item url="file://$PROJECT_DIR$/src/js/utilities/textUtilities.min.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
@@ -134,9 +96,7 @@
       <root url="file://$PROJECT_DIR$/src/js/MVC/controllers/PrimaryStructureController.min.min.min.js" />
       <root url="file://$PROJECT_DIR$/src/js/MVC/controllers/PrimaryStructureController.min.min.min.min.min.min.js" />
       <root url="file://$PROJECT_DIR$/src/js/main.min.min.min.min.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/d3.min.js" />
       <root url="file://$PROJECT_DIR$/lib/js/hopscotch.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/d3-tip.min.js" />
       <root url="file://$PROJECT_DIR$/src/js/MVC/models/ProteinFamilyModel.min.min.js" />
       <root url="file://$PROJECT_DIR$/src/js/MVC/models/ProteinModel.min.min.js" />
       <root url="file://$PROJECT_DIR$/src/js/algorithms/Needleman-Wunsch.min.js" />
@@ -172,16 +132,18 @@
       <root url="file://$PROJECT_DIR$/src/js/MVC/views/PrimaryStructureView.min.js" />
       <root url="file://$PROJECT_DIR$/src/js/MVC/views/FilteringMenuView.min.js" />
       <root url="file://$PROJECT_DIR$/src/js/MVC/views/AxisView3D.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/typehead.bundle.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/jQuery-context/jquery.contextMenu.min.js" />
       <root url="file://$PROJECT_DIR$/lib/js/knockout-min.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.fileupload-process.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/jQuery-context/main.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.iframe-transport.min.js" />
-      <root url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.fileupload.min.js" />
       <root url="file://$PROJECT_DIR$/lib/js/d3-context-menu.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/d3-tip.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/d3.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/jQuery-context/jquery.contextMenu.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/jQuery-context/main.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.fileupload-process.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.fileupload.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.iframe-transport.min.js" />
       <root url="file://$PROJECT_DIR$/lib/js/jQuery-file-upload/jquery.ui.widget.min.js" />
       <root url="file://$PROJECT_DIR$/lib/js/levenshtein.min.js" />
+      <root url="file://$PROJECT_DIR$/lib/js/typehead.bundle.min.js" />
     </CLASSES>
     <SOURCES />
   </library>

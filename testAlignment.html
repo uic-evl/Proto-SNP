@@ -2,40 +2,51 @@
 <head>
 </head>
 
+<link rel="stylesheet" href="lib/css/bootstrap.min.css">
+
+<script type='text/javascript' src='lib/js/jquery-2.2.4.min.js'></script>
+<script type='text/javascript' src="lib/js/bootstrap.min.js"></script>
+<script type='text/javascript' src="lib/js/popper.min.js"></script>
+
+
 <script type='text/javascript' src='src/js/algorithms/sms_common.js'></script>
 <script type='text/javascript' src='src/js/algorithms/align_pair_linear.js'></script>
 <script type='text/javascript' src='src/js/algorithms/align_pair_quad.js'></script>
 <script type='text/javascript' src='src/js/algorithms/blosum62.js'></script>
+<script src=//cdn.bio.sh/msa/1.0/msa.min.gz.js></script>
+
+<div id="alignment"></div>
 
 <body>
 
 <script type="application/javascript">
 
-    let p2 = ">sp|Q2M3G4|SHRM1_HUMAN Protein Shroom1 OS=Homo sapiens OX=9606 GN=SHROOM1 PE=1 SV=1\n" +
-        "MEALGPGGDRASPASSTSSLDLWHLSMRADSAYSSFSAASGGPEPRTQSPGTDLLPYLDW\n" +
-        "DYVRVVWGGPGPAPPDAALCTSPRPRPAVAARSGPQPTEVPGTPGPLNRQATPLLYALAA\n" +
-        "EAEAAAQAAEPPSPPASRAAYRQRLQGAQRRVLRETSFQRKELRMSLPARLRPTVPARPP\n" +
-        "ATHPRSASLSHPGGEGEPARSRAPAPGTAGRGPLANQQRKWCFSEPGKLDRVGRGGGPAR\n" +
-        "ECLGEACSSSGLPGPEPLEFQHPALAKFEDHEVGWLPETQPQGSMNLDSGSLKLGDAFRP\n" +
-        "ASRSRSASGEVLGSWGGSGGTIPIVQAVPQGAETPRPLFQTKLSRFLPQKEAAVMYPAEL\n" +
-        "PQSSPADSEQRVSETCIVPAWLPSLPDEVFLEEAPLVRMRSPPDPHASQGPPASVHASDQ\n" +
-        "PYGTGLGQRTGQVTVPTEYPLHECPGTAGADDCWQGVNGSVGISRPTSHTPTGTANDNIP\n" +
-        "TIDPTGLTTNPPTAAESDLLKPVPADALGLSGNDTPGPSHNTALARGTGQPGSRPTWPSQ\n" +
-        "CLEELVQELARLDPSLCDPLASQPSPEPPLGLLDGLIPLAEVRAAMRPACGEAGEEAAST\n" +
-        "FEPGSYQFSFTQLLPAPREETRLENPATHPVLDQPCGQGLPAPNNSIQGKKVELAARLQK\n" +
-        "MLQDLHTEQERLQGEAQAWARRQAALEAAVRQACAPQELERFSRFMADLERVLGLLLLLG\n" +
-        "SRLARVRRALARAASDSDPDEQASLLQRLRLLQRQEEDAKELKEHVARRERAVREVLVRA\n" +
-        "LPVEELRVYCALLAGKAAVLAQQRNLDERIRLLQDQLDAIRDDLGHHAPSPSPARPPGTC\n" +
-        "PPVQPPFPLLLT";
+    let p2 = "--------LDHDLSVKKQELIESISRKLQVLREARESLLEDVQANTVLGAEVEAIVKGVCKPSEFDKFRMFIGDLDKVVNLLLSLSGRLARVENALNNLDDGASPGDRQSLLEKQRVLIQQHEDAKELKENLDRRERIVFDILANYLSEESLADYEHFVKMKSALIIEQRELEDKIHLGEEQLKCLLDS-------";
+    let p1 = "HEEDSGSDLDHDLSVKKQELIESISRKLQVLREARESLLEDVQANTVLGAEVEAIVKGVCKPSEFDKFRMFIGDLDKVVNLLLSLSGRLARVENALNNLDDGASPGDRQSLLEKQRVLIQQHEDAKELKENLDRRERIVFDILANYLSEESLADYEHFVKMKSALIIEQRELEDKIHLGEEQLKCLLDSLQPERGK";
 
-    let p1 = ">5F4Y:A|PDBID|CHAIN|SEQUENCE\n" +
-        "SDLDHDLSVKKQELIESISRKLQVLREARESLLEDVQANTVLGAEVEAIVKGVCKPSEFDKFRMFIGDLDKVVNLLLSLS\n" +
-        "GRLARVENALNNLDDGASPGDRQSLLEKQRVLIQQHEDAKELKENLDRRERIVFDILANYLSEESLADYEHFVKMKSALI\n" +
-        "IEQRELEDKIHLGEEQLKCLLDSL\n";
+    //let output = pairwiseAlignProtein(p1, p2, {gap: 10, begin:0, end:0.0});
 
-    let output = pairwiseAlignProtein(p1, p2, {gap: 10, begin:0, end:0.0});
+    // var seqs1 =  msa.io.fasta.parse(p1),
+    //     seqs2 = msa.io.fasta.parse(p2);
 
-    console.log(output);
+    var m = msa({
+      el: document.getElementById("alignment"),
+      // seqs: seqs,
+      vis: {
+        conserv: false,
+        overviewbox: false
+      },
+      // smaller menu for JSBin
+      menu: "small",
+      bootstrapMenu: true
+    });
+
+    m.seqs.add({seq:p1});
+    m.seqs.add({seq:p2});
+
+    // m.seqs.add(seqs2);
+
+    m.render();
 
 </script>
 

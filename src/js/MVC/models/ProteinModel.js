@@ -57,6 +57,7 @@ const ProteinModel = (function() {
                     });
             }
         };
+
     }
 
     ProteinModel.prototype = {
@@ -99,13 +100,39 @@ const ProteinModel = (function() {
                 if(metadata.associated_protein){
                     let family_seq = App.residueMappingUtility.removeGaps(metadata.associated_protein.sequence)
                         , protein_seq = this.getSequence(structure),
+
                         p1 = `>${this._proteinName}:A\n${protein_seq.abbr.join("")}`,
                         p2 = `>${metadata.associated_protein.name}\n${family_seq}`,
-                        alignment = pairwiseAlignProtein(p1, p2, {gap: 10, begin:0, end:0.0});
 
-                    console.log(alignment);
+                        alignment = pairwiseAlignProtein(p1, p2, {gap: 10, begin:0, end:0.0}).split(">");
+
+                  /* Open the modal */
+                  $('#proteinAlignmentModal').modal('show')
+                  .on('shown.bs.modal', function (event) {
+
+                    var m = msa({
+                      el: document.getElementById("protein_alignment"),
+                      // seqs: seqs,
+                      vis: {
+                        conserv: false,
+                        overviewbox: false
+                      },
+                      // smaller menu for JSBin
+                      menu: "small",
+                      bootstrapMenu: true
+                    });
+
+                    let protein_1 = alignment[1].split("\n")
+                        , protein_2 = alignment[2].split("\n");
+
+                    m.seqs.add({seq:protein_1[1]});
+                    m.seqs.add({seq:protein_2[1]});
+
+                    m.render();
+                  });
+
+
                 }
-
 
             }.bind(this));
         },

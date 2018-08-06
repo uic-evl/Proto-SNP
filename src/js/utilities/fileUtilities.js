@@ -67,7 +67,7 @@ const FileUtilities = function(){
         /* Get the data */
         parsedLine = line.match(regex_data);
         /* Append the sequence to the dictionary entry*/
-        family[parsedLine[1]].sequence += _.toUpper(parsedLine[4].split(' ').join(''));
+        family[parsedLine[1]].sequence += parsedLine[4].split(' ').join('').toUpperCase();
       }
     });
     /* The max length changed. Pad the protein sequences to the longest length*/
@@ -95,7 +95,7 @@ const FileUtilities = function(){
         name: seq.name,
         id: seq.id,
         length: seq.seq.length,
-        sequence: _.toUpper(seq.seq),
+        sequence: seq.seq.toUpperCase(),
         scores: {initial: sequences.length - seq.id}
       };
 

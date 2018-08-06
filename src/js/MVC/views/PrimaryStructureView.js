@@ -44,7 +44,7 @@ const PrimaryStructureView = (function() {
         /* New protein loaded into the view */
         self._model.proteinAdded.attach(function (sender, protein) {
             /* Initialize the viewer */
-            self.initialize(_.toUpper(sender._proteinName));
+            self.initialize(sender._proteinName.toUpperCase());
             /* Render the sequence with of the loaded protein */
             self.render(sender.getSequence(protein.structure).name);
         });

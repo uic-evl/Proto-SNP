@@ -56,6 +56,7 @@ var App = App || {};
     function setupInfo() {
         /* Register the about modal and help popup */
         $('#aboutModalDiv').load("./src/html/modals/aboutModal.html");
+        $('#proteinAlignmentModalDiv').load("./src/html/modals/proteinAlignmentModal.html");
 
         $('#helpButton').on("click", function(){
             let span = $(this).find("span"),

@@ -22,7 +22,7 @@ const TertiaryStructureView = (function () {
     function updateViewTitle(dom, title) {
         let p = d3.select(dom).select('#proteinName p');
         /* Update the label */
-        p.text(_.toUpper(title));
+        p.text(title.toUpperCase());
     }
 
     function selectionChanged(sender, args){
